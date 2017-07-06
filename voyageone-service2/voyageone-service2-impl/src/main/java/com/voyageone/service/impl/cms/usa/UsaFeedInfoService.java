@@ -231,6 +231,7 @@ public class UsaFeedInfoService extends BaseService {
     }
 
     public static void main(String[] args) {
+
         String hello = "a   b c &^^^^7r8~1";
         System.out.println(hello.replaceAll("[^a-zA-Z0-9]+", " ").replaceAll("\\s+", "-"));
     }
