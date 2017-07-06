@@ -1,6 +1,5 @@
 package com.voyageone.service.impl.cms.usa;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -11,11 +10,9 @@ import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -175,7 +172,12 @@ public class UsaFeedInfoService extends BaseService {
             if (nextFeedStatus == null) {
                 throw new BusinessException(String.format("Invalid Status, Current Status(%s) -> Next Status(%s)", feedInfoModel.getStatus(), nextFeedStatus));
             }
-            // TODO: 2017/7/6 rex.wu Submit FeedInfo 
+            // TODO: 2017/7/6 rex.wu Submit FeedInfo
+
+
+            if (CmsConstants.UsaFeedStatus.Approved.name().equals(nextFeedStatus)) {
+
+            }
         }
 
     }

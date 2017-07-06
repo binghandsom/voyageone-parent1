@@ -62,6 +62,16 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
      * <p>Add by rex.wu at 2017-07-06</p>
      */
     private String status;
+    /**
+     * 中国各平台Approve信息
+     * <p>Add by rex.wu at 2017-07-06</p>
+     */
+    private CmsBtFeedInfoModel_Platform platforms;
+    /**
+     * 美国各平台Approve信息
+     * <p>Add by rex.wu at 2017-07-06</p>
+     */
+    private CmsBtFeedInfoModel_Platform usaPlatforms;
 
 
     public String getSizeChartType() {
@@ -424,5 +434,21 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public CmsBtFeedInfoModel_Platform getPlatforms() {
+        return platforms;
+    }
+
+    public void setPlatforms(CmsBtFeedInfoModel_Platform platforms) {
+        this.platforms = platforms;
+    }
+
+    public CmsBtFeedInfoModel_Platform getUsaPlatforms() {
+        return usaPlatforms;
+    }
+
+    public void setUsaPlatforms(CmsBtFeedInfoModel_Platform usaPlatforms) {
+        this.usaPlatforms = usaPlatforms;
     }
 }
