@@ -42,6 +42,7 @@ public class UsaFeedInfoService extends BaseService {
 
     /**
      * 条件查询feed商品列表
+     *
      * @param searchValue
      * @param channel
      */
@@ -66,11 +67,12 @@ public class UsaFeedInfoService extends BaseService {
         queryObject.setSkip((pageNum - 1) * pageSize);
         queryObject.setLimit(pageSize);
 
-        return  feedInfoService.getList(channel,queryObject);
+        return feedInfoService.getList(channel, queryObject);
     }
 
     /**
      * 查询feed商品总数
+     *
      * @param searchValue
      * @param channel
      * @return
@@ -82,40 +84,37 @@ public class UsaFeedInfoService extends BaseService {
     }
 
     //组装查询条件
-    public JongoQuery getQuery(Map<String, Object> searchValue){
+    public JongoQuery getQuery(Map<String, Object> searchValue) {
         //封装查询条件
         Criteria criteria = new Criteria();
         //状态
-        if (searchValue.get("status") != null){
-            criteria = criteria.and("status").is((String)searchValue.get("status"));
+        if (searchValue.get("status") != null) {
+            criteria = criteria.and("status").is((String) searchValue.get("status"));
         }
         //设置开始和截止的时间
-        if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null){
-            criteria = criteria.and("lastReceivedOn").gte((String)searchValue.get("lastReceivedOnStart"));
+        if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null) {
+            criteria = criteria.and("lastReceivedOn").gte((String) searchValue.get("lastReceivedOnStart"));
         }
-        if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") == null){
-            criteria = criteria.and("lastReceivedOn").lte((String)searchValue.get("lastReceivedOnEnd"));
+        if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") == null) {
+            criteria = criteria.and("lastReceivedOn").lte((String) searchValue.get("lastReceivedOnEnd"));
         }
-        if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") != null){
-            criteria = criteria.and("lastReceivedOn").gte((String)searchValue.get("lastReceivedOnStart")).lte((String)searchValue.get("lastReceivedOnEnd"));
+        if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") != null) {
+            criteria = criteria.and("lastReceivedOn").gte((String) searchValue.get("lastReceivedOnStart")).lte((String) searchValue.get("lastReceivedOnEnd"));
         }
         //name模糊查询
-        if (searchValue.get("name") != null){
+        if (searchValue.get("name") != null) {
             String name = (String) searchValue.get("name");
-            StringBuffer buffer = new StringBuffer("/");
-            buffer.append(name);
-            buffer.append("/");
-            criteria = criteria.and("name").is(buffer.toString());
+            criteria = criteria.and("name").regex(name);
         }
         //多条件精确查询,SKU/ Barcode/ Code / Model
-        if (searchValue.get("searchContent") != null){
+        if (searchValue.get("searchContent") != null) {
             String searchContent = (String) searchValue.get("searchContent");
             String[] split = searchContent.split("/n");
             List<String> searchContents = Arrays.asList(split);
-            criteria.orOperator(new Criteria("code").in(searchContents),new Criteria("model").in(searchContents),new Criteria("skus.sku").in(searchContent),new Criteria("skus.barcode").in(searchContent));
+            criteria.orOperator(new Criteria("code").in(searchContents), new Criteria("model").in(searchContents), new Criteria("skus.sku").in(searchContent), new Criteria("skus.barcode").in(searchContent));
         }
-        if (searchValue.get("isApprove") != null){
-            criteria = criteria.and("isApprove").is((String)searchValue.get("isApprove"));
+        if (searchValue.get("isApprove") != null) {
+            criteria = criteria.and("isApprove").is((String) searchValue.get("isApprove"));
         }
         return new JongoQuery(criteria);
     }
