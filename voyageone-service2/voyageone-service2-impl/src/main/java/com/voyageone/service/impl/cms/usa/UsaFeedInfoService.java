@@ -13,7 +13,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import org.apache.commons.collections4.CollectionUtils;
 
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;

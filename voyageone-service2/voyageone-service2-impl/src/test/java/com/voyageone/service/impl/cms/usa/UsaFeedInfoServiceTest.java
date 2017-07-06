@@ -18,7 +18,6 @@ import static org.junit.Assert.*;
  * Created by dell on 2017/7/6.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration
 @ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class UsaFeedInfoServiceTest {
     @Autowired
