@@ -44,6 +44,8 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
         // added by morse.lu 2016/07/13 end
 
         String imageTemplate = expressionParser.parse(imageTemplateExpression, shopBean, user, extParameter);
+        RuleExpression htmlTemplateExpression = customModuleUserParamImageWithParam.getHtmlTemplate();
+        String htmlTemplate = expressionParser.parse(htmlTemplateExpression, shopBean, user, extParameter);
         List<String> imageParams = new ArrayList<>();
         for (RuleExpression imageParamExpression : imageParamExpressions) {
             String imageParam = expressionParser.parse(imageParamExpression, shopBean, user, extParameter);
@@ -136,6 +138,7 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())
                 || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())
                 || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())
+                || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.NTES.getId())
                 ) {
             Set<String> url = new HashSet<>();
             url.add(parseResult);
@@ -152,6 +155,9 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
 //        if (imageSet != null) {
 //            imageSet.add(parseResult);
 //        }
+        if (!StringUtils.isNullOrBlank2(parseResult) && !StringUtils.isNullOrBlank2(htmlTemplate)) {
+            parseResult = String.format(htmlTemplate, parseResult);
+        }
 
         return parseResult;
     }

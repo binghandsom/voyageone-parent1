@@ -12,11 +12,15 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdImgzoneService;
 import com.voyageone.components.jumei.bean.JmImageFileBean;
 import com.voyageone.components.jumei.service.JumeiImageFileService;
 import com.voyageone.components.tmall.service.TbPictureService;
+import com.voyageone.ecerp.interfaces.third.koala.KoalaItemService;
+import com.voyageone.ecerp.interfaces.third.koala.beans.ItemImgUploadResponse;
+import com.voyageone.ecerp.interfaces.third.koala.beans.KoalaConfig;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageGroupModel;
@@ -35,6 +39,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Date;
 import java.util.List;
 
 
@@ -68,6 +73,9 @@ public class CmsUploadImageToPlatformService extends BaseCronTaskService {
     @Autowired
     private JdImgzoneService jdImgzoneService;
 
+    @Autowired
+    private KoalaItemService koalaItemService;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -86,7 +94,7 @@ public class CmsUploadImageToPlatformService extends BaseCronTaskService {
         queryObject.setQuery("{\"image.status\":"
                 + CmsConstants.ImageUploadStatus.WAITING_UPLOAD + ",\"active\":1,\"cartId\":{$in:[" + CartEnums.Cart.TM.getId() + ","
                 + CartEnums.Cart.TB.getId() + "," + CartEnums.Cart.TG.getId() + "," + CartEnums.Cart.JM.getId() + ","
-                + CartEnums.Cart.TT.getId() + "," + CartEnums.Cart.LTT.getId() + ","
+                + CartEnums.Cart.TT.getId() + "," + CartEnums.Cart.LTT.getId() + "," + CartEnums.Cart.KL.getId() + ","
                 + CartEnums.Cart.JD.getId() + "," + CartEnums.Cart.JG.getId() + "," + CartEnums.Cart.JGJ.getId() + "," + CartEnums.Cart.JGY.getId() + "]}}");
 
         List<CmsBtImageGroupModel> imageGroupList = cmsBtImageGroupDao.select(queryObject);
@@ -119,9 +127,61 @@ public class CmsUploadImageToPlatformService extends BaseCronTaskService {
         } else if (cartId.equals(CartEnums.Cart.JD.getId()) || cartId.equals(CartEnums.Cart.JG.getId())
                 || cartId.equals(CartEnums.Cart.JGJ.getId()) || cartId.equals(CartEnums.Cart.JGY.getId())) {
             uploadImageToJD(channelId, cartId, imageType, image);
+        } else if (cartId.equals(CartEnums.Cart.KL.getId())) {
+            uploadImageToKL(channelId, imageType, image);
         }
         // TODO 淘宝/天猫/天猫国际/聚美/京东/京东国际/京东国际匠心界/京东国际悦境以外 以后往这里加
     }
+
+    private void uploadImageToKL(String channelId, int imageType, CmsBtImageGroupModel_Image image) {
+        String originUrl = image.getOriginUrl();
+        $info("开始上传平台图片---图片原始Url:" + originUrl + ", 平台id;" + 34 + ", 渠道id:" + channelId);
+        InputStream inputStream = null;
+        byte[] bytes = null;
+        try {
+            URL url = new URL(originUrl);
+            HttpURLConnection httpUrl = (HttpURLConnection) url.openConnection();
+            httpUrl.connect();
+            inputStream = new BufferedInputStream(httpUrl.getInputStream());
+            bytes = IOUtils.toByteArray(inputStream);
+        } catch (Exception e) {
+            $error("原始Url非法");
+            // 设置返回的错误信息
+            image.setErrorMsg("原始Url非法");
+            // 设置图片上传状态为上传成功
+            image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
+            return;
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (IOException ignored) {
+            }
+        }
+
+        KoalaConfig koalaConfig = Shops.getShopKoala(channelId, CartEnums.Cart.KL.getId());
+        ItemImgUploadResponse itemImgUploadResponse = null;
+        try{
+            itemImgUploadResponse = koalaItemService.imgUpload(koalaConfig, bytes, new Date().getTime() + ".jpg");
+            if(itemImgUploadResponse != null){
+                // 设置平台返回的Url
+                image.setPlatformUrl(itemImgUploadResponse.getUrl());
+                // 设置平台返回的PictureId
+                image.setPlatformImageId(itemImgUploadResponse.getUrl());
+                // 设置图片上传状态为上传成功
+                image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_SUCCESS));
+                // 清除errorMsg
+                image.setErrorMsg(null);
+            }
+        }catch (Exception e){
+            // 设置图片上传状态为上传成功
+            image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
+            // 清除errorMsg
+            image.setErrorMsg(e.getMessage());
+        }
+    }
+
 
     /**
      * 图片上传到淘宝/天猫/天猫国际
