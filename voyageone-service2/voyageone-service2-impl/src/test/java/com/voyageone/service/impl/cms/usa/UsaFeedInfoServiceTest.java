@@ -6,7 +6,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +27,8 @@ public class UsaFeedInfoServiceTest {
         Map<String, Object> map = new HashMap<>();
         map.put("pageNum",1);
         map.put("pageSize",10);
-        map.put("name","Patagonia Down Sweater Vest (Kids)");
-        List<CmsBtFeedInfoModel> feedList = usaFeedInfoService.getFeedList(map,"001");
+        map.put("name","Kids");
+        List<CmsBtFeedInfoModel> feedList = usaFeedInfoService.getFeedList(map,"C001");
 
     }
 
