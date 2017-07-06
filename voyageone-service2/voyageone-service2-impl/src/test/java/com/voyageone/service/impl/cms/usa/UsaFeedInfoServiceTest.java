@@ -41,7 +41,7 @@ public class UsaFeedInfoServiceTest {
 
     @Test
     public void isUrlKeyDuplicated() throws Exception {
-        System.out.println(usaFeedInfoService.isUrlKeyDuplicated("001", "123"));
+        System.out.println(usaFeedInfoService.isUrlKeyDuplicated("001", "68220-gem","123"));
     }
 
 }
