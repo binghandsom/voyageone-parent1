@@ -12,23 +12,18 @@
     <context:component-scan base-package="com.voyageone"/>
 
     <import resource="classpath*:common-config.xml"/>
-    <!--<import resource="classpath*:datasource-jumei-config.xml" />-->
-    <import resource="classpath*:datasource-cms2-config-mast.xml"/>
-    <import resource="classpath*:datasource-cms2-config-new.xml"/>
-    <import resource="classpath*:datasource-config-mongo-cms2-mast.xml"/>
-    <import resource="classpath*:datasource-vms-config.xml"/>
-    <!-- MQ Config -->
-    <import resource="classpath*:mq-config.xml"/>
-    <!-- redis Config -->
-    <import resource="classpath*:redis-config.xml"/>
-    <!-- cache Config -->
     <import resource="classpath*:data-cache-config.xml"/>
-    <!-- solr Config -->
+    <import resource="classpath*:datasource-cms2-config.xml"/>
+    <import resource="classpath*:datasource-cms2-config-new.xml"/>
+    <import resource="classpath*:datasource-vms-config.xml"/>
+    <import resource="classpath*:datasource-config-mongo-cms2.xml"/>
+    <import resource="classpath*:sdk-client-config.xml"/>
+    <import resource="classpath*:mq-config.xml"/>
+    <import resource="classpath*:redis-config.xml"/>
     <import resource="classpath*:solr-config.xml"/>
-
     <import resource="classpath*:datasource-security-config.xml"/>
     <import resource="classpath*:datasource-admin-common-config.xml"/>
-
+    <import resource="classpath*:datasource-report-config.xml"/>
     <!-- 初始化处理 -->
     <bean class="com.voyageone.common.configs.Initializer" init-method="init" lazy-init="false"/>
 
