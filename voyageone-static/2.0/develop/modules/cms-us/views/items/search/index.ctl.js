@@ -5,56 +5,56 @@ define([
     cms.controller('newItemController', class newItemController {
 
         constructor(popups, itemDetailService) {
-            this.popups = popups;
-            this.feeds = {};
-            this.feedListTotal = 0;
-            this.paraMap = {};
-            this.paraMap.status = "";
-            this.paraMap.isApprove = null;
-            this.status=[false,false,false];
-            this.isApprove=[false,false];
-            this.paraMap.pageNum = 1;
-            this.paraMap.pageSize = 10;
-            this.itemDetailService = itemDetailService;
-            this.init();
+            let self = this;
 
+            self.popups = popups;
+            self.feedListTotal = 0;
+            self.paraMap = {
+                status:"",
+                isApprove:null
+            };
+            self.status = [false, false, false];
+            self.isApprove = [false, false];
+            self.itemDetailService = itemDetailService;
+            self.paging = {curr: 1, total: 0,fetch:function(){
+                self.getList();
+            }};
 
         }
-        init() {
+
+        getList() {
             let self = this;
-        }
-        getList(){
-            let self = this;
-            if(self.status[0] == true){
+
+            if (self.status[0] === true) {
                 self.paraMap.status += "new_";
             }
-            if(self.status[1] == true){
+            if (self.status[1] === true) {
                 self.paraMap.status += "pending_";
             }
-            if(self.status[2] == true){
+            if (self.status[2] === true) {
                 self.paraMap.status += "ready_";
             }
-            if(self.isApprove[0] == true && self.isApprove[1] == false){
-                self.paraMap.isApprove ="Yes";
+            if (self.isApprove[0] === true && self.isApprove[1] == false) {
+                self.paraMap.isApprove = "Yes";
             }
-            if(self.isApprove[1] == true && self.isApprove[0] == false){
-                self.paraMap.isApprove ="No";
+            if (self.isApprove[1] === true && self.isApprove[0] === false) {
+                self.paraMap.isApprove = "No";
             }
-            self.itemDetailService.list(self.paraMap).then(resp => {
+
+            self.itemDetailService.list(_.extend(self.paraMap,self.paging)).then(resp => {
                 self.feeds = resp.data.feedList;
                 self.feedListTotal = resp.data.feedListTotal;
-
+                self.paging.total = resp.data.feedListTotal;
             });
 
         }
 
-        clear(){
+        clear() {
             let self = this;
-           self.paraMap = {};
-            self.status=[false,false,false];
-            self.isApprove=[false,false];
-            self.paraMap.pageNum = 1;
-            self.paraMap.pageSize = 10;
+            self.paraMap = {};
+            self.status = [false, false, false];
+            self.isApprove = [false, false];
+            self.paging = {curr: 1, total: 0};
 
         }
 
