@@ -19,17 +19,13 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by james on 2017/7/5.
@@ -48,6 +44,9 @@ public class UsaFeedInfoService extends BaseService {
 
     /**
      * 条件查询feed商品列表
+     *
+     * @param searchValue
+     * @param channel
      */
     public List<CmsBtFeedInfoModel> getFeedList(Map<String, Object> searchValue, String channel) {
         //封装查询条件
@@ -75,11 +74,27 @@ public class UsaFeedInfoService extends BaseService {
 
     /**
      * 查询feed商品总数
+     *
+     * @param searchValue
+     * @param channel
+     * @return
      */
     public Long getFeedCount(Map<String, Object> searchValue, String channel) {
         //封装查询条件
         JongoQuery query = getQuery(searchValue);
         return cmsBtFeedInfoDao.countByQuery(query.getQuery(), channel);
+    }
+
+    /**
+     * 根据条件跟新feed信息
+     * @param channelId
+     * @param queryMap
+     * @param updateMap
+     * @return
+     */
+    public WriteResult upDateFeedInfo(String channelId, Map queryMap, Map updateMap) {
+        WriteResult writeResult = feedInfoService.updateFeedInfo(channelId, queryMap, updateMap);
+        return  writeResult;
     }
 
     //组装查询条件
@@ -101,12 +116,19 @@ public class UsaFeedInfoService extends BaseService {
             criteria = criteria.and("lastReceivedOn").gte((String) searchValue.get("lastReceivedOnStart")).lte((String) searchValue.get("lastReceivedOnEnd"));
         }
         //name模糊查询
+
         if (searchValue.get("name") != null) {
             String name = (String) searchValue.get("name");
-            StringBuffer buffer = new StringBuffer("/");
-            buffer.append(name);
-            buffer.append("/");
-            criteria = criteria.and("name").is(buffer.toString());
+            String regEx="[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+            Pattern p = Pattern.compile(regEx);
+            Matcher m = p.matcher(name);
+            while (m.find()) {
+                String group = m.group();
+                name =  name.replace(group,"\\" + group);
+
+            }
+            criteria = criteria.and("name").regex(name);
+
         }
         //多条件精确查询,SKU/ Barcode/ Code / Model
         if (searchValue.get("searchContent") != null) {

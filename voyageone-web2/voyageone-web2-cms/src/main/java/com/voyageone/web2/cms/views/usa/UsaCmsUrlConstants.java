@@ -14,6 +14,10 @@ public class UsaCmsUrlConstants {
     interface FEED {
         String ROOT = "/cms/us/feed";
 
-        String DETAIL = "/detail";
+        String DETAIL = "detail";
+
+        String LIST = "list";
+
+        String UPDATEONE = "updateOne";
     }
 }

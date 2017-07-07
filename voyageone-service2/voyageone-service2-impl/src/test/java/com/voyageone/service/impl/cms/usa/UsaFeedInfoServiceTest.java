@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -21,25 +23,45 @@ import static org.junit.Assert.*;
 public class UsaFeedInfoServiceTest {
 
     @Autowired
-    private UsaFeedInfoService usaFeedInfoService;
+    UsaFeedInfoService usaFeedInfoService;
 
     @Test
-    public void getTopModelsByModel() throws Exception {
+    public void testGetFeedList() throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        map.put("pageNum",1);
+        map.put("pageSize",10);
+        map.put("name","Patagonia Down Sweater Vest (Kids)");
+     /*   map.put("searchContent","68220-gem-xl");
+        map.put("barcode","885657051304");
+        map.put("lastReceivedOnStart","2014-09-21 00:55:49");
+        map.put("lastReceivedOnEnd","2014-09-23 00:55:49");
+        map.put("sort","barcode_1");*/
+        List<CmsBtFeedInfoModel> feedList = usaFeedInfoService.getFeedList(map,"001");
 
-        List<CmsBtFeedInfoModel> resultFeedList = usaFeedInfoService.getTopModelsByModel("001", "patagoniadownsweatervestkids", -1);
-        if (CollectionUtils.isNotEmpty(resultFeedList)) {
-            for (CmsBtFeedInfoModel feed : resultFeedList) {
-                System.out.println("_id=" + feed.get_id());
-                System.out.println("Model=" + feed.getModel());
-                System.out.println("Code=" + feed.getCode());
-                System.out.println("Brand=" + feed.getBrand());
-            }
-        }
     }
 
     @Test
-    public void isUrlKeyDuplicated() throws Exception {
-        System.out.println(usaFeedInfoService.isUrlKeyDuplicated("001", "68220-gem","123"));
+    public void testGetFeedCount() throws Exception {
+        Map<String, Object> map = new HashMap<>();
+        map.put("pageNum", 1);
+        map.put("pageSize", 10);
+        map.put("name", "Patagonia Down Sweater Vest");
+        map.put("searchContent", "68220-gem-xl");
+        map.put("barcode", "885657051304");
+        map.put("lastReceivedOnStart", "2014-09-21 00:55:49");
+        map.put("lastReceivedOnEnd", "2014-09-23 00:55:49");
+        map.put("sort", "barcode_1");
+        Long feedCount = usaFeedInfoService.getFeedCount(map, "001");
     }
 
+    @Test
+    public void testUpDateFeedInfo() throws Exception {
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("code","68220-gem");
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("name","1111111111111");
+        usaFeedInfoService.upDateFeedInfo("001",queryMap,resultMap);
+
+    }
 }
