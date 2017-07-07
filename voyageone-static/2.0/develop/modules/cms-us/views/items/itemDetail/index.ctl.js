@@ -22,12 +22,12 @@ define([
             this.originList = [{value:"CN",name:"CN"}];
             this.colorMap = [{value:"Red",name:"Red"}];
             this.setting = {
-                weightOrg:100,
+                weightOrg:"",
                 weightOrgUnit:"",
-                priceClientMsrp:200,
-                priceNet:300,
-                priceMsrp:400,
-                priceCurrent:399.99,
+                priceClientMsrp:"",
+                priceNet:"",
+                priceMsrp:"",
+                priceCurrent:"",
 
                 weightOrgUnits:['kg','lb']
             };
@@ -68,6 +68,13 @@ define([
             angular.forEach(self.feed.skus, function (sku) {
                 sku[property] = self.setting[property];
             })
+        }
+
+        // Save or Submit or Approve the Feed
+        // flag:0 or 1; 0-Only Save,1-Submit/Approve to next status
+        save(flag) {
+            let self = this;
+            console.log(self.feed)
         }
 
         popBatchApprove() {

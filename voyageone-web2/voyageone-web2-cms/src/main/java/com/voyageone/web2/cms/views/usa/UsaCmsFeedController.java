@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ import java.util.Map;
  * @Author rex.wu
  * @Create 2017-07-05 17:09
  */
-@Controller
+@RestController
 @RequestMapping(value = UsaCmsUrlConstants.FEED.ROOT)
 public class UsaCmsFeedController extends BaseController {
 
@@ -51,7 +52,6 @@ public class UsaCmsFeedController extends BaseController {
     }
 
     @RequestMapping(value = UsaCmsUrlConstants.FEED.DETAIL)
-    @ResponseBody
     public AjaxResponse getFeedDetail(@RequestBody FeedRequest reqParams) {
 
         String channelId = getUser().getSelChannelId();
@@ -63,18 +63,27 @@ public class UsaCmsFeedController extends BaseController {
             resultMap.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, getLang()));
             resultMap.put("productTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, getLang()));
             resultMap.put("sizeTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, getLang()));
-            // TODO: 2017/7/7 rex.wu
-            resultMap.put("materialList", Collections.singleton(null));
-            resultMap.put("originList", Collections.singleton(null));
-            resultMap.put("colorMap", Collections.singleton(null));
+            resultMap.put("materialList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.material_TYPE_103, channelId, getLang()));
+            resultMap.put("originList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.origin_TYPE_104, channelId, getLang()));
+            resultMap.put("colorMap", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.colorMap_TYPE_105, channelId, getLang()));
         }
         return success(resultMap);
     }
 
     /**
+     * 更新Feed信息: Save 或 Submit至下一步 或 Approve
+     *
+     * @param reqParams 请求参数
+     */
+    @RequestMapping(value = UsaCmsUrlConstants.FEED.UPDATE)
+    public AjaxResponse updateFeed(@RequestBody FeedRequest reqParams) {
+        UserSessionBean user = getUser();
+        usaFeedInfoService.saveOrSubmitFeed(user.getSelChannelId(), reqParams.getFeed(), null, user.getUserName());
+        return success(null);
+    }
+
+    /**
      * 条件查询feed列表信息
-     * @param params
-     * @return
      */
     @RequestMapping(value = UsaCmsUrlConstants.FEED.LIST)
     public AjaxResponse getFeedList(@RequestBody Map params) {
@@ -96,23 +105,23 @@ public class UsaCmsFeedController extends BaseController {
     public AjaxResponse upDateOne(@RequestBody Map params) {
         HashMap<String, Object> queryMap = new HashMap<>();
         String code = (String) params.get("code");
-        if (code != null){
-            queryMap.put("code",code);
+        if (code != null) {
+            queryMap.put("code", code);
         }
         HashMap<String, Object> updateMap = new HashMap<>();
 
         String msrpPrice = (String) params.get("msrpPrice");
-        if (msrpPrice != null){
-            updateMap.put("skus.msrpPrice",msrpPrice);
+        if (msrpPrice != null) {
+            updateMap.put("skus.msrpPrice", msrpPrice);
         }
         String price = (String) params.get("price");
-        if (price != null){
-            updateMap.put("skus.priceNet",price);
-            updateMap.put("skus.priceClientRetail",price);
+        if (price != null) {
+            updateMap.put("skus.priceNet", price);
+            updateMap.put("skus.priceClientRetail", price);
         }
         String approve = (String) params.get("approve");
-        if (msrpPrice != null){
-            updateMap.put("approve",approve);
+        if (msrpPrice != null) {
+            updateMap.put("approve", approve);
         }
         WriteResult writeResult = usaFeedInfoService.upDateFeedInfo(getUser().getSelChannelId().toString(), queryMap, updateMap);
 

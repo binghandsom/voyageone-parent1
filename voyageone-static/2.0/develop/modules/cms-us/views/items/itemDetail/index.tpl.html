@@ -426,4 +426,10 @@
             </div>
         </div>
     </div>
+    <!--1、New只有Save Button-->
+    <!--2、Pending有Save和Submit Button-->
+    <!--3、Ready有Save和Approve Button-->
+    <button ng-click="ctrl.save('0')">Save</button>
+    <button ng-if="ctrl.feed.status != 'Approved'" ng-click="ctrl.save('1')">Submit</button>
+    <button ng-if="ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')">Approve</button>
 </div>
