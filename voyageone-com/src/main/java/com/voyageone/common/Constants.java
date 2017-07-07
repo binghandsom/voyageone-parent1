@@ -137,6 +137,9 @@ public final class Constants {
         public static final String SORT_ATTRIBUTES_61 = "sortAttributes";
         public static final String DYNAMIC_PROPERTY = "dynamicProperty";
         public static final String IMAGE_TEMPLATE_TYPE = "imageTemplateType";
+        public static final String material_TYPE_103 = "material";
+        public static final String origin_TYPE_104 = "origin";
+        public static final String colorMap_TYPE_105 = "colorMap";
     }
 
     public static final class comMtTypeValue {
