@@ -8,12 +8,20 @@ define([
 ], function (cms) {
 
     angular.module('com.voyageone.popups', []).constant('popActions', {
-        search:{
-            batchApprove:{
+        search: {
+            batchApprove: {
                 "templateUrl": "views/pop/items/search/index.tpl.html",
                 "controllerUrl": "modules/cms-us/views/pop/items/search/index.ctl",
                 "controller": 'batchApproveController as ctrl',
                 "size": 'md'
+            }
+        },
+        detail: {
+            usCategory: {
+                "templateUrl": "views/pop/items/detail/usCategory/index.tpl.html",
+                "controllerUrl": "modules/cms-us/views/pop/items/detail/usCategory/index.ctl",
+                "controller": 'usCategoryController as ctrl',
+                "size": 'lg'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -27,6 +35,7 @@ define([
             };
 
             let defer = $q.defer();
+
             require([config.controllerUrl], function () {
 
                 defer.resolve($uibModal.open(config).result);
@@ -38,14 +47,18 @@ define([
         /**
          *  批量approve模态框
          */
-        $scope.openBatchApprove = function(context) {
-            return openModal(popActions.search.batchApprove,context);
+        $scope.openBatchApprove = function (context) {
+            return openModal(popActions.search.batchApprove, context);
         };
+
+        $scope.openUsCategory = function (context) {
+            return openModal(popActions.detail.usCategory, context);
+        }
 
 
     }).factory('popups', function ($controller, $rootScope) {
 
-        var popupScope = $rootScope.$new();
+        let popupScope = $rootScope.$new();
 
         popupScope.$controller = $controller('popupCtrl', {$scope: popupScope});
 

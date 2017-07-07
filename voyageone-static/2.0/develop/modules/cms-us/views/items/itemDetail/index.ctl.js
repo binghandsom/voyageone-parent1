@@ -1,6 +1,6 @@
 define([
-           'cms'
-       ], function (cms) {
+    'cms'
+], function (cms) {
 
     cms.controller('itemDetailController', class itemDetailController {
         constructor(popups, $routeParams, itemDetailService, alert,$location) {
@@ -77,10 +77,10 @@ define([
             console.log(self.feed)
         }
 
-        popBatchApprove() {
-            let self = this;
-
-            self.popups.openBatchApprove();
+        popUsCategory() {
+            this.popups.openUsCategory().then(context => {
+                console.log('context', context);
+            });
         }
 
     });

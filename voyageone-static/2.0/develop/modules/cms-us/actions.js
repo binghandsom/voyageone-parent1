@@ -58,23 +58,31 @@ define(function () {
                     "save": "save"
                 }
             },
-            "search": {
-                "$feedSearchService": {
-                    "root": "/cms/search/feed/",
-                    "init": "init",
-                    "search": "search",
-                    "updateFeedStatus": "updateFeedStatus",
-                    "doExport": "export",
-                    "exportSearch": "exportSearch",
-                    "download": "download",
-                    "updateMainCategory":"updateMainCategory",
-                    "batchUpdateMainCategory":"batchUpdateMainCategory"
+            search: {
+                $feedSearchService: {
+                    root: "/cms/search/feed/",
+                    init: "init",
+                    search: "search",
+                    updateFeedStatus: "updateFeedStatus",
+                    doExport: "export",
+                    exportSearch: "exportSearch",
+                    download: "download",
+                    updateMainCategory: "updateMainCategory",
+                    batchUpdateMainCategory: "batchUpdateMainCategory"
                 }
             },
-            "itemDetailService":{
-                root:'/cms/us/feed',
-                detail:"detail"
-            }
+            itemDetailService: {
+                root: '/cms/us/feed',
+                detail: "detail"
+            },
+            channel: {
+                sellerCat: {
+                    sellerCatService: {
+                        root: "/cms/channel/category/",
+                        getCat: "getSellerCat"
+                    }
+                }
+            },
         }
     };
 });

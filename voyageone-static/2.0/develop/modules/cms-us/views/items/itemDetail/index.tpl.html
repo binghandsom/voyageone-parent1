@@ -26,13 +26,13 @@
                             </div>
                             <div class="form-group">
                                 <div class="row">
-                                    <label class="col-md-4 control-label query-title ">US Official Category</label>
+                                    <div class="col-md-4 text-right">
+                                        <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory()">
+                                            <i class="fa fa-arrow-right"></i>&nbsp;US Official Category
+                                        </button>
+                                    </div>
                                     <div class="col-md-6">
-                                        <select class="form-control">
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                        </select>
+                                        <input type="text" class="form-control" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -114,9 +114,11 @@
                             </div>
                             <div class="form-group">
                                 <div class="row">
-                                    <label class="col-md-4 control-label query-title ">Amazon Category</label>
+                                    <div class="col-md-4 text-right">
+                                        <button type="button" class="btn btn-info btn-pop"><i class="fa fa-arrow-right"></i>&nbsp;Amazon Category</button>
+                                    </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control">
+                                        <input type="text" class="form-control" readonly>
                                     </div>
                                 </div>
                             </div>
