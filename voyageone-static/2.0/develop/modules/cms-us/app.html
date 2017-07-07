@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <title>CMS</title>
+
+    <link rel="stylesheet" href="../../static/css/app.min.css?version=" type="text/css">
+    <link rel="stylesheet" href="../../libs/angular-block-ui/0.2.1/angular-block-ui.min.css">
+    <link rel="stylesheet" href="../../libs/chosen/1.4.2/chosen.min.css">
+</head>
+<body ng-controller="appCtrl">
+<div class="app app-aside-fixed" id="app"
+     ng-class="{
+        'app-header-fixed': app.settings.headerFixed,
+        'app-aside-fixed': app.settings.asideFixed,
+        'app-aside-folded': app.settings.asideFolded,
+        'container': app.settings.container
+     }">
+    <!-- navbar -->
+    <div ng-include=" 'views/home/menu/header.tpl.html' " class="app-header navbar"></div>
+    <!-- / navbar -->
+
+    <!-- menu -->
+    <div ng-include=" 'views/home/menu/aside.tpl.html' " class="app-aside hidden-xs bg-dark"></div>
+    <!-- / menu -->
+
+    <div class="app-content">
+        <div ui-butterbar></div>
+
+        <a href class="off-screen-toggle hide" ui-toggle-class="off-screen" data-target=".app-aside"></a>
+
+        <!-- breadcrumbs -->
+        <div ng-include=" 'views/home/menu/breadcrumbs.tpl.html' " class="bg-light lter hidden-xs"></div>
+
+        <!-- page content -->
+        <div class="app-content-body fade-in-up" ng-view></div>
+
+        <!-- footer -->
+        <div class="app-footer wrapper b-t bg-light">
+            <span class="pull-right"><span></span>&nbsp;
+                <a href="javascript:void(0)"  go-top = "1000" class="m-l-sm text-muted">
+                    <i class="fa fa-long-arrow-up"></i>
+                </a>
+            </span>
+            <span>{{::app.copyRight}}</span>
+        </div>
+        <!-- / footer -->
+    </div><!-- /.app-content -->
+</div>
+<script src="../../libs/require.js/2.2.0/require.js" data-main="main"></script>
+</body>
+</html>

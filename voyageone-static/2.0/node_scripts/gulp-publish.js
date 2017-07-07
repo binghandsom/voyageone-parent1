@@ -1,4 +1,6 @@
 require('./gulp-publish-beta');
+//static  server for es6
+require('./server');
 
 var fs = require('fs');
 var glob = require('glob');

@@ -6,7 +6,8 @@
     "pkg-ng": "node node_scripts/npm/package-ng.js",
     "build-css-pkg": "node node_scripts/npm-build-css-package.js",
     "i-server": "npm i morgan http-proxy-middleware browser-sync",
-    "start": "browser-sync start -c bs-config.js"
+    "start": "browser-sync start -c bs-config.js",
+    "server-es6": "gulp serve"
   },
   "author": "VoyageOne",
   "license": "ISC",
@@ -23,6 +24,10 @@
     "gulp-debug": "",
     "gulp-footer": "",
     "gulp-header": "",
+    "babel-core": "",
+    "babel-preset-es2015": "",
+    "babel-register": "",
+    "gulp-babel": "",
     "gulp-minify-css": "",
     "gulp-minify-html": "",
     "gulp-ng-annotate": "",
@@ -32,10 +37,13 @@
     "gulp-sourcemaps": "",
     "gulp-uglify": "",
     "gulp-util": "",
+    "gulp-cached": "",
+    "gulp-remember": "",
     "through2": "",
     "morgan": "",
     "http-proxy-middleware": "",
     "url": "",
-    "browser-sync": ""
+    "browser-sync": "",
+    "moment": ""
   }
 }
