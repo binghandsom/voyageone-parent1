@@ -32,7 +32,7 @@
                                         </button>
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" readonly>
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.amazonBrowseTree" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -251,7 +251,7 @@
                                     <label class="col-md-4 control-label query-title ">Approve Pricing ?</label>
                                     <div class="col-md-6 checkbox">
                                         <label>
-                                            <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="ctrl.feed.attribute.approvePricing[0]">
+                                            <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="ctrl.feed.approvePricingFlag">
                                         </label>&nbsp;Yes
                                     </div>
                                 </div>
@@ -431,7 +431,7 @@
     <!--1、New只有Save Button-->
     <!--2、Pending有Save和Submit Button-->
     <!--3、Ready有Save和Approve Button-->
-    <button ng-click="ctrl.save('0')">Save</button>
-    <button ng-if="ctrl.feed.status != 'Approved'" ng-click="ctrl.save('1')">Submit</button>
+    <button ng-if="ctrl.feed.status != 'Approved'" ng-click="ctrl.save('0')">Save</button>
+    <button ng-if="ctrl.feed.status != 'Ready' && ctrl.feed.status != 'Approved'" ng-click="ctrl.save('1')">Submit</button>
     <button ng-if="ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')">Approve</button>
 </div>

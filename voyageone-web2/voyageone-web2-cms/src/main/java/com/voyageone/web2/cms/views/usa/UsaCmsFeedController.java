@@ -79,8 +79,7 @@ public class UsaCmsFeedController extends BaseController {
     @RequestMapping(value = UsaCmsUrlConstants.FEED.UPDATE)
     public AjaxResponse updateFeed(@RequestBody FeedRequest reqParams) {
         UserSessionBean user = getUser();
-        usaFeedInfoService.saveOrSubmitFeed(user.getSelChannelId(), reqParams.getFeed(), Objects.equals(Integer.valueOf(1), reqParams.getFlag()), user.getUserName());
-        return success(null);
+        return success(usaFeedInfoService.saveOrSubmitFeed(user.getSelChannelId(), reqParams.getFeed(), Objects.equals(Integer.valueOf(1), reqParams.getFlag()), user.getUserName()));
     }
 
     /**

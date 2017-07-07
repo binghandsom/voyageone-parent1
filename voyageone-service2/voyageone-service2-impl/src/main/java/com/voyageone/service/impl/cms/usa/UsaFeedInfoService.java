@@ -259,8 +259,9 @@ public class UsaFeedInfoService extends BaseService {
      * @param feedInfoModel Feed信息
      * @param flag          是否是Submit至下一步,默认false
      * @param username      更新人
+     * @return 最新的Feed
      */
-    public void saveOrSubmitFeed(String channelId, CmsBtFeedInfoModel feedInfoModel, boolean flag, String username) {
+    public CmsBtFeedInfoModel saveOrSubmitFeed(String channelId, CmsBtFeedInfoModel feedInfoModel, boolean flag, String username) {
         CmsBtFeedInfoModel feed = null;
         String code = null;
         if (feedInfoModel == null
@@ -268,6 +269,7 @@ public class UsaFeedInfoService extends BaseService {
                 || (feed = cmsBtFeedInfoDao.selectProductByCode(channelId, code)) == null) {
             throw new BusinessException(String.format("Feed(Code:%s) not exists.", code));
         }
+
 
         // 1、如果页面提交过来的Feed状态和DB中的Feed状态不一致则说明DB中Feed信息已经被修改过了
         // 2、如果DB中的Feed状态已经是Approved,则无论是Save还是Submit操作都禁止,因为美国CMS2看不到Approved过的Feed
@@ -310,8 +312,8 @@ public class UsaFeedInfoService extends BaseService {
         feedInfoModel.setModifier(username);
         feedInfoModel.setModified(DateTimeUtil.getNow());
         WriteResult writeResult = cmsBtFeedInfoDao.update(feedInfoModel);
-        System.out.println(JacksonUtil.bean2Json(writeResult));
         $info(String.format("(%s)Save Feed(channelId=%s,code=%s)结果: %s", username, channelId, code, JacksonUtil.bean2Json(writeResult)));
+        return cmsBtFeedInfoDao.selectById(feed.get_id(), channelId);
     }
 
     /**

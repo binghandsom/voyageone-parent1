@@ -41,23 +41,8 @@ define([
             self.itemDetailService.detail({code: self.code}).then((resp) => {
                 if (resp.data && resp.data.feed) {
                     self.feed = resp.data.feed;
-
-                    let hasUrlkey = self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
-                    _.extend(self.feed, {hasUrlkey:hasUrlkey});
-                    if (!hasUrlkey) {
-                        // 计算urlKey
-                        self.generateUrlKey();
-                    }
-                    // 将sku->weightOrg转换成int
-                    angular.forEach(self.feed.skus, function (sku) {
-                       sku.weightOrg = parseInt(sku.weightOrg);
-                    });
-
-                    // 处理approvePricing
-                    let approvePricingFlag = self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
-
-
-
+                    // 处理Feed数据
+                    self.filterFeed();
                     self.brandList = resp.data.brandList;
                     self.productTypeList = resp.data.productTypeList;
                     self.sizeTypeList = resp.data.sizeTypeList;
@@ -73,7 +58,29 @@ define([
                     });
                 }
             });
+        }
 
+        // 处理Feed数据
+        filterFeed() {
+            let self = this;
+            let hasUrlkey = self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
+            _.extend(self.feed, {hasUrlkey:hasUrlkey});
+            if (!hasUrlkey) {
+                // 计算urlKey
+                self.generateUrlKey();
+            }
+            // 将sku->weightOrg转换成float
+            angular.forEach(self.feed.skus, function (sku) {
+                sku.weightOrg = parseFloat(sku.weightOrg);
+            });
+
+            // 处理approvePricing
+            let approvePricingFlag = self.feed.attribute.approvePricing && _.size(self.feed.attribute.approvePricing) > 0;
+            _.extend(self.feed, {approvePricingFlag:approvePricingFlag ? 1 : 0});
+
+            // 处理attribute.amazonBrowseTree
+            let amazonBrowseTree = (self.feed.attribute.amazonBrowseTree && _.size(self.feed.attribute.amazonBrowseTree) > 0) ? self.feed.attribute.amazonBrowseTree[0] : "";
+            _.extend(self.feed, {amazonBrowseTree:amazonBrowseTree});
         }
 
         // 生成UrlKey
@@ -99,18 +106,24 @@ define([
         // flag:0 or 1; 0-Only Save,1-Submit/Approve to next status
         save(flag) {
             let self = this;
+            // 处理attribute.approvePricingFlag
+            self.feed.attribute.approvePricing = [self.feed.approvePricingFlag];
             let parameter = {feed:self.feed, flag:flag};
-            console.log(self.feed);
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {
                     self.notify.success("Operation succeeded.");
+                    _.extend(self.feed, res.data);
+                    // 处理Feed数据
+                    self.filterFeed();
                 }
             });
         }
 
         popUsCategory() {
-            this.popups.openUsCategory().then(context => {
-                console.log('context', context);
+            let self = this;
+            self.popups.openUsCategory().then(context => {
+                _.extend(self.feed.attribute, {amazonBrowseTree:context.catPath})
+                console.log(self.feed);
             });
         }
 
