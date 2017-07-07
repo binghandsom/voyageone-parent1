@@ -3,7 +3,7 @@ define([
        ], function (cms) {
 
     cms.controller('itemDetailController', class itemDetailController {
-        constructor(popups, $routeParams, itemDetailService, alert,$location) {
+        constructor(popups, $routeParams, itemDetailService, alert,$location,notify) {
             this.code = $routeParams.code;
             if (!this.code) {
                 console.log("不存在");
@@ -13,6 +13,7 @@ define([
             this.itemDetailService = itemDetailService;
             this.alert = alert;
             this.$location = $location;
+            this.notify = notify;
 
             this.feed = {};
             this.brandList = [];
@@ -40,10 +41,23 @@ define([
             self.itemDetailService.detail({code: self.code}).then((resp) => {
                 if (resp.data && resp.data.feed) {
                     self.feed = resp.data.feed;
+
+                    let hasUrlkey = self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
+                    _.extend(self.feed, {hasUrlkey:hasUrlkey});
+                    if (!hasUrlkey) {
+                        // 计算urlKey
+                        self.generateUrlKey();
+                    }
                     // 将sku->weightOrg转换成int
                     angular.forEach(self.feed.skus, function (sku) {
                        sku.weightOrg = parseInt(sku.weightOrg);
                     });
+
+                    // 处理approvePricing
+                    let approvePricingFlag = self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
+
+
+
                     self.brandList = resp.data.brandList;
                     self.productTypeList = resp.data.productTypeList;
                     self.sizeTypeList = resp.data.sizeTypeList;
@@ -62,6 +76,17 @@ define([
 
         }
 
+        // 生成UrlKey
+        generateUrlKey() {
+            let self = this;
+            if (!self.feed.hasUrlkey && self.feed.name) {
+                let urlkey = self.feed.name + "-" + self.feed.code;
+                urlkey = urlkey.replace(/[^a-zA-Z0-9]+/g, " ");
+                urlkey = urlkey.replace(/\s+/g, "-");
+                self.feed.attribute.urlkey = [urlkey.toLowerCase()];
+            }
+        }
+
         // 统一设置SKU属性
         setSkuProperty(property) {
             let self = this;
@@ -74,7 +99,13 @@ define([
         // flag:0 or 1; 0-Only Save,1-Submit/Approve to next status
         save(flag) {
             let self = this;
-            console.log(self.feed)
+            let parameter = {feed:self.feed, flag:flag};
+            console.log(self.feed);
+            self.itemDetailService.update(parameter).then((res) => {
+                if (res.data) {
+                    self.notify.success("Operation succeeded.");
+                }
+            });
         }
 
         popBatchApprove() {

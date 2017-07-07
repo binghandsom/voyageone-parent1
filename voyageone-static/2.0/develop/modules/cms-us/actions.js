@@ -73,7 +73,8 @@ define(function () {
             },
             "itemDetailService":{
                 root:'/cms/us/feed',
-                detail:"detail"
+                detail:"detail",
+                update:"update"
             }
         }
     };

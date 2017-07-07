@@ -19,6 +19,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
@@ -44,9 +45,6 @@ public class UsaFeedInfoService extends BaseService {
 
     /**
      * 条件查询feed商品列表
-     *
-     * @param searchValue
-     * @param channel
      */
     public List<CmsBtFeedInfoModel> getFeedList(Map<String, Object> searchValue, String channel) {
         //封装查询条件
@@ -74,10 +72,6 @@ public class UsaFeedInfoService extends BaseService {
 
     /**
      * 查询feed商品总数
-     *
-     * @param searchValue
-     * @param channel
-     * @return
      */
     public Long getFeedCount(Map<String, Object> searchValue, String channel) {
         //封装查询条件
@@ -87,14 +81,10 @@ public class UsaFeedInfoService extends BaseService {
 
     /**
      * 根据条件跟新feed信息
-     * @param channelId
-     * @param queryMap
-     * @param updateMap
-     * @return
      */
     public WriteResult upDateFeedInfo(String channelId, Map queryMap, Map updateMap) {
         WriteResult writeResult = feedInfoService.updateFeedInfo(channelId, queryMap, updateMap);
-        return  writeResult;
+        return writeResult;
     }
 
     //组装查询条件
@@ -119,12 +109,12 @@ public class UsaFeedInfoService extends BaseService {
 
         if (searchValue.get("name") != null) {
             String name = (String) searchValue.get("name");
-            String regEx="[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+            String regEx = "[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
             Pattern p = Pattern.compile(regEx);
             Matcher m = p.matcher(name);
             while (m.find()) {
                 String group = m.group();
-                name =  name.replace(group,"\\" + group);
+                name = name.replace(group, "\\" + group);
 
             }
             criteria = criteria.and("name").regex(name);
@@ -267,10 +257,10 @@ public class UsaFeedInfoService extends BaseService {
      *
      * @param channelId     渠道ID
      * @param feedInfoModel Feed信息
-     * @param feedStatus    Submit后Feed状态，如果传入值为null或者和feedInfoModel值一致则视为Save操作
+     * @param flag          是否是Submit至下一步,默认false
      * @param username      更新人
      */
-    public void saveOrSubmitFeed(String channelId, CmsBtFeedInfoModel feedInfoModel, CmsConstants.UsaFeedStatus feedStatus, String username) {
+    public void saveOrSubmitFeed(String channelId, CmsBtFeedInfoModel feedInfoModel, boolean flag, String username) {
         CmsBtFeedInfoModel feed = null;
         String code = null;
         if (feedInfoModel == null
@@ -287,7 +277,7 @@ public class UsaFeedInfoService extends BaseService {
         }
 
         // 保存 or 提交至下一步
-        boolean isSave = feedStatus == null || feedStatus.name().equals(feedInfoModel.getStatus());
+        boolean isSave = !flag;
         if (isSave) {
             // New状态Save时如果urlKey不空则校验其唯一性
             if (CmsConstants.UsaFeedStatus.New.name().equals(feed.getStatus())
@@ -309,9 +299,6 @@ public class UsaFeedInfoService extends BaseService {
             } else if (CmsConstants.UsaFeedStatus.Ready.name().equals(feed.getStatus())) {
                 nextFeedStatus = CmsConstants.UsaFeedStatus.Approved.name();
             }
-            if (!feedStatus.name().equals(nextFeedStatus)) {
-                throw new BusinessException(String.format("Invalid Status, current status is (%s), next status must be (%s)", feedInfoModel.getStatus(), nextFeedStatus));
-            }
             feedInfoModel.setStatus(nextFeedStatus);
 
             if (CmsConstants.UsaFeedStatus.Approved.name().equals(nextFeedStatus)) {
@@ -323,8 +310,8 @@ public class UsaFeedInfoService extends BaseService {
         feedInfoModel.setModifier(username);
         feedInfoModel.setModified(DateTimeUtil.getNow());
         WriteResult writeResult = cmsBtFeedInfoDao.update(feedInfoModel);
-        $info(String.format("(%s)%s Feed(channelId=%s,code=%s)结果: %s", username, isSave ? "Save" : feedStatus.name(), channelId, code, JacksonUtil.bean2Json(writeResult)));
-
+        System.out.println(JacksonUtil.bean2Json(writeResult));
+        $info(String.format("(%s)Save Feed(channelId=%s,code=%s)结果: %s", username, channelId, code, JacksonUtil.bean2Json(writeResult)));
     }
 
     /**
