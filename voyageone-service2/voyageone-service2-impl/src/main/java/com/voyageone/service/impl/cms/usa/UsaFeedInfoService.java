@@ -24,6 +24,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by james on 2017/7/5.
@@ -102,9 +104,19 @@ public class UsaFeedInfoService extends BaseService {
             criteria = criteria.and("lastReceivedOn").gte((String) searchValue.get("lastReceivedOnStart")).lte((String) searchValue.get("lastReceivedOnEnd"));
         }
         //name模糊查询
+
         if (searchValue.get("name") != null) {
             String name = (String) searchValue.get("name");
+            String regEx="[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
+            Pattern p = Pattern.compile(regEx);
+            Matcher m = p.matcher(name);
+            while (m.find()) {
+                String group = m.group();
+                name =  name.replace(group,"\\" + group);
+
+            }
             criteria = criteria.and("name").regex(name);
+
         }
         //多条件精确查询,SKU/ Barcode/ Code / Model
         if (searchValue.get("searchContent") != null) {
