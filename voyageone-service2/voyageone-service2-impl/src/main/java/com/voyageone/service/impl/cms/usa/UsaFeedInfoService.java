@@ -102,13 +102,13 @@ public class UsaFeedInfoService extends BaseService {
         //封装查询条件
         Criteria criteria = new Criteria();
         //状态
-       /* if (searchValue.get("status") != null && searchValue.get("status") != "") {
+        if (searchValue.get("status") != null && searchValue.get("status") != "") {
             String status = (String) searchValue.get("status");
             String[] split = status.split("_");
             criteria = criteria.and("status").in(Arrays.asList(split));
         }else{
             criteria = criteria.and("status").in(Arrays.asList("new", "pending","ready"));
-        }*/
+        }
         //设置开始和截止的时间
         if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null) {
             criteria = criteria.and("lastReceivedOn").gte((String) searchValue.get("lastReceivedOnStart"));
@@ -121,7 +121,7 @@ public class UsaFeedInfoService extends BaseService {
         }
         //name模糊查询
 
-        if (searchValue.get("name") != null) {
+        if (searchValue.get("name") != null && searchValue.get("name") != "") {
             String name = (String) searchValue.get("name");
             String regEx="[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
             Pattern p = Pattern.compile(regEx);
