@@ -62,6 +62,8 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
      * <p>Add by rex.wu at 2017-07-06</p>
      */
     private String status;
+
+    private String approvePricing;
     /**
      * 中国各平台Approve信息
      * <p>Add by rex.wu at 2017-07-06</p>
@@ -450,5 +452,13 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setUsaPlatforms(CmsBtFeedInfoModel_Platform usaPlatforms) {
         this.usaPlatforms = usaPlatforms;
+    }
+
+    public String getApprovePricing() {
+        return approvePricing;
+    }
+
+    public void setApprovePricing(String approvePricing) {
+        this.approvePricing = approvePricing;
     }
 }
