@@ -73,11 +73,17 @@ define([
             angular.forEach(self.feed.skus, function (sku) {
                 sku.weightOrg = parseFloat(sku.weightOrg);
             });
-
-            // 处理approvePricing
-            let approvePricingFlag = self.feed.attribute.approvePricing && _.size(self.feed.attribute.approvePricing) > 0;
-            _.extend(self.feed, {approvePricingFlag:approvePricingFlag ? 1 : 0});
-            
+            // 处理Abstract和accessory
+            if (self.feed.attribute.abstract && _.size(self.feed.attribute.abstract) > 0) {
+                _.extend(self.feed, {abstract:self.feed.attribute.abstract[0]});
+            }
+            if (self.feed.attribute.accessory && _.size(self.feed.attribute.accessory) > 0) {
+                _.extend(self.feed, {accessory:self.feed.attribute.accessory[0]});
+            }
+            // 处理orderlimitcount
+            if (self.feed.attribute.orderlimitcount && _.size(self.feed.attribute.orderlimitcount) > 0) {
+                _.extend(self.feed, {orderlimitcount:self.feed.attribute.orderlimitcount[0]});
+            }
         }
 
         // 生成UrlKey
@@ -103,8 +109,11 @@ define([
         // flag:0 or 1; 0-Only Save,1-Submit/Approve to next status
         save(flag) {
             let self = this;
-            // 处理attribute.approvePricingFlag
-            self.feed.attribute.approvePricing = [self.feed.approvePricingFlag];
+            // 处理Abstract和accessory
+            self.feed.attribute.abstract = [self.feed.abstract];
+            self.feed.attribute.accessory = [self.feed.accessory];
+            // 处理orderlimitcount
+            self.feed.attribute.orderlimitcount = [self.feed.orderlimitcount];
             let parameter = {feed:self.feed, flag:flag};
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {
