@@ -17,5 +17,7 @@ public class UsaCmsUrlConstants {
         String DETAIL = "detail";
 
         String LIST = "list";
+
+        String UPDATEONE = "updateOne";
     }
 }

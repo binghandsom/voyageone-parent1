@@ -16,7 +16,7 @@ import java.util.Map;
 import static org.junit.Assert.*;
 
 /**
- * Created by dell on 2017/7/6.
+ * Created by rex.wu on 2017/7/6.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context-service2.xml")
@@ -43,14 +43,25 @@ public class UsaFeedInfoServiceTest {
     @Test
     public void testGetFeedCount() throws Exception {
         Map<String, Object> map = new HashMap<>();
-        map.put("pageNum",1);
-        map.put("pageSize",10);
-        map.put("name","Patagonia Down Sweater Vest");
-        map.put("searchContent","68220-gem-xl");
-        map.put("barcode","885657051304");
-        map.put("lastReceivedOnStart","2014-09-21 00:55:49");
-        map.put("lastReceivedOnEnd","2014-09-23 00:55:49");
-        map.put("sort","barcode_1");
+        map.put("pageNum", 1);
+        map.put("pageSize", 10);
+        map.put("name", "Patagonia Down Sweater Vest");
+        map.put("searchContent", "68220-gem-xl");
+        map.put("barcode", "885657051304");
+        map.put("lastReceivedOnStart", "2014-09-21 00:55:49");
+        map.put("lastReceivedOnEnd", "2014-09-23 00:55:49");
+        map.put("sort", "barcode_1");
         Long feedCount = usaFeedInfoService.getFeedCount(map, "001");
+    }
 
+    @Test
+    public void testUpDateFeedInfo() throws Exception {
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("code","68220-gem");
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("name","1111111111111");
+        usaFeedInfoService.upDateFeedInfo("001",queryMap,resultMap);
+
+    }
 }

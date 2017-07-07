@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.usa;
 
+import com.mongodb.WriteResult;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.usa.UsaFeedInfoService;
@@ -58,6 +59,33 @@ public class UsaCmsFeedController extends BaseController {
 
         // 返回feed信息
         return success(resultBean);
+    }
+
+    @RequestMapping(value = UsaCmsUrlConstants.FEED.UPDATEONE)
+    public AjaxResponse upDateOne(@RequestBody Map params) {
+        HashMap<String, Object> queryMap = new HashMap<>();
+        String code = (String) params.get("code");
+        if (code != null){
+            queryMap.put("code",code);
+        }
+        HashMap<String, Object> updateMap = new HashMap<>();
+
+        String msrpPrice = (String) params.get("msrpPrice");
+        if (msrpPrice != null){
+            updateMap.put("skus.msrpPrice",msrpPrice);
+        }
+        String price = (String) params.get("price");
+        if (price != null){
+            updateMap.put("skus.priceNet",price);
+            updateMap.put("skus.priceClientRetail",price);
+        }
+        String approve = (String) params.get("approve");
+        if (msrpPrice != null){
+            updateMap.put("approve",approve);
+        }
+        WriteResult writeResult = usaFeedInfoService.upDateFeedInfo(getUser().getSelChannelId().toString(), queryMap, updateMap);
+
+        return success(writeResult);
     }
 
 

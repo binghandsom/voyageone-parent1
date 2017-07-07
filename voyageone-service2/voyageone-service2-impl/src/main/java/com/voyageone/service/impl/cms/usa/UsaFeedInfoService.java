@@ -85,6 +85,18 @@ public class UsaFeedInfoService extends BaseService {
         return cmsBtFeedInfoDao.countByQuery(query.getQuery(), channel);
     }
 
+    /**
+     * 根据条件跟新feed信息
+     * @param channelId
+     * @param queryMap
+     * @param updateMap
+     * @return
+     */
+    public WriteResult upDateFeedInfo(String channelId, Map queryMap, Map updateMap) {
+        WriteResult writeResult = feedInfoService.updateFeedInfo(channelId, queryMap, updateMap);
+        return  writeResult;
+    }
+
     //组装查询条件
     public JongoQuery getQuery(Map<String, Object> searchValue) {
         //封装查询条件
