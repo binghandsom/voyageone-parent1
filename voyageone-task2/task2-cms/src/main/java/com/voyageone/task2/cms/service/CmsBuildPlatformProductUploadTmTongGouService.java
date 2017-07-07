@@ -25,7 +25,6 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.*;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.*;
-
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
@@ -62,15 +61,12 @@ import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.ibatis.type.IntegerTypeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -2395,6 +2391,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             // 新增商品的时候
             result = tbSimpleItemService.addSimpleItemUnTry(shopProp, productInfoXml);
             if (result == null) {
+                Thread.sleep(3000); // 可能是sku过多，天猫还没有处理完，响应超时了，睡一会，再尝试去取一下
                 String numId;
                 // 调用获取仓库商品的api 用标题去搜
                 String cmsTitle = productInfoMap.get("title");
@@ -2428,11 +2425,11 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                                 return "ERROR: 用标题搜商品时返回了多个商品, 请后台确认是否有重复的商品";
                             }
                         } else {
-                            return "ERROR: 由于天猫超时, 请重试，如依旧不行，联系IT";
+                            return "ERROR: 由于天猫超时，需要去看看天猫上是否上传成功，如未成功，请重试，如成功，联系IT回写numIId";
                         }
                     }
                 } else {
-                    return "ERROR: 由于天猫超时, 请重试，如依旧不行，联系IT";
+                    return "ERROR: 由于天猫超时，需要去看看天猫上是否上传成功，如未成功，请重试，如成功，联系IT回写numIId";
                 }
             }
 
