@@ -17,6 +17,8 @@ public class FeedRequest {
     // Save or Submit or Approve 操作标识
     private Integer flag;
 
+
+
     public String getCode() {
         return code;
     }

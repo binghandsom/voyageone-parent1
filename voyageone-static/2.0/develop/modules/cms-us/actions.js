@@ -71,10 +71,7 @@ define(function () {
                     batchUpdateMainCategory: "batchUpdateMainCategory"
                 }
             },
-            itemDetailService: {
-                root: '/cms/us/feed',
-                detail: "detail"
-            },
+
             channel: {
                 sellerCat: {
                     sellerCatService: {
@@ -83,6 +80,11 @@ define(function () {
                     }
                 }
             },
+            "itemDetailService":{
+                root:'/cms/us/feed',
+                detail:"detail",
+                update:"update"
+            }
         }
     };
 });

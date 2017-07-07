@@ -40,7 +40,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Name</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" ng-model="ctrl.feed.name" required>
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.name" ng-change="ctrl.generateUrlKey()" required>
                                     </div>
                                 </div>
                             </div>
@@ -118,7 +118,7 @@
                                         <button type="button" class="btn btn-info btn-pop"><i class="fa fa-arrow-right"></i>&nbsp;Amazon Category</button>
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" readonly>
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.attribute.amazonBrowseTree" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -150,7 +150,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Order Limit Count</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control">
+                                        <input type="text" class="form-control" ng-model="ctrl.attribute.orderlimitcount">
                                     </div>
                                 </div>
                             </div>
@@ -158,7 +158,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">URL Key</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" ng-model="ctrl.feed.attribute.urlKey">
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.attribute.urlkey" ng-disabled="ctrl.feed.hasUrlkey">
                                     </div>
                                 </div>
                             </div>
@@ -166,7 +166,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Abstract</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control">
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.attribute.abstract">
                                     </div>
                                 </div>
                             </div>
@@ -174,84 +174,84 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Accessory</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control">
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.attribute.accessory">
                                     </div>
                                 </div>
                             </div>
+                            <!--<div class="form-group">-->
+                                <!--<div class="row">-->
+                                    <!--<label class="col-md-4 control-label query-title ">Sneakerfolio</label>-->
+                                    <!--<div class="col-md-6 checkbox">-->
+                                        <!--<label>-->
+                                            <!--<input type="checkbox" >-->
+                                        <!--</label>&nbsp;Yes-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="form-group">-->
+                                <!--<div class="row">-->
+                                    <!--<label class="col-md-4 control-label query-title ">New Arrival ?</label>-->
+                                    <!--<div class="col-md-6 checkbox">-->
+                                        <!--<label>-->
+                                            <!--<input type="checkbox">-->
+                                        <!--</label>&nbsp;Yes-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="form-group">-->
+                                <!--<div class="row">-->
+                                    <!--<label class="col-md-4 control-label query-title ">Reward Eligible ?</label>-->
+                                    <!--<div class="col-md-6 checkbox">-->
+                                        <!--<label>-->
+                                            <!--<input type="checkbox">-->
+                                        <!--</label>&nbsp;Yes-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="form-group">-->
+                                <!--<div class="row">-->
+                                    <!--<label class="col-md-4 control-label query-title ">Discount Eligible ?</label>-->
+                                    <!--<div class="col-md-6 checkbox">-->
+                                        <!--<label>-->
+                                            <!--<input type="checkbox">-->
+                                        <!--</label>&nbsp;Yes-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="form-group">-->
+                                <!--<div class="row">-->
+                                    <!--<label class="col-md-4 control-label query-title ">Free Shipping</label>-->
+                                    <!--<div class="col-md-6 checkbox">-->
+                                        <!--<label>-->
+                                            <!--<input type="checkbox">-->
+                                        <!--</label>&nbsp;Yes-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="form-group">-->
+                                <!--<div class="row">-->
+                                    <!--<label class="col-md-4 control-label query-title ">Phone Order Only ?</label>-->
+                                    <!--<div class="col-md-6 checkbox">-->
+                                        <!--<label>-->
+                                            <!--<input type="checkbox">-->
+                                        <!--</label>&nbsp;Yes-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="form-group">-->
+                                <!--<div class="row">-->
+                                    <!--<label class="col-md-4 control-label query-title ">Phone Order Message</label>-->
+                                    <!--<div class="col-md-6">-->
+                                        <!--<input type="text" class="form-control">-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
                             <div class="form-group">
                                 <div class="row">
-                                    <label class="col-md-4 control-label query-title ">Sneakerfolio</label>
+                                    <label class="col-md-4 control-label query-title ">Approve Pricing ?</label>
                                     <div class="col-md-6 checkbox">
                                         <label>
-                                            <input type="checkbox" >
-                                        </label>&nbsp;Yes
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <label class="col-md-4 control-label query-title ">New Arrival ?</label>
-                                    <div class="col-md-6 checkbox">
-                                        <label>
-                                            <input type="checkbox">
-                                        </label>&nbsp;Yes
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <label class="col-md-4 control-label query-title ">Reward Eligible ?</label>
-                                    <div class="col-md-6 checkbox">
-                                        <label>
-                                            <input type="checkbox">
-                                        </label>&nbsp;Yes
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <label class="col-md-4 control-label query-title ">Discount Eligible ?</label>
-                                    <div class="col-md-6 checkbox">
-                                        <label>
-                                            <input type="checkbox">
-                                        </label>&nbsp;Yes
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <label class="col-md-4 control-label query-title ">Free Shipping</label>
-                                    <div class="col-md-6 checkbox">
-                                        <label>
-                                            <input type="checkbox">
-                                        </label>&nbsp;Yes
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <label class="col-md-4 control-label query-title ">Phone Order Only ?</label>
-                                    <div class="col-md-6 checkbox">
-                                        <label>
-                                            <input type="checkbox">
-                                        </label>&nbsp;Yes
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <label class="col-md-4 control-label query-title ">Phone Order Message</label>
-                                    <div class="col-md-6">
-                                        <input type="text" class="form-control">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="row">
-                                    <label class="col-md-4 control-label query-title ">Phone Order Only ?</label>
-                                    <div class="col-md-6 checkbox">
-                                        <label>
-                                            <input type="checkbox">
+                                            <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="ctrl.feed.attribute.approvePricing[0]">
                                         </label>&nbsp;Yes
                                     </div>
                                 </div>

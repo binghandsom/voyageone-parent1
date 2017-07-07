@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 美国CMS Feed相关Controller
@@ -78,7 +79,7 @@ public class UsaCmsFeedController extends BaseController {
     @RequestMapping(value = UsaCmsUrlConstants.FEED.UPDATE)
     public AjaxResponse updateFeed(@RequestBody FeedRequest reqParams) {
         UserSessionBean user = getUser();
-        usaFeedInfoService.saveOrSubmitFeed(user.getSelChannelId(), reqParams.getFeed(), null, user.getUserName());
+        usaFeedInfoService.saveOrSubmitFeed(user.getSelChannelId(), reqParams.getFeed(), Objects.equals(Integer.valueOf(1), reqParams.getFlag()), user.getUserName());
         return success(null);
     }
 
