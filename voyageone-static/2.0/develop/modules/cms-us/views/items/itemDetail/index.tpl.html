@@ -12,7 +12,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Code</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control">
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.code" disabled>
                                     </div>
                                 </div>
                             </div>
@@ -20,7 +20,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Model</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control">
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.model">
                                     </div>
                                 </div>
                             </div>
@@ -40,7 +40,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Name</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control">
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.name" required>
                                     </div>
                                 </div>
                             </div>
@@ -48,10 +48,8 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Brand</label>
                                     <div class="col-md-6">
-                                        <select class="form-control">
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
+                                        <select class="form-control" name="brand" ng-options="brand.value as brand.name for brand in ctrl.brandList"
+                                                ng-model="ctrl.feed.brand" required>
                                         </select>
                                     </div>
                                 </div>
@@ -60,10 +58,8 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Product Type</label>
                                     <div class="col-md-6">
-                                        <select class="form-control">
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
+                                        <select class="form-control" name="productType" ng-options="productType.value as productType.name for productType in ctrl.productTypeList"
+                                                ng-model="ctrl.feed.productType" required>
                                         </select>
                                     </div>
                                 </div>
@@ -72,10 +68,8 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Size Type</label>
                                     <div class="col-md-6">
-                                        <select class="form-control">
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
+                                        <select class="form-control" name="sizeType" ng-options="sizeType.value as sizeType.name for sizeType in ctrl.sizeTypeList"
+                                                ng-model="ctrl.feed.sizeType" required>
                                         </select>
                                     </div>
                                 </div>
@@ -84,10 +78,8 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Material</label>
                                     <div class="col-md-6">
-                                        <select class="form-control">
-                                            <option value="1">1</option>
-                                            <option value="1">2</option>
-                                            <option value="1">3</option>
+                                        <select class="form-control" name="material" ng-options="material.value as material.name for material in ctrl.materialList"
+                                                ng-model="ctrl.feed.material" required>
                                         </select>
                                     </div>
                                 </div>
@@ -96,7 +88,9 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Made in</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control">
+                                        <select class="form-control" name="origin" ng-options="origin.value as origin.name for origin in ctrl.originList"
+                                                ng-model="ctrl.feed.origin">
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -104,7 +98,9 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Color Map</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control">
+                                        <select class="form-control" name="origin" ng-options="color.value as color.name for color in ctrl.colorMap"
+                                                ng-model="ctrl.feed.color">
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -112,7 +108,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Color</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control">
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.color">
                                     </div>
                                 </div>
                             </div>
@@ -128,7 +124,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Usage</label>
                                     <div class="col-md-6">
-                                        <textarea class="form-control no-resize"></textarea>
+                                        <textarea class="form-control no-resize" ng-model="ctrl.feed.usageEn"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -136,7 +132,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Short Description</label>
                                     <div class="col-md-6">
-                                        <textarea class="form-control no-resize"></textarea>
+                                        <textarea class="form-control no-resize" ng-model="ctrl.feed.shortDescription"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -144,7 +140,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Long Description</label>
                                     <div class="col-md-6">
-                                        <textarea class="form-control no-resize"></textarea>
+                                        <textarea class="form-control no-resize" ng-model="ctrl.feed.longDescription"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -160,7 +156,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">URL Key</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control">
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.attribute.urlKey">
                                     </div>
                                 </div>
                             </div>
@@ -346,37 +342,39 @@
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="text" class="form-control">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.weightOrg" ng-change="ctrl.setSkuProperty('weightOrg')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="text" class="form-control">
+                                                <select class="form-control" ng-options="weightUnit as weightUnit for weightUnit in ctrl.setting.weightOrgUnits"
+                                                        ng-model="ctrl.setting.weightOrgUnit" ng-change="ctrl.setSkuProperty('weightOrgUnit')">
+                                                </select>
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="text" class="form-control">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceClientMsrp" ng-change="ctrl.setSkuProperty('priceClientMsrp')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="text" class="form-control">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceNet" ng-change="ctrl.setSkuProperty('priceNet')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="text" class="form-control">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceMsrp" ng-change="ctrl.setSkuProperty('priceMsrp')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="text" class="form-control">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceCurrent" ng-change="ctrl.setSkuProperty('priceCurrent')">
                                             </div>
                                         </td>
                                     </tr>
@@ -393,26 +391,30 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="text-left">
-                                            10
+                                    <tr ng-repeat="sku in ctrl.feed.skus">
+                                        <td class="text-left">{{sku.size}}</td>
+                                        <td class="text-left">{{sku.sku}}</td>
+                                        <td class="text-left">{{sku.barcode}}</td>
+                                        <td class="text-right">
+                                            <input type="number" class="form-control" ng-model="sku.weightOrg"/>
                                         </td>
-                                        <td class="text-left">
-                                            aq2661-10
-                                        </td>
-                                        <td class="text-left">889132902013</td>
-                                        <td class="text-right"></td>
                                         <td class="text-center">
-                                            <select class="form-control">
-                                                <option value="1">1</option>
-                                                <option value="2">2</option>
-                                                <option value="3">3</option>
+                                            <select class="form-control" ng-options="weightUnit as weightUnit for weightUnit in ctrl.setting.weightOrgUnits"
+                                                    ng-model="sku.weightOrgUnit">
                                             </select>
                                         </td>
-                                        <td class="text-right"></td>
-                                        <td class="text-right"></td>
-                                        <td class="text-right"></td>
-                                        <td class="text-right"></td>
+                                        <td class="text-right">
+                                            <input type="number" class="form-control" ng-model="sku.priceClientMsrp"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <input type="number" class="form-control" ng-model="sku.priceNet"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <input type="number" class="form-control" ng-model="sku.priceMsrp"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <input type="number" class="form-control" ng-model="sku.priceCurrent"/>
+                                        </td>
 
                                     </tr>
                                 </tbody>

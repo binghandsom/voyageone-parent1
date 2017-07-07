@@ -1,7 +1,10 @@
 package com.voyageone.web2.cms.views.usa;
 
 import com.mongodb.WriteResult;
+import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.usa.UsaFeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -11,12 +14,15 @@ import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.usa.FeedRequest;
 
 import com.voyageone.web2.core.bean.UserSessionBean;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,10 +42,33 @@ public class UsaCmsFeedController extends BaseController {
     @Autowired
     private UsaFeedInfoService usaFeedInfoService;
 
+    /**
+     * 统一的当前语言环境提供
+     */
+    @Override
+    public String getLang() {
+        return "en";
+    }
+
     @RequestMapping(value = UsaCmsUrlConstants.FEED.DETAIL)
     @ResponseBody
     public AjaxResponse getFeedDetail(@RequestBody FeedRequest reqParams) {
-        return success(feedInfoService.getProductByCode(getUser().getSelChannelId(), reqParams.getCode()));
+
+        String channelId = getUser().getSelChannelId();
+        // 返回数据
+        Map<String, Object> resultMap = new HashMap<>();
+        CmsBtFeedInfoModel feed = feedInfoService.getProductByCode(channelId, reqParams.getCode());
+        resultMap.put("feed", feed);
+        if (feed != null) {
+            resultMap.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, getLang()));
+            resultMap.put("productTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, getLang()));
+            resultMap.put("sizeTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, getLang()));
+            // TODO: 2017/7/7 rex.wu
+            resultMap.put("materialList", Collections.singleton(null));
+            resultMap.put("originList", Collections.singleton(null));
+            resultMap.put("colorMap", Collections.singleton(null));
+        }
+        return success(resultMap);
     }
 
     /**
