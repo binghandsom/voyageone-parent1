@@ -62,8 +62,9 @@ public class UsaFeedInfoService extends BaseService {
             queryObject.setSort(buffer.toString());
         }
         //封装分页条件
-        int pageNum = (Integer) searchValue.get("pageNum");
-        int pageSize = (Integer) searchValue.get("pageSize");
+        int pageNum = (Integer) searchValue.get("curr");
+        int pageSize = (Integer) searchValue.get("size");
+
         queryObject.setSkip((pageNum - 1) * pageSize);
         queryObject.setLimit(pageSize);
 

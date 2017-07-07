@@ -83,7 +83,7 @@ define(function () {
             "itemDetailService":{
                 root:'/cms/us/feed',
                 detail:"detail",
-                update:"update"
+                update:"update",
                 list:"list"
             }
         }

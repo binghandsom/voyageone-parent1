@@ -5,7 +5,6 @@
                 <div class="panel-heading">
                         <h4 class="panel-title"><i class="fa fa-search"></i>&nbsp;Query Terms</h4>
                 </div>
-                {{ctrl.paraMap.pageSize}}@@@{{ctrl.paraMap.pageNum}}
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-6">
@@ -175,7 +174,7 @@
 
                     <!--</div>-->
                     <div class="col-sm-12 m-t-lg m-b-lg">
-                        <!--<vpagination config="vm.feedPageOption"></vpagination>-->
+                        <vpagination config="ctrl.paging"></vpagination>
                     </div>
                 </div>
             </div>
