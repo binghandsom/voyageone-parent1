@@ -77,10 +77,7 @@ define([
             // 处理approvePricing
             let approvePricingFlag = self.feed.attribute.approvePricing && _.size(self.feed.attribute.approvePricing) > 0;
             _.extend(self.feed, {approvePricingFlag:approvePricingFlag ? 1 : 0});
-
-            // 处理attribute.amazonBrowseTree
-            let amazonBrowseTree = (self.feed.attribute.amazonBrowseTree && _.size(self.feed.attribute.amazonBrowseTree) > 0) ? self.feed.attribute.amazonBrowseTree[0] : "";
-            _.extend(self.feed, {amazonBrowseTree:amazonBrowseTree});
+            
         }
 
         // 生成UrlKey
@@ -122,8 +119,7 @@ define([
         popUsCategory() {
             let self = this;
             self.popups.openUsCategory().then(context => {
-                _.extend(self.feed.attribute, {amazonBrowseTree:context.catPath})
-                console.log(self.feed);
+                _.extend(self.feed, {category:context.catPath})
             });
         }
 
