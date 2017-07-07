@@ -84,6 +84,7 @@ define(function () {
                 root:'/cms/us/feed',
                 detail:"detail",
                 update:"update"
+                list:"list"
             }
         }
     };

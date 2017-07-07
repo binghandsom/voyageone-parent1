@@ -53,6 +53,7 @@ public class UsaCmsFeedController extends BaseController {
     }
 
     @RequestMapping(value = UsaCmsUrlConstants.FEED.DETAIL)
+    @ResponseBody
     public AjaxResponse getFeedDetail(@RequestBody FeedRequest reqParams) {
 
         String channelId = getUser().getSelChannelId();
@@ -85,17 +86,18 @@ public class UsaCmsFeedController extends BaseController {
 
     /**
      * 条件查询feed列表信息
+     * @param params
+     * @return
      */
     @RequestMapping(value = UsaCmsUrlConstants.FEED.LIST)
     public AjaxResponse getFeedList(@RequestBody Map params) {
         Map<String, Object> resultBean = new HashMap<String, Object>();
-        UserSessionBean userInfo = getUser();
-        ChannelConfigEnums.Channel selChannel = userInfo.getSelChannel();
+        String selChannelId = getUser().getSelChannelId();
         //获取数据列表
-        List<CmsBtFeedInfoModel> feedList = usaFeedInfoService.getFeedList(params, selChannel.toString());
+        List<CmsBtFeedInfoModel> feedList = usaFeedInfoService.getFeedList(params, selChannelId);
         resultBean.put("feedList", feedList);
         //获取数据总量
-        Long feedListTotal = usaFeedInfoService.getFeedCount(params, selChannel.toString());
+        Long feedListTotal = usaFeedInfoService.getFeedCount(params, selChannelId);
         resultBean.put("feedListTotal", feedListTotal);
 
         // 返回feed信息
@@ -106,25 +108,25 @@ public class UsaCmsFeedController extends BaseController {
     public AjaxResponse upDateOne(@RequestBody Map params) {
         HashMap<String, Object> queryMap = new HashMap<>();
         String code = (String) params.get("code");
-        if (code != null) {
-            queryMap.put("code", code);
+        if (code != null){
+            queryMap.put("code",code);
         }
         HashMap<String, Object> updateMap = new HashMap<>();
 
         String msrpPrice = (String) params.get("msrpPrice");
-        if (msrpPrice != null) {
-            updateMap.put("skus.msrpPrice", msrpPrice);
+        if (msrpPrice != null){
+            updateMap.put("skus.msrpPrice",msrpPrice);
         }
         String price = (String) params.get("price");
-        if (price != null) {
-            updateMap.put("skus.priceNet", price);
-            updateMap.put("skus.priceClientRetail", price);
+        if (price != null){
+            updateMap.put("skus.priceNet",price);
+            updateMap.put("skus.priceClientRetail",price);
         }
         String approve = (String) params.get("approve");
-        if (msrpPrice != null) {
-            updateMap.put("approve", approve);
+        if (msrpPrice != null){
+            updateMap.put("approve",approve);
         }
-        WriteResult writeResult = usaFeedInfoService.upDateFeedInfo(getUser().getSelChannelId().toString(), queryMap, updateMap);
+        WriteResult writeResult = usaFeedInfoService.upDateFeedInfo(getUser().getSelChannelId(), queryMap, updateMap);
 
         return success(writeResult);
     }
