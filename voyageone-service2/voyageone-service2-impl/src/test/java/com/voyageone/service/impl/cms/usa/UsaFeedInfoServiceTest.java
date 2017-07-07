@@ -1,6 +1,8 @@
 package com.voyageone.service.impl.cms.usa;
 
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context-service2.xml")
 public class UsaFeedInfoServiceTest {
+
     @Autowired
     UsaFeedInfoService usaFeedInfoService;
 
@@ -50,5 +53,4 @@ public class UsaFeedInfoServiceTest {
         map.put("sort","barcode_1");
         Long feedCount = usaFeedInfoService.getFeedCount(map, "001");
 
-    }
 }
