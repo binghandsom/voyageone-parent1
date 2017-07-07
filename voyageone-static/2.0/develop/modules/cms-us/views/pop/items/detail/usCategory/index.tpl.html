@@ -1,0 +1,46 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click=" ctrl.cancel()">
+            <span aria-hidden="true"><i class="fa fa-close"></i></span>
+        </button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{'TXT_CATEGORY' | translate}}</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <div class="category_ts" ng-if="ctrl.context.plateSchema != true">
+            <!--这里是Feed和主数据相互切换的-->
+            <p>{{'TXT_FEED_OR_MASTER_CATEGORY_WITH_COLON' | translate}}{{ ctrl.context.from }}</p>
+        </div>
+        <div class="category_drags">
+            <div class="category_drag col-sm-3" ng-repeat="categoryItem in ctrl.categoryPath">
+                <div class="category_drag_main">
+                    <p class="text-center text-vo font-bold">{{:: categoryItem.level }}&nbsp;{{'TXT_LEVEL_CATEGORY' | translate}}</p>
+                    <div class="input-group" style="padding: 0 4px;">
+                        <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" ng-model="catName">
+                        <div class="input-group-btn">
+                            <button type="submit" class="btn btn-vo" ng-click="search.catName = catName"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                    <div class="category_drag_list_dp category_popup">
+                        <ul>
+                            <li ng-repeat="category in categoryItem.categories | filter:search track by category.catId">
+                                <a href="javascript:void(0)" ng-click=" ctrl.openCategory(category,categoryItem)" ng-class="{indexSelected:categoryItem.selectedCat == category.catName}">
+                                    <span>{{::category.catName}}</span>
+                                    <span class="label label-xs" ng-class="::ctrl.getSkuSplitClass(category)" ng-if="::category.skuSplit.id" uib-tooltip="{{::ctrl.getSkuSplitDesc(category)}}" tooltip-append-to-body="true">{{::category.skuSplit.id}}</span>
+                                    <span class="pull-right text-muted" ng-if="category.children && category.children.length">
+                                        <i class="fa fa-fw fa-angle-right text"></i>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i>&nbsp;close</button>
+        <button class="btn btn-vo" ng-click="ctrl.ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;save</button>
+    </div>
+</div>

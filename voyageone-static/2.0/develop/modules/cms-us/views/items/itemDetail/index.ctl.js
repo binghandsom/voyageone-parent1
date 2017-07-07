@@ -5,10 +5,10 @@ define([
     cms.controller('itemDetailController', class itemDetailController {
         constructor(popups, $routeParams, itemDetailService) {
             this.code = $routeParams.code;
-            if (!this.code) {
+/*            if (!this.code) {
                 console.log("不存在");
                 return;
-            }
+            }*/
             this.popups = popups;
             this.itemDetailService = itemDetailService;
 
@@ -31,6 +31,10 @@ define([
             let self = this;
 
             self.popups.openBatchApprove();
+        }
+
+        popUsCategory(){
+            this.popups.openUsCategory();
         }
 
     });
