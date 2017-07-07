@@ -136,7 +136,7 @@
 				/core/access/user/vendorLogin = anon
 				/core/access/user/logout= anon
 				/cms/** = authc,channel
-				/cms-us/=authc,channel
+				/cms-us/**=authc,channel
 			</value>
 		</property>
 	</bean>
