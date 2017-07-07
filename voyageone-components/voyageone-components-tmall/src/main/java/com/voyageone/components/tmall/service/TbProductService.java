@@ -10,6 +10,7 @@ import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.TbBase;
+import com.voyageone.components.tmall.bean.TmallApiExecuteContext;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -20,8 +21,9 @@ import java.util.Map;
 @Component
 public class TbProductService extends TbBase {
 
-	/**
+    /**
      * 获取[更新产品]的规则的schema
+     *
      * @throws ApiException
      */
     public String getProductUpdateSchema(Long productId, ShopBean config, StringBuffer failCause) throws ApiException {
@@ -37,8 +39,9 @@ public class TbProductService extends TbBase {
         return response.getUpdateProductSchema();
     }
 
-	/**
+    /**
      * 更新产品
+     *
      * @throws ApiException
      */
     public String updateProduct(Long productId, String xmlData, ShopBean config, StringBuffer failCause) throws ApiException {
@@ -69,8 +72,7 @@ public class TbProductService extends TbBase {
         return response.getMatchResult();
     }
 
-    public String getProductSchema(Long productId, ShopBean config) throws ApiException
-    {
+    public String getProductSchema(Long productId, ShopBean config) throws ApiException {
         TmallProductSchemaGetRequest request = new TmallProductSchemaGetRequest();
         request.setProductId(productId);
 
@@ -85,8 +87,7 @@ public class TbProductService extends TbBase {
         request.setPropvalues(propValues);
 
         TmallProductSchemaMatchResponse response = reqTaobaoApi(config, request);
-        if (response.getErrorCode() == null)
-        {
+        if (response.getErrorCode() == null) {
             String product_ids = response.getMatchResult();
             if (product_ids == null || "".equals(product_ids))
                 return null;
@@ -103,13 +104,27 @@ public class TbProductService extends TbBase {
         return response.getAddProductRule();
     }
 
-    public String addProduct(Long categoryId, Long brandId, String xmlData, ShopBean config, StringBuffer failCause) throws ApiException {
+    public String addProduct(Long categoryId, Long brandId, String xmlData, ShopBean config, StringBuffer failCause)
+            throws ApiException {
+        return addProduct(categoryId, brandId, xmlData, config, failCause, TmallApiExecuteContext.Default);
+    }
+
+    public String addProductUnTry(Long categoryId, Long brandId, String xmlData, ShopBean config, StringBuffer failCause)
+            throws ApiException {
+        TmallApiExecuteContext tmallApiExecuteContext = new TmallApiExecuteContext().tryCount(1);
+        return addProduct(categoryId, brandId, xmlData, config, failCause, tmallApiExecuteContext);
+    }
+
+    private String addProduct(Long categoryId, Long brandId, String xmlData, ShopBean config, StringBuffer failCause,
+                              TmallApiExecuteContext tmallApiExecuteContext)
+            throws ApiException {
         TmallProductSchemaAddRequest request = new TmallProductSchemaAddRequest();
         request.setCategoryId(categoryId);
         request.setBrandId(brandId);
         request.setXmlData(xmlData);
 
-        TmallProductSchemaAddResponse response = reqTaobaoApi(config, request);
+        TmallProductSchemaAddResponse response = reqTaobaoApi(config, request, tmallApiExecuteContext.tryCount(),
+                tmallApiExecuteContext.tryWait(), true);
         if (response.getErrorCode() != null) {
             failCause.append(response.getSubMsg());
         }
@@ -117,13 +132,33 @@ public class TbProductService extends TbBase {
     }
 
     //tmall.item.schema.add
-    public TmallItemSchemaAddResponse addItem(Long categoryId, String productId, String xmlData, ShopBean config) throws ApiException {
+    public TmallItemSchemaAddResponse addItem(Long categoryId, String productId, String xmlData, ShopBean config)
+            throws ApiException {
+        return tryAddItem(categoryId,
+                productId,
+                xmlData,
+                config,
+                TmallApiExecuteContext.Default);
+    }
+
+    public TmallItemSchemaAddResponse addItemUnTry(Long categoryId, String productId, String xmlData, ShopBean config)
+            throws ApiException {
+        return tryAddItem(categoryId,
+                productId,
+                xmlData,
+                config,
+                new TmallApiExecuteContext().tryCount(1));
+    }
+
+    private TmallItemSchemaAddResponse tryAddItem(Long categoryId, String productId, String xmlData, ShopBean config,
+                                                  TmallApiExecuteContext tmallApiExecuteContext)
+            throws ApiException {
         TmallItemSchemaAddRequest request = new TmallItemSchemaAddRequest();
         request.setCategoryId(categoryId);
         request.setProductId(Long.parseLong(productId));
         request.setXmlData(xmlData);
 
-        return reqTaobaoApi(config, request);
+        return reqTaobaoApi(config, request, tmallApiExecuteContext.tryCount(), tmallApiExecuteContext.tryWait(), true);
     }
 
     //tmall.item.schema.update
@@ -213,9 +248,9 @@ public class TbProductService extends TbBase {
     public Boolean delItem(ShopBean config, String numId) throws ApiException {
         ItemDeleteRequest req = new ItemDeleteRequest();
         req.setNumIid(Long.parseLong(numId));
-        ItemDeleteResponse response = reqTaobaoApi(config,req);
+        ItemDeleteResponse response = reqTaobaoApi(config, req);
         if (response.getErrorCode() != null) {
-            if(response.getSubMsg().indexOf("该商品已被删除") > -1) return true;
+            if (response.getSubMsg().indexOf("该商品已被删除") > -1) return true;
             throw new BusinessException("天猫删除商品失败:" + response.getSubMsg() + "  错误码：" + response.getErrorCode());
         }
         return true;
@@ -225,11 +260,10 @@ public class TbProductService extends TbBase {
      * 天猫增量更新商品规则获取(tmall.item.increment.update.schema.get)
      * http://open.taobao.com/docs/api.htm?apiId=23781
      *
-     * @param numId    商品id(必须)
+     * @param numId   商品id(必须)
      * @param xmlData 更新的字段(可选) 如果入参xml_data指定了更新的字段，则只返回指定字段的规则（ISV如果功能性很强，如明确更新Title，请拼装好此字段以提升API整体性能）
      */
-    public TmallItemIncrementUpdateSchemaGetResponse getItemIncrementUpdateSchema(String numId, String xmlData, ShopBean config) throws ApiException
-    {
+    public TmallItemIncrementUpdateSchemaGetResponse getItemIncrementUpdateSchema(String numId, String xmlData, ShopBean config) throws ApiException {
         TmallItemIncrementUpdateSchemaGetRequest request = new TmallItemIncrementUpdateSchemaGetRequest();
         request.setItemId(Long.parseLong(numId));
         if (!StringUtils.isEmpty(xmlData)) request.setXmlData(xmlData);
@@ -241,11 +275,10 @@ public class TbProductService extends TbBase {
      * 天猫根据规则增量更新商品(tmall.item.schema.increment.update)
      * http://open.taobao.com/docs/api.htm?apiId=23782
      *
-     * @param numId    需要编辑的商品ID(必须)
-     * @param xmlData  更新的字段(必须) 如果入参xml_data指定了更新的字段，则只返回指定字段的规则（ISV如果功能性很强，如明确更新Title，请拼装好此字段以提升API整体性能）
+     * @param numId   需要编辑的商品ID(必须)
+     * @param xmlData 更新的字段(必须) 如果入参xml_data指定了更新的字段，则只返回指定字段的规则（ISV如果功能性很强，如明确更新Title，请拼装好此字段以提升API整体性能）
      */
-    public TmallItemSchemaIncrementUpdateResponse updateItemSchemaIncrement(String numId, String xmlData, ShopBean config) throws ApiException
-    {
+    public TmallItemSchemaIncrementUpdateResponse updateItemSchemaIncrement(String numId, String xmlData, ShopBean config) throws ApiException {
         TmallItemSchemaIncrementUpdateRequest request = new TmallItemSchemaIncrementUpdateRequest();
         request.setItemId(Long.parseLong(numId));
         request.setXmlData(xmlData);
@@ -255,6 +288,7 @@ public class TbProductService extends TbBase {
 
     /**
      * tmall.item.combine.get (组合商品获取接口)
+     *
      * @param numId
      * @param config
      * @return

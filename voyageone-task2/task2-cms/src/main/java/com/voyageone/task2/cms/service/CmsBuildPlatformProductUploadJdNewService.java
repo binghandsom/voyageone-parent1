@@ -1,9 +1,11 @@
 package com.voyageone.task2.cms.service;
 
 import com.google.common.base.Joiner;
-import com.jd.open.api.sdk.domain.*;
+import com.jd.open.api.sdk.domain.AdWords;
+import com.jd.open.api.sdk.domain.Feature;
+import com.jd.open.api.sdk.domain.Image;
+import com.jd.open.api.sdk.domain.Prop;
 import com.jd.open.api.sdk.domain.ware.Sku;
-import com.jd.open.api.sdk.request.ware.ImageWriteUpdateRequest;
 import com.jd.open.api.sdk.response.ware.ImageWriteUpdateResponse;
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
@@ -33,7 +35,6 @@ import com.voyageone.components.jd.bean.JdProductNewBean;
 import com.voyageone.components.jd.service.JdSaleService;
 import com.voyageone.components.jd.service.JdSkuService;
 import com.voyageone.components.jd.service.JdWareNewService;
-import com.voyageone.components.jd.service.JdWareService;
 import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
@@ -60,18 +61,13 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.model.ConditionPropValueModel;
 import com.voyageone.task2.cms.service.putaway.ConditionPropValueRepo;
-import org.apache.commons.beanutils.converters.IntegerConverter;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -183,6 +179,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
     private CmsMtChannelConditionMappingConfigDao cmsMtChannelConditionMappingConfigDao;
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
+    private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
 
     @Override
     public SubSystem getSubSystem() {
@@ -193,8 +190,6 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
     public String getTaskName() {
         return "CmsBuildPlatformProductUploadJdNewJob";
     }
-
-    private Map<String, Map<String, List<ConditionPropValueModel>>> channelConditionConfig;
 
     /**
      * 京东平台上新处理
@@ -526,9 +521,7 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
         }
 
         try {
-            // 上新用的商品数据信息取得 // TODO：这段翻译写得不好看， 以后再改
-            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
-            cmsTranslateMqService.executeSingleCode(channelId, 0, sxData.getMainProduct().getCommon().getFields().getCode(), "0");
+            // 上新用的商品数据信息取得
             sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
             if (sxData == null) {
                 throw new BusinessException("取得上新用的商品数据信息失败！请向管理员确认 [sxData=null]");
@@ -599,6 +592,10 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 $error(errMsg);
                 throw new BusinessException(errMsg);
             }
+
+            // 标题翻译 （先去掉试试看 后面设置标题的地方已经有逻辑判断的）
+//            cmsTranslateMqService.executeSingleCode(sxData, "0");
+
             // 上新对象code
             List<String> listSxCode = null;
             if (ListUtils.notNull(sxData.getProductList())) {
@@ -613,22 +610,34 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
                 jdWareId = Long.parseLong(sxData.getPlatform().getNumIId());
             }
 
+
+
+            // 取得主产品京东平台设置信息(包含SKU等信息)
+            CmsBtProductModel_Platform_Cart mainProductPlatformCart = mainProduct.getPlatform(sxData.getCartId());
+            if (mainProductPlatformCart == null) {
+                $error(String.format("获取主产品京东平台设置信息(包含SKU，Schema属性值等信息)失败！[ProductCode:%s][CartId:%s]",
+                        mainProduct.getCommon().getFields().getCode(), sxData.getCartId()));
+                throw new BusinessException("获取主产品京东平台设置信息(包含SKU，Schema属性值等信息)失败");
+            }
+
             // 如果skuList不为空，取得所有sku的库存信息
             // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
             // WMS2.0切换 20170526 charis STA
-            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
-            for (String code : listSxCode) {
-                try {
-                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
-                    for (Map.Entry<String, Integer> e : map.entrySet()) {
-                        skuLogicQtyMap.put(e.getKey(), e.getValue());
-                    }
-                } catch (Exception e) {
-                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
-                            channelId, cartId, code, e.getMessage());
-                    throw new Exception(errorMsg);
-                }
-            }
+            // 库存取得逻辑变为直接用cms的库存
+            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(mainProductPlatformCart.getSkus());
+//            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+//            for (String code : listSxCode) {
+//                try {
+//                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
+//                    for (Map.Entry<String, Integer> e : map.entrySet()) {
+//                        skuLogicQtyMap.put(e.getKey(), e.getValue());
+//                    }
+//                } catch (Exception e) {
+//                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+//                            channelId, cartId, code, e.getMessage());
+//                    throw new Exception(errorMsg);
+//                }
+//            }
             // WMS2.0切换 20170526 charis END
             // delete by desmond 2016/12/26 start 暂时先注释掉，以后有可能还是要删除库存为0的SKU
 //            // 删除主产品的common.skus中库存为0的SKU
@@ -685,13 +694,6 @@ public class CmsBuildPlatformProductUploadJdNewService extends BaseCronTaskServi
 //            }
             // delete by desmond 2016/12/26 end
 
-            // 取得主产品京东平台设置信息(包含SKU等信息)
-            CmsBtProductModel_Platform_Cart mainProductPlatformCart = mainProduct.getPlatform(sxData.getCartId());
-            if (mainProductPlatformCart == null) {
-                $error(String.format("获取主产品京东平台设置信息(包含SKU，Schema属性值等信息)失败！[ProductCode:%s][CartId:%s]",
-                        mainProduct.getCommon().getFields().getCode(), sxData.getCartId()));
-                throw new BusinessException("获取主产品京东平台设置信息(包含SKU，Schema属性值等信息)失败");
-            }
 
             // 取得京东共通Schema(用于设定京东商品标题，长宽高重量等共通属性)
             String catId = "1";          // 类目shema表中京东共通属性的catId为"1"

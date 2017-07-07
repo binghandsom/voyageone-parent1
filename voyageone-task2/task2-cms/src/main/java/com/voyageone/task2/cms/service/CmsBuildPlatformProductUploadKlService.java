@@ -495,48 +495,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                 listSxCode = sxData.getProductList().stream().map(p -> p.getCommonNotNull().getFieldsNotNull().getCode()).collect(Collectors.toList());
             }
 
-            // 如果skuList不为空，取得所有sku的库存信息
-            // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
-            // WMS2.0切换 20170526 charis STA
-            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
-            for (String code : listSxCode) {
-                try {
-                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
-                    for (Map.Entry<String, Integer> e : map.entrySet()) {
-                        skuLogicQtyMap.put(e.getKey(), e.getValue());
-                    }
-                } catch (Exception e) {
-                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
-                            channelId, cartId, code, e.getMessage());
-                    throw new Exception(errorMsg);
-                }
-            }
-            // WMS2.0切换 20170526 charis END
-            // delete by desmond 2016/12/26 start 暂时先注释掉，以后有可能还是要删除库存为0的SKU
-//            // 删除主产品的common.skus中库存为0的SKU
-//            if (ListUtils.notNull(sxData.getMainProduct().getCommonNotNull().getSkus())) {
-//                deleteNoStockCommonSku(sxData.getMainProduct().getCommonNotNull().getSkus(), skuLogicQtyMap);
-//            }
-//            // 删除主产品的PXX.skus中库存为0的SKU
-//            if (ListUtils.notNull(sxData.getMainProduct().getPlatformNotNull(cartId).getSkus())) {
-//                deleteNoStockPlatformSku(sxData.getMainProduct().getPlatformNotNull(cartId).getSkus(), skuLogicQtyMap);
-//            }
-//            // 删除每个产品库存为0的sku
-//            for (CmsBtProductModel cmsBtProduct : sxData.getProductList()) {
-//                if (ListUtils.notNull(cmsBtProduct.getCommonNotNull().getSkus())) {
-//                    deleteNoStockCommonSku(cmsBtProduct.getCommonNotNull().getSkus(), skuLogicQtyMap);
-//                }
-//                if (ListUtils.notNull(cmsBtProduct.getPlatformNotNull(cartId).getSkus())) {
-//                    deleteNoStockPlatformSku(cmsBtProduct.getPlatformNotNull(cartId).getSkus(), skuLogicQtyMap);
-//                }
-//            }
-            // delete by desmond 2016/12/26 end
 
-            // 计算该商品下所有产品所有SKU的逻辑库存之和，新增时如果所有库存为0，报出不能上新错误
-            int totalSkusLogicQty = 0;
-            for (String skuCode : skuLogicQtyMap.keySet()) {
-                totalSkusLogicQty += skuLogicQtyMap.get(skuCode);
-            }
 
 //            StringBuffer sbFailCause = new StringBuffer("");
             // delete by desmond 2016/12/26 start 暂时先注释掉，以后有可能还是要删除库存为0的SKU
@@ -573,6 +532,51 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
                 $error(String.format("获取主产品考拉平台设置信息(包含SKU，Schema属性值等信息)失败！[ProductCode:%s][CartId:%s]",
                         mainProduct.getCommon().getFields().getCode(), sxData.getCartId()));
                 throw new BusinessException("获取主产品考拉平台设置信息(包含SKU，Schema属性值等信息)失败");
+            }
+
+            // 如果skuList不为空，取得所有sku的库存信息
+            // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
+            // WMS2.0切换 20170526 charis STA
+            // 库存取得逻辑变为直接用cms的库存
+            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(mainProductPlatformCart.getSkus());
+//            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
+//            for (String code : listSxCode) {
+//                try {
+//                    Map<String, Integer> map = sxProductService.getAvailQuantity(channelId, String.valueOf(cartId), code, null);
+//                    for (Map.Entry<String, Integer> e : map.entrySet()) {
+//                        skuLogicQtyMap.put(e.getKey(), e.getValue());
+//                    }
+//                } catch (Exception e) {
+//                    String errorMsg = String.format("获取可售库存时发生异常 [channelId:%s] [cartId:%s] [code:%s] [errorMsg:%s]",
+//                            channelId, cartId, code, e.getMessage());
+//                    throw new Exception(errorMsg);
+//                }
+//            }
+            // WMS2.0切换 20170526 charis END
+            // delete by desmond 2016/12/26 start 暂时先注释掉，以后有可能还是要删除库存为0的SKU
+//            // 删除主产品的common.skus中库存为0的SKU
+//            if (ListUtils.notNull(sxData.getMainProduct().getCommonNotNull().getSkus())) {
+//                deleteNoStockCommonSku(sxData.getMainProduct().getCommonNotNull().getSkus(), skuLogicQtyMap);
+//            }
+//            // 删除主产品的PXX.skus中库存为0的SKU
+//            if (ListUtils.notNull(sxData.getMainProduct().getPlatformNotNull(cartId).getSkus())) {
+//                deleteNoStockPlatformSku(sxData.getMainProduct().getPlatformNotNull(cartId).getSkus(), skuLogicQtyMap);
+//            }
+//            // 删除每个产品库存为0的sku
+//            for (CmsBtProductModel cmsBtProduct : sxData.getProductList()) {
+//                if (ListUtils.notNull(cmsBtProduct.getCommonNotNull().getSkus())) {
+//                    deleteNoStockCommonSku(cmsBtProduct.getCommonNotNull().getSkus(), skuLogicQtyMap);
+//                }
+//                if (ListUtils.notNull(cmsBtProduct.getPlatformNotNull(cartId).getSkus())) {
+//                    deleteNoStockPlatformSku(cmsBtProduct.getPlatformNotNull(cartId).getSkus(), skuLogicQtyMap);
+//                }
+//            }
+            // delete by desmond 2016/12/26 end
+
+            // 计算该商品下所有产品所有SKU的逻辑库存之和，新增时如果所有库存为0，报出不能上新错误
+            int totalSkusLogicQty = 0;
+            for (String skuCode : skuLogicQtyMap.keySet()) {
+                totalSkusLogicQty += skuLogicQtyMap.get(skuCode);
             }
 
             // 取得考拉共通Schema(用于设定考拉商品标题，长宽高重量等共通属性)
@@ -939,7 +943,7 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         // 图片信息（图片尺寸为800*800，单张大小不超过 2048K）(必须)
         // 商品5张图片名称列表
         // TODO:先这边写着，回头做到schema里，custom表里追加IMAGE属性，这样可以用共通代码解析处理
-        Set<String> listPicNameUrl = new HashSet<>();
+        List<String> listPicNameUrl = new ArrayList<>();
         // 获取url
         for (int i = 1; i <= 5; i++) {
             try {
@@ -959,17 +963,37 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
         // 上传
         Map<String, String> mapUrls;
         try {
-            mapUrls = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()), shopProp, listPicNameUrl, getTaskName());
+            mapUrls = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), Long.toString(sxData.getGroupId()), shopProp, new HashSet<>(listPicNameUrl), getTaskName());
         } catch (Exception ex) {
             String errMsg = String.format("考拉上传图片失败![ChannelId:%s] [CartId:%s] [GroupId:%s] [PlatformCategoryId:%s]",
                     channelId, cartId, sxData.getGroupId(), platformCategoryId);
             $error(errMsg, ex);
             throw new BusinessException("考拉上传图片失败!" + ex.getMessage());
         }
-        String strUrls = mapUrls.values().stream().map(url -> url + Separtor_Caret + "1").collect(Collectors.joining(Separtor_Vertical)) // 商品图片
-                + Separtor_Vertical
-                + mapUrls.values().stream().map(url -> url + Separtor_Caret + "2").collect(Collectors.joining(Separtor_Vertical)); // App图片
-        klAddBean.setImageUrls(strUrls);
+//        String strUrls = mapUrls.values().stream().map(url -> url + Separtor_Caret + "1").collect(Collectors.joining(Separtor_Vertical)) // 商品图片
+//                + Separtor_Vertical
+//                + mapUrls.values().stream().map(url -> url + Separtor_Caret + "2").collect(Collectors.joining(Separtor_Vertical)); // App图片
+//        klAddBean.setImageUrls(strUrls);
+        StringBuilder sb = new StringBuilder("");
+        // PC
+        listPicNameUrl.forEach(picUrl -> {
+            String platformUrl = mapUrls.get(picUrl);
+            if (!StringUtils.isEmpty(platformUrl)) {
+                sb.append(platformUrl + Separtor_Caret + "1" + Separtor_Vertical);
+            }
+        });
+        // APP
+        listPicNameUrl.forEach(picUrl -> {
+            String platformUrl = mapUrls.get(picUrl);
+            if (!StringUtils.isEmpty(platformUrl)) {
+                sb.append(platformUrl + Separtor_Caret + "2" + Separtor_Vertical);
+            }
+        });
+        // 移除最后的"|"
+        if (sb.length() > 0) {
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        klAddBean.setImageUrls(sb.toString());
 
         // 调用共通函数取得商品属性列表，用户自行输入的类目属性ID和用户自行输入的属性值Map
         Map<String, String> klProductAttrMap = getKlProductAttributes(platformSchemaData, shopProp, expressionParser, blnIsSmartSx);

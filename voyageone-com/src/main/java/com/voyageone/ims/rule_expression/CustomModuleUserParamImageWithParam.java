@@ -19,14 +19,18 @@ public class CustomModuleUserParamImageWithParam extends CustomModuleUserParam {
     // added by morse.lu 2016/09/19 start
     private RuleExpression viewType;
     // added by morse.lu 2016/09/19 end
+    // added by charis.li 2017/07/05 STA
+    private RuleExpression htmlTemplate;
+    // added by charis.li 2017/07/05 END
 
     public CustomModuleUserParamImageWithParam() {}
 
-    public CustomModuleUserParamImageWithParam(RuleExpression imageTemplate, List<RuleExpression> imageParams, RuleExpression useCmsBtImageTemplate, RuleExpression viewType) {
+    public CustomModuleUserParamImageWithParam(RuleExpression imageTemplate, List<RuleExpression> imageParams, RuleExpression useCmsBtImageTemplate, RuleExpression viewType, RuleExpression htmlTemplate) {
         this.imageTemplate = imageTemplate;
         this.imageParams = imageParams;
         this.useCmsBtImageTemplate = useCmsBtImageTemplate;
         this.viewType = viewType;
+        this.htmlTemplate = htmlTemplate;
     }
 
     public List<RuleExpression> getImageParams() {
@@ -59,5 +63,13 @@ public class CustomModuleUserParamImageWithParam extends CustomModuleUserParam {
 
     public void setViewType(RuleExpression viewType) {
         this.viewType = viewType;
+    }
+
+    public RuleExpression getHtmlTemplate() {
+        return htmlTemplate;
+    }
+
+    public void setHtmlTemplate(RuleExpression htmlTemplate) {
+        this.htmlTemplate = htmlTemplate;
     }
 }
