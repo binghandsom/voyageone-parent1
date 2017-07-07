@@ -102,8 +102,12 @@ public class UsaFeedInfoService extends BaseService {
         //封装查询条件
         Criteria criteria = new Criteria();
         //状态
-        if (searchValue.get("status") != null) {
-            criteria = criteria.and("status").is((String) searchValue.get("status"));
+        if (searchValue.get("status") != null && searchValue.get("status") != "") {
+            String status = (String) searchValue.get("status");
+            String[] split = status.split("_");
+            criteria = criteria.and("status").in(Arrays.asList(split));
+        }else{
+            criteria = criteria.and("status").in(Arrays.asList("new", "pending","ready"));
         }
         //设置开始和截止的时间
         if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null) {

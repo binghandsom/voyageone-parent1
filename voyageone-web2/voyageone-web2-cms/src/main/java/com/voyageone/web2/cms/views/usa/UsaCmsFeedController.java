@@ -13,9 +13,7 @@ import com.voyageone.web2.cms.bean.usa.FeedRequest;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +25,8 @@ import java.util.Map;
  * @Author rex.wu
  * @Create 2017-07-05 17:09
  */
-@Controller
+
+@RestController
 @RequestMapping(value = UsaCmsUrlConstants.FEED.ROOT)
 public class UsaCmsFeedController extends BaseController {
 
@@ -50,13 +49,12 @@ public class UsaCmsFeedController extends BaseController {
     @RequestMapping(value = UsaCmsUrlConstants.FEED.LIST)
     public AjaxResponse getFeedList(@RequestBody Map params) {
         Map<String, Object> resultBean = new HashMap<String, Object>();
-        UserSessionBean userInfo = getUser();
-        ChannelConfigEnums.Channel selChannel = userInfo.getSelChannel();
+        String selChannelId = getUser().getSelChannelId();
         //获取数据列表
-        List<CmsBtFeedInfoModel> feedList = usaFeedInfoService.getFeedList(params, selChannel.toString());
+        List<CmsBtFeedInfoModel> feedList = usaFeedInfoService.getFeedList(params, selChannelId);
         resultBean.put("feedList", feedList);
         //获取数据总量
-        Long feedListTotal = usaFeedInfoService.getFeedCount(params, selChannel.toString());
+        Long feedListTotal = usaFeedInfoService.getFeedCount(params, selChannelId);
         resultBean.put("feedListTotal", feedListTotal);
 
         // 返回feed信息
@@ -85,7 +83,7 @@ public class UsaCmsFeedController extends BaseController {
         if (msrpPrice != null){
             updateMap.put("approve",approve);
         }
-        WriteResult writeResult = usaFeedInfoService.upDateFeedInfo(getUser().getSelChannelId().toString(), queryMap, updateMap);
+        WriteResult writeResult = usaFeedInfoService.upDateFeedInfo(getUser().getSelChannelId(), queryMap, updateMap);
 
         return success(writeResult);
     }
