@@ -31,11 +31,11 @@ public class UsaFeedInfoServiceTest {
         map.put("pageNum",1);
         map.put("pageSize",10);
         map.put("name","Patagonia Down Sweater Vest (Kids)");
-     /*   map.put("searchContent","68220-gem-xl");
+        map.put("searchContent","68220-gem-xl");
         map.put("barcode","885657051304");
         map.put("lastReceivedOnStart","2014-09-21 00:55:49");
         map.put("lastReceivedOnEnd","2014-09-23 00:55:49");
-        map.put("sort","barcode_1");*/
+        map.put("sort","barcode_1");
         List<CmsBtFeedInfoModel> feedList = usaFeedInfoService.getFeedList(map,"001");
 
     }
