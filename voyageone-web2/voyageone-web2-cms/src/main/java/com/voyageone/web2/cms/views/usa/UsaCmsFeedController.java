@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * 美国CMS Feed相关Controller
@@ -27,6 +28,7 @@ public class UsaCmsFeedController extends BaseController {
     private UsaFeedInfoService usaFeedInfoService;
 
     @RequestMapping(value = UsaCmsUrlConstants.FEED.DETAIL)
+    @ResponseBody
     public AjaxResponse getFeedDetail(@RequestBody FeedRequest reqParams) {
         return success(feedInfoService.getProductByCode(getUser().getSelChannelId(), reqParams.getCode()));
     }

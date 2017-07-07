@@ -12,8 +12,8 @@ public class UsaCmsUrlConstants {
      * USA CMS Feed相关
      */
     interface FEED {
-        String ROOT = "/cms-usa/feed";
+        String ROOT = "/cms/us/feed";
 
-        String DETAIL = "detail";
+        String DETAIL = "/detail";
     }
 }

@@ -6,6 +6,7 @@ define([
 
         constructor(popups) {
             this.popups = popups;
+
         }
 
         popBatchApprove() {

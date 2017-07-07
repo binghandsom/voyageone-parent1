@@ -13,7 +13,7 @@ define(function () {
             controller: 'newItemController as ctrl'
         },
         itemDetail:{
-            hash: "/items/itemDetail",
+            hash: "/items/itemDetail/:code?",
             templateUrl: "views/items/itemDetail/index.tpl.html",
             controllerUrl: "modules/cms-us/views/items/itemDetail/index.ctl",
             controller: 'itemDetailController as ctrl'
