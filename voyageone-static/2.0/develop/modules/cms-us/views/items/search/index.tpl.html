@@ -5,6 +5,7 @@
                 <div class="panel-heading">
                         <h4 class="panel-title"><i class="fa fa-search"></i>&nbsp;Query Terms</h4>
                 </div>
+                {{ctrl.paraMap.pageSize}}@@@{{ctrl.paraMap.pageNum}}
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-6">
@@ -12,15 +13,15 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title">status</label>
-                                        <div class="col-md-6 checkbox">
+                                        <div class="col-md-6 checkbox" >
                                             <label>
-                                                <input type="checkbox">&nbsp;&nbsp;new
+                                                <input type="checkbox" ng-model="ctrl.status[0]">&nbsp;&nbsp;new
                                             </label>&emsp;
                                             <label>
-                                                <input type="checkbox">&nbsp;&nbsp;pending
+                                                <input type="checkbox" ng-model="ctrl.status[1]">&nbsp;&nbsp;pending
                                             </label>&emsp;
                                             <label>
-                                                <input type="checkbox">&nbsp;&nbsp;ready
+                                                <input type="checkbox" ng-model="ctrl.status[2]">&nbsp;&nbsp;ready
                                             </label>
                                         </div>
                                     </div>
@@ -28,7 +29,7 @@
                                 <div class="form-group">
                                     <label class="col-md-4 control-label query-title">sku/barcode/code/model</label>
                                     <div class="col-md-6">
-                                        <textarea class="form-control no-resize"></textarea>
+                                        <textarea class="form-control no-resize" ng-model="ctrl.paraMap.searchContent"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -43,8 +44,8 @@
                                                 <div class="col-md-5">
                                                     <p class="input-group">
                                                         <input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" date-model-format="yyyy-MM-dd"
-                                                               ng-model="dt1" is-open="dataPicker1" datepicker-options="dateOptions" max-date="dt2"
-                                                               ng-required="true" close-text="Close" alt-input-formats="altInputFormats" required="required">
+                                                                is-open="dataPicker1" datepicker-options="dateOptions" max-date="dt2"
+                                                               ng-required="true" close-text="Close" alt-input-formats="altInputFormats" required="required" ng-model="ctrl.paraMap.lastReceivedOnStart">
                                                         <span class="input-group-btn">
                                                             <button type="button" class="btn btn-default" ng-click="dataPicker1 = !dataPicker1"><i class="glyphicon glyphicon-calendar"></i></button>
                                                         </span>
@@ -54,8 +55,8 @@
                                                 <div class="col-md-5">
                                                     <p class="input-group">
                                                         <input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" date-model-format="yyyy-MM-dd"
-                                                               ng-model="dt2" is-open="dataPicker2" datepicker-options="dateOptions" min-date="dt1"
-                                                               ng-required="true" close-text="Close" required="required">
+                                                               is-open="dataPicker2" datepicker-options="dateOptions" min-date="dt1"
+                                                               ng-required="true" close-text="Close" required="required" ng-model="ctrl.paraMap.lastReceivedOnEnd">
                                                         <span class="input-group-btn">
                                                             <button type="button" class="btn btn-default" ng-click="dataPicker2 = !dataPicker2"><i class="glyphicon glyphicon-calendar"></i></button>
                                                         </span>
@@ -70,7 +71,7 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title">name</label>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control">
+                                            <input type="text" class="form-control" ng-model="ctrl.paraMap.name">
                                         </div>
                                     </div>
                                 </div>
@@ -79,10 +80,10 @@
                                         <label class="col-md-4 control-label query-title">Approve Pricing</label>
                                         <div class="col-md-6 checkbox">
                                             <label>
-                                                <input type="checkbox">&nbsp;&nbsp;yes
+                                                <input type="checkbox"  ng-model="ctrl.isApprove[0]">&nbsp;&nbsp;yes
                                             </label>&emsp;
                                             <label>
-                                                <input type="checkbox">&nbsp;&nbsp;no
+                                                <input type="checkbox"  ng-model="ctrl.isApprove[1]">&nbsp;&nbsp;no
                                             </label>&emsp;
                                         </div>
                                     </div>
@@ -92,8 +93,8 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4 col-md-offset-4 text-center">
-                            <button type="button" class="btn btn-default"><i class="fa fa-trash"></i>&nbsp;&nbsp;clear</button>&emsp;
-                            <button type="button" class="btn btn-vo"><i class="fa fa-search"></i>&nbsp;&nbsp;search</button>
+                            <button type="button" class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-trash" ></i>&nbsp;&nbsp;clear</button>&emsp;
+                            <button type="button" class="btn btn-vo" ng-click="ctrl.getList()"><i class="fa fa-search"></i>&nbsp;&nbsp;search</button>
                         </div>
                     </div>
                 </div>
@@ -134,7 +135,7 @@
                                 <th>Name</th>
                                 <th>Model</th>
                                 <th>Status</th>
-                                <th>Inventory</th>
+                                <th>Total Qty</th>
                                 <th>Approve price</th>
                                 <th>Msrp($)</th>
                                 <th>price($)</th>
@@ -144,27 +145,27 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr ng-repeat="feed in ctrl.feeds">
                                 <td>
                                     <input type="checkbox">
                                 </td>
                                 <td>
                                     <a href="javascript:void(0)">
-                                        <img alt="1280750-480." class="thumb-sm-search" src="http://image.voyageone.com.cn/is/image/sneakerhead/under-armour-storm-armour-fleece-twist-hoodie-1280750480.-1">
+                                        <img alt="1280750-480." class="thumb-sm-search" src="{{feed.image[0]}}">
                                     </a>
                                 </td>
                                 <td>
-                                    <a href="#/items/itemDetail" target="_blank">619705-064</a>
+                                    <a href="#/items/itemDetail?id={{feed._id}}" target="_blank">{{feed.code}}</a>
                                 </td>
-                                <td>Jordan Varsity Sweatpants</td>
-                                <td>619705</td>
-                                <td>Ready</td>
-                                <td>3</td>
-                                <td>No</td>
-                                <td>100</td>
-                                <td>100</td>
-                                <td>2017-02-16 15:24:15</td>
-                                <td>ann.huang</td>
+                                <td>{{feed.name}}</td>
+                                <td>{{feed.model}}</td>
+                                <td>{{feed.status}}</td>
+                                <td>{{feed.qty}}</td>
+                                <td>{{feed.isApprove}}</td>
+                                <td>{{feed.skus[0].priceMsrp}}</td>
+                                <td>{{feed.skus[0].priceNet}}</td>
+                                <td>{{feed.lastReceivedOn}}</td>
+                                <td>{{feed.modifier}}</td>
                                 <td class="text-center">
                                     <button type="button" class="btn btn-vo"><i class="fa fa-arrow-right"></i>&nbsp;Approve</button>
                                 </td>
