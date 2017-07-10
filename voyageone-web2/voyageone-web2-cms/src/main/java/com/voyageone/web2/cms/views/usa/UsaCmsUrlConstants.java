@@ -20,6 +20,8 @@ public class UsaCmsUrlConstants {
 
         String GET_TOP_MODEL = "getTopModel";
 
+        String SET_PRICE = "setPrice";
+
         String LIST = "list";
 
         String UPDATEONE = "updateOne";

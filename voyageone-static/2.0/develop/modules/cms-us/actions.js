@@ -85,6 +85,7 @@ define(function () {
                 detail:"detail",
                 update:"update",
                 getTopModel:"getTopModel",
+                setPrice:"setPrice",
                 list:"list"
             }
         }

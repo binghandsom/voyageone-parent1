@@ -3,12 +3,13 @@ define([
 ], function (cms) {
 
     cms.controller('feedDetailController', class FeedDetailController {
-        constructor(popups, $routeParams, itemDetailService, alert,$location,notify) {
+        constructor(popups, $routeParams, itemDetailService, alert,$location,notify,confirm) {
             this.popups = popups;
             this.itemDetailService = itemDetailService;
             this.alert = alert;
             this.$location = $location;
             this.notify = notify;
+            this.confirm = confirm;
 
             this.id = $routeParams.id;
             if (!this.id) {
@@ -104,9 +105,12 @@ define([
         setSkuProperty(sku,property) {
             let self = this;
             if (!sku) {
-                angular.forEach(self.feed.skus, function (sku) {
-                    sku[property] = self.setting[property];
+                angular.forEach(self.feed.skus, function (item) {
+                    item[property] = self.setting[property];
+                    item['priceClientRetail'] = item['priceNet'];
                 })
+            } else {
+                sku['priceClientRetail'] = sku['priceNet'];
             }
             self.setSkuCNPrice();
         }
@@ -114,26 +118,15 @@ define([
         setSkuCNPrice() {
             let self = this;
             let productType = self.feed.productType;
-            angular.forEach(self.feed.skus, function (sku) {
-                let priceClientMsrp = sku['priceClientMsrp'];
-                let priceNet = sku['priceNet'];
-                if (productType.toLowerCase() == "shoes") {
-                    // ->中国建议售价 (msrp + msrp * 0.2 + 11) * 6.4
-                    // ->中国指导售价 (price + msrp * 0.2 + 11) * 6.4
-                    sku['priceMsrp'] = (priceClientMsrp + priceClientMsrp*0.2 + 11)*6.4;
-                    sku['priceCurrent'] = (priceNet + priceClientMsrp*0.2 + 11)*6.4;
-                } else if (productType.toLowerCase() == "gear") {
-                    // ->中国建议售价 msrp * 11
-                    // ->中国指导售价 msrp * 8
-                    sku['priceMsrp'] = priceClientMsrp*11;
-                    sku['priceCurrent'] = priceClientMsrp*8;
-                } else {
-                    // ->中国建议售价 msrp * 11
-                    // ->中国指导售价 price * 11
-                    sku['priceMsrp'] = priceClientMsrp*11;
-                    sku['priceCurrent'] = priceNet*11;
+            self.itemDetailService.setPrice({feed:self.feed}).then((res) => {
+                if (res.data) {
+                    self.feed.skus = res.data.skus;
+                    // 将sku->weightOrg转换成float
+                    angular.forEach(self.feed.skus, function (sku) {
+                        sku.weightOrg = parseFloat(sku.weightOrg);
+                    });
                 }
-            })
+            });
         }
 
         // Save or Submit or Approve the Feed
@@ -142,12 +135,37 @@ define([
             let self = this;
 
             // 如果是Approve,approve price是否打钩。价格是否为0或者500，如果是0或者500警告用户再次确认
-            // if (self.feed.status === '') {
-            //
-            // }
+            if (self.feed.status === 'Ready') {
+                if (self.feed.approvePricing != '1') {
+                    self.alert("Please check 'Approve Pricing'.");
+                    return;
+                }
+                // Msrp or price O或500时Confirm
+                let checkSkus = _.filter(self.feed.skus, function (sku) {
+                    return sku.priceClientMsrp == 0 || sku.priceClientMsrp == 500 || sku.priceNet == 0 || sku.priceNet == 500;
+                });
+                if (!checkSkus || _.size(checkSkus) == 0) {
+                    self.popups.openBatchApprove({code:"123"});
+                    // self.saveFeed(flag);
+                } else {
+                    let skus = [];
+                    angular.forEach(checkSkus, function (sku) {
+                        skus.push(sku.sku);
+                    });
+                    let message = `SKU[${skus}] Msrp($) or price($) is 0 or 500, continue to Approve?`;
+                    self.confirm(message).then((confirmed) => {
+                        self.saveFeed(flag);
+                    }, () => {
 
+                    })
+                }
+            } else {
+                self.saveFeed(flag);
+            }
+        }
 
-
+        saveFeed(flag) {
+            let self = this;
             // 处理Abstract和accessory
             self.feed.attribute.abstract = [self.feed.abstract];
             self.feed.attribute.accessory = [self.feed.accessory];
@@ -243,22 +261,24 @@ define([
                 self.itemDetailService.getTopModel({code:self.feed.code,model:self.feed.model,top:top}).then((res) => {
                     if (res.data) {
                         self.topFeedList = res.data;
-                        console.log(_.size(self.topFeedList))
+                        console.log(self.topFeedList);
                     }
                 })
             }
         }
         // Copy其他code部分属性
         copyAttr(feed) {
-            console.log(feed);
+            let self = this;
             let attribute = {
                 brand:feed.brand,
                 productType:feed.productType,
                 sizeType:feed.sizeType,
                 material:feed.material,
-
+                origin:feed.origin,
+                usageEn:feed.usageEn
+                // TODO
             };
-
+            _.extend(self.feed, attribute);
         }
 
     });

@@ -64,16 +64,11 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String status;
 
     private String approvePricing;
+
     /**
-     * 中国各平台Approve信息
-     * <p>Add by rex.wu at 2017-07-06</p>
+     * 美国CMS2 Approve信息,KV分别是cartId 和 Days Old Before Sharing
      */
-    private CmsBtFeedInfoModel_Platform platforms;
-    /**
-     * 美国各平台Approve信息
-     * <p>Add by rex.wu at 2017-07-06</p>
-     */
-    private CmsBtFeedInfoModel_Platform usaPlatforms;
+    private Map<Integer, Integer> approveInfo;
     /**
      * 美国CMS2 Box-image
      */
@@ -442,28 +437,20 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         this.status = status;
     }
 
-    public CmsBtFeedInfoModel_Platform getPlatforms() {
-        return platforms;
-    }
-
-    public void setPlatforms(CmsBtFeedInfoModel_Platform platforms) {
-        this.platforms = platforms;
-    }
-
-    public CmsBtFeedInfoModel_Platform getUsaPlatforms() {
-        return usaPlatforms;
-    }
-
-    public void setUsaPlatforms(CmsBtFeedInfoModel_Platform usaPlatforms) {
-        this.usaPlatforms = usaPlatforms;
-    }
-
     public String getApprovePricing() {
         return approvePricing;
     }
 
     public void setApprovePricing(String approvePricing) {
         this.approvePricing = approvePricing;
+    }
+
+    public Map<Integer, Integer> getApproveInfo() {
+        return approveInfo;
+    }
+
+    public void setApproveInfo(Map<Integer, Integer> approveInfo) {
+        this.approveInfo = approveInfo;
     }
 
     public List<String> getBoxImage() {
