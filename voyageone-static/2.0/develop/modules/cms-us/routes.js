@@ -13,7 +13,7 @@ define(function () {
             controller: 'feedSearchController as ctrl'
         },
         itemDetail:{
-            hash: "/feed/detail/:code?",
+            hash: "/feed/detail/:id?",
             templateUrl: "views/feed/detail/index.tpl.html",
             controllerUrl: "modules/cms-us/views/feed/detail/index.ctl",
             controller: 'feedDetailController as ctrl'

@@ -44,7 +44,19 @@ define([
                 $localStorage.user.channel = channel.channelId;
                 $localStorage.user.channelName = channel.channelName;
                 // 之后跳转相应的应用
-                location.href = 'modules/cms-us/app.html#/home';
+
+                /**
+                 * 判断是中国CMS or 美国CMS
+                 */
+                $ajax.post('/cms/home/menu/getMenuHeaderInfo').then(function (res) {
+
+                    if(res.data.menuTree[0].resName === 'Base Items')
+                        location.href = 'modules/cms-us/app.html#/home';
+                    else
+                        location.href = 'modules/cms/app.html#/home';
+                });
+
+
             }, function (res) {
                 alert(res.message || res.code);
             })
