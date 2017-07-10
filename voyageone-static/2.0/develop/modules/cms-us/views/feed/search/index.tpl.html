@@ -127,7 +127,7 @@
                         <thead>
                             <tr>
                                 <th>
-                                    <input type="checkbox">
+                                    <input type="checkbox" ng-model="ctrl.isAll" ng-change="ctrl.selectAll()">
                                 </th>
                                 <th>IMG</th>
                                 <th>Code</th>
@@ -146,7 +146,7 @@
                         <tbody>
                             <tr ng-repeat="feed in ctrl.feeds">
                                 <td>
-                                    <input type="checkbox">
+                                    <input type="checkbox" ng-model="feed.check">
                                 </td>
                                 <td>
                                     <a href="javascript:void(0)">
@@ -161,8 +161,12 @@
                                 <td>{{feed.status}}</td>
                                 <td>{{feed.qty}}</td>
                                 <td>{{feed.isApprove}}</td>
-                                <td>{{feed.skus[0].priceMsrp}}</td>
-                                <td>{{feed.skus[0].priceNet}}</td>
+                                <td>
+                                    {{feed.skus[0].priceMsrp}}
+                                </td>
+                                <td>
+                                    {{feed.skus[0].priceNet}}
+                                </td>
                                 <td>{{feed.lastReceivedOn}}</td>
                                 <td>{{feed.modifier}}</td>
                                 <td class="text-center">
