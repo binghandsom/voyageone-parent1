@@ -40,6 +40,8 @@ define([
                 self.status[2] = true;
             }
 
+
+
         }
 
         getList() {
@@ -82,22 +84,31 @@ define([
                         feed.priceMsrps = [arr1[0],arr1[arr1.length-1]];
                         feed.priceNets = [arr2[0],arr2[arr2.length-1]];
 
+
                     })
                 }
 
             });
 
         }
-
-        updateOne(code,key,value) {
+        updateOne(feed,key,value) {
             let self = this;
             let requestMap = {};
-
-            if(!feed.editMsrp){
-                self.itemDetailService.updateOne().then(resp => {
-
+            requestMap.code = feed.code;
+            requestMap[key] = value;
+            //requestMap.value = value;
+                self.itemDetailService.updateOne(requestMap).then(resp => {
+                    feed.editMsrp = false;
+                    feed.editRetai = false;
                 });
-            }
+        }
+
+        //Approve操作
+        popBatchApprove() {
+            let self = this;
+            self.itemDetailService.approve().then(resp => {
+
+            });
         }
 
         clear() {
@@ -105,7 +116,6 @@ define([
                 columnArrow = self.columnArrow;
 
             self.paraMap = {};
-            let self = this;
             self.paraMap = {
                 status:"",
                 approvePricing:null

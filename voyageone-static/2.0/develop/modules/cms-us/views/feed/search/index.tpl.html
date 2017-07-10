@@ -5,7 +5,6 @@
                 <div class="panel-heading">
                         <h4 class="panel-title"><i class="fa fa-search"></i>&nbsp;Query Terms</h4>
                 </div>
-                {{ctrl.feeds}}
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-6">
@@ -132,36 +131,16 @@
                                 </th>
                                 <th>IMG</th>
                                 <th>Code</th>
-                                <th style="min-width: 100px;">Name</th>
+                                <th>Name</th>
                                 <th>Model</th>
                                 <th>Status</th>
-                                <th style="min-width: 100px;">
-                                    Total Qty
-                                    <button class="opacityBtn"
-                                            ng-if="ctrl.feeds.length"
-                                            ng-click="ctrl.columnOrder('quantity')"><i class="fa fa-{{ctrl.getArrowName('qty')}}"></i></button>
-                                </th>
-                                <th style="min-width: 100px;" ng-hide="ctrl.flag == 1">Approve price</th>
-                                <th style="min-width: 100px;" ng-hide="ctrl.flag == 1">
-                                    Msrp($)
-                                    <button class="opacityBtn"
-                                            ng-if="ctrl.feeds.length"
-                                            ng-click="ctrl.columnOrder('quantity')"><i class="fa fa-{{ctrl.getArrowName('priceMsrp')}}"></i></button>
-                                </th>
-                                <th style="min-width: 100px;" ng-hide="ctrl.flag == 1">
-                                    price($)
-                                    <button class="opacityBtn"
-                                            ng-if="ctrl.feeds.length"
-                                            ng-click="ctrl.columnOrder('quantity')"><i class="fa fa-{{ctrl.getArrowName('priceNet')}}"></i></button>
-                                </th>
-                                <th style="min-width: 120px;">
-                                    Last Received
-                                    <button class="opacityBtn"
-                                            ng-if="ctrl.feeds.length"
-                                            ng-click="ctrl.columnOrder('quantity')"><i class="fa fa-{{ctrl.getArrowName('lastReceivedOn')}}"></i></button>
-                                </th>
+                                <th>Total Qty</th>
+                                <th ng-hide="ctrl.flag == 1">Approve price</th>
+                                <th ng-hide="ctrl.flag == 1">Msrp($)</th>
+                                <th ng-hide="ctrl.flag == 1">price($)</th>
+                                <th>Last Received</th>
                                 <th>Modifier</th>
-                                <th class="text-center">Action</th>
+                                <th class="text-center" ng-show="ctrl.flag == 3">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -188,7 +167,7 @@
                                     <div class="input-group">
                                         <span class="input-group-addon cur-p"
                                               ng-click="feed.editMsrp = !feed.editMsrp"><i class="fa fa-pencil"></i></span>
-                                        <input type="text" class="form-control" ng-blur="ctrl.updateOne(feed.code,'priceClientMsrp',feed.priceClientMsrpMin)"
+                                        <input type="text" class="form-control" ng-change="feed.priceClientMsrpMax = feed.priceClientMsrpMin" ng-blur="ctrl.updateOne(feed,'priceClientMsrp',feed.priceClientMsrpMin)"
                                                ng-model="feed.priceClientMsrpMin" ng-disabled="!feed.editMsrp">
                                     </div>
                                 </td>
@@ -197,8 +176,9 @@
                                 </td>
                                 <td ng-if="feed.priceClientRetailMin == feed.priceClientRetailMax" ng-hide="ctrl.flag == 1">
                                     <div class="input-group">
-                                        <span class="input-group-addon cur-p" ng-blur="ctrl.updateOne(feed.code,'priceClientMsrp',feed.priceClientMsrpMin)"><i class="fa fa-pencil"></i></span>
-                                        <input type="text" class="form-control" ng-model="feed.priceClientRetailMin" ng-disabled="!feed.editPrice">
+                                        <span class="input-group-addon cur-p" ng-click="feed.editRetai = !feed.editRetai"><i class="fa fa-pencil"></i></span>
+                                        <input type="text" class="form-control" ng-model="feed.priceClientRetailMin" ng-disabled="!feed.editRetai" ng-blur="ctrl.updateOne(feed,'price',feed.priceClientRetailMin)"
+                                               ng-change="feed.priceClientRetailMax = feed.priceClientRetailMin">
                                     </div>
                                 </td>
                                 <td ng-if="feed.priceClientRetailMin != feed.priceClientRetailMax" ng-hide="ctrl.flag == 1">
@@ -212,7 +192,6 @@
                             </tr>
                         </tbody>
                     </table>
-
                     <!--</div>-->
                     <div class="col-sm-12 m-t-lg m-b-lg">
                         <vpagination config="ctrl.paging"></vpagination>

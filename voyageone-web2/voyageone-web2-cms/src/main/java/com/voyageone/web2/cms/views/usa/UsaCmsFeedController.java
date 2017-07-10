@@ -2,23 +2,17 @@ package com.voyageone.web2.cms.views.usa;
 
 import com.mongodb.WriteResult;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.usa.UsaFeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.usa.FeedRequest;
 
 import com.voyageone.web2.core.bean.UserSessionBean;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -114,24 +108,37 @@ public class UsaCmsFeedController extends BaseController {
     @RequestMapping(value = UsaCmsUrlConstants.FEED.UPDATEONE)
     public AjaxResponse upDateOne(@RequestBody Map params) {
         WriteResult writeResult = null;
+        Double msrpPrice = null;
+        Double price = null;
         if (params != null){
             HashMap<String, Object> queryMap = new HashMap<>();
             String code = (String) params.get("code");
             if (code != null){
                 queryMap.put("code",code);
             }
-            Double msrpPrice = (Double) params.get("msrpPrice");
-            Double price = (Double) params.get("price");
+            //这里有类型转换异常
+            String priceClientMsrp = (String) params.get("priceClientMsrp");
+            if (priceClientMsrp != null){
+                msrpPrice =Double.parseDouble(priceClientMsrp);
+            }
+
+            String price1 = (String) params.get("price");
+            if (price1 != null){
+                 price =Double.parseDouble(price1);
+            }
+
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(getUser().getSelChannelId(), code);
             if(cmsBtFeedInfoModel != null){
+                final Double finalMsrpPrice = msrpPrice;
+                final Double finalPrice = price;
                 cmsBtFeedInfoModel.getSkus().forEach(sku->{
-                    if(msrpPrice != null){
-                        sku.setPriceClientMsrp(msrpPrice);
+                    if(finalMsrpPrice != null){
+                        sku.setPriceClientMsrp(finalMsrpPrice);
                     }
-                    if(price != null){
-                        sku.setPriceClientRetail(price);
-                        sku.setPriceNet(price);
+                    if(finalPrice != null){
+                        sku.setPriceClientRetail(finalPrice);
+                        sku.setPriceNet(finalPrice);
                     }
                 });
             }

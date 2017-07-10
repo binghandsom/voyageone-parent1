@@ -85,9 +85,10 @@ define(function () {
                 detail:"detail",
                 update:"update",
                 getTopModel:"getTopModel",
-                updateOne:"updateOne"
+                updateOne:"updateOne",
                 setPrice:"setPrice",
-                list:"list"
+                list:"list",
+                approve:"approve"
             }
         }
     };
