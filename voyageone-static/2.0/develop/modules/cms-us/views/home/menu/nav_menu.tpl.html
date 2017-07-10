@@ -1,30 +1,3 @@
-<!--
-<ul class="nav">
-    <li class="active">
-        <a class="auto">
-            <span class="pull-right text-muted">
-                <i class="fa fa-fw fa-angle-right text"></i>
-                <i class="fa fa-fw fa-angle-down text-active"></i>
-            </span>
-            <i class="glyphicon glyphicon-star icon text-vo"></i>
-            <span>Base Items</span>
-        </a>
-        <ul class="nav nav-sub dk">
-
-            <li ui-sref-active="active">
-                <a href="#/search">
-                    <i class="glyphicon glyphicon-minus icon text-vo"></i>
-                    <span>New Items</span>
-                </a>
-            </li>
-
-        </ul>
-    </li>
-
-</ul>
--->
-
-
 <!--加载菜单-->
 <ul class="nav" ng-if="$root.menuTree"  ng-include="'menuChild'" ng-init="children=$root.menuTree"></ul>
 
@@ -45,7 +18,7 @@
             </div>
 
             <div ng-switch-default>
-                <a  ng-if="!$root.isParentMenu(item)" href="{{item.resUrl}}">
+                <a  ng-if="!$root.isParentMenu(item)" href="javascript:void(0)" ng-click="linkPage(item)">
                     <i class="{{item.icon}}"></i>
                     <span >{{item.resName}}</span>
                 </a>

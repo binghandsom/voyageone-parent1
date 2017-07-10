@@ -8,7 +8,7 @@ define([
     'modules/cms-us/translate/zh',
     'modules/cms-us/controller/repeatFilter.ctl',
     'modules/cms-us/controller/popup.ctl'
-], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate,repeatFilter) {
+], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate, repeatFilter) {
 
     var mainApp = angular.module('voyageone.cms', [
         'com.voyageone.popups',
@@ -93,7 +93,7 @@ define([
         .controller('asideCtrl', asideCtrl)
 
         //定义一些常用filter
-        .controller('repeatFilter',repeatFilter);
+        .controller('repeatFilter', repeatFilter);
 
     function appCtrl($scope, $window, translateService) {
 
@@ -182,18 +182,18 @@ define([
         function getMenuHeaderInfo() {
             var defer = $q.defer();
             $menuService.getMenuHeaderInfo().then(function (response) {
-                        var data = response.data;
-                        window.userlanguage = data.userInfo.language;
-                        // 设置画面用户显示的语言
-                        _.forEach(data.languageList, function (language) {
+                var data = response.data;
+                window.userlanguage = data.userInfo.language;
+                // 设置画面用户显示的语言
+                _.forEach(data.languageList, function (language) {
 
-                            if (_.isEqual(userlanguage, language.name)) {
-                                data.userInfo.language = language.add_name1;
-                                translateService.setLanguage(language.add_name2);
-                            }
-                        });
-                        //data.userInfo.application = cookieService.application();  服务端已经返回
-                        defer.resolve(data);
+                    if (_.isEqual(userlanguage, language.name)) {
+                        data.userInfo.language = language.add_name1;
+                        translateService.setLanguage(language.add_name2);
+                    }
+                });
+
+                defer.resolve(data);
             });
 
             return defer.promise;
@@ -312,14 +312,18 @@ define([
                 vm.languageList = data.languageList;
                 vm.userInfo = data.userInfo;
                 $rootScope.menuTree = data.menuTree;
-                $rootScope.feedCategoryTreeList=data.feedCategoryTreeList;
+                $rootScope.feedCategoryTreeList = data.feedCategoryTreeList;
                 $rootScope.application = data.userInfo.application;
                 $rootScope.isTranslator = data.isTranslator;
+
+                $rootScope.auth = setAuth(data.menuTree);
+
+                console.log(setAuth(data.menuTree));
             });
         }
 
-        $rootScope.isParentMenu=function(item) {
-            return item.children&& item.children.length > 0;
+        $rootScope.isParentMenu = function (item) {
+            return item.children && item.children.length > 0;
         };
 
         /**
@@ -359,9 +363,6 @@ define([
          */
         function goSearchPage(value) {
             if (value) {
-                //searchInfoFactory.catId(null);
-                //searchInfoFactory.codeList(value);
-                //searchInfoFactory.platformCart(23);
                 vm.searchValue = "";
                 $location.path(cRoutes.search_advance_param.url + "2/" + encodeURIComponent(value) + '/0/0');
             }
@@ -374,6 +375,18 @@ define([
             menuService.logout().then(function () {
                 $window.location = cCommonRoutes.login.url;
             })
+        }
+
+        function setAuth(menus) {
+            let authArr = _.find(menus, item => {
+                return item.resName === 'Base Items';
+            });
+
+            _.each(authArr.children, (item, index) => {
+                item.selfAuth = index + 1
+            });
+
+            return {auth: authArr.children.length};
         }
     }
 
@@ -413,7 +426,8 @@ define([
         $scope.initialize = initialize;
         $scope.selectPlatformType = selectPlatformType;
         $scope.goSearchPage = goSearchPage;
-        $scope.goAdvanceSearchByFeedCat=goAdvanceSearchByFeedCat;
+        $scope.linkPage = linkPage;
+        $scope.goAdvanceSearchByFeedCat = goAdvanceSearchByFeedCat;
 
         function initialize() {
             menuService.getPlatformType().then(function (data) {
@@ -431,7 +445,7 @@ define([
          * @param cType
          */
         function selectPlatformType(cType) {
-            $scope.menuInfo.categoryTreeList=[];
+            $scope.menuInfo.categoryTreeList = [];
             menuService.setPlatformType(cType).then(function (data) {
                 $rootScope.platformType = {cTypeId: cType.add_name2, cartId: cType.value};
                 $scope.menuInfo.categoryTreeList = data.categoryTreeList;
@@ -439,9 +453,10 @@ define([
             });
         }
 
-        function goAdvanceSearchByFeedCat(catPath,catId) {
-            $location.path(cRoutes.search_advance_param.url + "10001/" + catPath + "/"+ catId);
+        function goAdvanceSearchByFeedCat(catPath, catId) {
+            $location.path(cRoutes.search_advance_param.url + "10001/" + catPath + "/" + catId);
         }
+
         /**
          * 跳转到search页面
          * @param catId:类目名称   影射到高级检索或者feed检索的select默认选中
@@ -469,6 +484,12 @@ define([
                     $location.path(cRoutes.search_advance_param.url + "3/" + $rootScope.platformType.cartId + "/" + catId + "/" + encodeCatPath);
                     break;
             }
+        }
+
+        function linkPage(menu) {
+            $rootScope.auth.selfAuth = menu.selfAuth;
+
+            location.href = menu.resUrl;
         }
     }
 
