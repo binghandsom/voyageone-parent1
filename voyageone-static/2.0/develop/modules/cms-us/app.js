@@ -317,8 +317,6 @@ define([
                 $rootScope.isTranslator = data.isTranslator;
 
                 $rootScope.auth = setAuth(data.menuTree);
-
-                console.log(setAuth(data.menuTree));
             });
         }
 
@@ -489,7 +487,9 @@ define([
         function linkPage(menu) {
             $rootScope.auth.selfAuth = menu.selfAuth;
 
-            location.href = menu.resUrl;
+            let timeStamp = new Date().getTime();
+
+            location.href = `${menu.resUrl}?time=${timeStamp}`;
         }
     }
 

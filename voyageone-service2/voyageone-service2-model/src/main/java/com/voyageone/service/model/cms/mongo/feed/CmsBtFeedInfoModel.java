@@ -57,6 +57,12 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String mpn = "";
     private String catConf = "";
 
+    private Double priceClientRetailMin;
+    private Double priceClientMsrpMin;
+
+    private Double priceClientRetailMax;
+    private Double priceClientMsrpMax;
+
     /**
      * 美国CMS2新增状态.@see CmsConstants.UsaFeedStatus
      * <p>Add by rex.wu at 2017-07-06</p>
@@ -459,5 +465,37 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setBoxImage(List<String> boxImage) {
         this.boxImage = boxImage;
+    }
+
+    public Double getPriceClientRetailMin() {
+        return priceClientRetailMin;
+    }
+
+    public void setPriceClientRetailMin(Double priceClientRetailMin) {
+        this.priceClientRetailMin = priceClientRetailMin;
+    }
+
+    public Double getPriceClientMsrpMin() {
+        return priceClientMsrpMin;
+    }
+
+    public void setPriceClientMsrpMin(Double priceClientMsrpMin) {
+        this.priceClientMsrpMin = priceClientMsrpMin;
+    }
+
+    public Double getPriceClientRetailMax() {
+        return priceClientRetailMax;
+    }
+
+    public void setPriceClientRetailMax(Double priceClientRetailMax) {
+        this.priceClientRetailMax = priceClientRetailMax;
+    }
+
+    public Double getPriceClientMsrpMax() {
+        return priceClientMsrpMax;
+    }
+
+    public void setPriceClientMsrpMax(Double priceClientMsrpMax) {
+        this.priceClientMsrpMax = priceClientMsrpMax;
     }
 }
