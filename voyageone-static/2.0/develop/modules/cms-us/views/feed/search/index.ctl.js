@@ -2,23 +2,27 @@ define([
     'cms'
 ], function (cms) {
 
-    cms.controller('newItemController', class newItemController {
+    cms.controller('feedSearchController', class FeedSearchController {
 
-        constructor(popups, itemDetailService) {
+        constructor($rootScope, popups, itemDetailService) {
             let self = this;
 
+            self.$rootScope = $rootScope;
+            console.log('auth',self.$rootScope.auth);
             self.popups = popups;
             self.feedListTotal = 0;
             self.paraMap = {
-                status:"",
-                isApprove:null
+                status: "",
+                isApprove: null
             };
             self.status = [false, false, false];
             self.isApprove = [false, false];
             self.itemDetailService = itemDetailService;
-            self.paging = {curr: 1, total: 0,fetch:function(){
-                self.getList();
-            }};
+            self.paging = {
+                curr: 1, total: 0, fetch: function () {
+                    self.getList();
+                }
+            };
 
         }
 
@@ -41,7 +45,7 @@ define([
                 self.paraMap.isApprove = "No";
             }
 
-            self.itemDetailService.list(_.extend(self.paraMap,self.paging)).then(resp => {
+            self.itemDetailService.list(_.extend(self.paraMap, self.paging)).then(resp => {
                 self.feeds = resp.data.feedList;
                 self.feedListTotal = resp.data.feedListTotal;
                 self.paging.total = resp.data.feedListTotal;
