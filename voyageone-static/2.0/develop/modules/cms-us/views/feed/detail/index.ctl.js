@@ -248,6 +248,18 @@ define([
                 })
             }
         }
+        // Copy其他code部分属性
+        copyAttr(feed) {
+            console.log(feed);
+            let attribute = {
+                brand:feed.brand,
+                productType:feed.productType,
+                sizeType:feed.sizeType,
+                material:feed.material,
+
+            };
+
+        }
 
     });
 
