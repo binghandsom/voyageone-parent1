@@ -154,6 +154,7 @@ define([
                 });
                 if (!checkSkus || _.size(checkSkus) == 0) {
                     let ctx = {
+
                         codeList:[self.feed.code]
                     };
                     self.popups.openBatchApprove(ctx);
