@@ -2,7 +2,7 @@ define([
     'cms'
 ], function (cms) {
 
-    cms.controller('itemDetailController', class itemDetailController {
+    cms.controller('feedDetailController', class FeedDetailController {
         constructor(popups, $routeParams, itemDetailService, alert,$location,notify) {
             this.popups = popups;
             this.itemDetailService = itemDetailService;
