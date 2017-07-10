@@ -73,11 +73,18 @@ public class UsaFeedInfoService extends BaseService {
         }
         String formulaRetail =  retailConfig.getConfigValue1();
 
-
-        cmsBtFeedInfoModel.getSkus().forEach(sku->{
+        Double priceClientRetailMin = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientRetail();
+        Double priceClientMsrpMin = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientMsrp();
+        Double priceClientRetailMax = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientRetail();
+        Double priceClientMsrpMax = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientMsrp();;
+        for(CmsBtFeedInfoModel_Sku sku : cmsBtFeedInfoModel.getSkus()){
             sku.setPriceMsrp(calculatePrice(formulaMsrp, sku));
             sku.setPriceCurrent(calculatePrice(formulaRetail, sku));
-        });
+            priceClientRetailMin = Double.min(priceClientRetailMin, sku.getPriceClientRetail());
+            priceClientRetailMax = Double.max(priceClientRetailMax, sku.getPriceClientRetail());
+            priceClientMsrpMin = Double.min(priceClientMsrpMin, sku.getPriceClientMsrp());
+            priceClientMsrpMax = Double.max(priceClientMsrpMax, sku.getPriceClientMsrp());
+        }
 
         return cmsBtFeedInfoModel;
     }
@@ -402,6 +409,10 @@ public class UsaFeedInfoService extends BaseService {
     public boolean isUrlKeyDuplicated(String channelId, String code, String urlKey) {
         String query = "{\"channelId\":#,\"code\":{$ne:#},\"attribute.urlkey\":#}";
         return cmsBtFeedInfoDao.countByQuery(query, new Object[]{channelId, code, urlKey}, channelId) > 0;
+    }
+
+    public void saveFeedApproveInfo(String channelId, String code, Map<Integer, Integer> approveInfo) {
+
     }
 
     public static void main(String[] args) {

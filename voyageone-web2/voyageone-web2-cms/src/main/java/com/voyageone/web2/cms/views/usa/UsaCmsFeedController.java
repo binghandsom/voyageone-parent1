@@ -77,6 +77,11 @@ public class UsaCmsFeedController extends BaseController {
         return success(usaFeedInfoService.getTopFeedByModel(getUser().getSelChannelId(), reqParams.getCode(), reqParams.getModel(), reqParams.getTop()));
     }
 
+    @RequestMapping(value = UsaCmsUrlConstants.FEED.SET_PRICE)
+    public AjaxResponse setPrice(@RequestBody FeedRequest reqParams) {
+        return success(usaFeedInfoService.setPrice(reqParams.getFeed()));
+    }
+
     /**
      * 更新Feed信息: Save 或 Submit至下一步 或 Approve
      *
