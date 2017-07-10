@@ -304,11 +304,4 @@ public class CmsConstants {
         Approved
     }
 
-    /**
-     * 国家标识
-     */
-    public enum Country {
-        USA,
-        CN
-    }
 }

@@ -12,12 +12,13 @@ public class FeedRequest {
 
     private String id;
     private String code;
+    private int top;
+    private String model;
 
     // MongoDB中的FeedModel
     private CmsBtFeedInfoModel feed;
     // Save or Submit or Approve 操作标识
     private Integer flag;
-
 
     public String getId() {
         return id;
@@ -33,6 +34,22 @@ public class FeedRequest {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public int getTop() {
+        return top;
+    }
+
+    public void setTop(int top) {
+        this.top = top;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
     }
 
     public CmsBtFeedInfoModel getFeed() {

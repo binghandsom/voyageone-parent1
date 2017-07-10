@@ -234,6 +234,16 @@ define([
             self.feed.boxImage.splice(index, 1);
         }
 
+        //
+        getTopModel(top) {
+            let self = this;
+            if (self.feed.model) {
+                self.itemDetailService.getTopModel({code:self.feed.code,model:self.feed.model,top:top}).then((res) => {
+                    console.log(res.data);
+                })
+            }
+        }
+
     });
 
 });
