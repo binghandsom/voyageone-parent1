@@ -73,7 +73,7 @@ define([
 
         popBatchApprove() {
             let self = this,
-                codeList = [];
+                codeList;
 
             codeList = _.chain(self.feeds).filter(item => {
                 return item.check;
