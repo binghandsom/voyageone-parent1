@@ -489,7 +489,9 @@ define([
         function linkPage(menu) {
             $rootScope.auth.selfAuth = menu.selfAuth;
 
-            location.href = menu.resUrl;
+            let timeStamp = new Date().getTime();
+
+            location.href = `${menu.resUrl}?time=${timeStamp}`;
         }
     }
 

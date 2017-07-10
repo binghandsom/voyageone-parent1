@@ -127,7 +127,7 @@
                         <thead>
                             <tr>
                                 <th>
-                                    <input type="checkbox">
+                                    <input type="checkbox" ng-model="ctrl.isAll" ng-change="ctrl.selectAll()">
                                 </th>
                                 <th>IMG</th>
                                 <th>Code</th>
@@ -146,7 +146,7 @@
                         <tbody>
                             <tr ng-repeat="feed in ctrl.feeds">
                                 <td>
-                                    <input type="checkbox">
+                                    <input type="checkbox" ng-model="feed.check">
                                 </td>
                                 <td>
                                     <a href="javascript:void(0)">
@@ -163,10 +163,24 @@
                                 <td ng-if="feed.approvePricing == '1'" ng-hide="ctrl.flag == 1">Yes</td>
                                 <td ng-if="feed.approvePricing == '0'" ng-hide="ctrl.flag == 1">No</td>
                                 <td ng-if="feed.approvePricing == null" ng-hide="ctrl.flag == 1"></td>
-                                <td ng-if="feed.priceMsrps[0] == feed.priceMsrps[1]" ng-hide="ctrl.flag == 1">{{feed.priceMsrps[0]}}</td>
-                                <td ng-if="feed.priceMsrps[0] != feed.priceMsrps[1]" ng-hide="ctrl.flag == 1">{{feed.priceMsrps[0]}}~{{feed.priceMsrps[1]}}</td>
-                                <td ng-if="feed.priceNets[0] == feed.priceNets[1]" ng-hide="ctrl.flag == 1">{{feed.priceNets[0]}}</td>
-                                <td ng-if="feed.priceNets[0] != feed.priceNets[1]" ng-hide="ctrl.flag == 1">{{feed.priceNets[0]}}~{{feed.priceNets[1]}}</td>
+                                <td ng-if="feed.priceMsrps[0] == feed.priceMsrps[1]" ng-hide="ctrl.flag == 1">
+                                    <div class="input-group">
+                                        <span class="input-group-addon cur-p" ng-click="feed.editMsrp = !feed.editMsrp"><i class="fa fa-pencil"></i></span>
+                                        <input type="text" class="form-control" ng-model="feed.skus[0].priceMsrp" ng-disabled="!feed.editMsrp">
+                                    </div>
+                                </td>
+                                <td ng-if="feed.priceMsrps[0] != feed.priceMsrps[1]" ng-hide="ctrl.flag == 1">
+                                    {{feed.priceMsrps[0]}}~{{feed.priceMsrps[1]}}
+                                </td>
+                                <td ng-if="feed.priceNets[0] == feed.priceNets[1]" ng-hide="ctrl.flag == 1">
+                                    <div class="input-group">
+                                        <span class="input-group-addon cur-p" ng-click="feed.editPrice = !feed.editPrice"><i class="fa fa-pencil"></i></span>
+                                        <input type="text" class="form-control" ng-model="feed.skus[0].priceNet" ng-disabled="!feed.editPrice">
+                                    </div>
+                                </td>
+                                <td ng-if="feed.priceNets[0] != feed.priceNets[1]" ng-hide="ctrl.flag == 1">
+                                    {{feed.priceNets[0]}}~{{feed.priceNets[1]}}
+                                </td>
                                 <td>{{feed.lastReceivedOn}}</td>
                                 <td>{{feed.modifier}}</td>
                                 <td class="text-center"  ng-show="ctrl.flag == 3">

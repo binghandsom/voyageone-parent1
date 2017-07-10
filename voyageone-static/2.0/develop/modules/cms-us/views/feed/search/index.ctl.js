@@ -8,7 +8,7 @@ define([
             let self = this;
 
             self.$rootScope = $rootScope;
-            console.log('auth',self.$rootScope.auth);
+            console.log('auth', self.$rootScope.auth);
             self.popups = popups;
             self.feedListTotal = 0;
             self.paraMap = {
@@ -101,6 +101,14 @@ define([
             let self = this;
 
             self.popups.openBatchApprove();
+        }
+
+        selectAll() {
+            let self = this;
+
+            _.each(self.feeds,feed => {
+                feed.check = self.isAll;
+            });
         }
 
     });
