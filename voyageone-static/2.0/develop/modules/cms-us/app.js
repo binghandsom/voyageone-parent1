@@ -317,8 +317,6 @@ define([
                 $rootScope.isTranslator = data.isTranslator;
 
                 $rootScope.auth = setAuth(data.menuTree);
-
-                console.log(setAuth(data.menuTree));
             });
         }
 
