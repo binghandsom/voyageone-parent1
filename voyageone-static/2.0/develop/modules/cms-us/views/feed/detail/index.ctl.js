@@ -33,6 +33,8 @@ define([
 
                 weightOrgUnits:['kg','lb']
             };
+            this.topFeedList = []; // 同Model查询结果
+            this.imageUrl = "http://image.sneakerhead.com/is/image/sneakerhead/";
             this.init();
         }
 
@@ -185,7 +187,7 @@ define([
                 let add = num - count;
                 if (add > 0) {
                     for (let i=1; i<=add; i++) {
-                        self.feed.image.push("http://image.sneakerhead.com/is/image/sneakerhead/" + urlKey + "-" + (count + i));
+                        self.feed.image.push(self.imageUrl + urlKey + "-" + (count + i));
                     }
                 } else {
                     self.feed.image.splice(add);
@@ -215,7 +217,7 @@ define([
                 let add = num - count;
                 if (add > 0) {
                     for (let i=1; i<=add; i++) {
-                        self.feed.boxImage.push("http://image.sneakerhead.com/is/image/sneakerhead/" + urlKey + "-2-" + (count + i));
+                        self.feed.boxImage.push(self.imageUrl + urlKey + "-2-" + (count + i));
                     }
                 } else {
                     self.feed.boxImage.splice(add);
@@ -234,12 +236,15 @@ define([
             self.feed.boxImage.splice(index, 1);
         }
 
-        //
+        // 同Model
         getTopModel(top) {
             let self = this;
             if (self.feed.model) {
                 self.itemDetailService.getTopModel({code:self.feed.code,model:self.feed.model,top:top}).then((res) => {
-                    console.log(res.data);
+                    if (res.data) {
+                        self.topFeedList = res.data;
+                        console.log(_.size(self.topFeedList))
+                    }
                 })
             }
         }

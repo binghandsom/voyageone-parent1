@@ -29,33 +29,12 @@
                                 </div>
 
                             </div>
-
-                            <div class="form-group" ng-if="ctrl.dispalyModals">
+                            <div class="form-group">
                                 <div class="row">
                                     <div class="col-md-8 col-md-offset-4">
-                                        <div class="col-xs-6 col-md-2">
+                                        <div class="col-xs-6 col-md-2" ng-repeat="item in ctrl.topFeedList">
                                             <a href="#" class="thumbnail">
-                                                <img alt="1280750-480." class="thumb-sm-search" src="http://image.sneakerhead.com/is/image/sneakerhead/patagonia-down-sweater-vest-kids-68220gem-1">
-                                            </a>
-                                        </div>
-                                        <div class="col-xs-6 col-md-2">
-                                            <a href="#" class="thumbnail">
-                                                <img alt="1280750-480." class="thumb-sm-search" src="http://image.sneakerhead.com/is/image/sneakerhead/patagonia-down-sweater-vest-kids-68220gem-1">
-                                            </a>
-                                        </div>
-                                        <div class="col-xs-6 col-md-2">
-                                            <a href="#" class="thumbnail">
-                                                <img alt="1280750-480." class="thumb-sm-search" src="http://image.sneakerhead.com/is/image/sneakerhead/patagonia-down-sweater-vest-kids-68220gem-1">
-                                            </a>
-                                        </div>
-                                        <div class="col-xs-6 col-md-2">
-                                            <a href="#" class="thumbnail">
-                                                <img alt="1280750-480." class="thumb-sm-search" src="http://image.sneakerhead.com/is/image/sneakerhead/patagonia-down-sweater-vest-kids-68220gem-1">
-                                            </a>
-                                        </div>
-                                        <div class="col-xs-6 col-md-2">
-                                            <a href="#" class="thumbnail">
-                                                <img alt="1280750-480." class="thumb-sm-search" src="http://image.sneakerhead.com/is/image/sneakerhead/patagonia-down-sweater-vest-kids-68220gem-1">
+                                                <img alt="{{ctrl.feed.code}}" class="thumb-sm-search" src="{{ctrl.feed.image[0]}}">
                                             </a>
                                         </div>
                                     </div>

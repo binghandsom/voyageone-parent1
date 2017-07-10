@@ -180,11 +180,11 @@ public class UsaFeedInfoService extends BaseService {
         queryProductStatus.add(CmsConstants.ProductStatus.Pending);
 
         List<CmsBtProductModel> resultProductList = new ArrayList<>(top);
-        String query = String.format("{\"channelId\":#,\"common.fields.model\":#,\"platforms.P#\":{$exists:true},\"platforms.P#.status\":#}");
+        String query = "{\"channelId\":#,\"common.fields.model\":#,\"usPlatforms.P#.status\":#}";
         int count = 0;
         for (CmsConstants.ProductStatus productStatus : queryProductStatus) {
             JongoQuery jongoQuery = new JongoQuery(null, query, null, top - resultProductList.size(), 0);
-            jongoQuery.setParameters(channelId, model, usOfficialCartId, usOfficialCartId, productStatus.name());
+            jongoQuery.setParameters(channelId, model, usOfficialCartId, productStatus.name());
             List<CmsBtProductModel> tempResultProductList = cmsBtProductDao.select(jongoQuery, channelId);
             count = tempResultProductList.size();
             if (count > 0) {
@@ -204,7 +204,7 @@ public class UsaFeedInfoService extends BaseService {
             queryFeedStatus.add(CmsConstants.UsaFeedStatus.New);
 
             List<CmsBtFeedInfoModel> resultFeedList = new ArrayList<>(top);
-            query = String.format("{\"channelId\":#,\"code\":{$ne:#},\"model\":#,\"status\":{$exists:true},\"status\":#}");
+            query = "{\"channelId\":#,\"code\":{$ne:#},\"model\":#,\"status\":{$exists:true},\"status\":#}";
             for (CmsConstants.UsaFeedStatus feedStatus : queryFeedStatus) {
                 JongoQuery jongoQuery = new JongoQuery(null, query, null, top - resultFeedList.size(), 0);
                 jongoQuery.setParameters(channelId, code, model, feedStatus.name());
