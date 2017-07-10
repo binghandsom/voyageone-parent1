@@ -71,11 +71,16 @@ public class CmsProductAddUpdateMQJob extends TBaseMQCmsService<CmsProductAddUpd
         cmsBtFeedInfoModel.setColor(messageBody.getColor());
         cmsBtFeedInfoModel.setStatus(CmsConstants.UsaFeedStatus.New.name());
         cmsBtFeedInfoModel.setUpdFlg(9);
+        cmsBtFeedInfoModel.setPriceClientMsrpMax(messageBody.getMsrp());
+        cmsBtFeedInfoModel.setPriceClientMsrpMin(messageBody.getMsrp());
+        cmsBtFeedInfoModel.setPriceClientRetailMin(messageBody.getMsrp() - 0.01);
+        cmsBtFeedInfoModel.setPriceClientRetailMax(messageBody.getMsrp() - 0.01);
         List<CmsBtFeedInfoModel_Sku> skus = new ArrayList<>(messageBody.getSkuList().size());
         cmsBtFeedInfoModel.setSkus(skus);
         messageBody.getSkuList().forEach(item -> {
             CmsBtFeedInfoModel_Sku sku = new CmsBtFeedInfoModel_Sku();
             sku.setPriceClientMsrp(messageBody.getMsrp());
+            sku.setPriceClientRetail(messageBody.getMsrp() - 0.01);
             sku.setSku(item.getSku());
             sku.setClientSku(item.getSku());
             sku.setBarcode(item.getBarcode());
