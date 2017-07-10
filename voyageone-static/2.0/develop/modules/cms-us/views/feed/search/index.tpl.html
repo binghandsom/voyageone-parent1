@@ -162,10 +162,16 @@
                                 <td>{{feed.qty}}</td>
                                 <td>{{feed.isApprove}}</td>
                                 <td>
-                                    {{feed.skus[0].priceMsrp}}
+                                    <div class="input-group">
+                                       <span class="input-group-addon cur-p" ng-click="feed.editMsrp = !feed.editMsrp"><i class="fa fa-pencil"></i></span>
+                                        <input type="text" class="form-control" ng-model="feed.skus[0].priceMsrp" ng-disabled="!feed.editMsrp">
+                                    </div>
                                 </td>
                                 <td>
-                                    {{feed.skus[0].priceNet}}
+                                    <div class="input-group">
+                                        <span class="input-group-addon cur-p" ng-click="feed.editPrice = !feed.editPrice"><i class="fa fa-pencil"></i></span>
+                                        <input type="text" class="form-control" ng-model="feed.skus[0].priceNet" ng-disabled="!feed.editPrice">
+                                    </div>
                                 </td>
                                 <td>{{feed.lastReceivedOn}}</td>
                                 <td>{{feed.modifier}}</td>
