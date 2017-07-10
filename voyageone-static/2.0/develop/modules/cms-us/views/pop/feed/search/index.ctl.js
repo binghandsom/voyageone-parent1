@@ -29,7 +29,7 @@ define([
         }
 
         approve() {
-            self.itemDetailService.
+            // self.itemDetailService.
         }
 
     });
