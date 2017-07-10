@@ -79,10 +79,10 @@
                                         <label class="col-md-4 control-label query-title">Approve Pricing</label>
                                         <div class="col-md-6 checkbox">
                                             <label>
-                                                <input type="checkbox"  ng-model="ctrl.isApprove[0]">&nbsp;&nbsp;yes
+                                                <input type="checkbox"  ng-model="ctrl.approvePricing[0]">&nbsp;&nbsp;yes
                                             </label>&emsp;
                                             <label>
-                                                <input type="checkbox"  ng-model="ctrl.isApprove[1]">&nbsp;&nbsp;no
+                                                <input type="checkbox"  ng-model="ctrl.approvePricing[1]">&nbsp;&nbsp;no
                                             </label>&emsp;
                                         </div>
                                     </div>
@@ -145,6 +145,7 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="feed in ctrl.feeds">
+                                {{feed.priceMsrps}}@@@{{feed.priceNets}}
                                 <td>
                                     <input type="checkbox">
                                 </td>
@@ -160,9 +161,13 @@
                                 <td>{{feed.model}}</td>
                                 <td>{{feed.status}}</td>
                                 <td>{{feed.qty}}</td>
-                                <td>{{feed.isApprove}}</td>
-                                <td>{{feed.skus[0].priceMsrp}}</td>
-                                <td>{{feed.skus[0].priceNet}}</td>
+                                <td ng-if="feed.approvePricing == '1'">Yes</td>
+                                <td ng-if="feed.approvePricing == '0'">No</td>
+                                <td ng-if="feed.approvePricing == null"></td>
+                                <td ng-if="feed.priceMsrps[0] == feed.priceMsrps[1]">{{feed.priceMsrps[0]}}</td>
+                                <td ng-if="feed.priceMsrps[0] != feed.priceMsrps[1]">{{feed.priceMsrps[0]}}~{{feed.priceMsrps[1]}}</td>
+                                <td ng-if="feed.priceNets[0] == feed.priceNets[1]">{{feed.priceNets[0]}}</td>
+                                <td ng-if="feed.priceNets[0] != feed.priceNets[1]">{{feed.priceNets[0]}}~{{feed.priceNets[1]}}</td>
                                 <td>{{feed.lastReceivedOn}}</td>
                                 <td>{{feed.modifier}}</td>
                                 <td class="text-center">

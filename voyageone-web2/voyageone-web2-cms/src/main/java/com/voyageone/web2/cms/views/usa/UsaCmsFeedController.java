@@ -8,6 +8,7 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.usa.UsaFeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -23,11 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 美国CMS Feed相关Controller
@@ -94,6 +91,7 @@ public class UsaCmsFeedController extends BaseController {
         String selChannelId = getUser().getSelChannelId();
         //获取数据列表
         List<CmsBtFeedInfoModel> feedList = usaFeedInfoService.getFeedList(params, selChannelId);
+
         resultBean.put("feedList", feedList);
         //获取数据总量
         Long feedListTotal = usaFeedInfoService.getFeedCount(params, selChannelId);
