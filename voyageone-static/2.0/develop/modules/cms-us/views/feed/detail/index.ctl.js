@@ -166,11 +166,18 @@ define([
             let urlKey = "";
             if (self.feed.hasUrlkey && num > 0) {
                 urlKey = self.feed.attribute.urlkey[0];
-                let images = [];
-                for (let i=1; i<=num; i++) {
-                    images.push("http://image.sneakerhead.com/is/image/sneakerhead/" + urlKey + "-" + i);
+                if (!self.feed.image) {
+                    self.feed.image = [];
                 }
-                self.feed.image = images;
+                let count = _.size(self.feed.image);
+                let add = num - count;
+                if (add > 0) {
+                    for (let i=1; i<=add; i++) {
+                        self.feed.image.push("http://image.sneakerhead.com/is/image/sneakerhead/" + urlKey + "-" + (count + i));
+                    }
+                } else {
+                    self.feed.image.splice(add);
+                }
             }
         }
         addImage() {
@@ -189,11 +196,18 @@ define([
             let urlKey = "";
             if (self.feed.hasUrlkey && num > 0) {
                 urlKey = self.feed.attribute.urlkey[0];
-                let images = [];
-                for (let i=1; i<=num; i++) {
-                    images.push("http://image.sneakerhead.com/is/image/sneakerhead/" + urlKey + "-2-" + i);
+                if (!self.feed.boxImage) {
+                    self.feed.boxImage = [];
                 }
-                self.feed.boxImage = images;
+                let count = _.size(self.feed.boxImage);
+                let add = num - count;
+                if (add > 0) {
+                    for (let i=1; i<=add; i++) {
+                        self.feed.boxImage.push("http://image.sneakerhead.com/is/image/sneakerhead/" + urlKey + "-2-" + (count + i));
+                    }
+                } else {
+                    self.feed.boxImage.splice(add);
+                }
             }
         }
         addBoxImage() {
