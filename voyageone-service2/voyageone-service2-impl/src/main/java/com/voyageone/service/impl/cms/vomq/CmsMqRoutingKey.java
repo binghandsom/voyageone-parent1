@@ -141,6 +141,8 @@ public class CmsMqRoutingKey {
     // 高级检索批量修改商品标题
     public static final String CMS_BATCH_UPDATE_PRODUCT_TITLE = "VOCmsBatchUpdateProductTitleMQJobQueue";
 
+    public static final String CMS_USA_PRODUCT_ADD_UPDATE = "VOCmsUsaProductAddUpdateMQJobQueue";
+
 
     // 未整理的业务内容
 
