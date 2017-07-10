@@ -32,7 +32,7 @@
                                         </button>
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" ng-model="ctrl.feed.amazonBrowseTree" readonly>
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.category" readonly>
                                     </div>
                                 </div>
                             </div>
@@ -150,7 +150,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Order Limit Count</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" ng-model="ctrl.attribute.orderlimitcount">
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.orderlimitcount">
                                     </div>
                                 </div>
                             </div>
@@ -166,7 +166,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Abstract</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" ng-model="ctrl.feed.attribute.abstract">
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.abstract">
                                     </div>
                                 </div>
                             </div>
@@ -174,7 +174,7 @@
                                 <div class="row">
                                     <label class="col-md-4 control-label query-title ">Accessory</label>
                                     <div class="col-md-6">
-                                        <input type="text" class="form-control" ng-model="ctrl.feed.attribute.accessory">
+                                        <input type="text" class="form-control" ng-model="ctrl.feed.accessory">
                                     </div>
                                 </div>
                             </div>
@@ -251,7 +251,7 @@
                                     <label class="col-md-4 control-label query-title ">Approve Pricing ?</label>
                                     <div class="col-md-6 checkbox">
                                         <label>
-                                            <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="ctrl.feed.approvePricingFlag">
+                                            <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.approvePricing">
                                         </label>&nbsp;Yes
                                     </div>
                                 </div>
@@ -279,12 +279,12 @@
                                                 <div class="tab-pane active">
                                                     <div class="row">
                                                         <div class="col-md-3">
-                                                            <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image6}" style="height: 88px">
-                                                                <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image6)}}">
+                                                            <a href="javascript:void(0)" ng-repeat="image in ctrl.feed.image track by $index" class="thumbnail clear-margin-bottom" ng-class="active" style="height: 88px">
+                                                                <img style="max-height: 80px" class="thumb-group" ng-src="{{image}}">
                                                             </a>
                                                         </div>
                                                         <div class="col-md-3 text-center m-t-md">
-                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image6',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
+                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.addImage()"><i class="glyphicon glyphicon-plus"></i></button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -299,7 +299,7 @@
                                                         <div class="row">
                                                             <label class="col-md-6 query-title">&nbsp;&nbsp;picture num</label>
                                                             <div class="col-md-6">
-                                                                <input type="text" class="form-control">
+                                                                <input type="text" class="form-control" ng-model="ctrl.feed.imageNum" ng-keyup="ctrl.initImage(ctrl.feed.imageNum)">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -308,11 +308,11 @@
 
 
                                             <ul class="list-group">
-                                                <li class="list-group-item">
-                                                    Cras justo odio
+                                                <li class="list-group-item" ng-repeat="image in ctrl.feed.image track by $index">
+                                                    {{image}}
                                                     <div class="pull-right" style="margin-top: -3px;">
-                                                        <button type="button" class="btn btn-default"><i class="fa fa-save"></i></button>
-                                                        <button type="button" class="btn btn-default"><i class="fa fa-trash"></i></button>
+                                                        <!--<button type="button" class="btn btn-default"><i class="fa fa-save"></i></button>-->
+                                                        <button type="button" class="btn btn-default" ng-click="ctrl.deleteImage($index)"><i class="fa fa-trash"></i></button>
                                                     </div>
                                                 </li>
                                             </ul>
@@ -322,6 +322,63 @@
                                 </uib-tab>
                                 <uib-tab>
                                     <tab-heading>Box</tab-heading>
+                                    <div id="vo_fixProdPanel_">
+                                        <!-- product photos -->
+                                        <div class="vo_prodGallery">
+                                            <div class="imageContainer">
+                                                <div class="imageWrapper">
+                                                    <img  class="imageWrapper" style="cursor: pointer;max-width: 330px; max-height: 200px;" ng-src="{{vm.currentImage}}" title="【click me】" ng-click="goDetail()">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="wrapper-sm m-t-xs">
+                                            <div>
+                                                <div class="tab-pane active">
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <a href="javascript:void(0)" ng-repeat="image in ctrl.feed.boxImage track by $index"
+                                                               class="thumbnail clear-margin-bottom" ng-class="active" style="height: 88px">
+                                                                <img style="max-height: 80px" class="thumb-group" ng-src="{{image}}">
+                                                            </a>
+                                                        </div>
+                                                        <div class="col-md-3 text-center m-t-md">
+                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.addBoxImage()"><i class="glyphicon glyphicon-plus"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="wrapper-sm m-t-xs">
+
+                                            <div class="row">
+                                                <div class="col-md-6 form-horizontal">
+                                                    <div class="form-group">
+                                                        <div class="row">
+                                                            <label class="col-md-6 query-title">&nbsp;&nbsp;picture num</label>
+                                                            <div class="col-md-6">
+                                                                <input type="text" class="form-control" ng-model="ctrl.feed.boxImageNum" ng-keyup="ctrl.initBoxImage(ctrl.feed.boxImageNum)">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+                                            <ul class="list-group">
+                                                <li class="list-group-item" ng-repeat="image in ctrl.feed.boxImage track by $index">
+                                                    {{image}}
+                                                    <!--<input type="text" ng-model="image">-->
+                                                    <div class="pull-right" style="margin-top: -3px;">
+                                                        <!--<button type="button" class="btn btn-default"><i class="fa fa-save"></i></button>-->
+                                                        <button type="button" class="btn btn-default" ng-click="ctrl.deleteBoxImage($index)"><i class="fa fa-trash"></i></button>
+                                                    </div>
+                                                </li>
+                                            </ul>
+
+                                        </div>
+                                    </div>
                                 </uib-tab>
                             </uib-tabset>
 
@@ -344,41 +401,41 @@
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.weightOrg" ng-change="ctrl.setSkuProperty('weightOrg')">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.weightOrg" ng-change="ctrl.setSkuProperty('','weightOrg')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
                                                 <select class="form-control" ng-options="weightUnit as weightUnit for weightUnit in ctrl.setting.weightOrgUnits"
-                                                        ng-model="ctrl.setting.weightOrgUnit" ng-change="ctrl.setSkuProperty('weightOrgUnit')">
+                                                        ng-model="ctrl.setting.weightOrgUnit" ng-change="ctrl.setSkuProperty('','weightOrgUnit')">
                                                 </select>
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceClientMsrp" ng-change="ctrl.setSkuProperty('priceClientMsrp')">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceClientMsrp" ng-change="ctrl.setSkuProperty('','priceClientMsrp')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceNet" ng-change="ctrl.setSkuProperty('priceNet')">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceNet" ng-change="ctrl.setSkuProperty('','priceNet')">
+                                            </div>
+                                        </td>
+                                        <!--<td class="text-right form-horizontal">
+                                            <div class="form-group query-title">default:</div>
+                                            <div class="form-group">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceMsrp" ng-change="ctrl.setSkuProperty('','priceMsrp')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceMsrp" ng-change="ctrl.setSkuProperty('priceMsrp')">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceCurrent" ng-change="ctrl.setSkuProperty('','priceCurrent')">
                                             </div>
-                                        </td>
-                                        <td class="text-right form-horizontal">
-                                            <div class="form-group query-title">default:</div>
-                                            <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceCurrent" ng-change="ctrl.setSkuProperty('priceCurrent')">
-                                            </div>
-                                        </td>
+                                        </td>-->
                                     </tr>
                                     <tr>
                                         <th class="text-left">size</th>
@@ -406,16 +463,16 @@
                                             </select>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control" ng-model="sku.priceClientMsrp"/>
+                                            <input type="number" class="form-control" ng-model="sku.priceClientMsrp" ng-change="ctrl.setSkuProperty(sku,'priceClientMsrp')"/>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control" ng-model="sku.priceNet"/>
+                                            <input type="number" class="form-control" ng-model="sku.priceNet" ng-change="ctrl.setSkuProperty(sku,'priceNet')"/>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control" ng-model="sku.priceMsrp"/>
+                                            <input type="number" class="form-control" ng-model="sku.priceMsrp" readonly/>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control" ng-model="sku.priceCurrent"/>
+                                            <input type="number" class="form-control" ng-model="sku.priceCurrent" readonly/>
                                         </td>
 
                                     </tr>

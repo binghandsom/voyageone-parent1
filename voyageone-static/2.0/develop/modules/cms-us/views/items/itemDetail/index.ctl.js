@@ -4,16 +4,17 @@ define([
 
     cms.controller('itemDetailController', class itemDetailController {
         constructor(popups, $routeParams, itemDetailService, alert,$location,notify) {
-            this.code = $routeParams.code;
-            if (!this.code) {
-                console.log("不存在");
-                return;
-            }
             this.popups = popups;
             this.itemDetailService = itemDetailService;
             this.alert = alert;
             this.$location = $location;
             this.notify = notify;
+
+            this.id = $routeParams.id;
+            if (!this.id) {
+                this.alert("Feed not exists.");
+                return;
+            }
 
             this.feed = {};
             this.brandList = [];
@@ -38,7 +39,7 @@ define([
         init() {
             let self = this;
             // 根据code加载Feed
-            self.itemDetailService.detail({code: self.code}).then((resp) => {
+            self.itemDetailService.detail({id: self.id}).then((resp) => {
                 if (resp.data && resp.data.feed) {
                     self.feed = resp.data.feed;
                     // 处理Feed数据
@@ -51,10 +52,10 @@ define([
                     // self.originList = resp.data.originList;
                     // self.colorMap = resp.data.colorMap;
                 } else {
-                    let code = self.code;
-                    let message = `Feed(Code:${code}) not exists.`;
+                    let id = self.id;
+                    let message = `Feed(id:${id}) not exists.`;
                     self.alert(message).then((res) => {
-                        self.$location.path("");
+                        // self.$location.path("");
                     });
                 }
             });
@@ -73,14 +74,17 @@ define([
             angular.forEach(self.feed.skus, function (sku) {
                 sku.weightOrg = parseFloat(sku.weightOrg);
             });
-
-            // 处理approvePricing
-            let approvePricingFlag = self.feed.attribute.approvePricing && _.size(self.feed.attribute.approvePricing) > 0;
-            _.extend(self.feed, {approvePricingFlag:approvePricingFlag ? 1 : 0});
-
-            // 处理attribute.amazonBrowseTree
-            let amazonBrowseTree = (self.feed.attribute.amazonBrowseTree && _.size(self.feed.attribute.amazonBrowseTree) > 0) ? self.feed.attribute.amazonBrowseTree[0] : "";
-            _.extend(self.feed, {amazonBrowseTree:amazonBrowseTree});
+            // 处理Abstract和accessory
+            if (self.feed.attribute.abstract && _.size(self.feed.attribute.abstract) > 0) {
+                _.extend(self.feed, {abstract:self.feed.attribute.abstract[0]});
+            }
+            if (self.feed.attribute.accessory && _.size(self.feed.attribute.accessory) > 0) {
+                _.extend(self.feed, {accessory:self.feed.attribute.accessory[0]});
+            }
+            // 处理orderlimitcount
+            if (self.feed.attribute.orderlimitcount && _.size(self.feed.attribute.orderlimitcount) > 0) {
+                _.extend(self.feed, {orderlimitcount:self.feed.attribute.orderlimitcount[0]});
+            }
         }
 
         // 生成UrlKey
@@ -95,10 +99,38 @@ define([
         }
 
         // 统一设置SKU属性
-        setSkuProperty(property) {
+        setSkuProperty(sku,property) {
             let self = this;
+            if (!sku) {
+                angular.forEach(self.feed.skus, function (sku) {
+                    sku[property] = self.setting[property];
+                })
+            }
+            self.setSkuCNPrice();
+        }
+        // 同步计算中国相关价格
+        setSkuCNPrice() {
+            let self = this;
+            let productType = self.feed.productType;
             angular.forEach(self.feed.skus, function (sku) {
-                sku[property] = self.setting[property];
+                let priceClientMsrp = sku['priceClientMsrp'];
+                let priceNet = sku['priceNet'];
+                if (productType.toLowerCase() == "shoes") {
+                    // ->中国建议售价 (msrp + msrp * 0.2 + 11) * 6.4
+                    // ->中国指导售价 (price + msrp * 0.2 + 11) * 6.4
+                    sku['priceMsrp'] = (priceClientMsrp + priceClientMsrp*0.2 + 11)*6.4;
+                    sku['priceCurrent'] = (priceNet + priceClientMsrp*0.2 + 11)*6.4;
+                } else if (productType.toLowerCase() == "gear") {
+                    // ->中国建议售价 msrp * 11
+                    // ->中国指导售价 msrp * 8
+                    sku['priceMsrp'] = priceClientMsrp*11;
+                    sku['priceCurrent'] = priceClientMsrp*8;
+                } else {
+                    // ->中国建议售价 msrp * 11
+                    // ->中国指导售价 price * 11
+                    sku['priceMsrp'] = priceClientMsrp*11;
+                    sku['priceCurrent'] = priceNet*11;
+                }
             })
         }
 
@@ -106,8 +138,11 @@ define([
         // flag:0 or 1; 0-Only Save,1-Submit/Approve to next status
         save(flag) {
             let self = this;
-            // 处理attribute.approvePricingFlag
-            self.feed.attribute.approvePricing = [self.feed.approvePricingFlag];
+            // 处理Abstract和accessory
+            self.feed.attribute.abstract = [self.feed.abstract];
+            self.feed.attribute.accessory = [self.feed.accessory];
+            // 处理orderlimitcount
+            self.feed.attribute.orderlimitcount = [self.feed.orderlimitcount];
             let parameter = {feed:self.feed, flag:flag};
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {
@@ -122,9 +157,69 @@ define([
         popUsCategory() {
             let self = this;
             self.popups.openUsCategory().then(context => {
-                _.extend(self.feed.attribute, {amazonBrowseTree:context.catPath})
-                console.log(self.feed);
+                _.extend(self.feed, {category:context.catPath})
             });
+        }
+
+        initImage(num) {
+            let self = this;
+            let urlKey = "";
+            if (self.feed.hasUrlkey && num > 0) {
+                urlKey = self.feed.attribute.urlkey[0];
+                if (!self.feed.image) {
+                    self.feed.image = [];
+                }
+                let count = _.size(self.feed.image);
+                let add = num - count;
+                if (add > 0) {
+                    for (let i=1; i<=add; i++) {
+                        self.feed.image.push("http://image.sneakerhead.com/is/image/sneakerhead/" + urlKey + "-" + (count + i));
+                    }
+                } else {
+                    self.feed.image.splice(add);
+                }
+            }
+        }
+        addImage() {
+            let self = this;
+            if (!self.feed.image) {
+                self.feed.image = [];
+            }
+            self.feed.image.push("");
+        }
+        deleteImage(index) {
+            let self = this;
+            self.feed.image.splice(index, 1);
+        }
+        initBoxImage(num) {
+            let self = this;
+            let urlKey = "";
+            if (self.feed.hasUrlkey && num > 0) {
+                urlKey = self.feed.attribute.urlkey[0];
+                if (!self.feed.boxImage) {
+                    self.feed.boxImage = [];
+                }
+                let count = _.size(self.feed.boxImage);
+                let add = num - count;
+                if (add > 0) {
+                    for (let i=1; i<=add; i++) {
+                        self.feed.boxImage.push("http://image.sneakerhead.com/is/image/sneakerhead/" + urlKey + "-2-" + (count + i));
+                    }
+                } else {
+                    self.feed.boxImage.splice(add);
+                }
+            }
+        }
+        addBoxImage() {
+            let self = this;
+            if (!self.feed.boxImage) {
+                self.feed.boxImage = [];
+            }
+            self.feed.boxImage.push("");
+        }
+        deleteBoxImage(index) {
+            let self = this;
+            self.feed.boxImage.splice(index, 1);
         }
 
     });

@@ -103,6 +103,12 @@ public class FeedInfoService extends BaseService {
         return cmsBtFeedInfoDao.update(cmsBtFeedInfoModel);
     }
 
+    public WriteResult insertFeedInfo(CmsBtFeedInfoModel cmsBtFeedInfoModel){
+        return cmsBtFeedInfoDao.insert(cmsBtFeedInfoModel);
+    }
+    public WriteResult delFeedInfo(CmsBtFeedInfoModel cmsBtFeedInfoModel){
+        return cmsBtFeedInfoDao.deleteById(cmsBtFeedInfoModel.get_id(), cmsBtFeedInfoModel.getChannelId());
+    }
     /**
      * 更新feed的产品信息
      */
