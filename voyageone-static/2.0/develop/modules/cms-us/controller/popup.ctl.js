@@ -10,16 +10,16 @@ define([
     angular.module('com.voyageone.popups', []).constant('popActions', {
         search: {
             batchApprove: {
-                "templateUrl": "views/pop/items/search/index.tpl.html",
-                "controllerUrl": "modules/cms-us/views/pop/items/search/index.ctl",
+                "templateUrl": "views/pop/feed/search/index.tpl.html",
+                "controllerUrl": "modules/cms-us/views/pop/feed/search/index.ctl",
                 "controller": 'batchApproveController as ctrl',
                 "size": 'md'
             }
         },
         detail: {
             usCategory: {
-                "templateUrl": "views/pop/items/detail/usCategory/index.tpl.html",
-                "controllerUrl": "modules/cms-us/views/pop/items/detail/usCategory/index.ctl",
+                "templateUrl": "views/pop/feed/detail/usCategory/index.tpl.html",
+                "controllerUrl": "modules/cms-us/views/pop/feed/detail/usCategory/index.ctl",
                 "controller": 'usCategoryController as ctrl',
                 "size": 'lg'
             }

@@ -6,17 +6,17 @@ define(function () {
             controllerUrl: "modules/cms-us/views/home/welcome/datachart.ctl",
             controller: 'datachartController as ctrl'
         },
-        items:{
-            hash: "/search",
-            templateUrl: "views/items/search/index.tpl.html",
-            controllerUrl: "modules/cms-us/views/items/search/index.ctl",
-            controller: 'newItemController as ctrl'
+        feed:{
+            hash: "/feed/usa/search",
+            templateUrl: "views/feed/search/index.tpl.html",
+            controllerUrl: "modules/cms-us/views/feed/search/index.ctl",
+            controller: 'feedSearchController as ctrl'
         },
         itemDetail:{
-            hash: "/items/itemDetail/:id?",
-            templateUrl: "views/items/itemDetail/index.tpl.html",
-            controllerUrl: "modules/cms-us/views/items/itemDetail/index.ctl",
-            controller: 'itemDetailController as ctrl'
+            hash: "/feed/detail/:id?",
+            templateUrl: "views/feed/detail/index.tpl.html",
+            controllerUrl: "modules/cms-us/views/feed/detail/index.ctl",
+            controller: 'feedDetailController as ctrl'
         }
     };
 });

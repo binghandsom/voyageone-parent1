@@ -4,6 +4,8 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
@@ -23,8 +25,15 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.SpelEvaluationException;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -43,6 +52,51 @@ public class UsaFeedInfoService extends BaseService {
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+
+
+    /**
+     * feed的中国价格计算
+     * @param cmsBtFeedInfoModel feed对象
+     * @return 价格计算后的对象
+     */
+    public CmsBtFeedInfoModel setPrice(CmsBtFeedInfoModel cmsBtFeedInfoModel){
+
+        CmsChannelConfigBean msrpConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_MSRP, cmsBtFeedInfoModel.getProductType());
+        if(msrpConfig == null){
+            msrpConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_MSRP, "0");
+        }
+        String formulaMsrp =  msrpConfig.getConfigValue1();
+
+        CmsChannelConfigBean retailConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_RETAIL, cmsBtFeedInfoModel.getProductType());
+        if(retailConfig == null){
+            retailConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_RETAIL, "0");
+        }
+        String formulaRetail =  retailConfig.getConfigValue1();
+
+
+        cmsBtFeedInfoModel.getSkus().forEach(sku->{
+            sku.setPriceMsrp(calculatePrice(formulaMsrp, sku));
+            sku.setPriceCurrent(calculatePrice(formulaRetail, sku));
+        });
+
+        return cmsBtFeedInfoModel;
+    }
+
+    private Double calculatePrice(String formula, CmsBtFeedInfoModel_Sku sku){
+        ExpressionParser parser = new SpelExpressionParser();
+
+        Expression expression = parser.parseExpression(formula);
+
+        StandardEvaluationContext context = new StandardEvaluationContext(sku);
+
+        try {
+            BigDecimal price = expression.getValue(context, BigDecimal.class);
+
+            return price.setScale(0, RoundingMode.UP).doubleValue();
+        } catch (SpelEvaluationException sp) {
+            throw new BusinessException("使用固定公式计算时出现错误", sp);
+        }
+    }
 
     /**
      * 根据Feed在MongoDB中的id查询Feed数据
@@ -195,10 +249,11 @@ public class UsaFeedInfoService extends BaseService {
      * <p>  feed状态有优先级</p>
      *
      * @param channelId 渠道ID
+     * @param code      Code
      * @param model     Feed->model
      * @param top       查询个数
      */
-    public List<CmsBtFeedInfoModel> getTopModelsByModel(String channelId, String model, int top) {
+    public List<CmsBtFeedInfoModel> getTopFeedByModel(String channelId, String code, String model, int top) {
         if (top <= 0) top = 5;
         int usOfficialCartId = 1;
 
@@ -209,11 +264,11 @@ public class UsaFeedInfoService extends BaseService {
         queryProductStatus.add(CmsConstants.ProductStatus.Pending);
 
         List<CmsBtProductModel> resultProductList = new ArrayList<>(top);
-        String query = String.format("{\"channelId\":#,\"common.fields.model\":#,\"platforms.P#\":{$exists:true},\"platforms.P#.status\":#}");
+        String query = "{\"channelId\":#,\"common.fields.model\":#,\"usPlatforms.P#.status\":#}";
         int count = 0;
         for (CmsConstants.ProductStatus productStatus : queryProductStatus) {
             JongoQuery jongoQuery = new JongoQuery(null, query, null, top - resultProductList.size(), 0);
-            jongoQuery.setParameters(channelId, model, usOfficialCartId, usOfficialCartId, productStatus.name());
+            jongoQuery.setParameters(channelId, model, usOfficialCartId, productStatus.name());
             List<CmsBtProductModel> tempResultProductList = cmsBtProductDao.select(jongoQuery, channelId);
             count = tempResultProductList.size();
             if (count > 0) {
@@ -230,12 +285,13 @@ public class UsaFeedInfoService extends BaseService {
             queryFeedStatus.add(CmsConstants.UsaFeedStatus.Approved);
             queryFeedStatus.add(CmsConstants.UsaFeedStatus.Ready);
             queryFeedStatus.add(CmsConstants.UsaFeedStatus.Pending);
+            queryFeedStatus.add(CmsConstants.UsaFeedStatus.New);
 
             List<CmsBtFeedInfoModel> resultFeedList = new ArrayList<>(top);
-            query = String.format("{\"channelId\":#,\"model\":#,\"status\":{$exists:true},\"status\":#}");
+            query = "{\"channelId\":#,\"code\":{$ne:#},\"model\":#,\"status\":{$exists:true},\"status\":#}";
             for (CmsConstants.UsaFeedStatus feedStatus : queryFeedStatus) {
                 JongoQuery jongoQuery = new JongoQuery(null, query, null, top - resultFeedList.size(), 0);
-                jongoQuery.setParameters(channelId, model, usOfficialCartId, usOfficialCartId, feedStatus.name());
+                jongoQuery.setParameters(channelId, code, model, feedStatus.name());
                 List<CmsBtFeedInfoModel> tempResultFeedList = cmsBtFeedInfoDao.select(jongoQuery, channelId);
                 count = tempResultFeedList.size();
                 if (count > 0) {

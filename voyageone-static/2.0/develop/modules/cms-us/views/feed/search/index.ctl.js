@@ -2,11 +2,13 @@ define([
     'cms'
 ], function (cms) {
 
-    cms.controller('newItemController', class newItemController {
+    cms.controller('feedSearchController', class FeedSearchController {
 
-        constructor(popups, itemDetailService) {
+        constructor($rootScope, popups, itemDetailService) {
             let self = this;
 
+            self.$rootScope = $rootScope;
+            console.log('auth',self.$rootScope.auth);
             self.popups = popups;
             self.feedListTotal = 0;
             self.paraMap = {
@@ -18,9 +20,12 @@ define([
             self.status = [false, false, false];
             self.approvePricing = [false, false];
             self.itemDetailService = itemDetailService;
-            self.paging = {curr: 1, total: 0,fetch:function(){
-                self.getList();
-            }};
+            self.paging = {
+                curr: 1, total: 0, fetch: function () {
+                    self.getList();
+                }
+            };
+
             //设置状态的默认选中
             if(self.flag == 1){
                 self.status[0] = true;
@@ -53,7 +58,7 @@ define([
                 self.paraMap.approvePricing = "0";
             }
 
-            self.itemDetailService.list(_.extend(self.paraMap,self.paging)).then(resp => {
+            self.itemDetailService.list(_.extend(self.paraMap, self.paging)).then(resp => {
                 self.feeds = resp.data.feedList;
                 self.feedListTotal = resp.data.feedListTotal;
                 self.paging.total = resp.data.feedListTotal;
