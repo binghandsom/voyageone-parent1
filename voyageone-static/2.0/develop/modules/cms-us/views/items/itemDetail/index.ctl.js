@@ -138,11 +138,23 @@ define([
         // flag:0 or 1; 0-Only Save,1-Submit/Approve to next status
         save(flag) {
             let self = this;
+
+            // 如果是Approve,approve price是否打钩。价格是否为0或者500，如果是0或者500警告用户再次确认
+            // if (self.feed.status === '') {
+            //
+            // }
+
+
+
             // 处理Abstract和accessory
             self.feed.attribute.abstract = [self.feed.abstract];
             self.feed.attribute.accessory = [self.feed.accessory];
             // 处理orderlimitcount
             self.feed.attribute.orderlimitcount = [self.feed.orderlimitcount];
+
+
+
+
             let parameter = {feed:self.feed, flag:flag};
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {
