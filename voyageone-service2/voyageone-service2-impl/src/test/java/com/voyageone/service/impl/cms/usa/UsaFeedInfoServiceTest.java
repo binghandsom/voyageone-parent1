@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.usa;
 
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -24,6 +25,13 @@ public class UsaFeedInfoServiceTest {
 
     @Autowired
     UsaFeedInfoService usaFeedInfoService;
+    @Autowired
+    FeedInfoService feedInfoService;
+    @Test
+    public void setPrice() throws Exception {
+        CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode("001", "68220-gem");
+        usaFeedInfoService.setPrice(cmsBtFeedInfoModel);
+    }
 
     @Test
     public void testGetFeedList() throws Exception {

@@ -4,6 +4,8 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
@@ -11,6 +13,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 
@@ -22,8 +25,15 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.SpelEvaluationException;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,6 +52,47 @@ public class UsaFeedInfoService extends BaseService {
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+
+
+
+    public CmsBtFeedInfoModel setPrice(CmsBtFeedInfoModel cmsBtFeedInfoModel){
+
+        CmsChannelConfigBean msrpConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_MSRP, cmsBtFeedInfoModel.getProductType());
+        if(msrpConfig == null){
+            msrpConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_MSRP, "0");
+        }
+        String formulaMsrp =  msrpConfig.getConfigValue1();
+
+        CmsChannelConfigBean retailConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_RETAIL, cmsBtFeedInfoModel.getProductType());
+        if(retailConfig == null){
+            retailConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_RETAIL, "0");
+        }
+        String formulaRetail =  retailConfig.getConfigValue1();
+
+
+        cmsBtFeedInfoModel.getSkus().forEach(sku->{
+            sku.setPriceMsrp(calculatePrice(formulaMsrp, sku));
+            sku.setPriceCurrent(calculatePrice(formulaRetail, sku));
+        });
+
+        return cmsBtFeedInfoModel;
+    }
+
+    private Double calculatePrice(String formula, CmsBtFeedInfoModel_Sku sku){
+        ExpressionParser parser = new SpelExpressionParser();
+
+        Expression expression = parser.parseExpression(formula);
+
+        StandardEvaluationContext context = new StandardEvaluationContext(sku);
+
+        try {
+            BigDecimal price = expression.getValue(context, BigDecimal.class);
+
+            return price.setScale(0, RoundingMode.UP).doubleValue();
+        } catch (SpelEvaluationException sp) {
+            throw new BusinessException("使用固定公式计算时出现错误", sp);
+        }
+    }
 
     /**
      * 根据Feed在MongoDB中的id查询Feed数据

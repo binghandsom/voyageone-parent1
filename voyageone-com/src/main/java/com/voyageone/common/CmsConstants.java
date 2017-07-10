@@ -191,6 +191,10 @@ public class CmsConstants {
 
         // usjoi导入的白名单
         String CATEGORY_WHITE = "CATEGORY_WHITE";
+
+        String FEED_PRICE_MSRP = "FEED_PRICE_MSRP";
+
+        String FEED_PRICE_RETAIL = "FEED_PRICE_RETAIL";
     }
 
     public interface ImageUploadStatus {
