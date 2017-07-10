@@ -412,6 +412,10 @@ public class UsaFeedInfoService extends BaseService {
         return cmsBtFeedInfoDao.countByQuery(query, new Object[]{channelId, code, urlKey}, channelId) > 0;
     }
 
+    public void saveFeedApproveInfo(String channelId, String code, Map<Integer, Integer> approveInfo) {
+
+    }
+
     public static void main(String[] args) {
 
         String hello = "a   b c &^^^^7r8~1";

@@ -85,9 +85,9 @@ define(function () {
                 detail:"detail",
                 update:"update",
                 getTopModel:"getTopModel",
-                list:"list",
                 updateOne:"updateOne"
-
+                setPrice:"setPrice",
+                list:"list"
             }
         }
     };
