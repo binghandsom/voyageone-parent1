@@ -317,9 +317,11 @@ define([
                 $rootScope.isTranslator = data.isTranslator;
             });
         }
+
         $rootScope.isParentMenu=function(item) {
             return item.children&& item.children.length > 0;
-        }
+        };
+
         /**
          * go to channel selected page.
          */

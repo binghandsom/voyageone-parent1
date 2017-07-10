@@ -2,7 +2,7 @@ define([
     'cms'
 ], function (cms) {
 
-    cms.controller('newItemController', class newItemController {
+    cms.controller('feedSearchController', class FeedSearchController {
 
         constructor(popups, itemDetailService) {
             let self = this;
