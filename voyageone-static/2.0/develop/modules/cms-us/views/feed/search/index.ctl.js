@@ -4,11 +4,11 @@ define([
 
     cms.controller('feedSearchController', class FeedSearchController {
 
-        constructor($rootScope, popups, itemDetailService) {
+        constructor($rootScope, popups, itemDetailService, alert) {
             let self = this;
 
             self.$rootScope = $rootScope;
-            console.log('auth', self.$rootScope.auth);
+            self.alert = alert;
             self.popups = popups;
             self.feedListTotal = 0;
             self.paraMap = {
@@ -72,21 +72,34 @@ define([
         }
 
         popBatchApprove() {
-            let self = this;
+            let self = this,
+                codeList = [];
 
-            self.popups.openBatchApprove();
+            codeList = _.chain(self.feeds).filter(item => {
+                return item.check;
+            }).pluck('code').value();
+
+            if (codeList.length === 0) {
+                self.alert('Please select at least one！');
+                return false;
+            }
+
+            self.popups.openBatchApprove({
+                sel_all:self.totalItems,
+                codeList:codeList
+            });
         }
 
         selectAll() {
             let self = this;
 
-            _.each(self.feeds,feed => {
+            _.each(self.feeds, feed => {
                 feed.check = self.isAll;
             });
         }
 
         columnOrder(columnName) {
-            let self = this,column,
+            let self = this, column,
                 columnArrow = self.columnArrow;
 
 
@@ -116,7 +129,7 @@ define([
             self.searchByOrder(columnName, column.mark);
         };
 
-        getArrowName (columnName) {
+        getArrowName(columnName) {
             let self = this,
                 columnArrow = self.columnArrow;
 
@@ -126,7 +139,7 @@ define([
             return columnArrow[columnName].mark;
         };
 
-        searchByOrder (columnName, sortOneType) {
+        searchByOrder(columnName, sortOneType) {
             let self = this,
                 paraMap = self.paraMap;
 
