@@ -85,6 +85,10 @@ public class UsaFeedInfoService extends BaseService {
             priceClientMsrpMin = Double.min(priceClientMsrpMin, sku.getPriceClientMsrp());
             priceClientMsrpMax = Double.max(priceClientMsrpMax, sku.getPriceClientMsrp());
         }
+        cmsBtFeedInfoModel.setPriceClientMsrpMax(priceClientMsrpMax);
+        cmsBtFeedInfoModel.setPriceClientRetailMax(priceClientRetailMax);
+        cmsBtFeedInfoModel.setPriceClientRetailMin(priceClientRetailMin);
+        cmsBtFeedInfoModel.setPriceClientMsrpMin(priceClientMsrpMin);
 
         return cmsBtFeedInfoModel;
     }
