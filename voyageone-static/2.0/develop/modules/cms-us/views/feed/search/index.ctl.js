@@ -15,6 +15,7 @@ define([
                 status: "",
                 isApprove: null
             };
+            self.columnArrow = {};
             self.status = [false, false, false];
             self.isApprove = [false, false];
             self.itemDetailService = itemDetailService;
@@ -54,11 +55,19 @@ define([
         }
 
         clear() {
-            let self = this;
+            let self = this,
+                columnArrow = self.columnArrow;
+
             self.paraMap = {};
             self.status = [false, false, false];
             self.isApprove = [false, false];
             self.paging = {curr: 1, total: 0};
+
+            if (columnArrow) {
+                _.forEach(columnArrow, function (value, key) {
+                    columnArrow[key] = null;
+                });
+            }
 
         }
 
@@ -74,6 +83,58 @@ define([
             _.each(self.feeds,feed => {
                 feed.check = self.isAll;
             });
+        }
+
+        columnOrder(columnName) {
+            let self = this,column,
+                columnArrow = self.columnArrow;
+
+
+            _.forEach(columnArrow, function (value, key) {
+                if (key != columnName)
+                    columnArrow[key] = null;
+            });
+
+            column = columnArrow[columnName];
+
+            if (!column) {
+                column = {};
+                column.mark = 'unsorted';
+                column.count = null;
+            }
+
+            column.count = !column.count;
+
+            //偶数升序，奇数降序
+            if (column.count)
+                column.mark = 'sort-desc';
+            else
+                column.mark = 'sort-up';
+
+            columnArrow[columnName] = column;
+
+            self.searchByOrder(columnName, column.mark);
+        };
+
+        getArrowName (columnName) {
+            let self = this,
+                columnArrow = self.columnArrow;
+
+            if (!columnArrow || !columnArrow[columnName])
+                return 'unsorted';
+
+            return columnArrow[columnName].mark;
+        };
+
+        searchByOrder (columnName, sortOneType) {
+            let self = this,
+                paraMap = self.paraMap;
+
+            paraMap.sortName = columnName;
+            paraMap.sortType = sortOneType == 'sort-up' ? '1' : '-1';
+
+            self.getList();
+
         }
 
     });
