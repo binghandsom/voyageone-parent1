@@ -145,34 +145,6 @@ public class UsaFeedInfoService extends BaseService {
         queryObject.setLimit(pageSize);
 
         List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channel, queryObject);
-        /*if (feedList != null){
-                for (CmsBtFeedInfoModel value : feedList) {
-                    List<CmsBtFeedInfoModel_Sku> skus = value.getSkus();
-                    List<Double> priceMsrps = new ArrayList<>();
-                    List<Double> priceNets = new ArrayList<>();
-                    skus.forEach(value1 -> {
-                        priceMsrps.add(value1.getPriceMsrp());
-                        priceMsrps.add(value1.getPriceNet());
-                    });
-                    Collections.sort(priceMsrps);
-                    Collections.sort(priceNets);
-
-                    List<Double> newPriceMsrps = new ArrayList<>();
-                    List<Double> newPriceNets = new ArrayList<>();
-                    //最小值
-                    newPriceMsrps.add(priceMsrps.get(0));
-                    //最大值
-                    newPriceMsrps.add(priceMsrps.get(priceMsrps.size()));
-
-                    //最小值
-                    newPriceNets.add(priceNets.get(0));
-                    //最大值
-                    newPriceNets.add(priceNets.get(priceNets.size()));
-                    value.setPriceMsrps(newPriceMsrps);
-                    value.setPriceNets(newPriceNets);
-                }
-
-        }*/
         return feedList;
     }
 
@@ -203,7 +175,7 @@ public class UsaFeedInfoService extends BaseService {
             String[] split = status.split("_");
             criteria = criteria.and("status").in(Arrays.asList(split));
         }else{
-            criteria = criteria.and("status").in(Arrays.asList(CmsConstants.UsaFeedStatus.New, CmsConstants.UsaFeedStatus.Pending,CmsConstants.UsaFeedStatus.Ready));
+            criteria = criteria.and("status").in(Arrays.asList(CmsConstants.UsaFeedStatus.New.toString(), CmsConstants.UsaFeedStatus.Pending.toString(),CmsConstants.UsaFeedStatus.Ready.toString()));
         }
         //设置开始和截止的时间
         if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null) {

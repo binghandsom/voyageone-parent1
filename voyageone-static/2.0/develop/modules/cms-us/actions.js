@@ -85,7 +85,9 @@ define(function () {
                 detail:"detail",
                 update:"update",
                 getTopModel:"getTopModel",
-                list:"list"
+                list:"list",
+                updateOne:"updateOne"
+
             }
         }
     };

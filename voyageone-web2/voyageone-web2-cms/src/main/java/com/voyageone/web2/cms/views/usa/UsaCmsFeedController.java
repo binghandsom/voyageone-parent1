@@ -115,23 +115,28 @@ public class UsaCmsFeedController extends BaseController {
             if (code != null){
                 queryMap.put("code",code);
             }
-            HashMap<String, Object> updateMap = new HashMap<>();
+            Double msrpPrice = (Double) params.get("msrpPrice");
+            Double price = (Double) params.get("price");
 
-            String msrpPrice = (String) params.get("msrpPrice");
-            if (msrpPrice != null){
-                updateMap.put("skus.msrpPrice",msrpPrice);
-            }
-            String price = (String) params.get("price");
-            if (price != null){
-                updateMap.put("skus.priceNet",price);
-                updateMap.put("skus.priceClientRetail",price);
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(getUser().getSelChannelId(), code);
+            if(cmsBtFeedInfoModel != null){
+                cmsBtFeedInfoModel.getSkus().forEach(sku->{
+                    if(msrpPrice != null){
+                        sku.setPriceClientMsrp(msrpPrice);
+                    }
+                    if(price != null){
+                        sku.setPriceClientRetail(price);
+                        sku.setPriceNet(price);
+                    }
+                });
             }
             String approvePricing = (String) params.get("approvePricing");
-            if (msrpPrice != null){
-                updateMap.put("approvePricing",approvePricing
-                );
+
+            if (approvePricing != null){
+                cmsBtFeedInfoModel.setApprovePricing(approvePricing);
             }
-            writeResult = usaFeedInfoService.upDateFeedInfo(getUser().getSelChannelId(), queryMap, updateMap);
+            cmsBtFeedInfoModel = usaFeedInfoService.setPrice(cmsBtFeedInfoModel);
+            writeResult = feedInfoService.updateFeedInfo(cmsBtFeedInfoModel);
         }
 
 

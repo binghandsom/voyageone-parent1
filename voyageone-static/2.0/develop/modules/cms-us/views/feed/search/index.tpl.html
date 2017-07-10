@@ -5,6 +5,7 @@
                 <div class="panel-heading">
                         <h4 class="panel-title"><i class="fa fa-search"></i>&nbsp;Query Terms</h4>
                 </div>
+                {{ctrl.feeds}}
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-md-6">
@@ -163,23 +164,25 @@
                                 <td ng-if="feed.approvePricing == '1'" ng-hide="ctrl.flag == 1">Yes</td>
                                 <td ng-if="feed.approvePricing == '0'" ng-hide="ctrl.flag == 1">No</td>
                                 <td ng-if="feed.approvePricing == null" ng-hide="ctrl.flag == 1"></td>
-                                <td ng-if="feed.priceMsrps[0] == feed.priceMsrps[1]" ng-hide="ctrl.flag == 1">
+                                <td ng-if="feed.priceClientMsrpMin == feed.priceClientMsrpMax" ng-hide="ctrl.flag == 1">
                                     <div class="input-group">
-                                        <span class="input-group-addon cur-p" ng-click="feed.editMsrp = !feed.editMsrp"><i class="fa fa-pencil"></i></span>
-                                        <input type="text" class="form-control" ng-model="feed.skus[0].priceMsrp" ng-disabled="!feed.editMsrp">
+                                        <span class="input-group-addon cur-p"
+                                              ng-click="feed.editMsrp = !feed.editMsrp"><i class="fa fa-pencil"></i></span>
+                                        <input type="text" class="form-control" ng-blur="ctrl.updateOne(feed.code,'priceClientMsrp',feed.priceClientMsrpMin)"
+                                               ng-model="feed.priceClientMsrpMin" ng-disabled="!feed.editMsrp">
                                     </div>
                                 </td>
-                                <td ng-if="feed.priceMsrps[0] != feed.priceMsrps[1]" ng-hide="ctrl.flag == 1">
-                                    {{feed.priceMsrps[0]}}~{{feed.priceMsrps[1]}}
+                                <td ng-if="feed.priceClientMsrpMin != feed.priceClientMsrpMax" ng-hide="ctrl.flag == 1">
+                                    {{feed.priceClientMsrpMin}}~{{feed.priceClientMsrpMax}}
                                 </td>
-                                <td ng-if="feed.priceNets[0] == feed.priceNets[1]" ng-hide="ctrl.flag == 1">
+                                <td ng-if="feed.priceClientRetailMin == feed.priceClientRetailMax" ng-hide="ctrl.flag == 1">
                                     <div class="input-group">
-                                        <span class="input-group-addon cur-p" ng-click="feed.editPrice = !feed.editPrice"><i class="fa fa-pencil"></i></span>
-                                        <input type="text" class="form-control" ng-model="feed.skus[0].priceNet" ng-disabled="!feed.editPrice">
+                                        <span class="input-group-addon cur-p" ng-blur="ctrl.updateOne(feed.code,'priceClientMsrp',feed.priceClientMsrpMin)"><i class="fa fa-pencil"></i></span>
+                                        <input type="text" class="form-control" ng-model="feed.priceClientRetailMin" ng-disabled="!feed.editPrice">
                                     </div>
                                 </td>
-                                <td ng-if="feed.priceNets[0] != feed.priceNets[1]" ng-hide="ctrl.flag == 1">
-                                    {{feed.priceNets[0]}}~{{feed.priceNets[1]}}
+                                <td ng-if="feed.priceClientRetailMin != feed.priceClientRetailMax" ng-hide="ctrl.flag == 1">
+                                    {{feed.priceClientRetailMin}}~{{feed.priceClientRetailMax}}
                                 </td>
                                 <td>{{feed.lastReceivedOn}}</td>
                                 <td>{{feed.modifier}}</td>

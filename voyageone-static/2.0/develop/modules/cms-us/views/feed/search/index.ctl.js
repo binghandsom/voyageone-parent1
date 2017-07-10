@@ -15,8 +15,11 @@ define([
                 status:"",
                 approvePricing:null
             };
+            self.updateMap = {};
             //权限控制,默认为最低权限1:new,2:Pending,3:Ready
-            self.flag = 3;
+
+            self.flag = self.$rootScope.auth.selfAuth;
+            console.log(self.flag);
             self.status = [false, false, false];
             self.approvePricing = [false, false];
             self.itemDetailService = itemDetailService;
@@ -40,7 +43,9 @@ define([
         }
 
         getList() {
+
             let self = this;
+            self.paraMap.status = '';
 
             if (self.status[0] === true) {
                 self.paraMap.status += "New_";
@@ -82,6 +87,17 @@ define([
 
             });
 
+        }
+
+        updateOne(code,key,value) {
+            let self = this;
+            let requestMap = {};
+
+            if(!feed.editMsrp){
+                self.itemDetailService.updateOne().then(resp => {
+
+                });
+            }
         }
 
         clear() {
