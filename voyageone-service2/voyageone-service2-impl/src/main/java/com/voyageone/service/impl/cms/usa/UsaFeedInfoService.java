@@ -54,7 +54,11 @@ public class UsaFeedInfoService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
 
 
-
+    /**
+     * feed的中国价格计算
+     * @param cmsBtFeedInfoModel feed对象
+     * @return 价格计算后的对象
+     */
     public CmsBtFeedInfoModel setPrice(CmsBtFeedInfoModel cmsBtFeedInfoModel){
 
         CmsChannelConfigBean msrpConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_MSRP, cmsBtFeedInfoModel.getProductType());
