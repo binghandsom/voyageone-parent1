@@ -142,7 +142,7 @@ public class UsaFeedInfoService extends BaseService {
             String[] split = status.split("_");
             criteria = criteria.and("status").in(Arrays.asList(split));
         }else{
-            criteria = criteria.and("status").in(Arrays.asList("new", "pending","ready"));
+            criteria = criteria.and("status").in(Arrays.asList(CmsConstants.UsaFeedStatus.New, CmsConstants.UsaFeedStatus.Pending,CmsConstants.UsaFeedStatus.Ready));
         }
         //设置开始和截止的时间
         if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null) {

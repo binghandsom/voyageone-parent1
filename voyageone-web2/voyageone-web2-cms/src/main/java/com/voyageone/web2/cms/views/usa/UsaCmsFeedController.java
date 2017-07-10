@@ -103,27 +103,32 @@ public class UsaCmsFeedController extends BaseController {
 
     @RequestMapping(value = UsaCmsUrlConstants.FEED.UPDATEONE)
     public AjaxResponse upDateOne(@RequestBody Map params) {
-        HashMap<String, Object> queryMap = new HashMap<>();
-        String code = (String) params.get("code");
-        if (code != null){
-            queryMap.put("code",code);
-        }
-        HashMap<String, Object> updateMap = new HashMap<>();
+        WriteResult writeResult = null;
+        if (params != null){
+            HashMap<String, Object> queryMap = new HashMap<>();
+            String code = (String) params.get("code");
+            if (code != null){
+                queryMap.put("code",code);
+            }
+            HashMap<String, Object> updateMap = new HashMap<>();
 
-        String msrpPrice = (String) params.get("msrpPrice");
-        if (msrpPrice != null){
-            updateMap.put("skus.msrpPrice",msrpPrice);
+            String msrpPrice = (String) params.get("msrpPrice");
+            if (msrpPrice != null){
+                updateMap.put("skus.msrpPrice",msrpPrice);
+            }
+            String price = (String) params.get("price");
+            if (price != null){
+                updateMap.put("skus.priceNet",price);
+                updateMap.put("skus.priceClientRetail",price);
+            }
+            String approvePricing = (String) params.get("approvePricing");
+            if (msrpPrice != null){
+                updateMap.put("approvePricing",approvePricing
+                );
+            }
+            writeResult = usaFeedInfoService.upDateFeedInfo(getUser().getSelChannelId(), queryMap, updateMap);
         }
-        String price = (String) params.get("price");
-        if (price != null){
-            updateMap.put("skus.priceNet",price);
-            updateMap.put("skus.priceClientRetail",price);
-        }
-        String approve = (String) params.get("approve");
-        if (msrpPrice != null){
-            updateMap.put("approve",approve);
-        }
-        WriteResult writeResult = usaFeedInfoService.upDateFeedInfo(getUser().getSelChannelId(), queryMap, updateMap);
+
 
         return success(writeResult);
     }

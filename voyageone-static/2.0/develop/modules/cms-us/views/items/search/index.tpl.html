@@ -16,11 +16,11 @@
                                             <label>
                                                 <input type="checkbox" ng-model="ctrl.status[0]">&nbsp;&nbsp;new
                                             </label>&emsp;
-                                            <label>
-                                                <input type="checkbox" ng-model="ctrl.status[1]">&nbsp;&nbsp;pending
+                                            <label ng-show="ctrl.flag==2||ctrl.flag==3">
+                                                <input type="checkbox" ng-model="ctrl.status[1]" >&nbsp;&nbsp;pending
                                             </label>&emsp;
-                                            <label>
-                                                <input type="checkbox" ng-model="ctrl.status[2]">&nbsp;&nbsp;ready
+                                            <label ng-show="ctrl.flag==3">
+                                                <input type="checkbox" ng-model="ctrl.status[2]" >&nbsp;&nbsp;ready
                                             </label>
                                         </div>
                                     </div>
@@ -77,7 +77,7 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title">Approve Pricing</label>
-                                        <div class="col-md-6 checkbox">
+                                        <div class="col-md-6 checkbox" ng-hide="ctrl.flag==1">
                                             <label>
                                                 <input type="checkbox"  ng-model="ctrl.approvePricing[0]">&nbsp;&nbsp;yes
                                             </label>&emsp;
@@ -135,17 +135,16 @@
                                 <th>Model</th>
                                 <th>Status</th>
                                 <th>Total Qty</th>
-                                <th>Approve price</th>
-                                <th>Msrp($)</th>
-                                <th>price($)</th>
+                                <th ng-hide="ctrl.flag == 1">Approve price</th>
+                                <th ng-hide="ctrl.flag == 1">Msrp($)</th>
+                                <th ng-hide="ctrl.flag == 1">price($)</th>
                                 <th>Last Received</th>
                                 <th>Modifier</th>
-                                <th class="text-center">Action</th>
+                                <th class="text-center" ng-show="ctrl.flag == 3">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="feed in ctrl.feeds">
-                                {{feed.priceMsrps}}@@@{{feed.priceNets}}
                                 <td>
                                     <input type="checkbox">
                                 </td>
@@ -161,16 +160,16 @@
                                 <td>{{feed.model}}</td>
                                 <td>{{feed.status}}</td>
                                 <td>{{feed.qty}}</td>
-                                <td ng-if="feed.approvePricing == '1'">Yes</td>
-                                <td ng-if="feed.approvePricing == '0'">No</td>
-                                <td ng-if="feed.approvePricing == null"></td>
-                                <td ng-if="feed.priceMsrps[0] == feed.priceMsrps[1]">{{feed.priceMsrps[0]}}</td>
-                                <td ng-if="feed.priceMsrps[0] != feed.priceMsrps[1]">{{feed.priceMsrps[0]}}~{{feed.priceMsrps[1]}}</td>
-                                <td ng-if="feed.priceNets[0] == feed.priceNets[1]">{{feed.priceNets[0]}}</td>
-                                <td ng-if="feed.priceNets[0] != feed.priceNets[1]">{{feed.priceNets[0]}}~{{feed.priceNets[1]}}</td>
+                                <td ng-if="feed.approvePricing == '1'" ng-hide="ctrl.flag == 1">Yes</td>
+                                <td ng-if="feed.approvePricing == '0'" ng-hide="ctrl.flag == 1">No</td>
+                                <td ng-if="feed.approvePricing == null" ng-hide="ctrl.flag == 1"></td>
+                                <td ng-if="feed.priceMsrps[0] == feed.priceMsrps[1]" ng-hide="ctrl.flag == 1">{{feed.priceMsrps[0]}}</td>
+                                <td ng-if="feed.priceMsrps[0] != feed.priceMsrps[1]" ng-hide="ctrl.flag == 1">{{feed.priceMsrps[0]}}~{{feed.priceMsrps[1]}}</td>
+                                <td ng-if="feed.priceNets[0] == feed.priceNets[1]" ng-hide="ctrl.flag == 1">{{feed.priceNets[0]}}</td>
+                                <td ng-if="feed.priceNets[0] != feed.priceNets[1]" ng-hide="ctrl.flag == 1">{{feed.priceNets[0]}}~{{feed.priceNets[1]}}</td>
                                 <td>{{feed.lastReceivedOn}}</td>
                                 <td>{{feed.modifier}}</td>
-                                <td class="text-center">
+                                <td class="text-center"  ng-show="ctrl.flag == 3">
                                     <button type="button" class="btn btn-vo"><i class="fa fa-arrow-right"></i>&nbsp;Approve</button>
                                 </td>
                             </tr>

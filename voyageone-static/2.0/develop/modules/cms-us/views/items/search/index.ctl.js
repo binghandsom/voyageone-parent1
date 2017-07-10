@@ -14,13 +14,23 @@ define([
                 approvePricing:null
             };
             //权限控制,默认为最低权限1:new,2:Pending,3:Ready
-            self.flag = '1';
+            self.flag = 3;
             self.status = [false, false, false];
             self.approvePricing = [false, false];
             self.itemDetailService = itemDetailService;
             self.paging = {curr: 1, total: 0,fetch:function(){
                 self.getList();
             }};
+            //设置状态的默认选中
+            if(self.flag == 1){
+                self.status[0] = true;
+            }
+            if(self.flag == 2){
+                self.status[1] = true;
+            }
+            if(self.flag == 3){
+                self.status[2] = true;
+            }
 
         }
 
@@ -28,13 +38,13 @@ define([
             let self = this;
 
             if (self.status[0] === true) {
-                self.paraMap.status += "new_";
+                self.paraMap.status += "New_";
             }
             if (self.status[1] === true) {
-                self.paraMap.status += "pending_";
+                self.paraMap.status += "Pending_";
             }
             if (self.status[2] === true) {
-                self.paraMap.status += "ready_";
+                self.paraMap.status += "Ready_";
             }
             if (self.approvePricing[0] === true && self.approvePricing[1] == false) {
                 self.paraMap.approvePricing = "1";
