@@ -13,7 +13,7 @@
                 <strong>USA</strong>
             </div>
             <div class="panel-body">
-                <div class="row">
+                <div class="row" ng-if="ctrl.codeCount == 1">
                     <label class="col-md-3"><strong>MSRP</strong></label>
                     <label class="col-md-3">$120</label>
                     <label class="col-md-3"><strong>Price</strong></label>
@@ -31,9 +31,42 @@
                                 </div>
                             </td>
                             <td class="v-middle">Amazon</td>
-                            <td class="v-middle">xxxxxxxxxxxxx</td>
+                            <td class="v-middle">Days Old Before Sharing</td>
                             <td class="v-middle">
-                                <input type="text" class="form-control">
+                                <input type="number" class="form-control">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <strong>CN</strong>
+            </div>
+            <div class="panel-body">
+                <div class="row" ng-if="ctrl.codeCount == 1">
+                    <label class="col-md-3"><strong>MSRP</strong></label>
+                    <label class="col-md-3">$120</label>
+                    <label class="col-md-3"><strong>Price</strong></label>
+                    <label class="col-md-3">$120</label>
+                </div>
+
+                <div class="row">
+                    <table class="table">
+                        <tr>
+                            <td>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox">
+                                    </label>
+                                </div>
+                            </td>
+                            <td class="v-middle">Amazon</td>
+                            <td class="v-middle">Days Old Before Sharing</td>
+                            <td class="v-middle">
+                                <input type="number" class="form-control">
                             </td>
                         </tr>
                     </table>

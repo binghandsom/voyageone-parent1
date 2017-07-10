@@ -125,6 +125,14 @@ define([
                     angular.forEach(self.feed.skus, function (sku) {
                         sku.weightOrg = parseFloat(sku.weightOrg);
                     });
+
+                    var priceScope = {
+                        priceClientRetailMin:res.data.priceClientRetailMin,
+                        priceClientMsrpMin:res.data.priceClientMsrpMin,
+                        priceClientRetailMax:res.data.priceClientRetailMax,
+                        priceClientMsrpMax:res.data.priceClientMsrpMax
+                    };
+                    _.extend(self.feed, priceScope);
                 }
             });
         }
@@ -135,7 +143,7 @@ define([
             let self = this;
 
             // 如果是Approve,approve price是否打钩。价格是否为0或者500，如果是0或者500警告用户再次确认
-            if (self.feed.status === 'Ready') {
+            if (self.feed.status == 'Ready' && flag == '1') {
                 if (self.feed.approvePricing != '1') {
                     self.alert("Please check 'Approve Pricing'.");
                     return;
@@ -145,7 +153,10 @@ define([
                     return sku.priceClientMsrp == 0 || sku.priceClientMsrp == 500 || sku.priceNet == 0 || sku.priceNet == 500;
                 });
                 if (!checkSkus || _.size(checkSkus) == 0) {
-                    self.popups.openBatchApprove({code:"123"});
+                    let ctx = {
+                        codeList:[self.feed.code]
+                    };
+                    self.popups.openBatchApprove(ctx);
                     // self.saveFeed(flag);
                 } else {
                     let skus = [];
@@ -171,10 +182,6 @@ define([
             self.feed.attribute.accessory = [self.feed.accessory];
             // 处理orderlimitcount
             self.feed.attribute.orderlimitcount = [self.feed.orderlimitcount];
-
-
-
-
             let parameter = {feed:self.feed, flag:flag};
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {
