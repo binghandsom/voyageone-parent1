@@ -44,6 +44,20 @@ public class UsaFeedInfoService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
 
     /**
+     * 根据Feed在MongoDB中的id查询Feed数据
+     *
+     * @param channelId 渠道ID
+     * @param id        ID
+     * @return CmsBtFeedInfoModel
+     */
+    public CmsBtFeedInfoModel getFeedById(String channelId, String id) {
+        if (StringUtils.isNotBlank(id)) {
+            return cmsBtFeedInfoDao.selectById(id, channelId);
+        }
+        return null;
+    }
+
+    /**
      * 条件查询feed商品列表
      */
     public List<CmsBtFeedInfoModel> getFeedList(Map<String, Object> searchValue, String channel) {
@@ -156,7 +170,7 @@ public class UsaFeedInfoService extends BaseService {
      */
     public List<CmsBtFeedInfoModel> getTopModelsByModel(String channelId, String model, int top) {
         if (top <= 0) top = 5;
-        int usOfficialCartId = 23; // TODO: 2017/7/6 rex.wu U.S.Official平台ID待定
+        int usOfficialCartId = 1;
 
         // 先从Product中查询top个满足状态Product
         List<CmsConstants.ProductStatus> queryProductStatus = new ArrayList<>();

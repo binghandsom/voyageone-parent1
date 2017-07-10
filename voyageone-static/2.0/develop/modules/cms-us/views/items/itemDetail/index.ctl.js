@@ -4,16 +4,17 @@ define([
 
     cms.controller('itemDetailController', class itemDetailController {
         constructor(popups, $routeParams, itemDetailService, alert,$location,notify) {
-            this.code = $routeParams.code;
-            if (!this.code) {
-                console.log("不存在");
-                return;
-            }
             this.popups = popups;
             this.itemDetailService = itemDetailService;
             this.alert = alert;
             this.$location = $location;
             this.notify = notify;
+
+            this.id = $routeParams.id;
+            if (!this.id) {
+                this.alert("Feed not exists.");
+                return;
+            }
 
             this.feed = {};
             this.brandList = [];
@@ -38,7 +39,7 @@ define([
         init() {
             let self = this;
             // 根据code加载Feed
-            self.itemDetailService.detail({code: self.code}).then((resp) => {
+            self.itemDetailService.detail({id: self.id}).then((resp) => {
                 if (resp.data && resp.data.feed) {
                     self.feed = resp.data.feed;
                     // 处理Feed数据
@@ -51,10 +52,10 @@ define([
                     // self.originList = resp.data.originList;
                     // self.colorMap = resp.data.colorMap;
                 } else {
-                    let code = self.code;
-                    let message = `Feed(Code:${code}) not exists.`;
+                    let id = self.id;
+                    let message = `Feed(id:${id}) not exists.`;
                     self.alert(message).then((res) => {
-                        self.$location.path("");
+                        // self.$location.path("");
                     });
                 }
             });
@@ -172,6 +173,17 @@ define([
                 self.feed.image = images;
             }
         }
+        addImage() {
+            let self = this;
+            if (!self.feed.image) {
+                self.feed.image = [];
+            }
+            self.feed.image.push("");
+        }
+        deleteImage(index) {
+            let self = this;
+            self.feed.image.splice(index, 1);
+        }
         initBoxImage(num) {
             let self = this;
             let urlKey = "";
@@ -183,6 +195,17 @@ define([
                 }
                 self.feed.boxImage = images;
             }
+        }
+        addBoxImage() {
+            let self = this;
+            if (!self.feed.boxImage) {
+                self.feed.boxImage = [];
+            }
+            self.feed.boxImage.push("");
+        }
+        deleteBoxImage(index) {
+            let self = this;
+            self.feed.boxImage.splice(index, 1);
         }
 
     });

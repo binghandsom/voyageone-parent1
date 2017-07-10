@@ -59,7 +59,7 @@ public class UsaCmsFeedController extends BaseController {
         String channelId = getUser().getSelChannelId();
         // 返回数据
         Map<String, Object> resultMap = new HashMap<>();
-        CmsBtFeedInfoModel feed = feedInfoService.getProductByCode(channelId, reqParams.getCode());
+        CmsBtFeedInfoModel feed = usaFeedInfoService.getFeedById(channelId, reqParams.getId());
         resultMap.put("feed", feed);
         if (feed != null) {
             resultMap.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, getLang()));

@@ -10,6 +10,7 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
  */
 public class FeedRequest {
 
+    private String id;
     private String code;
 
     // MongoDB中的FeedModel
@@ -18,6 +19,13 @@ public class FeedRequest {
     private Integer flag;
 
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getCode() {
         return code;

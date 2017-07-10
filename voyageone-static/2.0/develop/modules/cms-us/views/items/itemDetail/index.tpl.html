@@ -279,12 +279,12 @@
                                                 <div class="tab-pane active">
                                                     <div class="row">
                                                         <div class="col-md-3">
-                                                            <a href="javascript:void(0)" ng-repeat="image in ctrl.feed.image" class="thumbnail clear-margin-bottom" ng-class="active" style="height: 88px">
+                                                            <a href="javascript:void(0)" ng-repeat="image in ctrl.feed.image track by $index" class="thumbnail clear-margin-bottom" ng-class="active" style="height: 88px">
                                                                 <img style="max-height: 80px" class="thumb-group" ng-src="{{image}}">
                                                             </a>
                                                         </div>
                                                         <div class="col-md-3 text-center m-t-md">
-                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image6',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
+                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.addImage()"><i class="glyphicon glyphicon-plus"></i></button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -308,11 +308,11 @@
 
 
                                             <ul class="list-group">
-                                                <li class="list-group-item" ng-repeat="image in ctrl.feed.image">
+                                                <li class="list-group-item" ng-repeat="image in ctrl.feed.image track by $index">
                                                     {{image}}
                                                     <div class="pull-right" style="margin-top: -3px;">
                                                         <button type="button" class="btn btn-default"><i class="fa fa-save"></i></button>
-                                                        <button type="button" class="btn btn-default"><i class="fa fa-trash"></i></button>
+                                                        <button type="button" class="btn btn-default" ng-click="ctrl.deleteImage($index)"><i class="fa fa-trash"></i></button>
                                                     </div>
                                                 </li>
                                             </ul>
@@ -337,12 +337,13 @@
                                                 <div class="tab-pane active">
                                                     <div class="row">
                                                         <div class="col-md-3">
-                                                            <a href="javascript:void(0)" ng-repeat="image in ctrl.feed.boxImage" class="thumbnail clear-margin-bottom" ng-class="active" style="height: 88px">
+                                                            <a href="javascript:void(0)" ng-repeat="image in ctrl.feed.boxImage track by $index"
+                                                               class="thumbnail clear-margin-bottom" ng-class="active" style="height: 88px">
                                                                 <img style="max-height: 80px" class="thumb-group" ng-src="{{image}}">
                                                             </a>
                                                         </div>
                                                         <div class="col-md-3 text-center m-t-md">
-                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image6',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
+                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.addBoxImage()"><i class="glyphicon glyphicon-plus"></i></button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -366,12 +367,12 @@
 
 
                                             <ul class="list-group">
-                                                <li class="list-group-item" ng-repeat="image in ctrl.feed.boxImage">
+                                                <li class="list-group-item" ng-repeat="image in ctrl.feed.boxImage track by $index">
                                                     {{image}}
                                                     <!--<input type="text" ng-model="image">-->
                                                     <div class="pull-right" style="margin-top: -3px;">
                                                         <button type="button" class="btn btn-default"><i class="fa fa-save"></i></button>
-                                                        <button type="button" class="btn btn-default"><i class="fa fa-trash"></i></button>
+                                                        <button type="button" class="btn btn-default" ng-click="ctrl.deleteBoxImage($index)"><i class="fa fa-trash"></i></button>
                                                     </div>
                                                 </li>
                                             </ul>
