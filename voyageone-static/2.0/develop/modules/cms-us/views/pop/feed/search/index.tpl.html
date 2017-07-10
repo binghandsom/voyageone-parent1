@@ -22,18 +22,18 @@
 
                 <div class="row">
                     <table class="table">
-                        <tr>
+                        <tr ng-repeat="usPlatform in ctrl.usPlatforms">
                             <td>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox">
+                                        <input type="checkbox" ng-model="usPlatform.checked">
                                     </label>
                                 </div>
                             </td>
-                            <td class="v-middle">Amazon</td>
+                            <td class="v-middle">{{usPlatform.name}}</td>
                             <td class="v-middle">Days Old Before Sharing</td>
                             <td class="v-middle">
-                                <input type="number" class="form-control">
+                                <input type="number" class="form-control" ng-model="usPlatform.day">
                             </td>
                         </tr>
                     </table>
@@ -55,18 +55,18 @@
 
                 <div class="row">
                     <table class="table">
-                        <tr>
+                        <tr ng-repeat="platform in ctrl.platforms">
                             <td>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox">
+                                        <input type="checkbox" ng-model="platform.checked">
                                     </label>
                                 </div>
                             </td>
-                            <td class="v-middle">Amazon</td>
+                            <td class="v-middle">{{platform.name}}</td>
                             <td class="v-middle">Days Old Before Sharing</td>
                             <td class="v-middle">
-                                <input type="number" class="form-control">
+                                <input type="number" class="form-control" ng-model="platform.day" value="0">
                             </td>
                         </tr>
                     </table>

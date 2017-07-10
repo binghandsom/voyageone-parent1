@@ -82,6 +82,11 @@ public class UsaCmsFeedController extends BaseController {
         return success(usaFeedInfoService.setPrice(reqParams.getFeed()));
     }
 
+    @RequestMapping(value = UsaCmsUrlConstants.FEED.APPROVE)
+    public AjaxResponse approve(@RequestBody Map<String, Object> reqParams) {
+        return success(null);
+    }
+
     /**
      * 更新Feed信息: Save 或 Submit至下一步 或 Approve
      *

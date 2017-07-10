@@ -22,6 +22,8 @@ public class UsaCmsUrlConstants {
 
         String SET_PRICE = "setPrice";
 
+        String APPROVE = "approve";
+
         String LIST = "list";
 
         String UPDATEONE = "updateOne";
