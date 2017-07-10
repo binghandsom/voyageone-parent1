@@ -98,10 +98,38 @@ define([
         }
 
         // 统一设置SKU属性
-        setSkuProperty(property) {
+        setSkuProperty(sku,property) {
             let self = this;
+            if (!sku) {
+                angular.forEach(self.feed.skus, function (sku) {
+                    sku[property] = self.setting[property];
+                })
+            }
+            self.setSkuCNPrice();
+        }
+        // 同步计算中国相关价格
+        setSkuCNPrice() {
+            let self = this;
+            let productType = self.feed.productType;
             angular.forEach(self.feed.skus, function (sku) {
-                sku[property] = self.setting[property];
+                let priceClientMsrp = sku['priceClientMsrp'];
+                let priceNet = sku['priceNet'];
+                if (productType.toLowerCase() == "shoes") {
+                    // ->中国建议售价 (msrp + msrp * 0.2 + 11) * 6.4
+                    // ->中国指导售价 (price + msrp * 0.2 + 11) * 6.4
+                    sku['priceMsrp'] = (priceClientMsrp + priceClientMsrp*0.2 + 11)*6.4;
+                    sku['priceCurrent'] = (priceNet + priceClientMsrp*0.2 + 11)*6.4;
+                } else if (productType.toLowerCase() == "gear") {
+                    // ->中国建议售价 msrp * 11
+                    // ->中国指导售价 msrp * 8
+                    sku['priceMsrp'] = priceClientMsrp*11;
+                    sku['priceCurrent'] = priceClientMsrp*8;
+                } else {
+                    // ->中国建议售价 msrp * 11
+                    // ->中国指导售价 price * 11
+                    sku['priceMsrp'] = priceClientMsrp*11;
+                    sku['priceCurrent'] = priceNet*11;
+                }
             })
         }
 
@@ -130,6 +158,31 @@ define([
             self.popups.openUsCategory().then(context => {
                 _.extend(self.feed, {category:context.catPath})
             });
+        }
+
+        initImage(num) {
+            let self = this;
+            let urlKey = "";
+            if (self.feed.hasUrlkey && num > 0) {
+                urlKey = self.feed.attribute.urlkey[0];
+                let images = [];
+                for (let i=1; i<=num; i++) {
+                    images.push("http://image.sneakerhead.com/is/image/sneakerhead/" + urlKey + "-" + i);
+                }
+                self.feed.image = images;
+            }
+        }
+        initBoxImage(num) {
+            let self = this;
+            let urlKey = "";
+            if (self.feed.hasUrlkey && num > 0) {
+                urlKey = self.feed.attribute.urlkey[0];
+                let images = [];
+                for (let i=1; i<=num; i++) {
+                    images.push("http://image.sneakerhead.com/is/image/sneakerhead/" + urlKey + "-2-" + i);
+                }
+                self.feed.boxImage = images;
+            }
         }
 
     });
