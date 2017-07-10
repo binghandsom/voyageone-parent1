@@ -23,16 +23,36 @@
                                         <input type="text" class="form-control" ng-model="ctrl.feed.model">
                                     </div>
                                     <div class="col-md-1">
-                                        <button type="button" class="btn btn-default btn-pop"><i class="fa fa-angle-double-down" style="font-size: 16px;"></i></button>
+                                        <button type="button" class="btn btn-default btn-pop" ng-click="ctrl.dispalyModals = !ctrl.dispalyModals"><i class="fa fa-angle-double-down" style="font-size: 16px;"></i></button>
                                     </div>
                                 </div>
 
                             </div>
 
-                            <div class="form-group">
+                            <div class="form-group" ng-if="ctrl.dispalyModals">
                                 <div class="row">
-                                    <div class="col-md-6 col-md-offset-4">
-                                        <div class="col-xs-6 col-md-3">
+                                    <div class="col-md-8 col-md-offset-4">
+                                        <div class="col-xs-6 col-md-2">
+                                            <a href="#" class="thumbnail">
+                                                <img alt="1280750-480." class="thumb-sm-search" src="http://image.sneakerhead.com/is/image/sneakerhead/patagonia-down-sweater-vest-kids-68220gem-1">
+                                            </a>
+                                        </div>
+                                        <div class="col-xs-6 col-md-2">
+                                            <a href="#" class="thumbnail">
+                                                <img alt="1280750-480." class="thumb-sm-search" src="http://image.sneakerhead.com/is/image/sneakerhead/patagonia-down-sweater-vest-kids-68220gem-1">
+                                            </a>
+                                        </div>
+                                        <div class="col-xs-6 col-md-2">
+                                            <a href="#" class="thumbnail">
+                                                <img alt="1280750-480." class="thumb-sm-search" src="http://image.sneakerhead.com/is/image/sneakerhead/patagonia-down-sweater-vest-kids-68220gem-1">
+                                            </a>
+                                        </div>
+                                        <div class="col-xs-6 col-md-2">
+                                            <a href="#" class="thumbnail">
+                                                <img alt="1280750-480." class="thumb-sm-search" src="http://image.sneakerhead.com/is/image/sneakerhead/patagonia-down-sweater-vest-kids-68220gem-1">
+                                            </a>
+                                        </div>
+                                        <div class="col-xs-6 col-md-2">
                                             <a href="#" class="thumbnail">
                                                 <img alt="1280750-480." class="thumb-sm-search" src="http://image.sneakerhead.com/is/image/sneakerhead/patagonia-down-sweater-vest-kids-68220gem-1">
                                             </a>
@@ -451,4 +471,22 @@
     <button ng-if="ctrl.feed.status != 'Approved'" ng-click="ctrl.save('0')">Save</button>
     <button ng-if="ctrl.feed.status != 'Ready' && ctrl.feed.status != 'Approved'" ng-click="ctrl.save('1')">Submit</button>
     <button ng-if="ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')">Approve</button>
+
+    <!-------------------------------- 导航栏 --------------------------------->
+    <sticky top-fix="-100" style="position: absolute; top: 380px; right: 47px;" drag>
+        <nav class="bs-docs-sidebar">
+            <h3 drag-handle>导航栏</h3>
+            <ul class="nav bs-docs-sidenav">
+                <li>
+                    <a href="javascript:void(0)" ng-click="ctrl.pageAnchor('common',1000)">Save</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" ng-click="ctrl.pageAnchor('item',1000)">Submit</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" ng-click="ctrl.pageAnchor('product',1000)">Approve</a>
+                </li>
+            </ul>
+        </nav>
+    </sticky>
 </div>
