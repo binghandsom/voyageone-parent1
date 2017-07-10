@@ -33,6 +33,8 @@ define([
 
                 weightOrgUnits:['kg','lb']
             };
+            this.topFeedList = []; // 同Model查询结果
+            this.imageUrl = "http://image.sneakerhead.com/is/image/sneakerhead/";
             this.init();
         }
 
@@ -138,11 +140,23 @@ define([
         // flag:0 or 1; 0-Only Save,1-Submit/Approve to next status
         save(flag) {
             let self = this;
+
+            // 如果是Approve,approve price是否打钩。价格是否为0或者500，如果是0或者500警告用户再次确认
+            // if (self.feed.status === '') {
+            //
+            // }
+
+
+
             // 处理Abstract和accessory
             self.feed.attribute.abstract = [self.feed.abstract];
             self.feed.attribute.accessory = [self.feed.accessory];
             // 处理orderlimitcount
             self.feed.attribute.orderlimitcount = [self.feed.orderlimitcount];
+
+
+
+
             let parameter = {feed:self.feed, flag:flag};
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {
@@ -173,7 +187,7 @@ define([
                 let add = num - count;
                 if (add > 0) {
                     for (let i=1; i<=add; i++) {
-                        self.feed.image.push("http://image.sneakerhead.com/is/image/sneakerhead/" + urlKey + "-" + (count + i));
+                        self.feed.image.push(self.imageUrl + urlKey + "-" + (count + i));
                     }
                 } else {
                     self.feed.image.splice(add);
@@ -203,7 +217,7 @@ define([
                 let add = num - count;
                 if (add > 0) {
                     for (let i=1; i<=add; i++) {
-                        self.feed.boxImage.push("http://image.sneakerhead.com/is/image/sneakerhead/" + urlKey + "-2-" + (count + i));
+                        self.feed.boxImage.push(self.imageUrl + urlKey + "-2-" + (count + i));
                     }
                 } else {
                     self.feed.boxImage.splice(add);
@@ -220,6 +234,19 @@ define([
         deleteBoxImage(index) {
             let self = this;
             self.feed.boxImage.splice(index, 1);
+        }
+
+        // 同Model
+        getTopModel(top) {
+            let self = this;
+            if (self.feed.model) {
+                self.itemDetailService.getTopModel({code:self.feed.code,model:self.feed.model,top:top}).then((res) => {
+                    if (res.data) {
+                        self.topFeedList = res.data;
+                        console.log(_.size(self.topFeedList))
+                    }
+                })
+            }
         }
 
     });

@@ -216,10 +216,11 @@ public class UsaFeedInfoService extends BaseService {
      * <p>  feed状态有优先级</p>
      *
      * @param channelId 渠道ID
+     * @param code      Code
      * @param model     Feed->model
      * @param top       查询个数
      */
-    public List<CmsBtFeedInfoModel> getTopModelsByModel(String channelId, String model, int top) {
+    public List<CmsBtFeedInfoModel> getTopFeedByModel(String channelId, String code, String model, int top) {
         if (top <= 0) top = 5;
         int usOfficialCartId = 1;
 
@@ -230,11 +231,11 @@ public class UsaFeedInfoService extends BaseService {
         queryProductStatus.add(CmsConstants.ProductStatus.Pending);
 
         List<CmsBtProductModel> resultProductList = new ArrayList<>(top);
-        String query = String.format("{\"channelId\":#,\"common.fields.model\":#,\"platforms.P#\":{$exists:true},\"platforms.P#.status\":#}");
+        String query = "{\"channelId\":#,\"common.fields.model\":#,\"usPlatforms.P#.status\":#}";
         int count = 0;
         for (CmsConstants.ProductStatus productStatus : queryProductStatus) {
             JongoQuery jongoQuery = new JongoQuery(null, query, null, top - resultProductList.size(), 0);
-            jongoQuery.setParameters(channelId, model, usOfficialCartId, usOfficialCartId, productStatus.name());
+            jongoQuery.setParameters(channelId, model, usOfficialCartId, productStatus.name());
             List<CmsBtProductModel> tempResultProductList = cmsBtProductDao.select(jongoQuery, channelId);
             count = tempResultProductList.size();
             if (count > 0) {
@@ -251,12 +252,13 @@ public class UsaFeedInfoService extends BaseService {
             queryFeedStatus.add(CmsConstants.UsaFeedStatus.Approved);
             queryFeedStatus.add(CmsConstants.UsaFeedStatus.Ready);
             queryFeedStatus.add(CmsConstants.UsaFeedStatus.Pending);
+            queryFeedStatus.add(CmsConstants.UsaFeedStatus.New);
 
             List<CmsBtFeedInfoModel> resultFeedList = new ArrayList<>(top);
-            query = String.format("{\"channelId\":#,\"model\":#,\"status\":{$exists:true},\"status\":#}");
+            query = "{\"channelId\":#,\"code\":{$ne:#},\"model\":#,\"status\":{$exists:true},\"status\":#}";
             for (CmsConstants.UsaFeedStatus feedStatus : queryFeedStatus) {
                 JongoQuery jongoQuery = new JongoQuery(null, query, null, top - resultFeedList.size(), 0);
-                jongoQuery.setParameters(channelId, model, usOfficialCartId, usOfficialCartId, feedStatus.name());
+                jongoQuery.setParameters(channelId, code, model, feedStatus.name());
                 List<CmsBtFeedInfoModel> tempResultFeedList = cmsBtFeedInfoDao.select(jongoQuery, channelId);
                 count = tempResultFeedList.size();
                 if (count > 0) {
