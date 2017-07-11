@@ -72,9 +72,9 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String approvePricing;
 
     /**
-     * 美国CMS2 Approve信息,KV分别是cartId 和 Days Old Before Sharing
+     * Feed在各平台Approve信息
      */
-    private Map<Integer, Integer> approveInfo;
+    private List<CmsBtFeedInfoModel_ApproveItem> approveInfo;
     /**
      * 美国CMS2 Box-image
      */
@@ -451,11 +451,11 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         this.approvePricing = approvePricing;
     }
 
-    public Map<Integer, Integer> getApproveInfo() {
+    public List<CmsBtFeedInfoModel_ApproveItem> getApproveInfo() {
         return approveInfo;
     }
 
-    public void setApproveInfo(Map<Integer, Integer> approveInfo) {
+    public void setApproveInfo(List<CmsBtFeedInfoModel_ApproveItem> approveInfo) {
         this.approveInfo = approveInfo;
     }
 

@@ -22,18 +22,18 @@
 
                 <div class="row">
                     <table class="table">
-                        <tr>
+                        <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId < 20 && platform.lang_id=='en'">
                             <td>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox">
+                                        <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="platform.checked">
                                     </label>
                                 </div>
                             </td>
-                            <td class="v-middle">Amazon</td>
+                            <td class="v-middle">{{platform.add_name2}}</td>
                             <td class="v-middle">Days Old Before Sharing</td>
                             <td class="v-middle">
-                                <input type="number" class="form-control">
+                                <input type="number" class="form-control" ng-model="platform.day">
                             </td>
                         </tr>
                     </table>
@@ -55,18 +55,18 @@
 
                 <div class="row">
                     <table class="table">
-                        <tr>
+                        <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId >= 20 && platform.lang_id=='cn'">
                             <td>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox">
+                                        <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="platform.checked">
                                     </label>
                                 </div>
                             </td>
-                            <td class="v-middle">Amazon</td>
+                            <td class="v-middle">{{platform.name}}</td>
                             <td class="v-middle">Days Old Before Sharing</td>
                             <td class="v-middle">
-                                <input type="number" class="form-control">
+                                <input type="number" class="form-control" ng-model="platform.day" value="0">
                             </td>
                         </tr>
                     </table>
@@ -77,6 +77,6 @@
     </div>
 
     <div class="modal-footer">
-        <button class="btn btn-success" ng-click="ctrl.complete()"><i class="fa fa-check "></i>&nbsp;confirm</button>
+        <button class="btn btn-success" ng-click="ctrl.approve()"><i class="fa fa-check "></i>&nbsp;confirm</button>
     </div>
 </div>

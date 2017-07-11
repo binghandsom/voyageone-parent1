@@ -58,6 +58,10 @@ define(function () {
                     "save": "save"
                 }
             },
+            commonService: {
+                "root":"/cms/us/common",
+                "getChannelCarts":"getChannelCarts"
+            },
             search: {
                 $feedSearchService: {
                     root: "/cms/search/feed/",
@@ -85,8 +89,10 @@ define(function () {
                 detail:"detail",
                 update:"update",
                 getTopModel:"getTopModel",
+                updateOne:"updateOne",
                 setPrice:"setPrice",
-                list:"list"
+                list:"list",
+                approve:"approve"
             }
         }
     };
