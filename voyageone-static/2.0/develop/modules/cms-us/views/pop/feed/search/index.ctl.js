@@ -32,7 +32,8 @@ define([
                     self.platforms = res.data;
                     angular.forEach(self.platforms, function (cartOjb) {
                         _.extend(cartOjb, {cartId:parseInt(cartOjb.value), day:0});
-                    })
+                    });
+                    console.log(self.platforms);
                 }
             });
         }

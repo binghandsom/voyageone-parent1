@@ -22,7 +22,7 @@
 
                 <div class="row">
                     <table class="table">
-                        <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId < 20">
+                        <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId < 20 && platform.lang_id=='en'">
                             <td>
                                 <div class="checkbox">
                                     <label>
@@ -55,7 +55,7 @@
 
                 <div class="row">
                     <table class="table">
-                        <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId >= 20">
+                        <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId >= 20 && platform.lang_id=='cn'">
                             <td>
                                 <div class="checkbox">
                                     <label>
