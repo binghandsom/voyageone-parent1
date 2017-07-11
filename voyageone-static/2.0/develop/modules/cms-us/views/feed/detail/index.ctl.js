@@ -231,7 +231,10 @@ define([
 
         popUsCategory() {
             let self = this;
-            self.popups.openUsCategory().then(context => {
+
+            self.popups.openUsCategory({
+                from:self.feed.category
+            }).then(context => {
                 _.extend(self.feed, {category: context.catPath})
             });
         }

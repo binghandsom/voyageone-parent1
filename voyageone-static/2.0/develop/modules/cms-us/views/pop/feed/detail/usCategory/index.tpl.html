@@ -7,7 +7,9 @@
     </div>
     <div class="modal-body wrapper">
         <div class="category_ts">
-            <p>Selected Category:&emsp;<strong>{{ctrl.selected.catPath}}</strong></p>
+            <p>Selected Category:&emsp;
+                <strong>{{ctrl.selected.catPath ? ctrl.selected.catPath : ctrl.context.from}}</strong>
+            </p>
         </div>
         <div class="category_drags">
             <div class="category_drag col-sm-3" ng-repeat="categoryItem in ctrl.totalCategory">
