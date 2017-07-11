@@ -152,6 +152,14 @@ define([
                 selAll:self.totalItems,
                 codeList:codeList,
                 searchMap: self.paraMap
+            }).then((res) =>{
+                if (res.success) {
+                    self.isAll = false;
+                    angular.forEach(self.feeds, function (feed) {
+                        feed.check = false;
+                    })
+                    self.getList();
+                }
             });
         }
 
@@ -173,6 +181,9 @@ define([
             }).then((res) =>{
                 if (res.success) {
                     self.isAll = false;
+                    angular.forEach(self.feeds, function (feed) {
+                        feed.check = false;
+                    })
                     self.getList();
                 }
             });
