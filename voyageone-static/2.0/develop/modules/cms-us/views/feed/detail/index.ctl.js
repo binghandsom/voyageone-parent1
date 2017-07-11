@@ -60,11 +60,15 @@ define([
                     // self.materialList = resp.data.materialList;
                     // self.originList = resp.data.originList;
                     // self.colorMap = resp.data.colorMap;
-                    if (self.feed && _.size(self.feed.image) > 0)
+                    if (self.feed && _.size(self.feed.image) > 0) {
                         self.currentFeedImage = self.feed.image[0];
+                        _.extend(self.feed, {imageNum:_.size(self.feed.image)});
+                    }
 
-                    if (self.feed && self.feed.attribute.boximages && _.size(self.feed.attribute.boximages) > 0)
+                    if (self.feed && self.feed.attribute.boximages && _.size(self.feed.attribute.boximages) > 0) {
                         self.currentBoxImage = self.feed.attribute.boximages[0];
+                        _.extend(self.feed, {boxImageNum:_.size(self.feed.attribute.boximages)});
+                    }
 
                 } else {
                     let id = self.id;
@@ -277,7 +281,7 @@ define([
                 let add = num - count;
                 if (add > 0) {
                     for (let i = 1; i <= add; i++) {
-                        self.feed.attribute.boximages.push(self.imageUrl + urlKey + "-2-" + (count + i));
+                        self.feed.attribute.boximages.push(self.imageUrl + urlKey + "-2" + (count + i));
                     }
                 } else {
                     self.feed.attribute.boximages.splice(add);

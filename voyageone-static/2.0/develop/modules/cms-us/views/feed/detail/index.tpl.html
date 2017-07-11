@@ -328,7 +328,7 @@
                                                     <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.image track by $index">
                                                         <div class="row">
                                                             <div class="col-md-10">
-                                                                {{image}}
+                                                                <textarea class="form-control no-resize" ng-model="image" rows="3"></textarea>
                                                             </div>
                                                             <div class="col-md-2">
                                                                 <button type="button" class="btn btn-default" ng-click="ctrl.deleteImage($index)"><i class="fa fa-trash"></i></button>
@@ -391,7 +391,7 @@
                                                     <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
                                                         <div class="row">
                                                             <div class="col-md-10">
-                                                                {{image}}
+                                                                <textarea class="form-control no-resize" ng-model="image" rows="3"></textarea>
                                                             </div>
                                                             <div class="col-md-2">
                                                                 <button type="button" class="btn btn-default" ng-click="ctrl.deleteBoxImage($index)"><i class="fa fa-trash"></i></button>
