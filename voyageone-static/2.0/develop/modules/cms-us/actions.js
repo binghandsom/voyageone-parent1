@@ -43,8 +43,8 @@ define(function () {
             }
         },
         "cms-us": {
-            "home": {
-                "$menuService": {
+            home: {
+                $menuService: {
                     "root": "/cms/home/menu/",
                     "getCategoryInfo": session('getCategoryInfo', [KEY.CHANNEL]),
                     "getPlatformType": session('getPlatformType', [KEY.USERNAME, KEY.CHANNEL]),
@@ -53,14 +53,14 @@ define(function () {
                     "getCmsConfig": session('getCmsConfig', [KEY.CHANNEL]),
                     getMenuHeaderInfo: "getMenuHeaderInfo"
                 },
-                "$modifyPassWordService": {
-                    "root": "/cms/home/menu/modifyPassword/",
-                    "save": "save"
+                $modifyPassWordService: {
+                    root: "/cms/home/menu/modifyPassword/",
+                    save: "save"
                 }
             },
             commonService: {
-                "root":"/cms/us/common",
-                "getChannelCarts":"getChannelCarts"
+                root:"/cms/us/common",
+                getChannelCarts:"getChannelCarts"
             },
             search: {
                 $feedSearchService: {
@@ -75,7 +75,6 @@ define(function () {
                     batchUpdateMainCategory: "batchUpdateMainCategory"
                 }
             },
-
             channel: {
                 sellerCat: {
                     sellerCatService: {
@@ -84,7 +83,7 @@ define(function () {
                     }
                 }
             },
-            "itemDetailService":{
+            itemDetailService:{
                 root:'/cms/us/feed',
                 detail:"detail",
                 update:"update",
@@ -93,6 +92,12 @@ define(function () {
                 setPrice:"setPrice",
                 list:"list",
                 approve:"approve"
+            },
+            product:{
+                productDetailService:{
+                    root:'/cms/product/detail/',
+                    getPlatformCategories: {url: "getPlatformCategories", cache: CACHE.LOCAL}
+                }
             }
         }
     };
