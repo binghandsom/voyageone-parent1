@@ -27,6 +27,7 @@ define([
         }
 
         init() {
+
             let self = this;
             self.commonService.getChannelCarts().then((res) => {
                 if (res.data) {
@@ -57,7 +58,6 @@ define([
                 approveInfo:approveInfo,
                 searchMap:self.context.searchMap
             };
-            console.log(params);
             if (self.updateModel) {
                 self.$modalInstance.close({success:true,approveInfo:approveInfo});
             } else {
