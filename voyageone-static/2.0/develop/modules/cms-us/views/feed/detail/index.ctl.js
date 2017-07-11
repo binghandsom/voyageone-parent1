@@ -328,6 +328,17 @@ define([
             _.extend(self.feed, attribute);
         }
 
+        /**
+         * @description 弹出亚马逊类目  cartId：5
+         */
+        popAmazonCategory(){
+            let self = this;
+
+            self.popups.openAmazonCategory().then(res => {
+
+            });
+        }
+
         goDetail(url) {
             if (!url)
                 return;
