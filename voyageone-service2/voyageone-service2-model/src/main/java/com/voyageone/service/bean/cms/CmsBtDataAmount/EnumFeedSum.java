@@ -8,13 +8,13 @@ import java.util.List;
  * Created by dell on 2016/7/5.
  */
 public enum EnumFeedSum implements IEnumDataAmountSum {
-    CMS_FEED_ALL("CMS_FEED_ALL", "", "/feed/product_list", "", " feed商品数"),
-    CMS_FEED_STATUS_NEW("CMS_FEED_STATUS_NEW", "{'updFlg':9}", "/feed/product_list", "", "新品数"),
-    CMS_FEED_STATUS_IMPORT_FINISH("CMS_FEED_STATUS_IMPORT_FINISH", "{'updFlg':1}", "/feed/product_list", "", "导入完成数"),
-    CMS_FEED_STATUS_NOT_IMPORT("CMS_FEED_STATUS_NOT_IMPORT", "{'updFlg':3}", "/feed/product_list", "", "不导入数"),
-    CMS_FEED_STATUS_IMPORT_FAILD("CMS_FEED_STATUS_IMPORT_FAILD", "{'updFlg':2}", "/feed/product_list", "", "导入失败数"),
-    CMS_FEED_DATA_ERROR("CMS_FEED_DATA_ERROR", "{'updFlg':8}", "/feed/product_list", "", "Feed数据错误数"),
-    CMS_FEED_STATUS_WAITING_FOR_IMPORT("CMS_FEED_STATUS_WAITING_FOR_IMPORT", "{'updFlg':0}", "/feed/product_list", "", "等待导入数"),
+    CMS_FEED_ALL("CMS_FEED_ALL", "{status':{$in:[null,'']}}", "/feed/product_list", "", " feed商品数"),
+    CMS_FEED_STATUS_NEW("CMS_FEED_STATUS_NEW", "{'updFlg':9,'status':{$in:[null,'']}}", "/feed/product_list", "", "新品数"),
+    CMS_FEED_STATUS_IMPORT_FINISH("CMS_FEED_STATUS_IMPORT_FINISH", "{'updFlg':1,'status':{$in:[null,'']}}", "/feed/product_list", "", "导入完成数"),
+    CMS_FEED_STATUS_NOT_IMPORT("CMS_FEED_STATUS_NOT_IMPORT", "{'updFlg':3,'status':{$in:[null,'']}}", "/feed/product_list", "", "不导入数"),
+    CMS_FEED_STATUS_IMPORT_FAILD("CMS_FEED_STATUS_IMPORT_FAILD", "{'updFlg':2,'status':{$in:[null,'']}}", "/feed/product_list", "", "导入失败数"),
+    CMS_FEED_DATA_ERROR("CMS_FEED_DATA_ERROR", "{'updFlg':8,'status':{$in:[null,'']}}", "/feed/product_list", "", "Feed数据错误数"),
+    CMS_FEED_STATUS_WAITING_FOR_IMPORT("CMS_FEED_STATUS_WAITING_FOR_IMPORT", "{'updFlg':0,'status':{$in:[null,'']}}", "/feed/product_list", "", "等待导入数"),
     CMS_FEED_feedBrand_block("CMS_FEED_feedBrand_block", "", "", "", "黑名单数量",1);
     EnumFeedSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
         this.amountName = amountName;
