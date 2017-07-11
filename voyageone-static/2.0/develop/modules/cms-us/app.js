@@ -152,7 +152,7 @@ define([
         });
 
         // set de default language
-        translateService.setLanguage("");
+        translateService.setLanguage("en");
 
         function isSmartDevice($window) {
             // Adapted from http://www.detectmobilebrowsers.com
