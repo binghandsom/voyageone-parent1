@@ -460,8 +460,8 @@ public class UsaFeedInfoService extends BaseService {
             jongoUpdate.setQuery("{\"channelId\":#,\"code\":#}");
             jongoUpdate.setQueryParameters(channelId, code);
 
-            jongoUpdate.setUpdate("{$set:{\"updFlg\":#,\"approveInfo\":#,\"modifier\":#,\"modified\":#}}");
-            jongoUpdate.setUpdateParameters(0, approveInfo, username, DateTimeUtil.getNow());
+            jongoUpdate.setUpdate("{$set:{\"updFlg\":#,\"\":#,\"approveInfo\":#,\"modifier\":#,\"modified\":#}}");
+            jongoUpdate.setUpdateParameters(0, CmsConstants.UsaFeedStatus.Approved.name(), approveInfo, username, DateTimeUtil.getNow());
             jongoUpdateList.add(jongoUpdate);
         }
 
