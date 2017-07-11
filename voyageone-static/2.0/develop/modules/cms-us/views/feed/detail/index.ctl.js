@@ -60,10 +60,10 @@ define([
                     // self.materialList = resp.data.materialList;
                     // self.originList = resp.data.originList;
                     // self.colorMap = resp.data.colorMap;
-                    if (self.feed && self.feed.image.length > 0)
+                    if (self.feed && _.size(self.feed.image) > 0)
                         self.currentFeedImage = self.feed.image[0];
 
-                    if (self.feed && self.feed.boxImage.length > 0)
+                    if (self.feed && _.size(self.feed.boxImage) > 0)
                         self.currentBoxImage = self.feed.boxImage[0];
 
                 } else {
