@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.usa;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -98,16 +99,23 @@ public class UsaCmsFeedController extends BaseController {
     @RequestMapping(value = UsaCmsUrlConstants.FEED.APPROVE)
     public AjaxResponse approve(@RequestBody FeedRequest reqParams) {
         List<String> codeList = reqParams.getCodeList();
-        Integer selAll = reqParams.getSelAll();
-        if (Objects.equals(selAll, Integer.valueOf(1))) {
-            // TODO: 2017/7/10 根据检索条件全量检索Feed
+        Boolean selAll = reqParams.getSelAll();
+        if (selAll != null && selAll) {
+            codeList = null;
+        }else{
+            reqParams.setSearchMap(new HashMap<>());
         }
-        if (CollectionUtils.isEmpty(codeList)) {
-            throw new BusinessException("No Code needs to be Approved.");
-        }
+        List<String> status = new ArrayList<>();
+        status.add(CmsConstants.ProductStatus.Ready.toString());
+        reqParams.getSearchMap().put("status",status );
+        reqParams.getSearchMap().put("approvePricing","1");
+        reqParams.getSearchMap().put("codeList",codeList);
+        codeList = usaFeedInfoService.getFeedCodeList(reqParams.getSearchMap(), getUser().getSelChannelId());
 
-        UserSessionBean user = getUser();
-        usaFeedInfoService.approve(user.getSelChannelId(), codeList, reqParams.getApproveInfo(), user.getUserName());
+        if (!CollectionUtils.isEmpty(codeList)) {
+            UserSessionBean user = getUser();
+            usaFeedInfoService.approve(user.getSelChannelId(), codeList, reqParams.getApproveInfo(), user.getUserName());
+        }
         return success("");
     }
 
