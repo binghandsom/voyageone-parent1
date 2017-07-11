@@ -418,7 +418,7 @@ define([
         }
     }
 
-    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes, cookieService) {
+    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes, $sessionStorage) {
 
         $scope.menuInfo = {};
         $scope.initialize = initialize;
@@ -486,6 +486,9 @@ define([
 
         function linkPage(menu) {
             $rootScope.auth.selfAuth = menu.selfAuth;
+
+            //save in sessionstorage
+            $sessionStorage.auth = $rootScope.auth;
 
             let timeStamp = new Date().getTime();
 

@@ -4,10 +4,10 @@ define([
 
     cms.controller('feedSearchController', class FeedSearchController {
 
-        constructor($rootScope, popups, itemDetailService, alert) {
+        constructor(popups, itemDetailService, alert,$sessionStorage) {
             let self = this;
 
-            self.$rootScope = $rootScope;
+            self.$sessionStorage = $sessionStorage;
             self.alert = alert;
             self.popups = popups;
             self.feedListTotal = 0;
@@ -18,7 +18,7 @@ define([
             self.updateMap = {};
             //权限控制,默认为最低权限1:new,2:Pending,3:Ready
 
-            self.flag = self.$rootScope.auth.selfAuth;
+            self.flag = self.$sessionStorage.auth.selfAuth;
             self.columnArrow = {};
             self.status = [false, false, false];
             self.approvePricing = [false, false];
