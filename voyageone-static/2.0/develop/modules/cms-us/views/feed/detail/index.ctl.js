@@ -13,7 +13,6 @@ define([
             this.$location = $location;
             this.notify = notify;
             this.confirm = confirm;
-            this.$rootScope = $rootScope;
             this.$sessionStorage = $sessionStorage;
             this.auth = this.$sessionStorage.auth.auth;
 
@@ -27,18 +26,18 @@ define([
             this.brandList = [];
             this.productTypeList = [];
             this.sizeTypeList = [];
-            this.materialList = [{value:"wood",name:"wood"}];
-            this.originList = [{value:"CN",name:"CN"}];
-            this.colorMap = [{value:"Red",name:"Red"}];
+            this.materialList = [{value: "wood", name: "wood"}];
+            this.originList = [{value: "CN", name: "CN"}];
+            this.colorMap = [{value: "Red", name: "Red"}];
             this.setting = {
-                weightOrg:"",
-                weightOrgUnit:"",
-                priceClientMsrp:"",
-                priceNet:"",
-                priceMsrp:"",
-                priceCurrent:"",
+                weightOrg: "",
+                weightOrgUnit: "",
+                priceClientMsrp: "",
+                priceNet: "",
+                priceMsrp: "",
+                priceCurrent: "",
 
-                weightOrgUnits:['kg','lb']
+                weightOrgUnits: ['kg', 'lb']
             };
             this.topFeedList = []; // 同Model查询结果
             this.imageUrl = "http://image.sneakerhead.com/is/image/sneakerhead/";
@@ -61,6 +60,12 @@ define([
                     // self.materialList = resp.data.materialList;
                     // self.originList = resp.data.originList;
                     // self.colorMap = resp.data.colorMap;
+                    if (self.feed && self.feed.image.length > 0)
+                        self.currentFeedImage = self.feed.image[0];
+
+                    if (self.feed && self.feed.boxImage.length > 0)
+                        self.currentBoxImage = self.feed.boxImage[0];
+
                 } else {
                     let id = self.id;
                     let message = `Feed(id:${id}) not exists.`;
@@ -76,7 +81,7 @@ define([
         filterFeed() {
             let self = this;
             let hasUrlkey = self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
-            _.extend(self.feed, {hasUrlkey:hasUrlkey});
+            _.extend(self.feed, {hasUrlkey: hasUrlkey});
             if (!hasUrlkey) {
                 // 计算urlKey
                 self.generateUrlKey();
@@ -87,18 +92,18 @@ define([
             });
             // 处理Abstract和accessory
             if (self.feed.attribute.abstract && _.size(self.feed.attribute.abstract) > 0) {
-                _.extend(self.feed, {abstract:self.feed.attribute.abstract[0]});
+                _.extend(self.feed, {abstract: self.feed.attribute.abstract[0]});
             }
             if (self.feed.attribute.accessory && _.size(self.feed.attribute.accessory) > 0) {
-                _.extend(self.feed, {accessory:self.feed.attribute.accessory[0]});
+                _.extend(self.feed, {accessory: self.feed.attribute.accessory[0]});
             }
             // 处理orderlimitcount
             if (self.feed.attribute.orderlimitcount && _.size(self.feed.attribute.orderlimitcount) > 0) {
-                _.extend(self.feed, {orderlimitcount:self.feed.attribute.orderlimitcount[0]});
+                _.extend(self.feed, {orderlimitcount: self.feed.attribute.orderlimitcount[0]});
             }
             // 处理colorMap
             if (self.feed.attribute.colorMap && _.size(self.feed.attribute.colorMap) > 0) {
-                _.extend(self.feed, {colorMap:self.feed.attribute.colorMap[0]});
+                _.extend(self.feed, {colorMap: self.feed.attribute.colorMap[0]});
             }
         }
 
@@ -114,7 +119,7 @@ define([
         }
 
         // 统一设置SKU属性
-        setSkuProperty(sku,property) {
+        setSkuProperty(sku, property) {
             let self = this;
             if (!sku) {
                 angular.forEach(self.feed.skus, function (item) {
@@ -126,11 +131,12 @@ define([
             }
             self.setSkuCNPrice();
         }
+
         // 同步计算中国相关价格
         setSkuCNPrice() {
             let self = this;
             let productType = self.feed.productType;
-            self.itemDetailService.setPrice({feed:self.feed}).then((res) => {
+            self.itemDetailService.setPrice({feed: self.feed}).then((res) => {
                 if (res.data) {
                     self.feed.skus = res.data.skus;
                     // 将sku->weightOrg转换成float
@@ -139,18 +145,16 @@ define([
                     });
 
                     var priceScope = {
-                        priceClientRetailMin:res.data.priceClientRetailMin,
-                        priceClientMsrpMin:res.data.priceClientMsrpMin,
-                        priceClientRetailMax:res.data.priceClientRetailMax,
-                        priceClientMsrpMax:res.data.priceClientMsrpMax
+                        priceClientRetailMin: res.data.priceClientRetailMin,
+                        priceClientMsrpMin: res.data.priceClientMsrpMin,
+                        priceClientRetailMax: res.data.priceClientRetailMax,
+                        priceClientMsrpMax: res.data.priceClientMsrpMax
                     };
                     _.extend(self.feed, priceScope);
                 }
             });
         }
 
-        // Save or Submit or Approve the Feed
-        // flag:0 or 1; 0-Only Save,1-Submit/Approve to next status
         save(flag) {
             let self = this;
 
@@ -166,12 +170,12 @@ define([
                 });
                 if (!checkSkus || _.size(checkSkus) == 0) {
                     let ctx = {
-                        updateModel:true,
-                        codeList:[self.feed.code]
+                        updateModel: true,
+                        codeList: [self.feed.code]
                     };
                     self.popups.openBatchApprove(ctx).then((res) => {
                         if (res.success) {
-                            _.extend(self.feed, {approveInfo:res.approveInfo});
+                            _.extend(self.feed, {approveInfo: res.approveInfo});
                             self.saveFeed(flag);
                         }
                     });
@@ -183,12 +187,12 @@ define([
                     let message = `SKU[${skus}] Msrp($) or price($) is 0 or 500, continue to Approve?`;
                     self.confirm(message).then((confirmed) => {
                         let ctx = {
-                            updateModel:true,
-                            codeList:[self.feed.code]
+                            updateModel: true,
+                            codeList: [self.feed.code]
                         };
                         self.popups.openBatchApprove(ctx).then((res) => {
                             if (res.success) {
-                                _.extend(self.feed, {approveInfo:res.approveInfo});
+                                _.extend(self.feed, {approveInfo: res.approveInfo});
                                 self.saveFeed(flag);
                             }
                         });
@@ -210,7 +214,7 @@ define([
             self.feed.attribute.orderlimitcount = [self.feed.orderlimitcount];
             // 处理colorMap
             self.feed.attribute.colorMap = [self.feed.colorMap];
-            let parameter = {feed:self.feed, flag:flag};
+            let parameter = {feed: self.feed, flag: flag};
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {
                     self.notify.success("Operation succeeded.");
@@ -224,7 +228,7 @@ define([
         popUsCategory() {
             let self = this;
             self.popups.openUsCategory().then(context => {
-                _.extend(self.feed, {category:context.catPath})
+                _.extend(self.feed, {category: context.catPath})
             });
         }
 
@@ -239,7 +243,7 @@ define([
                 let count = _.size(self.feed.image);
                 let add = num - count;
                 if (add > 0) {
-                    for (let i=1; i<=add; i++) {
+                    for (let i = 1; i <= add; i++) {
                         self.feed.image.push(self.imageUrl + urlKey + "-" + (count + i));
                     }
                 } else {
@@ -247,6 +251,7 @@ define([
                 }
             }
         }
+
         addImage() {
             let self = this;
             if (!self.feed.image) {
@@ -254,10 +259,12 @@ define([
             }
             self.feed.image.push("");
         }
+
         deleteImage(index) {
             let self = this;
             self.feed.image.splice(index, 1);
         }
+
         initBoxImage(num) {
             let self = this;
             let urlKey = "";
@@ -269,7 +276,7 @@ define([
                 let count = _.size(self.feed.boxImage);
                 let add = num - count;
                 if (add > 0) {
-                    for (let i=1; i<=add; i++) {
+                    for (let i = 1; i <= add; i++) {
                         self.feed.boxImage.push(self.imageUrl + urlKey + "-2-" + (count + i));
                     }
                 } else {
@@ -277,6 +284,7 @@ define([
                 }
             }
         }
+
         addBoxImage() {
             let self = this;
             if (!self.feed.boxImage) {
@@ -284,6 +292,7 @@ define([
             }
             self.feed.boxImage.push("");
         }
+
         deleteBoxImage(index) {
             let self = this;
             self.feed.boxImage.splice(index, 1);
@@ -293,25 +302,37 @@ define([
         getTopModel(top) {
             let self = this;
             if (self.feed.model) {
-                self.itemDetailService.getTopModel({code:self.feed.code,model:self.feed.model,top:top}).then((res) => {
+                self.itemDetailService.getTopModel({
+                    code: self.feed.code,
+                    model: self.feed.model,
+                    top: top
+                }).then((res) => {
                     if (res.data) {
                         self.topFeedList = res.data;
                     }
                 })
             }
         }
+
         // Copy其他code部分属性
         copyAttr(feed) {
             let self = this;
             let attribute = {
-                brand:feed.brand,
-                productType:feed.productType,
-                sizeType:feed.sizeType,
-                material:feed.material,
-                origin:feed.origin,
-                usageEn:feed.usageEn
+                brand: feed.brand,
+                productType: feed.productType,
+                sizeType: feed.sizeType,
+                material: feed.material,
+                origin: feed.origin,
+                usageEn: feed.usageEn
             };
             _.extend(self.feed, attribute);
+        }
+
+        goDetail(url) {
+            if (!url)
+                return;
+
+            window.open(url);
         }
 
     });
