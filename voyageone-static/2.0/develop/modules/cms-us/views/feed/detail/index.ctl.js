@@ -39,7 +39,7 @@ define([
 
                 weightOrgUnits: ['kg', 'lb']
             };
-            this.topFeedList = []; // 同Model查询结果
+            this.topFeedList = null; // 同Model查询结果
             this.imageUrl = "http://image.sneakerhead.com/is/image/sneakerhead/";
             this.init();
         }
@@ -60,11 +60,15 @@ define([
                     // self.materialList = resp.data.materialList;
                     // self.originList = resp.data.originList;
                     // self.colorMap = resp.data.colorMap;
-                    if (self.feed && _.size(self.feed.image) > 0)
+                    if (self.feed && _.size(self.feed.image) > 0) {
                         self.currentFeedImage = self.feed.image[0];
+                        _.extend(self.feed, {imageNum:_.size(self.feed.image)});
+                    }
 
-                    if (self.feed && self.feed.attribute.boximages && _.size(self.feed.attribute.boximages) > 0)
-                        self.currentBoxImage = self.feed.boximages[0];
+                    if (self.feed && self.feed.attribute.boximages && _.size(self.feed.attribute.boximages) > 0) {
+                        self.currentBoxImage = self.feed.attribute.boximages[0];
+                        _.extend(self.feed, {boxImageNum:_.size(self.feed.attribute.boximages)});
+                    }
 
                 } else {
                     let id = self.id;
@@ -277,7 +281,7 @@ define([
                 let add = num - count;
                 if (add > 0) {
                     for (let i = 1; i <= add; i++) {
-                        self.feed.attribute.boximages.push(self.imageUrl + urlKey + "-2-" + (count + i));
+                        self.feed.attribute.boximages.push(self.imageUrl + urlKey + "-2" + (count + i));
                     }
                 } else {
                     self.feed.attribute.boximages.splice(add);
@@ -326,6 +330,17 @@ define([
                 usageEn: feed.usageEn
             };
             _.extend(self.feed, attribute);
+        }
+
+        /**
+         * @description 弹出亚马逊类目  cartId：5
+         */
+        popAmazonCategory(){
+            let self = this;
+
+            self.popups.openAmazonCategory().then(res => {
+
+            });
         }
 
         goDetail(url) {
