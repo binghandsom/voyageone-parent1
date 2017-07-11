@@ -167,8 +167,8 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="feed in ctrl.feeds">
-                                <td>
-                                    <input type="checkbox" ng-model="feed.check">
+                                <td >
+                                    <input type="checkbox" ng-model="feed.check" ng-if="feed.approvePricing == '1'&&feed.status=='Ready'">
                                 </td>
                                 <td>
                                     <a href="javascript:void(0)">
@@ -184,7 +184,7 @@
                                 <td>{{feed.qty}}</td>
                                 <td ng-if="feed.approvePricing == '1'" ng-hide="ctrl.flag == 1">Yes</td>
                                 <td ng-if="feed.approvePricing == '0'" ng-hide="ctrl.flag == 1">No</td>
-                                <td ng-if="feed.approvePricing == null" ng-hide="ctrl.flag == 1"></td>
+                                <td ng-if="feed.approvePricing == null" ng-hide="ctrl.flag == 1">No</td>
                                 <td ng-if="feed.priceClientMsrpMin == feed.priceClientMsrpMax" ng-hide="ctrl.flag == 1">
                                     <div class="input-group">
                                         <span class="input-group-addon cur-p"
@@ -208,8 +208,8 @@
                                 </td>
                                 <td>{{feed.lastReceivedOn}}</td>
                                 <td>{{feed.modifier}}</td>
-                                <td class="text-center"  ng-show="ctrl.flag == 3">
-                                    <button type="button" class="btn btn-vo"><i class="fa fa-arrow-right"></i>&nbsp;Approve</button>
+                                <td class="text-center"  ng-show="ctrl.flag == 3" ng-if="feed.approvePricing == '1'&&feed.status=='Ready'">
+                                    <button type="button" class="btn btn-vo" ng-click="ctrl.popBatchApproveOne(feed.code)"><i class="fa fa-arrow-right"></i>&nbsp;Approve</button>
                                 </td>
                             </tr>
                         </tbody>

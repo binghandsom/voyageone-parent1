@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.usa;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -84,10 +85,12 @@ public class UsaCmsFeedController extends BaseController {
         }else{
             reqParams.setSearchMap(new HashMap<>());
         }
-        reqParams.getSearchMap().put("status","Approved");
+        List<String> status = new ArrayList<>();
+        status.add(CmsConstants.ProductStatus.Ready.toString());
+        reqParams.getSearchMap().put("status",status );
         reqParams.getSearchMap().put("approvePricing","1");
         reqParams.getSearchMap().put("codeList",codeList);
-        codeList = usaFeedInfoService.getFeedCodeList(reqParams.getSearchMap(), getUser().getUserName());
+        codeList = usaFeedInfoService.getFeedCodeList(reqParams.getSearchMap(), getUser().getSelChannelId());
 
         if (!CollectionUtils.isEmpty(codeList)) {
             UserSessionBean user = getUser();

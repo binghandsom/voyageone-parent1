@@ -187,12 +187,12 @@ public class UsaFeedInfoService extends BaseService {
         //封装查询条件
         Criteria criteria = new Criteria();
         //状态
-        if (StringUtils.isNotEmpty((String)searchValue.get("status"))) {
-            String status = (String) searchValue.get("status");
-            String[] split = status.split("_");
-            criteria = criteria.and("status").in(Arrays.asList(split));
+        if (ListUtils.notNull((List<String>) searchValue.get("status"))) {
+            List<String> status = (List<String>) searchValue.get("status");
+            criteria = criteria.and("status").in(status);
         }else{
-            criteria = criteria.and("status").in(Arrays.asList(CmsConstants.UsaFeedStatus.New.toString(), CmsConstants.UsaFeedStatus.Pending.toString(),CmsConstants.UsaFeedStatus.Ready.toString()));
+            criteria = criteria.and("status").in(Arrays.asList(CmsConstants.UsaFeedStatus.New.toString(),
+                    CmsConstants.UsaFeedStatus.Pending.toString(),CmsConstants.UsaFeedStatus.Ready.toString(),CmsConstants.UsaFeedStatus.Approved.toString()));
         }
         //设置开始和截止的时间
         if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null) {
