@@ -537,8 +537,10 @@ public class FeedInfoService extends BaseService {
             result.append(queryObject.getJongoQueryStr()+",");
         }
 
+        result.append("{\"status\":{$in:[null,\"\"]}}");
+
         if (!StringUtils.isEmpty(result.toString())) {
-            return "{$and:[" + result.toString().substring(0, result.toString().length() - 1) + "]}";
+            return "{$and:[" + result.toString() + "]}";
         } else {
             return "";
         }
