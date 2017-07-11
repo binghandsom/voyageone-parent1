@@ -44,6 +44,10 @@ public class FeedInfoService extends BaseService {
         return cmsBtFeedInfoDao.select(queryObject, channelId);
     }
 
+    public Iterator<CmsBtFeedInfoModel> getCursor(String channelId, JongoQuery queryObject){
+        return cmsBtFeedInfoDao.selectCursor(queryObject, channelId);
+    }
+
     /**
      * getCnt
      */
