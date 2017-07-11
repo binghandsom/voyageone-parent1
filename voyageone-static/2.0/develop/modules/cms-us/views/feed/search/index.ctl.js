@@ -155,13 +155,26 @@ define([
             });
         }
 
+
         popBatchApproveOne(code) {
             let self = this,
                 codeList = [code];
+           /* self.popups.openBatchApprove(ctx).then((res) => {
+                if (res.success) {
+                    _.extend(self.feed, {approveInfo:res.approveInfo});
+                    self.saveFeed(flag);
+                }
+            });*/
+
             self.popups.openBatchApprove({
                 selAll:false,
                 codeList:codeList
                 //searchMap: self.paraMap
+            }).then((res) =>{
+                if (res.success) {
+                    self.isAll = false;
+                    self.getList();
+                }
             });
         }
 

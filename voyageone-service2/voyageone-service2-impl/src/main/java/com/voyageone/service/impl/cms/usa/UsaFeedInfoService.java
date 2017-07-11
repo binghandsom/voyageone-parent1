@@ -238,7 +238,7 @@ public class UsaFeedInfoService extends BaseService {
         }
 
         if(ListUtils.notNull((List) searchValue.get("codeList"))){
-            criteria = criteria.and("code").in(searchValue.get("codeList"));
+            criteria = criteria.and("code").in(((List) searchValue.get("codeList")).toArray());
         }
         return new JongoQuery(criteria);
     }
