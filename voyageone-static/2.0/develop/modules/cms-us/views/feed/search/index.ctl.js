@@ -7,10 +7,11 @@ define([
 
     cms.controller('feedSearchController', class FeedSearchController {
 
-        constructor(popups, itemDetailService, alert,$sessionStorage) {
+        constructor(popups, itemDetailService, alert,$sessionStorage,notify) {
             let self = this;
 
             self.$sessionStorage = $sessionStorage;
+            self.notify = notify;
             self.alert = alert;
             self.popups = popups;
             self.feedListTotal = 0;
@@ -95,12 +96,14 @@ define([
         }
 
         updateOne(feed, key, value) {
-            let self = this;
-            let requestMap = {};
+            let self = this,
+                requestMap = {};
             requestMap.code = feed.code;
             requestMap[key] = value;
-            //requestMap.value = value;
+
             self.itemDetailService.updateOne(requestMap).then(resp => {
+                self.notify.success('update success!');
+
                 feed.editMsrp = false;
                 feed.editRetai = false;
             });
@@ -213,6 +216,14 @@ define([
             } else {
                 return columnName;
             }
+        }
+
+        canApprovePrice(feed){
+            let self = this;
+
+            feed.approvePricing = !feed.approvePricing;
+
+            self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
         }
 
     });
