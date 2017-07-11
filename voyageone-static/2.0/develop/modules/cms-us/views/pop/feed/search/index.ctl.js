@@ -31,7 +31,6 @@ define([
             self.commonService.getChannelCarts().then((res) => {
                 if (res.data) {
                     self.platforms = res.data;
-                    console.log(self.platforms);
                     angular.forEach(self.platforms, function (cartOjb) {
                         _.extend(cartOjb, {cartId:parseInt(cartOjb.value), day:0,checked:true});
                     });
@@ -58,7 +57,6 @@ define([
                 approveInfo:approveInfo,
                 searchMap:self.context.searchMap
             };
-            console.log(params);
             if (self.updateModel) {
                 self.$modalInstance.close({success:true,approveInfo:approveInfo});
             } else {
