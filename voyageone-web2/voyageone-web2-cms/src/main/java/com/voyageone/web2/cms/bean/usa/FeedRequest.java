@@ -1,7 +1,6 @@
 package com.voyageone.web2.cms.bean.usa;
 
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_ApproveItem;
 import java.util.List;
 import java.util.Map;
 
@@ -26,7 +25,7 @@ public class FeedRequest {
     private Integer selAll; // 是否检索结果全量
     private List<String> codeList; // Feed Code Collection
     private Map<String, Object> searchMap; // Feed检索条件
-    private List<CmsBtFeedInfoModel_ApproveItem> approveItems;
+    private Map<Integer, Integer> approveInfo;
 
     public String getId() {
         return id;
@@ -100,11 +99,11 @@ public class FeedRequest {
         this.searchMap = searchMap;
     }
 
-    public List<CmsBtFeedInfoModel_ApproveItem> getApproveItems() {
-        return approveItems;
+    public Map<Integer, Integer> getApproveInfo() {
+        return approveInfo;
     }
 
-    public void setApproveItems(List<CmsBtFeedInfoModel_ApproveItem> approveItems) {
-        this.approveItems = approveItems;
+    public void setApproveInfo(Map<Integer, Integer> approveInfo) {
+        this.approveInfo = approveInfo;
     }
 }

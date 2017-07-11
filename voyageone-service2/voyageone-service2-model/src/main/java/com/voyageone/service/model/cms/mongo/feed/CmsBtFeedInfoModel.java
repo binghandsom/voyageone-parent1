@@ -72,10 +72,6 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String approvePricing;
 
     /**
-     * Feed在各平台Approve信息
-     */
-    private List<CmsBtFeedInfoModel_ApproveItem> approveInfo;
-    /**
      * 美国CMS2 Box-image
      */
     private List<String> boxImage;
@@ -449,14 +445,6 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setApprovePricing(String approvePricing) {
         this.approvePricing = approvePricing;
-    }
-
-    public List<CmsBtFeedInfoModel_ApproveItem> getApproveInfo() {
-        return approveInfo;
-    }
-
-    public void setApproveInfo(List<CmsBtFeedInfoModel_ApproveItem> approveInfo) {
-        this.approveInfo = approveInfo;
     }
 
     public List<String> getBoxImage() {
