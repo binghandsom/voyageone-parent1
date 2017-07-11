@@ -2391,7 +2391,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             // 新增商品的时候
             result = tbSimpleItemService.addSimpleItemUnTry(shopProp, productInfoXml);
             if (result == null) {
-                Thread.sleep(3000); // 可能是sku过多，天猫还没有处理完，响应超时了，睡一会，再尝试去取一下
+                Thread.sleep(10000); // 可能是sku过多，天猫还没有处理完，响应超时了，睡一会，再尝试去取一下
                 String numId;
                 // 调用获取仓库商品的api 用标题去搜
                 String cmsTitle = productInfoMap.get("title");
@@ -2401,7 +2401,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 } else {
                     itemList = tbSaleService.getInventoryProduct(shopProp.getOrder_channel_id(), shopProp.getCart_id(), "for_shelved", 1L, 200L, cmsTitle);
                 }
-
+                if (ListUtils.isNull(itemList)) {
+                    return "ERROR: 由于天猫超时，需要去看看天猫上是否上传成功，如未成功，请重试，如成功，联系IT回写numIId";
+                }
                 List<Item> matchedItemList = itemList.stream()
                         .filter(item -> cmsTitle.equals(item.getTitle()))
                         .collect(Collectors.toList());
