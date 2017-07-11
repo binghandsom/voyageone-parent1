@@ -539,7 +539,12 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
             // WMS2.0切换 20170526 charis STA
             // 库存取得逻辑变为直接用cms的库存
-            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(mainProductPlatformCart.getSkus());
+            List<BaseMongoMap<String, Object>> platformSkus = new ArrayList<>();
+            cmsBtProductList.stream()
+                    .map(product -> product.getPlatform(cartId).getSkus())
+                    .forEach(listSku-> platformSkus.addAll(listSku));
+
+            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(platformSkus);
 
 
 //            for (String sku : strSkuCodeList) {

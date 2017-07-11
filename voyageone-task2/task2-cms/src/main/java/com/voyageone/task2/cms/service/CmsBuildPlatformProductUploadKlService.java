@@ -538,7 +538,12 @@ public class CmsBuildPlatformProductUploadKlService extends BaseCronTaskService 
             // 为了对应MiniMall的场合， 获取库存的时候要求用getOrgChannelId()（其他的场合仍然是用channelId即可）
             // WMS2.0切换 20170526 charis STA
             // 库存取得逻辑变为直接用cms的库存
-            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(mainProductPlatformCart.getSkus());
+            List<BaseMongoMap<String, Object>> platformSkus = new ArrayList<>();
+            cmsBtProductList.stream()
+                    .map(product -> product.getPlatform(cartId).getSkus())
+                    .forEach(listSku-> platformSkus.addAll(listSku));
+
+            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(platformSkus);
 //            Map<String, Integer> skuLogicQtyMap = new HashMap<>();
 //            for (String code : listSxCode) {
 //                try {
