@@ -1,13 +1,17 @@
+/**
+ * @description feed search page
+ */
 define([
     'cms'
 ], function (cms) {
 
     cms.controller('feedSearchController', class FeedSearchController {
 
-        constructor($rootScope, popups, itemDetailService, alert) {
+        constructor(popups, itemDetailService, alert,$sessionStorage,notify) {
             let self = this;
 
-            self.$rootScope = $rootScope;
+            self.$sessionStorage = $sessionStorage;
+            self.notify = notify;
             self.alert = alert;
             self.popups = popups;
             self.feedListTotal = 0;
@@ -19,7 +23,7 @@ define([
             self.totalItems = false;
             //权限控制,默认为最低权限1:new,2:Pending,3:Ready
 
-            self.flag = self.$rootScope.auth.selfAuth;
+            self.flag = self.$sessionStorage.auth.selfAuth;
             self.columnArrow = {};
             self.status = [false, false, false];
             self.approvePricing = [false, false];
@@ -96,12 +100,14 @@ define([
         }
 
         updateOne(feed, key, value) {
-            let self = this;
-            let requestMap = {};
+            let self = this,
+                requestMap = {};
             requestMap.code = feed.code;
             requestMap[key] = value;
-            //requestMap.value = value;
+
             self.itemDetailService.updateOne(requestMap).then(resp => {
+                self.notify.success('update success!');
+
                 feed.editMsrp = false;
                 feed.editRetai = false;
             });
@@ -226,6 +232,14 @@ define([
             } else {
                 return columnName;
             }
+        }
+
+        canApprovePrice(feed){
+            let self = this;
+
+            feed.approvePricing = !feed.approvePricing;
+
+            self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
         }
 
     });

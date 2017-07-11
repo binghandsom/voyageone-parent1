@@ -126,66 +126,67 @@
                     <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
                         <thead>
                             <tr>
-                                <th>
+                                <th class="text-center">
                                     <input type="checkbox" ng-model="ctrl.isAll" ng-change="ctrl.selectAll()">
                                 </th>
-                                <th>IMG</th>
-                                <th>Code</th>
-                                <th style="min-width: 100px">Name</th>
-                                <th>Model</th>
-                                <th>Status</th>
-                                <th style="min-width: 100px">
+                                <th class="text-center">IMG</th>
+                                <th class="text-left">Code</th>
+                                <th  class="text-left" style="min-width: 100px">Name</th>
+                                <th class="text-left">Model</th>
+                                <th class="text-center">Status</th>
+                                <th class="text-center" style="min-width: 100px">
                                     Total Qty
                                     <button class="opacityBtn"
                                             ng-if="ctrl.feeds.length"
                                             ng-click="ctrl.columnOrder('qty')"><i class="fa fa-{{ctrl.getArrowName('qty')}}"></i></button>
                                 </th>
-                                <th ng-hide="ctrl.flag == 1" style="min-width: 100px">
+                                <th  class="text-center" ng-hide="ctrl.flag == 1" style="min-width: 100px">
                                     Approve price
                                 </th>
-                                <th ng-hide="ctrl.flag == 1" style="min-width: 100px">
+                                <th  class="text-right" ng-hide="ctrl.flag == 1" style="min-width: 100px">
                                     Msrp($)
                                     <button class="opacityBtn"
                                             ng-if="ctrl.feeds.length"
                                             ng-click="ctrl.columnOrder('priceClientMsrp')"><i class="fa fa-{{ctrl.getArrowName('priceClientMsrp')}}"></i></button>
                                 </th>
-                                <th ng-hide="ctrl.flag == 1" style="min-width: 100px">
+                                <th class="text-right" ng-hide="ctrl.flag == 1" style="min-width: 100px">
                                     price($)
                                     <button class="opacityBtn"
                                             ng-if="ctrl.feeds.length"
                                             ng-click="ctrl.columnOrder('priceClientRetailMin')"><i class="fa fa-{{ctrl.getArrowName('priceClientRetailMin')}}"></i></button>
                                 </th>
-                                <th style="min-width: 120px">
+                                <th class="text-center" style="min-width: 120px">
                                     Last Received
                                     <button class="opacityBtn"
                                             ng-if="ctrl.feeds.length"
                                             ng-click="ctrl.columnOrder('lastReceivedOn')"><i class="fa fa-{{ctrl.getArrowName('lastReceivedOn')}}"></i></button>
                                 </th>
-                                <th>Modifier</th>
+                                <th class="text-center">Modifier</th>
                                 <th class="text-center" ng-show="ctrl.flag == 3">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="feed in ctrl.feeds">
-                                <td >
-                                    <input type="checkbox" ng-model="feed.check" ng-if="feed.approvePricing == '1'&&feed.status=='Ready'">
+                                <td class="text-center">
+                                    <input type="checkbox" ng-model="feed.check">
                                 </td>
-                                <td>
+                                <td class="text-center">
                                     <a href="javascript:void(0)">
                                         <img alt="1280750-480." class="thumb-sm-search" src="{{feed.image[0]}}">
                                     </a>
                                 </td>
-                                <td>
+                                <td class="text-left">
                                     <a href="#/feed/detail/{{feed._id}}" target="_blank">{{feed.code}}</a>
                                 </td>
-                                <td>{{feed.name}}</td>
-                                <td>{{feed.model}}</td>
-                                <td>{{feed.status}}</td>
-                                <td>{{feed.qty}}</td>
-                                <td ng-if="feed.approvePricing == '1'" ng-hide="ctrl.flag == 1">Yes</td>
-                                <td ng-if="feed.approvePricing == '0'" ng-hide="ctrl.flag == 1">No</td>
-                                <td ng-if="feed.approvePricing == null" ng-hide="ctrl.flag == 1">No</td>
-                                <td ng-if="feed.priceClientMsrpMin == feed.priceClientMsrpMax" ng-hide="ctrl.flag == 1">
+                                <td class="text-left">{{feed.name}}</td>
+                                <td class="text-left">{{feed.model}}</td>
+                                <td class="text-center">{{feed.status}}</td>
+                                <td class="text-center">{{feed.qty}}</td>
+                                <td class="text-center" ng-if="ctrl.flag != 1">
+                                    <span class="cur-p label" ng-class="{'label-info':feed.approvePricing == 1,'label-danger':feed.approvePricing != 1}"
+                                          ng-click="ctrl.canApprovePrice(feed)">{{feed.approvePricing == 1 ? 'Yes' : 'No'}}</span>
+                                </td>
+                                <td class="text-right" ng-if="feed.priceClientMsrpMin == feed.priceClientMsrpMax" ng-hide="ctrl.flag == 1">
                                     <div class="input-group">
                                         <span class="input-group-addon cur-p"
                                               ng-click="feed.editMsrp = !feed.editMsrp"><i class="fa fa-pencil"></i></span>
@@ -193,23 +194,23 @@
                                                ng-model="feed.priceClientMsrpMin" ng-disabled="!feed.editMsrp">
                                     </div>
                                 </td>
-                                <td ng-if="feed.priceClientMsrpMin != feed.priceClientMsrpMax" ng-hide="ctrl.flag == 1">
+                                <td class="text-right" ng-if="feed.priceClientMsrpMin != feed.priceClientMsrpMax" ng-hide="ctrl.flag == 1">
                                     {{feed.priceClientMsrpMin}}~{{feed.priceClientMsrpMax}}
                                 </td>
-                                <td ng-if="feed.priceClientRetailMin == feed.priceClientRetailMax" ng-hide="ctrl.flag == 1">
+                                <td class="text-right" ng-if="feed.priceClientRetailMin == feed.priceClientRetailMax" ng-hide="ctrl.flag == 1">
                                     <div class="input-group">
                                         <span class="input-group-addon cur-p" ng-click="feed.editRetai = !feed.editRetai"><i class="fa fa-pencil"></i></span>
                                         <input type="text" class="form-control" ng-model="feed.priceClientRetailMin" ng-disabled="!feed.editRetai" ng-blur="ctrl.updateOne(feed,'price',feed.priceClientRetailMin)"
                                                ng-change="feed.priceClientRetailMax = feed.priceClientRetailMin">
                                     </div>
                                 </td>
-                                <td ng-if="feed.priceClientRetailMin != feed.priceClientRetailMax" ng-hide="ctrl.flag == 1">
+                                <td class="text-right" ng-if="feed.priceClientRetailMin != feed.priceClientRetailMax" ng-hide="ctrl.flag == 1">
                                     {{feed.priceClientRetailMin}}~{{feed.priceClientRetailMax}}
                                 </td>
-                                <td>{{feed.lastReceivedOn}}</td>
-                                <td>{{feed.modifier}}</td>
-                                <td class="text-center"  ng-show="ctrl.flag == 3" ng-if="feed.approvePricing == '1'&&feed.status=='Ready'">
-                                    <button type="button" class="btn btn-vo" ng-click="ctrl.popBatchApproveOne(feed.code)"><i class="fa fa-arrow-right"></i>&nbsp;Approve</button>
+                                <td class="text-center">{{feed.lastReceivedOn}}</td>
+                                <td class="text-center">{{feed.modifier}}</td>
+                                <td class="text-center"  ng-show="ctrl.flag == 3">
+                                    <button type="button" class="btn btn-vo"><i class="fa fa-arrow-right"></i>&nbsp;Approve</button>
                                 </td>
                             </tr>
                         </tbody>

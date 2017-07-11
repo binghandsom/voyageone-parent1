@@ -46,6 +46,11 @@ public class UsaCmsFeedController extends BaseController {
         return "en";
     }
 
+    /**
+     * 获取Feed Detail
+     *
+     * @param reqParams Feed请求参数
+     */
     @RequestMapping(value = UsaCmsUrlConstants.FEED.DETAIL)
     @ResponseBody
     public AjaxResponse getFeedDetail(@RequestBody FeedRequest reqParams) {
@@ -66,16 +71,31 @@ public class UsaCmsFeedController extends BaseController {
         return success(resultMap);
     }
 
+    /**
+     * 获取同Model的Feed或Product信息，用以Copy部分Code级属性
+     *
+     * @param reqParams Feed请求参数
+     */
     @RequestMapping(value = UsaCmsUrlConstants.FEED.GET_TOP_MODEL)
     public AjaxResponse getTopModel(@RequestBody FeedRequest reqParams) {
         return success(usaFeedInfoService.getTopFeedByModel(getUser().getSelChannelId(), reqParams.getCode(), reqParams.getModel(), reqParams.getTop()));
     }
 
+    /**
+     * 重新计算Feed相关价格
+     *
+     * @param reqParams Feed请求参数
+     */
     @RequestMapping(value = UsaCmsUrlConstants.FEED.SET_PRICE)
     public AjaxResponse setPrice(@RequestBody FeedRequest reqParams) {
         return success(usaFeedInfoService.setPrice(reqParams.getFeed()));
     }
 
+    /**
+     * 批量Approve Feed
+     *
+     * @param reqParams Feed请求参数
+     */
     @RequestMapping(value = UsaCmsUrlConstants.FEED.APPROVE)
     public AjaxResponse approve(@RequestBody FeedRequest reqParams) {
         List<String> codeList = reqParams.getCodeList();
@@ -112,8 +132,6 @@ public class UsaCmsFeedController extends BaseController {
 
     /**
      * 条件查询feed列表信息
-     * @param params
-     * @return
      */
     @RequestMapping(value = UsaCmsUrlConstants.FEED.LIST)
     public AjaxResponse getFeedList(@RequestBody Map params) {
@@ -136,34 +154,34 @@ public class UsaCmsFeedController extends BaseController {
         WriteResult writeResult = null;
         Double msrpPrice = null;
         Double price = null;
-        if (params != null){
+        if (params != null) {
             HashMap<String, Object> queryMap = new HashMap<>();
             String code = (String) params.get("code");
-            if (code != null){
-                queryMap.put("code",code);
+            if (code != null) {
+                queryMap.put("code", code);
             }
             //这里有类型转换异常
             String priceClientMsrp = (String) params.get("priceClientMsrp");
-            if (priceClientMsrp != null){
-                msrpPrice =Double.parseDouble(priceClientMsrp);
+            if (priceClientMsrp != null) {
+                msrpPrice = Double.parseDouble(priceClientMsrp);
             }
 
             String price1 = (String) params.get("price");
-            if (price1 != null){
-                 price =Double.parseDouble(price1);
+            if (price1 != null) {
+                price = Double.parseDouble(price1);
             }
 
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(getUser().getSelChannelId(), code);
-            if(cmsBtFeedInfoModel != null){
+            if (cmsBtFeedInfoModel != null) {
                 cmsBtFeedInfoModel.setModifier(getUser().getUserName());
                 final Double finalMsrpPrice = msrpPrice;
                 final Double finalPrice = price;
-                cmsBtFeedInfoModel.getSkus().forEach(sku->{
-                    if(finalMsrpPrice != null){
+                cmsBtFeedInfoModel.getSkus().forEach(sku -> {
+                    if (finalMsrpPrice != null) {
                         sku.setPriceClientMsrp(finalMsrpPrice);
                     }
-                    if(finalPrice != null){
+                    if (finalPrice != null) {
                         sku.setPriceClientRetail(finalPrice);
                         sku.setPriceNet(finalPrice);
                     }
@@ -171,7 +189,7 @@ public class UsaCmsFeedController extends BaseController {
             }
             String approvePricing = (String) params.get("approvePricing");
 
-            if (approvePricing != null){
+            if (approvePricing != null) {
                 cmsBtFeedInfoModel.setApprovePricing(approvePricing);
             }
             cmsBtFeedInfoModel = usaFeedInfoService.setPrice(cmsBtFeedInfoModel);

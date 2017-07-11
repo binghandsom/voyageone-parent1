@@ -1,18 +1,19 @@
+/**
+ * @description feed detail
+ */
 define([
     'cms'
 ], function (cms) {
 
     cms.controller('feedDetailController', class FeedDetailController {
-        constructor(popups, $routeParams, itemDetailService, alert,$location,notify,confirm,$rootScope) {
+        constructor(popups, $routeParams, itemDetailService, alert,$location,notify,confirm,$sessionStorage) {
             this.popups = popups;
             this.itemDetailService = itemDetailService;
             this.alert = alert;
             this.$location = $location;
             this.notify = notify;
             this.confirm = confirm;
-            this.$rootScope = $rootScope;
-            console.log($rootScope);
-
+            this.$sessionStorage = $sessionStorage;
             this.id = $routeParams.id;
             if (!this.id) {
                 this.alert("Feed not exists.");
@@ -53,15 +54,17 @@ define([
                     self.productTypeList = resp.data.productTypeList;
                     self.sizeTypeList = resp.data.sizeTypeList;
 
+                    // TODO 配置项，暂时无数据
                     // self.materialList = resp.data.materialList;
                     // self.originList = resp.data.originList;
                     // self.colorMap = resp.data.colorMap;
                 } else {
                     let id = self.id;
                     let message = `Feed(id:${id}) not exists.`;
-                    self.alert(message).then((res) => {
-                        // self.$location.path("");
-                    });
+                    self.alert(message);
+                    // self.alert(message).then((res) => {
+                    //     self.$location.path("");
+                    // });
                 }
             });
         }
@@ -89,6 +92,10 @@ define([
             // 处理orderlimitcount
             if (self.feed.attribute.orderlimitcount && _.size(self.feed.attribute.orderlimitcount) > 0) {
                 _.extend(self.feed, {orderlimitcount:self.feed.attribute.orderlimitcount[0]});
+            }
+            // 处理colorMap
+            if (self.feed.attribute.colorMap && _.size(self.feed.attribute.colorMap) > 0) {
+                _.extend(self.feed, {colorMap:self.feed.attribute.colorMap[0]});
             }
         }
 
@@ -198,8 +205,9 @@ define([
             self.feed.attribute.accessory = [self.feed.accessory];
             // 处理orderlimitcount
             self.feed.attribute.orderlimitcount = [self.feed.orderlimitcount];
+            // 处理colorMap
+            self.feed.attribute.colorMap = [self.feed.colorMap];
             let parameter = {feed:self.feed, flag:flag};
-            console.log(self.feed);
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {
                     self.notify.success("Operation succeeded.");
@@ -299,7 +307,6 @@ define([
                 material:feed.material,
                 origin:feed.origin,
                 usageEn:feed.usageEn
-                // TODO
             };
             _.extend(self.feed, attribute);
         }
