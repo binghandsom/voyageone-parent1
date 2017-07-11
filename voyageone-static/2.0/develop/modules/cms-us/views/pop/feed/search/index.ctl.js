@@ -33,7 +33,6 @@ define([
                     angular.forEach(self.platforms, function (cartOjb) {
                         _.extend(cartOjb, {cartId:parseInt(cartOjb.value), day:0});
                     });
-                    console.log(self.platforms);
                 }
             });
         }
@@ -41,30 +40,26 @@ define([
         approve() {
             // self.itemDetailService.
             let self = this;
-            let approveInfo = [];
-            angular.forEach(self.platforms, function (platform) {
-                approveInfo.push({cartId:platform.cartId,approve:platform.checked,day:platform.day})
+            let checkCarts = _.filter(self.platforms, item => {
+               return item.checked;
+            });
+
+            let approveInfo = {};
+            angular.forEach(checkCarts, item => {
+                let _tmp ={};
+                _tmp[item.cartId] = item.day;
+                _.extend(approveInfo, _tmp);
             });
             let params = {
                 sel_all:self.sel_all,
                 codeList:self.codeList,
-                approveItems:approveInfo,
+                approveInfo:approveInfo,
                 searchMap:{}
             };
             self.itemDetailService.approve(params).then((res) => {
-                if (res.data) {
-                    console.log(res.data);
-                    self.$modalInstance.close({success:true});
-                }
+                self.$modalInstance.close({success:true});
             });
         }
-
-        complete() {
-            let self = this;
-
-
-        }
-
     });
 
 });

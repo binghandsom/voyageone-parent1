@@ -16,7 +16,6 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_ApproveItem;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
@@ -423,41 +422,27 @@ public class UsaFeedInfoService extends BaseService {
      *
      * @param channelId    渠道ID
      * @param codeList     codeList
-     * @param approveItems 各平台Approve信息
+     * @param approveInfo 各平台Approve信息,KV:cartId-Days Old Before Sharing
      * @param username     修改人
      */
-    public void approve(String channelId, List<String> codeList, List<CmsBtFeedInfoModel_ApproveItem> approveItems, String username) {
-        if (StringUtils.isBlank(channelId) || CollectionUtils.isEmpty(codeList) || CollectionUtils.isEmpty(approveItems)) {
+    public void approve(String channelId, List<String> codeList, Map<Integer, Integer> approveInfo, String username) {
+        if (StringUtils.isBlank(channelId) || CollectionUtils.isEmpty(codeList) ) {
             throw new BusinessException("Approve parameter error.");
         }
 
-        HashMap<String, Object> updateMap = new HashMap<>();
-        HashMap<String, Object> queryMap = new HashMap<>();
-
-        queryMap.put("channelId", channelId);
-        updateMap.put("approveInfo", approveItems);
-
-        List<BulkUpdateModel> bulkUpdateModelList = new ArrayList<>();
-        List<JongoUpdate> jongoUpdates = new ArrayList<>();
+        List<JongoUpdate> jongoUpdateList = new ArrayList<>();
         for (String code : codeList) {
-            queryMap.put("code", code);
-            BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
-            bulkUpdateModel.setUpdateMap(updateMap);
-            bulkUpdateModel.setQueryMap(queryMap);
-            bulkUpdateModelList.add(bulkUpdateModel);
 
             JongoUpdate jongoUpdate = new JongoUpdate();
             jongoUpdate.setQuery("{\"channelId\":#,\"code\":#}");
             jongoUpdate.setQueryParameters(channelId, code);
 
-            jongoUpdate.setUpdate("{\"approveInfo\":#}");
-            jongoUpdate.setUpdateParameters(JacksonUtil.bean2Json(approveItems));
-            jongoUpdates.add(jongoUpdate);
+            jongoUpdate.setUpdate("{$set:{\"approveInfo\":#,\"modifier\":#,\"modified\":#}}");
+            jongoUpdate.setUpdateParameters(approveInfo,username,DateTimeUtil.getNow());
+            jongoUpdateList.add(jongoUpdate);
         }
 
-//        cmsBtFeedInfoDao.up
-        BulkWriteResult writeResult =cmsBtFeedInfoDao.bulkUpdateWithJongo(channelId, jongoUpdates);
-//        BulkWriteResult writeResult = cmsBtFeedInfoDao.bulkUpdateWithMap(channelId, bulkUpdateModelList, username, "$set", false);
+        BulkWriteResult writeResult =cmsBtFeedInfoDao.bulkUpdateWithJongo(channelId, jongoUpdateList);
         $info(String.format("(%s)批量Approve Feed, 结果:", username, JacksonUtil.bean2Json(writeResult)));
 
     }

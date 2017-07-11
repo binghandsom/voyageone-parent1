@@ -87,9 +87,8 @@ public class UsaCmsFeedController extends BaseController {
         }
 
         UserSessionBean user = getUser();
-        usaFeedInfoService.approve(user.getSelChannelId(), codeList, reqParams.getApproveItems(), user.getUserName());
-
-        return success(null);
+        usaFeedInfoService.approve(user.getSelChannelId(), codeList, reqParams.getApproveInfo(), user.getUserName());
+        return success("");
     }
 
     /**
