@@ -1,3 +1,6 @@
+/**
+ * @description feed detail
+ */
 define([
     'cms'
 ], function (cms) {
