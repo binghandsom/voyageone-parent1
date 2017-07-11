@@ -515,8 +515,7 @@
             <h3 drag-handle>导航栏</h3>
             <ul class="nav bs-docs-sidenav">
                 <li class="text-center">
-                    <button class="opacityBtn text-black" ng-disabled="feedForm.$invalid" ng-click="ctrl.save('0')">Save</button>
-                    <button class="btn btn-default" ng-disabled="feedForm.$invalid" ng-if="!(ctrl.auth!=3 && ctrl.feed.status == 'Ready')  " ng-click="ctrl.save('0')">Save</button>
+                    <button class="opacityBtn text-black" ng-disabled="feedForm.$invalid" ng-if="!(ctrl.auth!=3 && ctrl.feed.status == 'Ready')  " ng-click="ctrl.save('0')">Save</button>
                 </li>
                 <li class="text-center">
                     <button class="opacityBtn text-black" ng-disabled="feedForm.$invalid" ng-if="ctrl.feed.status != 'Ready'" ng-click="ctrl.save('1')">Submit</button>
