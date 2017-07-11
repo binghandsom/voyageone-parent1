@@ -24,18 +24,31 @@
                                             <input type="text" class="form-control" name="model" ng-model="ctrl.feed.model" required>
                                         </div>
                                         <div class="col-md-1">
-                                            <button type="button" class="btn btn-default btn-pop" ng-click="ctrl.getTopModel(5)"><i class="fa fa-angle-double-down" style="font-size: 16px;"></i></button>
+                                            <button type="button" class="btn btn-default btn-pop" ng-click="ctrl.getTopModel(5)">
+                                                <i class="fa fa-angle-double-down" style="font-size: 16px;"></i>
+                                            </button>
                                         </div>
                                     </div>
 
                                 </div>
-                                <div class="form-group" ng-if="ctrl.topFeedList.length>0">
+                                <div class="form-group" ng-if="ctrl.isShowModal">
                                     <div class="row">
-                                        <div class="col-md-8 col-md-offset-4">
+                                        <div class="col-md-8 col-md-offset-4" ng-if="ctrl.topFeedList.length > 0">
                                             <div class="col-xs-6 col-md-2" ng-repeat="item in ctrl.topFeedList">
-                                                <a href="javascript:void(0);" class="thumbnail" ng-click="ctrl.copyAttr(item)">
+                                                <a href="javascript:void(0);" class="thumbnail" ng-class="{'active':item.status=='Approved'}"
+                                                   style="position: relative">
                                                     <img alt="{{ctrl.feed.code}}" class="thumb-sm-search" src="{{item.image[0]}}">
+                                                    <button type="button" class="btn btn-primary pos-absolute-right" ng-click="ctrl.copyAttr(item)">
+                                                        <i class="fa fa-copy"></i>
+                                                    </button>
                                                 </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-md-offset-4" ng-if="ctrl.topFeedList.length == 0">
+                                            <div class="alert alert-danger" role="alert">
+                                                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                                <span class="sr-only">Warning:</span>
+                                                no query data
                                             </div>
                                         </div>
                                     </div>
@@ -54,7 +67,8 @@
                                             </button>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" name="category" ng-model="ctrl.feed.category" required readonly>
+                                            <input type="text" class="form-control" title="{{ctrl.feed.category}}"
+                                                   name="category" ng-model="ctrl.feed.category"  required readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -137,7 +151,9 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-4 text-right">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.popAmazonCategory()"><i class="fa fa-arrow-right"></i>&nbsp;Amazon Category</button>
+                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.popAmazonCategory()">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Amazon Category
+                                            </button>
                                         </div>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.feed.attribute.amazonBrowseTree" readonly>

@@ -4,9 +4,9 @@ define([
 
     cms.controller('amazonCategoryController', class AmazonCategoryController {
 
-        constructor(context, sellerCatService, $uibModalInstance) {
+        constructor(context, productDetailService, $uibModalInstance) {
             this.context = context ? context : {};
-            this.sellerCatService = sellerCatService;
+            this.productDetailService = productDetailService;
             this.$uibModalInstance = $uibModalInstance;
             this.totalCategory = [];
             this.selected = {};
@@ -15,9 +15,9 @@ define([
         init() {
             const self = this;
 
-            self.sellerCatService.getCat({cartId: 5}).then(res => {
+            self.productDetailService.getPlatformCategories({cartId: 5}).then(res => {
                 let len = self.totalCategory.length;
-                self.totalCategory.push({index: len, children: res.data.catTree});
+                self.totalCategory.push({index: len, children: res.data});
 
             });
 
