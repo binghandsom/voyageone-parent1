@@ -1,5 +1,5 @@
 /**
- * @description
+ * @description feed detail
  */
 define([
     'cms'
