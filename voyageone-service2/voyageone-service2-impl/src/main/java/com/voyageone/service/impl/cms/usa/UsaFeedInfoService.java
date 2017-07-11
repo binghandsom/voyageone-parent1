@@ -174,7 +174,7 @@ public class UsaFeedInfoService extends BaseService {
         //封装查询条件
         Criteria criteria = new Criteria();
         //状态
-        if (searchValue.get("status") != null && searchValue.get("status") != "") {
+        if (StringUtils.isNotEmpty((String)searchValue.get("status"))) {
             String status = (String) searchValue.get("status");
             String[] split = status.split("_");
             criteria = criteria.and("status").in(Arrays.asList(split));
@@ -193,7 +193,8 @@ public class UsaFeedInfoService extends BaseService {
         }
         //name模糊查询
 
-        if (searchValue.get("name") != null && searchValue.get("name") != "") {
+
+        if (StringUtils.isNotEmpty((String)searchValue.get("name"))) {
             String name = (String) searchValue.get("name");
             String regEx = "[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
             Pattern p = Pattern.compile(regEx);
@@ -207,13 +208,15 @@ public class UsaFeedInfoService extends BaseService {
 
         }
         //多条件精确查询,SKU/ Barcode/ Code / Model
-        if (searchValue.get("searchContent") != null) {
+
+        if (StringUtils.isNotEmpty((String)searchValue.get("searchContent"))) {
             String searchContent = (String) searchValue.get("searchContent");
             String[] split = searchContent.split("/n");
             List<String> searchContents = Arrays.asList(split);
             criteria.orOperator(new Criteria("code").in(searchContents), new Criteria("model").in(searchContents), new Criteria("skus.sku").in(searchContent), new Criteria("skus.barcode").in(searchContent));
         }
-        if (searchValue.get("approvePricing") != null) {
+
+        if (StringUtils.isNotEmpty((String)searchValue.get("approvePricing"))) {
             criteria = criteria.and("approvePricing").is((String) searchValue.get("approvePricing"));
         }
         return new JongoQuery(criteria);
