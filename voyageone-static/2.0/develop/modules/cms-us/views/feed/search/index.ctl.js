@@ -198,7 +198,6 @@ define([
                 paraMap = self.paraMap;
 
             paraMap.sortName = self.getFinalColumn(columnName, sortType);
-            console.log('paraMap.sortName',paraMap.sortName);
             paraMap.sortType = sortType == 'sort-up' ? '1' : '-1';
 
             self.getList();
