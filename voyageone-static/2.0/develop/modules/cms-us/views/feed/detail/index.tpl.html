@@ -353,9 +353,8 @@
                                                 <div>
                                                     <div class="tab-pane active">
                                                         <div class="row">
-                                                            <div class="col-md-3">
-                                                                <a href="javascript:void(0)" ng-repeat="image in ctrl.feed.boxImage track by $index"
-                                                                   class="thumbnail clear-margin-bottom" ng-class="active" style="height: 88px">
+                                                            <div class="col-md-3" ng-repeat="image in ctrl.feed.boxImage track by $index">
+                                                                <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="active" style="height: 88px">
                                                                     <img style="max-height: 80px" class="thumb-group" ng-src="{{image}}">
                                                                 </a>
                                                             </div>
@@ -370,7 +369,7 @@
                                             <div class="wrapper-sm m-t-xs">
 
                                                 <div class="row">
-                                                    <div class="col-md-6 form-horizontal">
+                                                    <div class="col-md-12 form-horizontal">
                                                         <div class="form-group">
                                                             <div class="row">
                                                                 <label class="col-md-6 query-title">&nbsp;&nbsp;picture num</label>
@@ -384,7 +383,7 @@
 
 
                                                 <ul class="list-group">
-                                                    <li class="list-group-item" ng-repeat="image in ctrl.feed.boxImage track by $index">
+                                                    <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.boxImage track by $index">
                                                         {{image}}
                                                         <!--<input type="text" ng-model="image">-->
                                                         <div class="pull-right" style="margin-top: -3px;">
