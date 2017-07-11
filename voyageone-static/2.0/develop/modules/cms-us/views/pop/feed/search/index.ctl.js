@@ -12,10 +12,10 @@ define([
             this.itemDetailService = itemDetailService;
             this.commonService = commonService;
 
-            this.sel_all = context.sel_all; // 是否检索全量
+            this.selAll = context.selAll; // 是否检索全量
             this.updateModel = context.updateModel; // 是否是更新CmsFeedModel对象
             this.codeList = !context.codeList ? [] : context.codeList;
-
+            this.context = context;
             this.price = {
                 msrp:context.msrp,
                 price:context.price
@@ -52,11 +52,12 @@ define([
                 _.extend(approveInfo, _tmp);
             });
             let params = {
-                sel_all:self.sel_all,
+                selAll:self.selAll,
                 codeList:self.codeList,
                 approveInfo:approveInfo,
-                searchMap:{}
+                searchMap:self.context.searchMap
             };
+            console.log(params);
             if (self.updateModel) {
                 self.$modalInstance.close({success:true,approveInfo:approveInfo});
             } else {

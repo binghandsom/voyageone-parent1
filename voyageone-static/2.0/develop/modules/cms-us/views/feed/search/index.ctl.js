@@ -16,10 +16,11 @@ define([
             self.popups = popups;
             self.feedListTotal = 0;
             self.paraMap = {
-                status: "",
+                status: [],
                 approvePricing: null
             };
             self.updateMap = {};
+            self.totalItems = false;
             //权限控制,默认为最低权限1:new,2:Pending,3:Ready
 
             self.flag = self.$sessionStorage.auth.selfAuth;
@@ -46,20 +47,23 @@ define([
 
 
         }
+        init(){
+            let self = this;
+            self.getList();
+        }
 
         getList() {
 
             let self = this;
-            self.paraMap.status = '';
-
+            self.paraMap.status = [];
             if (self.status[0] === true) {
-                self.paraMap.status += "New_";
+                self.paraMap.status.push("New")
             }
             if (self.status[1] === true) {
-                self.paraMap.status += "Pending_";
+                self.paraMap.status.push("Pending")
             }
             if (self.status[2] === true) {
-                self.paraMap.status += "Ready_";
+                self.paraMap.status.push("Ready")
             }
             if (self.approvePricing[0] === true && self.approvePricing[1] == false) {
                 self.paraMap.approvePricing = "1";
@@ -119,7 +123,7 @@ define([
                 approvePricing: null
             };
             self.status = [false, false, false];
-            self.isApprove = [false, false];
+            self.approvePricing = [false, false];
             self.paging.curr = 1;
             self.paging.total = 0;
 
@@ -139,14 +143,25 @@ define([
                 return item.check;
             }).pluck('code').value();
 
-            if (codeList.length === 0) {
+            if (codeList.length === 0 && self.totalItems == false) {
                 self.alert('Please select at least one！');
                 return false;
             }
 
             self.popups.openBatchApprove({
-                sel_all: self.totalItems,
-                codeList: codeList
+                selAll:self.totalItems,
+                codeList:codeList,
+                searchMap: self.paraMap
+            });
+        }
+
+        popBatchApproveOne(code) {
+            let self = this,
+                codeList = [code];
+            self.popups.openBatchApprove({
+                selAll:false,
+                codeList:codeList
+                //searchMap: self.paraMap
             });
         }
 
@@ -154,7 +169,8 @@ define([
             let self = this;
 
             _.each(self.feeds, feed => {
-                feed.check = self.isAll;
+                if(feed.approvePricing == '1' && feed.status == 'Ready')
+                    feed.check = self.isAll;
             });
         }
 

@@ -11,6 +11,7 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
@@ -40,6 +41,7 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Created by james on 2017/7/5.
@@ -135,26 +137,36 @@ public class UsaFeedInfoService extends BaseService {
         //封装查询条件
         JongoQuery queryObject = getQuery(searchValue);
         //设置排序条件,排序字段后面拼接排序方式,下划线分割(1,正序,-1倒叙),默认不排序,点击那个按照哪个排序
-        String sortFild = (String) searchValue.get("sort");
-        if (sortFild != null) {
-            String[] split = sortFild.split("_");
+        String sortName = (String) searchValue.get("sortName");
+        String sortType = (String) searchValue.get("sortType");
+        if (StringUtils.isNotEmpty(sortName) && StringUtils.isNotEmpty(sortType)) {
             StringBuffer buffer = new StringBuffer();
             buffer.append("{'");
-            buffer.append(split[0]);
+            buffer.append(sortName);
             buffer.append("':");
-            buffer.append(split[1]);
+            buffer.append(sortType);
             buffer.append("}");
             queryObject.setSort(buffer.toString());
         }
         //封装分页条件
-        int pageNum = (Integer) searchValue.get("curr");
-        int pageSize = (Integer) searchValue.get("size");
-
-        queryObject.setSkip((pageNum - 1) * pageSize);
-        queryObject.setLimit(pageSize);
-
+        Integer pageNum = (Integer) searchValue.get("curr");
+        Integer pageSize = (Integer) searchValue.get("size");
+        if ( pageNum != null && pageSize != null){
+            queryObject.setSkip((pageNum - 1) * pageSize);
+            queryObject.setLimit(pageSize);
+        }
         List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channel, queryObject);
         return feedList;
+    }
+
+    public List<String> getFeedCodeList(Map<String, Object> searchValue, String channel) {
+        //封装查询条件
+        JongoQuery queryObject = getQuery(searchValue);
+        List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channel, queryObject);
+        if(ListUtils.notNull(feedList)){
+            return feedList.stream().map(CmsBtFeedInfoModel::getCode).collect(Collectors.toList());
+        }
+        return null;
     }
 
     /**
@@ -179,12 +191,12 @@ public class UsaFeedInfoService extends BaseService {
         //封装查询条件
         Criteria criteria = new Criteria();
         //状态
-        if (searchValue.get("status") != null && searchValue.get("status") != "") {
-            String status = (String) searchValue.get("status");
-            String[] split = status.split("_");
-            criteria = criteria.and("status").in(Arrays.asList(split));
-        } else {
-            criteria = criteria.and("status").in(Arrays.asList(CmsConstants.UsaFeedStatus.New.toString(), CmsConstants.UsaFeedStatus.Pending.toString(), CmsConstants.UsaFeedStatus.Ready.toString()));
+        if (ListUtils.notNull((List<String>) searchValue.get("status"))) {
+            List<String> status = (List<String>) searchValue.get("status");
+            criteria = criteria.and("status").in(status);
+        }else{
+            criteria = criteria.and("status").in(Arrays.asList(CmsConstants.UsaFeedStatus.New.toString(),
+                    CmsConstants.UsaFeedStatus.Pending.toString(),CmsConstants.UsaFeedStatus.Ready.toString(),CmsConstants.UsaFeedStatus.Approved.toString()));
         }
         //设置开始和截止的时间
         if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null) {
@@ -198,7 +210,8 @@ public class UsaFeedInfoService extends BaseService {
         }
         //name模糊查询
 
-        if (searchValue.get("name") != null && searchValue.get("name") != "") {
+
+        if (StringUtils.isNotEmpty((String)searchValue.get("name"))) {
             String name = (String) searchValue.get("name");
             String regEx = "[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
             Pattern p = Pattern.compile(regEx);
@@ -212,14 +225,20 @@ public class UsaFeedInfoService extends BaseService {
 
         }
         //多条件精确查询,SKU/ Barcode/ Code / Model
-        if (searchValue.get("searchContent") != null) {
+
+        if (StringUtils.isNotEmpty((String)searchValue.get("searchContent"))) {
             String searchContent = (String) searchValue.get("searchContent");
             String[] split = searchContent.split("/n");
             List<String> searchContents = Arrays.asList(split);
             criteria.orOperator(new Criteria("code").in(searchContents), new Criteria("model").in(searchContents), new Criteria("skus.sku").in(searchContent), new Criteria("skus.barcode").in(searchContent));
         }
-        if (searchValue.get("approvePricing") != null) {
+
+        if (StringUtils.isNotEmpty((String)searchValue.get("approvePricing"))) {
             criteria = criteria.and("approvePricing").is((String) searchValue.get("approvePricing"));
+        }
+
+        if(ListUtils.notNull((List) searchValue.get("codeList"))){
+            criteria = criteria.and("code").in(searchValue.get("codeList"));
         }
         return new JongoQuery(criteria);
     }
