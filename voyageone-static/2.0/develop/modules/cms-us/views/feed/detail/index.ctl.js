@@ -63,8 +63,8 @@ define([
                     if (self.feed && _.size(self.feed.image) > 0)
                         self.currentFeedImage = self.feed.image[0];
 
-                    if (self.feed && _.size(self.feed.boxImage) > 0)
-                        self.currentBoxImage = self.feed.boxImage[0];
+                    if (self.feed && self.feed.attribute.boximages && _.size(self.feed.attribute.boximages) > 0)
+                        self.currentBoxImage = self.feed.boximages[0];
 
                 } else {
                     let id = self.id;
@@ -270,32 +270,32 @@ define([
             let urlKey = "";
             if (self.feed.hasUrlkey && num > 0) {
                 urlKey = self.feed.attribute.urlkey[0];
-                if (!self.feed.boxImage) {
-                    self.feed.boxImage = [];
+                if (!self.feed.attribute.boximages) {
+                    self.feed.attribute.boximages = [];
                 }
-                let count = _.size(self.feed.boxImage);
+                let count = _.size(self.feed.attribute.boximages);
                 let add = num - count;
                 if (add > 0) {
                     for (let i = 1; i <= add; i++) {
-                        self.feed.boxImage.push(self.imageUrl + urlKey + "-2-" + (count + i));
+                        self.feed.attribute.boximages.push(self.imageUrl + urlKey + "-2-" + (count + i));
                     }
                 } else {
-                    self.feed.boxImage.splice(add);
+                    self.feed.attribute.boximages.splice(add);
                 }
             }
         }
 
         addBoxImage() {
             let self = this;
-            if (!self.feed.boxImage) {
-                self.feed.boxImage = [];
+            if (!self.feed.attribute.boximages) {
+                self.feed.attribute.boximages = [];
             }
-            self.feed.boxImage.push("");
+            self.feed.attribute.boximages.push("");
         }
 
         deleteBoxImage(index) {
             let self = this;
-            self.feed.boxImage.splice(index, 1);
+            self.feed.attribute.boximages.splice(index, 1);
         }
 
         // 同Model

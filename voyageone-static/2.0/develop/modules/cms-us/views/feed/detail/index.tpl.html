@@ -358,7 +358,7 @@
                                                 <div>
                                                     <div class="tab-pane active">
                                                         <div class="row">
-                                                            <div class="col-md-3" ng-repeat="image in ctrl.feed.boxImage track by $index">
+                                                            <div class="col-md-3" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
                                                                 <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="active" style="height: 88px">
                                                                     <img style="max-height: 80px" class="thumb-group" ng-src="{{image}}" ng-click="ctrl.currentBoxImage = image">
                                                                 </a>
@@ -388,7 +388,7 @@
 
 
                                                 <ul class="list-group">
-                                                    <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.boxImage track by $index">
+                                                    <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
                                                         <div class="row">
                                                             <div class="col-md-10">
                                                                 {{image}}
