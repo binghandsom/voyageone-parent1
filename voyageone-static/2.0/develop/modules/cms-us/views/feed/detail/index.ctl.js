@@ -3,13 +3,15 @@ define([
 ], function (cms) {
 
     cms.controller('feedDetailController', class FeedDetailController {
-        constructor(popups, $routeParams, itemDetailService, alert,$location,notify,confirm) {
+        constructor(popups, $routeParams, itemDetailService, alert,$location,notify,confirm,$rootScope) {
             this.popups = popups;
             this.itemDetailService = itemDetailService;
             this.alert = alert;
             this.$location = $location;
             this.notify = notify;
             this.confirm = confirm;
+            this.$rootScope = $rootScope;
+            console.log($rootScope);
 
             this.id = $routeParams.id;
             if (!this.id) {
@@ -154,13 +156,15 @@ define([
                 });
                 if (!checkSkus || _.size(checkSkus) == 0) {
                     let ctx = {
-
+                        updateModel:true,
                         codeList:[self.feed.code]
                     };
                     self.popups.openBatchApprove(ctx).then((res) => {
-                        console.log(res);
+                        if (res.success) {
+                            _.extend(self.feed, {approveInfo:res.approveInfo});
+                            self.saveFeed(flag);
+                        }
                     });
-                    // self.saveFeed(flag);
                 } else {
                     let skus = [];
                     angular.forEach(checkSkus, function (sku) {
@@ -168,7 +172,16 @@ define([
                     });
                     let message = `SKU[${skus}] Msrp($) or price($) is 0 or 500, continue to Approve?`;
                     self.confirm(message).then((confirmed) => {
-                        self.saveFeed(flag);
+                        let ctx = {
+                            updateModel:true,
+                            codeList:[self.feed.code]
+                        };
+                        self.popups.openBatchApprove(ctx).then((res) => {
+                            if (res.success) {
+                                _.extend(self.feed, {approveInfo:res.approveInfo});
+                                self.saveFeed(flag);
+                            }
+                        });
                     }, () => {
 
                     })
@@ -186,6 +199,7 @@ define([
             // 处理orderlimitcount
             self.feed.attribute.orderlimitcount = [self.feed.orderlimitcount];
             let parameter = {feed:self.feed, flag:flag};
+            console.log(self.feed);
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {
                     self.notify.success("Operation succeeded.");

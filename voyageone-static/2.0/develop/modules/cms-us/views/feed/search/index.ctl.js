@@ -12,13 +12,14 @@ define([
             self.popups = popups;
             self.feedListTotal = 0;
             self.paraMap = {
-                status:"",
-                approvePricing:null
+                status: "",
+                approvePricing: null
             };
             self.updateMap = {};
             //权限控制,默认为最低权限1:new,2:Pending,3:Ready
+
             self.flag = self.$rootScope.auth.selfAuth;
-            console.log(self.flag);
+            self.columnArrow = {};
             self.status = [false, false, false];
             self.approvePricing = [false, false];
             self.itemDetailService = itemDetailService;
@@ -27,16 +28,19 @@ define([
                     self.getList();
                 }
             };
+
             //设置状态的默认选中
-            if(self.flag == 1){
+            if (self.flag == 1) {
                 self.status[0] = true;
             }
-            if(self.flag == 2){
+            if (self.flag == 2) {
                 self.status[1] = true;
             }
-            if(self.flag == 3){
+            if (self.flag == 3) {
                 self.status[2] = true;
             }
+
+
         }
 
         getList() {
@@ -65,19 +69,19 @@ define([
                 self.feedListTotal = resp.data.feedListTotal;
                 self.paging.total = resp.data.feedListTotal;
                 //对页面显示的价格区间进行转化
-                if(self.feeds != null){
-                    angular.forEach(self.feeds,function(feed){
+                if (self.feeds != null) {
+                    angular.forEach(self.feeds, function (feed) {
                         var skus = feed.skus;
                         var arr1 = [];
                         var arr2 = [];
-                        angular.forEach(skus,function(value){
+                        angular.forEach(skus, function (value) {
                             arr1.push(value.priceMsrp);
                             arr2.push(value.priceNet);
                         })
                         arr1.sort();
                         arr2.sort();
-                        feed.priceMsrps = [arr1[0],arr1[arr1.length-1]];
-                        feed.priceNets = [arr2[0],arr2[arr2.length-1]];
+                        feed.priceMsrps = [arr1[0], arr1[arr1.length - 1]];
+                        feed.priceNets = [arr2[0], arr2[arr2.length - 1]];
 
 
                     })
@@ -86,16 +90,17 @@ define([
             });
 
         }
-        updateOne(feed,key,value) {
+
+        updateOne(feed, key, value) {
             let self = this;
             let requestMap = {};
             requestMap.code = feed.code;
             requestMap[key] = value;
             //requestMap.value = value;
-                self.itemDetailService.updateOne(requestMap).then(resp => {
-                    feed.editMsrp = false;
-                    feed.editRetai = false;
-                });
+            self.itemDetailService.updateOne(requestMap).then(resp => {
+                feed.editMsrp = false;
+                feed.editRetai = false;
+            });
         }
 
         clear() {
@@ -104,12 +109,12 @@ define([
 
             self.paraMap = {};
             self.paraMap = {
-                status:"",
-                approvePricing:null
+                status: "",
+                approvePricing: null
             };
             self.status = [false, false, false];
             self.isApprove = [false, false];
-            self.paging.curr =  1;
+            self.paging.curr = 1;
             self.paging.total = 0;
 
             if (columnArrow) {
@@ -132,6 +137,7 @@ define([
                 self.alert('Please select at least one！');
                 return false;
             }
+
             self.popups.openBatchApprove({
                 selAll:self.totalItems,
                 codeList:codeList,
@@ -188,15 +194,23 @@ define([
             return columnArrow[columnName].mark;
         };
 
-        searchByOrder(columnName, sortOneType) {
+        searchByOrder(columnName, sortType) {
             let self = this,
                 paraMap = self.paraMap;
 
-            paraMap.sortName = columnName;
-            paraMap.sortType = sortOneType == 'sort-up' ? '1' : '-1';
+            paraMap.sortName = self.getFinalColumn(columnName, sortType);
+            paraMap.sortType = sortType == 'sort-up' ? '1' : '-1';
 
             self.getList();
 
+        }
+
+        getFinalColumn(columnName, sortType) {
+            if (/^priceClient*/.test(columnName)) {
+                return sortType == 'sort-up' ? `${columnName}Min` : `${columnName}Max`;
+            } else {
+                return columnName;
+            }
         }
 
     });
