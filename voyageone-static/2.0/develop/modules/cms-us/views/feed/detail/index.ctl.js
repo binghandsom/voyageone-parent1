@@ -308,6 +308,9 @@ define([
         // 同Model
         getTopModel(top) {
             let self = this;
+
+            self.isShowModal = !self.isShowModal;
+
             if (self.feed.model) {
                 self.itemDetailService.getTopModel({
                     code: self.feed.code,
@@ -324,6 +327,7 @@ define([
         // Copy其他code部分属性
         copyAttr(feed) {
             let self = this;
+
             let attribute = {
                 brand: feed.brand,
                 productType: feed.productType,
@@ -333,6 +337,8 @@ define([
                 usageEn: feed.usageEn
             };
             _.extend(self.feed, attribute);
+
+            self.notify.success('copy success!');
         }
 
         /**

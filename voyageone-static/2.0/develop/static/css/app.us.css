@@ -1,17 +1,27 @@
-.query-title{
+.query-title {
     font-size: 13px;
     font-weight: bold;
     color: #42413a;
 }
 
-.skuItem-head{
+.skuItem-head {
     margin: 17px 2px;
     border-bottom: 2px solid #e67e22;
 }
 
-.skuItem-head h4{
+.skuItem-head h4 {
     padding: 0 17px;
     font-size: 15px;
     font-weight: bolder;
     color: #e67e22;
+}
+
+.pos-relative {
+    position: relative;
+}
+
+.pos-absolute-right {
+    position: absolute;
+    right: 0;
+    bottom: 0;
 }

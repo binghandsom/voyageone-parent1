@@ -31,13 +31,24 @@
                                     </div>
 
                                 </div>
-                                <div class="form-group" ng-if="ctrl.topFeedList.length>0">
+                                <div class="form-group" ng-if="ctrl.isShowModal">
                                     <div class="row">
-                                        <div class="col-md-8 col-md-offset-4">
+                                        <div class="col-md-8 col-md-offset-4" ng-if="ctrl.topFeedList.length > 0">
                                             <div class="col-xs-6 col-md-2" ng-repeat="item in ctrl.topFeedList">
-                                                <a href="javascript:void(0);" class="thumbnail" ng-click="ctrl.copyAttr(item)">
+                                                <a href="javascript:void(0);" class="thumbnail" ng-class="{'active':item.status=='Approved'}"
+                                                   style="position: relative">
                                                     <img alt="{{ctrl.feed.code}}" class="thumb-sm-search" src="{{item.image[0]}}">
+                                                    <button type="button" class="btn btn-primary pos-absolute-right" ng-click="ctrl.copyAttr(item)">
+                                                        <i class="fa fa-copy"></i>
+                                                    </button>
                                                 </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-md-offset-4" ng-if="ctrl.topFeedList.length == 0">
+                                            <div class="alert alert-danger" role="alert">
+                                                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                                <span class="sr-only">Warning:</span>
+                                                no query data
                                             </div>
                                         </div>
                                     </div>
