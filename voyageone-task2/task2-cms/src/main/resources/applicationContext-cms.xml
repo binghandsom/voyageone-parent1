@@ -190,6 +190,9 @@
         <!-- 检查善品数据是否正确（每天执行一次） -->
         <task:scheduled ref="CmsCheckProductIsRightJob" method="run" cron="0 30 20 * * ?"/>
 
+        <!-- 美国CMS2 Home页汇总分类信息Job -->
+        <task:scheduled ref="UsaCmsDataAmountJob" method="run" cron="0 0/1 * * * ?"/>
+
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->

@@ -15,7 +15,16 @@ public enum EnumFeedSum implements IEnumDataAmountSum {
     CMS_FEED_STATUS_IMPORT_FAILD("CMS_FEED_STATUS_IMPORT_FAILD", "{'updFlg':2}", "/feed/product_list", "", "导入失败数"),
     CMS_FEED_DATA_ERROR("CMS_FEED_DATA_ERROR", "{'updFlg':8}", "/feed/product_list", "", "Feed数据错误数"),
     CMS_FEED_STATUS_WAITING_FOR_IMPORT("CMS_FEED_STATUS_WAITING_FOR_IMPORT", "{'updFlg':0}", "/feed/product_list", "", "等待导入数"),
-    CMS_FEED_feedBrand_block("CMS_FEED_feedBrand_block", "", "", "", "黑名单数量",1);
+    CMS_FEED_feedBrand_block("CMS_FEED_feedBrand_block", "", "", "", "黑名单数量",1),
+
+    //==============================================================================================
+    //==================================美国CMS2枚举定义==============================================
+    //==============================================================================================
+
+    USA_CMS_FEED_STATUS_NEW("USA_CMS_FEED_STATUS_NEW", "{'status':'New'}", "/feed/usa/search", "{selfAuth:1}", "New Items"),
+    USA_CMS_FEED_STATUS_PENDING("USA_CMS_FEED_STATUS_PENDING", "{'status':'New'}", "/feed/usa/search", "{selfAuth:2}", "Pending Items"),
+    USA_CMS_FEED_STATUS_READY("USA_CMS_FEED_STATUS_READY", "{'status':'New'}", "/feed/usa/search", "{selfAuth:3}", "Ready Items");
+
     EnumFeedSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
         this.amountName = amountName;
         this.strQuery = strQuery;

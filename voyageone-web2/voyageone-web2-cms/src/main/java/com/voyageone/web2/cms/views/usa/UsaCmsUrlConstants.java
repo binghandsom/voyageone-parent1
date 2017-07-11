@@ -12,6 +12,8 @@ public class UsaCmsUrlConstants {
         String ROOT = "/cms/us/common";
 
         String GET_CHANNEL_CART = "getChannelCarts";
+
+        String GET_FEED_INFO = "getFeedInfo";
     }
 
     /**

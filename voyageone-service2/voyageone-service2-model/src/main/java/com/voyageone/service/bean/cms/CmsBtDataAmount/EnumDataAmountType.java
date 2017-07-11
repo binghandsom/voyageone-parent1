@@ -7,7 +7,14 @@ public enum  EnumDataAmountType {
     FeedSum(1, "FeedSum"),
     MasterSum(2, "MasterSum"),
     PlatformPriceSum(3, "PlatformPriceSum"),
-    PlatformInfoSum(4, "PlatformInfoSum");
+    PlatformInfoSum(4, "PlatformInfoSum"),
+
+    //==============================================================================================
+    //==================================美国CMS2枚举定义==============================================
+    //==============================================================================================
+
+    UsaFeedSum(5, "UsaFeedSum");
+
     EnumDataAmountType(int id, String name) {
         this.id = id;
         this.name = name;

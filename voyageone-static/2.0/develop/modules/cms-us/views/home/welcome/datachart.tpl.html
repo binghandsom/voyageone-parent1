@@ -17,21 +17,13 @@
                         <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
                             <thead>
                             <tr>
-                                <th class="text-center">New Items</th>
-                                <th class="text-center">Pending Items</th>
-                                <th class="text-center">Ready Items</th>
+                                <th class="text-center" ng-repeat="feedItem in ctrl.feedInfo">{{feedItem.comment}}</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
-                                <td class="text-center">
-                                    <a href="javascript:void(0)" ng-click="ctrl.goLink()">1</a>
-                                </td>
-                                <td class="text-center">
-                                    <a href="javascript:void(0)" ng-click="ctrl.goLink()">1</a>
-                                </td>
-                                <td class="text-center">
-                                    <a href="javascript:void(0)" ng-click="ctrl.goLink()">1</a>
+                                <td class="text-center" ng-repeat="feedItem in ctrl.feedInfo">
+                                    <a href="javascript:void(0)" ng-click="ctrl.goLink(feedItem)">{{feedItem.amountVal}}</a>
                                 </td>
                             </tr>
                             </tbody>

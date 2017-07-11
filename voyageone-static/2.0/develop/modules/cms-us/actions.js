@@ -60,7 +60,8 @@ define(function () {
             },
             commonService: {
                 "root":"/cms/us/common",
-                "getChannelCarts":"getChannelCarts"
+                "getChannelCarts":"getChannelCarts",
+                "getFeedInfo":"getFeedInfo"
             },
             search: {
                 $feedSearchService: {

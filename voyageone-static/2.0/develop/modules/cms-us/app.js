@@ -292,7 +292,7 @@ define([
         }
     }
 
-    function headerCtrl($scope, $rootScope, $window, $location, menuService, cRoutes, cCommonRoutes) {
+    function headerCtrl($scope, $rootScope, $window, $location, menuService, cRoutes, cCommonRoutes,$sessionStorage) {
         var vm = this;
         vm.menuList = {};
         vm.languageList = {};
@@ -317,6 +317,9 @@ define([
                 $rootScope.isTranslator = data.isTranslator;
 
                 $rootScope.auth = setAuth(data.menuTree);
+
+                //设置sessionstorage
+                $sessionStorage.auth = $rootScope.auth;
             });
         }
 
@@ -485,10 +488,7 @@ define([
         }
 
         function linkPage(menu) {
-            $rootScope.auth.selfAuth = menu.selfAuth;
-
-            //save in sessionstorage
-            $sessionStorage.auth = $rootScope.auth;
+            $sessionStorage.auth.selfAuth = menu.selfAuth;
 
             let timeStamp = new Date().getTime();
 
