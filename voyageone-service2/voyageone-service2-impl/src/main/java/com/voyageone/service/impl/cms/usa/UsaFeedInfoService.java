@@ -150,7 +150,8 @@ public class UsaFeedInfoService extends BaseService {
         queryObject.setSkip((pageNum - 1) * pageSize);
         queryObject.setLimit(pageSize);
 
-        return feedInfoService.getList(channel, queryObject);
+        List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channel, queryObject);
+        return feedList;
     }
 
     /**
@@ -175,13 +176,13 @@ public class UsaFeedInfoService extends BaseService {
         //封装查询条件
         Criteria criteria = new Criteria();
         //状态
-       /* if (searchValue.get("status") != null && searchValue.get("status") != "") {
+        if (searchValue.get("status") != null && searchValue.get("status") != "") {
             String status = (String) searchValue.get("status");
             String[] split = status.split("_");
             criteria = criteria.and("status").in(Arrays.asList(split));
         }else{
-            criteria = criteria.and("status").in(Arrays.asList("new", "pending","ready"));
-        }*/
+            criteria = criteria.and("status").in(Arrays.asList(CmsConstants.UsaFeedStatus.New.toString(), CmsConstants.UsaFeedStatus.Pending.toString(),CmsConstants.UsaFeedStatus.Ready.toString()));
+        }
         //设置开始和截止的时间
         if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null) {
             criteria = criteria.and("lastReceivedOn").gte((String) searchValue.get("lastReceivedOnStart"));
@@ -194,7 +195,7 @@ public class UsaFeedInfoService extends BaseService {
         }
         //name模糊查询
 
-        if (searchValue.get("name") != null) {
+        if (searchValue.get("name") != null && searchValue.get("name") != "") {
             String name = (String) searchValue.get("name");
             String regEx = "[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
             Pattern p = Pattern.compile(regEx);
@@ -214,8 +215,8 @@ public class UsaFeedInfoService extends BaseService {
             List<String> searchContents = Arrays.asList(split);
             criteria.orOperator(new Criteria("code").in(searchContents), new Criteria("model").in(searchContents), new Criteria("skus.sku").in(searchContent), new Criteria("skus.barcode").in(searchContent));
         }
-        if (searchValue.get("isApprove") != null) {
-            criteria = criteria.and("isApprove").is((String) searchValue.get("isApprove"));
+        if (searchValue.get("approvePricing") != null) {
+            criteria = criteria.and("approvePricing").is((String) searchValue.get("approvePricing"));
         }
         return new JongoQuery(criteria);
     }

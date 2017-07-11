@@ -3,32 +3,23 @@ package com.voyageone.web2.cms.views.usa;
 import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
-import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.usa.UsaFeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.usa.FeedRequest;
 
 import com.voyageone.web2.core.bean.UserSessionBean;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * 美国CMS Feed相关Controller
@@ -122,6 +113,7 @@ public class UsaCmsFeedController extends BaseController {
         String selChannelId = getUser().getSelChannelId();
         //获取数据列表
         List<CmsBtFeedInfoModel> feedList = usaFeedInfoService.getFeedList(params, selChannelId);
+
         resultBean.put("feedList", feedList);
         //获取数据总量
         Long feedListTotal = usaFeedInfoService.getFeedCount(params, selChannelId);
@@ -133,27 +125,51 @@ public class UsaCmsFeedController extends BaseController {
 
     @RequestMapping(value = UsaCmsUrlConstants.FEED.UPDATEONE)
     public AjaxResponse upDateOne(@RequestBody Map params) {
-        HashMap<String, Object> queryMap = new HashMap<>();
-        String code = (String) params.get("code");
-        if (code != null){
-            queryMap.put("code",code);
-        }
-        HashMap<String, Object> updateMap = new HashMap<>();
+        WriteResult writeResult = null;
+        Double msrpPrice = null;
+        Double price = null;
+        if (params != null){
+            HashMap<String, Object> queryMap = new HashMap<>();
+            String code = (String) params.get("code");
+            if (code != null){
+                queryMap.put("code",code);
+            }
+            //这里有类型转换异常
+            String priceClientMsrp = (String) params.get("priceClientMsrp");
+            if (priceClientMsrp != null){
+                msrpPrice =Double.parseDouble(priceClientMsrp);
+            }
 
-        String msrpPrice = (String) params.get("msrpPrice");
-        if (msrpPrice != null){
-            updateMap.put("skus.msrpPrice",msrpPrice);
+            String price1 = (String) params.get("price");
+            if (price1 != null){
+                 price =Double.parseDouble(price1);
+            }
+
+
+            CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(getUser().getSelChannelId(), code);
+            if(cmsBtFeedInfoModel != null){
+                cmsBtFeedInfoModel.setModifier(getUser().getUserName());
+                final Double finalMsrpPrice = msrpPrice;
+                final Double finalPrice = price;
+                cmsBtFeedInfoModel.getSkus().forEach(sku->{
+                    if(finalMsrpPrice != null){
+                        sku.setPriceClientMsrp(finalMsrpPrice);
+                    }
+                    if(finalPrice != null){
+                        sku.setPriceClientRetail(finalPrice);
+                        sku.setPriceNet(finalPrice);
+                    }
+                });
+            }
+            String approvePricing = (String) params.get("approvePricing");
+
+            if (approvePricing != null){
+                cmsBtFeedInfoModel.setApprovePricing(approvePricing);
+            }
+            cmsBtFeedInfoModel = usaFeedInfoService.setPrice(cmsBtFeedInfoModel);
+            writeResult = feedInfoService.updateFeedInfo(cmsBtFeedInfoModel);
         }
-        String price = (String) params.get("price");
-        if (price != null){
-            updateMap.put("skus.priceNet",price);
-            updateMap.put("skus.priceClientRetail",price);
-        }
-        String approve = (String) params.get("approve");
-        if (msrpPrice != null){
-            updateMap.put("approve",approve);
-        }
-        WriteResult writeResult = usaFeedInfoService.upDateFeedInfo(getUser().getSelChannelId(), queryMap, updateMap);
+
 
         return success(writeResult);
     }

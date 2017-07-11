@@ -89,9 +89,10 @@ define(function () {
                 detail:"detail",
                 update:"update",
                 getTopModel:"getTopModel",
+                updateOne:"updateOne",
                 setPrice:"setPrice",
-                approve:"approve",
-                list:"list"
+                list:"list",
+                approve:"approve"
             }
         }
     };
