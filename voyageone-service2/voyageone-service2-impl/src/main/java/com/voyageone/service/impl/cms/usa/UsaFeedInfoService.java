@@ -19,10 +19,13 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.expression.Expression;
@@ -31,6 +34,7 @@ import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -179,8 +183,8 @@ public class UsaFeedInfoService extends BaseService {
             String status = (String) searchValue.get("status");
             String[] split = status.split("_");
             criteria = criteria.and("status").in(Arrays.asList(split));
-        }else{
-            criteria = criteria.and("status").in(Arrays.asList(CmsConstants.UsaFeedStatus.New.toString(), CmsConstants.UsaFeedStatus.Pending.toString(),CmsConstants.UsaFeedStatus.Ready.toString()));
+        } else {
+            criteria = criteria.and("status").in(Arrays.asList(CmsConstants.UsaFeedStatus.New.toString(), CmsConstants.UsaFeedStatus.Pending.toString(), CmsConstants.UsaFeedStatus.Ready.toString()));
         }
         //设置开始和截止的时间
         if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null) {
@@ -420,13 +424,13 @@ public class UsaFeedInfoService extends BaseService {
     /**
      * 保存要Approve的Feed信息
      *
-     * @param channelId    渠道ID
-     * @param codeList     codeList
+     * @param channelId   渠道ID
+     * @param codeList    codeList
      * @param approveInfo 各平台Approve信息,KV:cartId-Days Old Before Sharing
-     * @param username     修改人
+     * @param username    修改人
      */
     public void approve(String channelId, List<String> codeList, Map<Integer, Integer> approveInfo, String username) {
-        if (StringUtils.isBlank(channelId) || CollectionUtils.isEmpty(codeList) ) {
+        if (StringUtils.isBlank(channelId) || CollectionUtils.isEmpty(codeList)) {
             throw new BusinessException("Approve parameter error.");
         }
 
@@ -437,12 +441,12 @@ public class UsaFeedInfoService extends BaseService {
             jongoUpdate.setQuery("{\"channelId\":#,\"code\":#}");
             jongoUpdate.setQueryParameters(channelId, code);
 
-            jongoUpdate.setUpdate("{$set:{\"approveInfo\":#,\"modifier\":#,\"modified\":#}}");
-            jongoUpdate.setUpdateParameters(approveInfo,username,DateTimeUtil.getNow());
+            jongoUpdate.setUpdate("{$set:{\"updFlg\":#,\"approveInfo\":#,\"modifier\":#,\"modified\":#}}");
+            jongoUpdate.setUpdateParameters(0, approveInfo, username, DateTimeUtil.getNow());
             jongoUpdateList.add(jongoUpdate);
         }
 
-        BulkWriteResult writeResult =cmsBtFeedInfoDao.bulkUpdateWithJongo(channelId, jongoUpdateList);
+        BulkWriteResult writeResult = cmsBtFeedInfoDao.bulkUpdateWithJongo(channelId, jongoUpdateList);
         $info(String.format("(%s)批量Approve Feed, 结果:", username, JacksonUtil.bean2Json(writeResult)));
 
     }
