@@ -19,7 +19,6 @@ define([
             //权限控制,默认为最低权限1:new,2:Pending,3:Ready
 
             self.flag = self.$rootScope.auth.selfAuth;
-            console.log(self.flag);
             self.status = [false, false, false];
             self.approvePricing = [false, false];
             self.itemDetailService = itemDetailService;

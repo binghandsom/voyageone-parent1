@@ -154,13 +154,15 @@ define([
                 });
                 if (!checkSkus || _.size(checkSkus) == 0) {
                     let ctx = {
-
+                        updateModel:true,
                         codeList:[self.feed.code]
                     };
                     self.popups.openBatchApprove(ctx).then((res) => {
-                        console.log(res);
+                        if (res.success) {
+                            _.extend(self.feed, {approveInfo:res.approveInfo});
+                            self.saveFeed(flag);
+                        }
                     });
-                    // self.saveFeed(flag);
                 } else {
                     let skus = [];
                     angular.forEach(checkSkus, function (sku) {
@@ -186,6 +188,7 @@ define([
             // 处理orderlimitcount
             self.feed.attribute.orderlimitcount = [self.feed.orderlimitcount];
             let parameter = {feed:self.feed, flag:flag};
+            console.log(self.feed);
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {
                     self.notify.success("Operation succeeded.");

@@ -13,6 +13,7 @@ define([
             this.commonService = commonService;
 
             this.sel_all = context.sel_all; // 是否检索全量
+            this.updateModel = context.updateModel; // 是否是更新CmsFeedModel对象
             this.codeList = !context.codeList ? [] : context.codeList;
 
             this.price = {
@@ -56,9 +57,13 @@ define([
                 approveInfo:approveInfo,
                 searchMap:{}
             };
-            self.itemDetailService.approve(params).then((res) => {
-                self.$modalInstance.close({success:true});
-            });
+            if (self.updateModel) {
+                self.$modalInstance.close({success:true,approveInfo:approveInfo});
+            } else {
+                self.itemDetailService.approve(params).then((res) => {
+                    self.$modalInstance.close({success:true});
+                });
+            }
         }
     });
 
