@@ -1,6 +1,9 @@
 package com.voyageone.web2.cms.bean.usa;
 
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_ApproveItem;
+import java.util.List;
+import java.util.Map;
 
 /**
  * USA CMS Feed相关参数
@@ -19,6 +22,11 @@ public class FeedRequest {
     private CmsBtFeedInfoModel feed;
     // Save or Submit or Approve 操作标识
     private Integer flag;
+
+    private Integer selAll; // 是否检索结果全量
+    private List<String> codeList; // Feed Code Collection
+    private Map<String, Object> searchMap; // Feed检索条件
+    private List<CmsBtFeedInfoModel_ApproveItem> approveItems;
 
     public String getId() {
         return id;
@@ -66,5 +74,37 @@ public class FeedRequest {
 
     public void setFlag(Integer flag) {
         this.flag = flag;
+    }
+
+    public Integer getSelAll() {
+        return selAll;
+    }
+
+    public void setSelAll(Integer selAll) {
+        this.selAll = selAll;
+    }
+
+    public List<String> getCodeList() {
+        return codeList;
+    }
+
+    public void setCodeList(List<String> codeList) {
+        this.codeList = codeList;
+    }
+
+    public Map<String, Object> getSearchMap() {
+        return searchMap;
+    }
+
+    public void setSearchMap(Map<String, Object> searchMap) {
+        this.searchMap = searchMap;
+    }
+
+    public List<CmsBtFeedInfoModel_ApproveItem> getApproveItems() {
+        return approveItems;
+    }
+
+    public void setApproveItems(List<CmsBtFeedInfoModel_ApproveItem> approveItems) {
+        this.approveItems = approveItems;
     }
 }

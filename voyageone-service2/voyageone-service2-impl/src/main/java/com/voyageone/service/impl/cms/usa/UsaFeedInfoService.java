@@ -1,7 +1,10 @@
 package com.voyageone.service.impl.cms.usa;
 
+import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -13,16 +16,14 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_ApproveItem;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.expression.Expression;
@@ -31,7 +32,6 @@ import org.springframework.expression.spel.SpelEvaluationException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
@@ -56,28 +56,30 @@ public class UsaFeedInfoService extends BaseService {
 
     /**
      * feed的中国价格计算
+     *
      * @param cmsBtFeedInfoModel feed对象
      * @return 价格计算后的对象
      */
-    public CmsBtFeedInfoModel setPrice(CmsBtFeedInfoModel cmsBtFeedInfoModel){
+    public CmsBtFeedInfoModel setPrice(CmsBtFeedInfoModel cmsBtFeedInfoModel) {
 
         CmsChannelConfigBean msrpConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_MSRP, cmsBtFeedInfoModel.getProductType());
-        if(msrpConfig == null){
+        if (msrpConfig == null) {
             msrpConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_MSRP, "0");
         }
-        String formulaMsrp =  msrpConfig.getConfigValue1();
+        String formulaMsrp = msrpConfig.getConfigValue1();
 
         CmsChannelConfigBean retailConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_RETAIL, cmsBtFeedInfoModel.getProductType());
-        if(retailConfig == null){
+        if (retailConfig == null) {
             retailConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_RETAIL, "0");
         }
-        String formulaRetail =  retailConfig.getConfigValue1();
+        String formulaRetail = retailConfig.getConfigValue1();
 
         Double priceClientRetailMin = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientRetail();
         Double priceClientMsrpMin = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientMsrp();
         Double priceClientRetailMax = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientRetail();
-        Double priceClientMsrpMax = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientMsrp();;
-        for(CmsBtFeedInfoModel_Sku sku : cmsBtFeedInfoModel.getSkus()){
+        Double priceClientMsrpMax = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientMsrp();
+        ;
+        for (CmsBtFeedInfoModel_Sku sku : cmsBtFeedInfoModel.getSkus()) {
             sku.setPriceMsrp(calculatePrice(formulaMsrp, sku));
             sku.setPriceCurrent(calculatePrice(formulaRetail, sku));
             priceClientRetailMin = Double.min(priceClientRetailMin, sku.getPriceClientRetail());
@@ -93,7 +95,7 @@ public class UsaFeedInfoService extends BaseService {
         return cmsBtFeedInfoModel;
     }
 
-    private Double calculatePrice(String formula, CmsBtFeedInfoModel_Sku sku){
+    private Double calculatePrice(String formula, CmsBtFeedInfoModel_Sku sku) {
         ExpressionParser parser = new SpelExpressionParser();
 
         Expression expression = parser.parseExpression(formula);
@@ -419,7 +421,47 @@ public class UsaFeedInfoService extends BaseService {
         return cmsBtFeedInfoDao.countByQuery(query, new Object[]{channelId, code, urlKey}, channelId) > 0;
     }
 
-    public void saveFeedApproveInfo(String channelId, String code, Map<Integer, Integer> approveInfo) {
+    /**
+     * 保存要Approve的Feed信息
+     *
+     * @param channelId    渠道ID
+     * @param codeList     codeList
+     * @param approveItems 各平台Approve信息
+     * @param username     修改人
+     */
+    public void approve(String channelId, List<String> codeList, List<CmsBtFeedInfoModel_ApproveItem> approveItems, String username) {
+        if (StringUtils.isBlank(channelId) || CollectionUtils.isEmpty(codeList) || CollectionUtils.isEmpty(approveItems)) {
+            throw new BusinessException("Approve parameter error.");
+        }
+
+        HashMap<String, Object> updateMap = new HashMap<>();
+        HashMap<String, Object> queryMap = new HashMap<>();
+
+        queryMap.put("channelId", channelId);
+        updateMap.put("approveInfo", approveItems);
+
+        List<BulkUpdateModel> bulkUpdateModelList = new ArrayList<>();
+        List<JongoUpdate> jongoUpdates = new ArrayList<>();
+        for (String code : codeList) {
+            queryMap.put("code", code);
+            BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
+            bulkUpdateModel.setUpdateMap(updateMap);
+            bulkUpdateModel.setQueryMap(queryMap);
+            bulkUpdateModelList.add(bulkUpdateModel);
+
+            JongoUpdate jongoUpdate = new JongoUpdate();
+            jongoUpdate.setQuery("{\"channelId\":#,\"code\":#}");
+            jongoUpdate.setQueryParameters(channelId, code);
+
+            jongoUpdate.setUpdate("{\"approveInfo\":#}");
+            jongoUpdate.setUpdateParameters(JacksonUtil.bean2Json(approveItems));
+            jongoUpdates.add(jongoUpdate);
+        }
+
+//        cmsBtFeedInfoDao.up
+        BulkWriteResult writeResult =cmsBtFeedInfoDao.bulkUpdateWithJongo(channelId, jongoUpdates);
+//        BulkWriteResult writeResult = cmsBtFeedInfoDao.bulkUpdateWithMap(channelId, bulkUpdateModelList, username, "$set", false);
+        $info(String.format("(%s)批量Approve Feed, 结果:", username, JacksonUtil.bean2Json(writeResult)));
 
     }
 
