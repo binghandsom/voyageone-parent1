@@ -311,7 +311,7 @@
                                             <div class="wrapper-sm m-t-xs">
 
                                                 <div class="row">
-                                                    <div class="col-md-6 form-horizontal">
+                                                    <div class="col-md-12 form-horizontal">
                                                         <div class="form-group">
                                                             <div class="row">
                                                                 <label class="col-md-6 query-title">&nbsp;&nbsp;picture num</label>
@@ -325,7 +325,7 @@
 
 
                                                 <ul class="list-group">
-                                                    <li class="list-group-item" ng-repeat="image in ctrl.feed.image track by $index">
+                                                    <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.image track by $index">
                                                         {{image}}
                                                         <div class="pull-right" style="margin-top: -3px;">
                                                             <!--<button type="button" class="btn btn-default"><i class="fa fa-save"></i></button>-->
@@ -441,6 +441,8 @@
                                                 <input type="number" class="form-control" ng-model="ctrl.setting.priceNet" ng-change="ctrl.setSkuProperty('','priceNet')">
                                             </div>
                                         </td>
+                                        <td></td>
+                                        <td></td>
                                         <!--<td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
@@ -513,13 +515,13 @@
             <h3 drag-handle>导航栏</h3>
             <ul class="nav bs-docs-sidenav">
                 <li class="text-center">
-                    <button class="btn btn-default" ng-disabled="feedForm.$invalid" ng-click="ctrl.save('0')">Save</button>
+                    <button class="opacityBtn text-black" ng-disabled="feedForm.$invalid" ng-click="ctrl.save('0')">Save</button>
                 </li>
                 <li class="text-center">
-                    <button class="btn btn-default" ng-disabled="feedForm.$invalid" ng-if="ctrl.feed.status != 'Ready'" ng-click="ctrl.save('1')">Submit</button>
+                    <button class="opacityBtn text-black" ng-disabled="feedForm.$invalid" ng-if="ctrl.feed.status != 'Ready'" ng-click="ctrl.save('1')">Submit</button>
                 </li>
                 <li class="text-center">
-                    <button class="btn btn-default" ng-disabled="feedForm.$invalid" ng-if="ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')">Approve</button>
+                    <button class="opacityBtn text-black" ng-disabled="feedForm.$invalid" ng-if="ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')">Approve</button>
                 </li>
             </ul>
         </nav>
