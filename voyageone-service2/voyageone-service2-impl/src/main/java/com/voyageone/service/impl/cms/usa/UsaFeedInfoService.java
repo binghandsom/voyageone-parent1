@@ -344,20 +344,19 @@ public class UsaFeedInfoService extends BaseService {
                 feed.setMaterial(fields.getMaterialEn());
                 // Made In
                 feed.setOrigin(fields.getOrigin());
-                // Amazon Category
-                // TODO: 2017/7/6 rex.wu
                 // Usage
                 feed.setUsageEn(fields.getUsageEn());
                 // Short Description
                 feed.setShortDescription(fields.getShortDesEn());
                 // Long Description
                 feed.setLongDescription(fields.getLongDesEn());
+                // TODO: 2017/7/6 rex.wu
+                // Amazon Category
                 // Order Limit Count
-                // TODO: 2017/7/6 rex.wu
                 // Abstract
-                // TODO: 2017/7/6 rex.wu
                 // Accessory
-                // TODO: 2017/7/6 rex.wu
+                // Feed状态
+                feed.setStatus(product.getPlatform(1).getStatus());
                 feedInfoModels.add(feed);
             }
         }
