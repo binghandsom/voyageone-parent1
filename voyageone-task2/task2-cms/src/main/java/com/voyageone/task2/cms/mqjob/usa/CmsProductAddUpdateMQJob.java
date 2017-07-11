@@ -2,6 +2,7 @@ package com.voyageone.task2.cms.mqjob.usa;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -66,6 +67,7 @@ public class CmsProductAddUpdateMQJob extends TBaseMQCmsService<CmsProductAddUpd
         cmsBtFeedInfoModel.setChannelId(messageBody.getChannelId());
         cmsBtFeedInfoModel.setCreater(messageBody.getSender());
         cmsBtFeedInfoModel.setModifier(messageBody.getSender());
+        cmsBtFeedInfoModel.setLastReceivedOn(DateTimeUtil.getNow());
         cmsBtFeedInfoModel.setCode(messageBody.getCode());
         cmsBtFeedInfoModel.setName(messageBody.getName());
         cmsBtFeedInfoModel.setColor(messageBody.getColor());
