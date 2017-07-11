@@ -22,6 +22,12 @@ define([
                 "controllerUrl": "modules/cms-us/views/pop/feed/detail/usCategory/index.ctl",
                 "controller": 'usCategoryController as ctrl',
                 "size": 'lg'
+            },
+            amazonCategory:{
+                "templateUrl": "views/pop/feed/detail/amazonCategory/index.tpl.html",
+                "controllerUrl": "modules/cms-us/views/pop/feed/detail/amazonCategory/index.ctl",
+                "controller": 'amazonCategoryController as ctrl',
+                "size": 'lg'
             }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
@@ -53,6 +59,10 @@ define([
 
         $scope.openUsCategory = function (context) {
             return openModal(popActions.detail.usCategory, context);
+        };
+
+        $scope.openAmazonCategory = function (context) {
+            return openModal(popActions.detail.amazonCategory, context); 
         }
 
 
