@@ -27,6 +27,7 @@ define([
         }
 
         init() {
+
             let self = this;
             self.commonService.getChannelCarts().then((res) => {
                 if (res.data) {
