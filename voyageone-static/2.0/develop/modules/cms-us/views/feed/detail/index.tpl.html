@@ -24,7 +24,9 @@
                                             <input type="text" class="form-control" name="model" ng-model="ctrl.feed.model" required>
                                         </div>
                                         <div class="col-md-1">
-                                            <button type="button" class="btn btn-default btn-pop" ng-click="ctrl.getTopModel(5)"><i class="fa fa-angle-double-down" style="font-size: 16px;"></i></button>
+                                            <button type="button" class="btn btn-default btn-pop" ng-click="ctrl.getTopModel(5)">
+                                                <i class="fa fa-angle-double-down" style="font-size: 16px;"></i>
+                                            </button>
                                         </div>
                                     </div>
 
@@ -54,7 +56,8 @@
                                             </button>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" name="category" ng-model="ctrl.feed.category" required readonly>
+                                            <input type="text" class="form-control" title="{{ctrl.feed.category}}"
+                                                   name="category" ng-model="ctrl.feed.category"  required readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -137,7 +140,9 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-4 text-right">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.popAmazonCategory()"><i class="fa fa-arrow-right"></i>&nbsp;Amazon Category</button>
+                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.popAmazonCategory()">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Amazon Category
+                                            </button>
                                         </div>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.feed.attribute.amazonBrowseTree" readonly>

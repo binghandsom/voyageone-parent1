@@ -342,7 +342,7 @@ define([
             let self = this;
 
             self.popups.openAmazonCategory().then(res => {
-
+                self.feed.attribute.amazonBrowseTree = res.catPath;
             });
         }
 
