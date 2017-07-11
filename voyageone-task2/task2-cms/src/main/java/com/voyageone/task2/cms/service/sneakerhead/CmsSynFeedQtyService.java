@@ -46,6 +46,7 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
 
         //封装skulist
         int index = 0;
+        //获取到每一个feed
         while (feeds.hasNext()) {
             CmsBtFeedInfoModel cmsBtProductModel = feeds.next();
             if (index % 3000 == 0) {
@@ -53,8 +54,9 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
             }
             //封装skulist按feed分,为了求feed的总库存
             ArrayList<String> skuList = new ArrayList<>();
+            //获取到当前feed对应skus
             List<CmsBtFeedInfoModel_Sku> skus = cmsBtProductModel.getSkus();
-
+            //封装当前feed对应的skulist
             if (ListUtils.notNull(skus)){
                 skus.forEach(sku -> {
                     skuList.add(sku.getSku());
@@ -65,59 +67,30 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
             getStoreStockDetailRequest2.setChannelId(channlId);
             getStoreStockDetailRequest2.setSubChannelId(subChannlId);
             getStoreStockDetailRequest2.setSkuList(skuList);
+            //获取到当前feed对应的库存信息
             GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
             //初始化feed总库存
             Integer totalQty = 0;
-
             List<GetStoreStockDetailData2.Temp> stocks = execute.getData().getStocks();
-            for (GetStoreStockDetailData2.Temp stock:stocks) {
-                List<Integer> total = stock.getBase().getTotal();
+            //获取每个sku的总库存,并进行更新
+            int skuNum = 0;
+            for (int i = 0;i<stocks.size();i++){
+                GetStoreStockDetailData2.Temp temp = stocks.get(i);
+                Integer skuTotal = temp.getBase().getTotal().get(0);
                 //更新对应的sku库存
-
-
-
+                CmsBtFeedInfoModel_Sku cmsBtFeedInfoModel_sku = skus.get(skuNum);
+                cmsBtFeedInfoModel_sku.setQty(skuTotal);
                 //totalQty += total;
+                skuNum++;
+                totalQty += skuTotal;
             }
-
-
+            //CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(channlId, cmsBtProductModel.getCode());
+            cmsBtProductModel.setSkus(skus);
+            //更新feed对应的总库存
+            cmsBtProductModel.setQty(totalQty);
+            feedInfoService.updateFeedInfo(cmsBtProductModel);
             index++;
         }
-
-      /*  if (ListUtils.notNull(feeds)){
-            feeds.forEach(feed ->{
-                ArrayList<String> skuList = new ArrayList<>();
-                List<CmsBtFeedInfoModel_Sku> skus = feed.getSkus();
-
-                if (ListUtils.notNull(skus)){
-                    skus.forEach(sku -> {
-                        skuList.add(sku.getSku());
-                    });
-                }
-
-                //调用wms远程接口,获取库存详情
-                GetStoreStockDetailRequest2 getStoreStockDetailRequest2 = new GetStoreStockDetailRequest2();
-                getStoreStockDetailRequest2.setChannelId(channlId);
-                getStoreStockDetailRequest2.setSubChannelId(subChannlId);
-                getStoreStockDetailRequest2.setSkuList(skuList);
-                GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
-                //初始化feed总库存
-                Integer totalQty = 0;
-
-                List<GetStoreStockDetailData2.Temp> stocks = execute.getData().getStocks();
-                for (GetStoreStockDetailData2.Temp stock:stocks) {
-                    List<Integer> total = stock.getBase().getTotal();
-                    totalQty += total;
-                }
-               *//* stocks.forEach(value ->{
-                    //对应单条sku总库存
-                    List<Integer> qty = value.getBase().getTotal();
-                    totalQty += qty;
-                });*//*
-
-
-            });
-        }*/
-
 
 
 
