@@ -103,14 +103,6 @@ define([
                 });
         }
 
-        //Approve操作
-        popBatchApprove() {
-            let self = this;
-            self.itemDetailService.approve().then(resp => {
-
-            });
-        }
-
         clear() {
             let self = this,
                 columnArrow = self.columnArrow;

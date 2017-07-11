@@ -130,6 +130,7 @@ public class UsaCmsFeedController extends BaseController {
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(getUser().getSelChannelId(), code);
             if(cmsBtFeedInfoModel != null){
+                cmsBtFeedInfoModel.setModifier(getUser().getUserName());
                 final Double finalMsrpPrice = msrpPrice;
                 final Double finalPrice = price;
                 cmsBtFeedInfoModel.getSkus().forEach(sku->{

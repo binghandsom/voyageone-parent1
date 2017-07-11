@@ -18,6 +18,12 @@ define([
             };
         }
 
+        complete() {
+            let self = this;
+
+
+        }
+
     });
 
 });
