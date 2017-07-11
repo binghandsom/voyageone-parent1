@@ -64,7 +64,7 @@ define([
                         self.currentFeedImage = self.feed.image[0];
 
                     if (self.feed && self.feed.attribute.boximages && _.size(self.feed.attribute.boximages) > 0)
-                        self.currentBoxImage = self.feed.boximages[0];
+                        self.currentBoxImage = self.feed.attribute.boximages[0];
 
                 } else {
                     let id = self.id;
