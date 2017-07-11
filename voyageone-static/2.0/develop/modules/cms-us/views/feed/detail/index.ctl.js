@@ -6,7 +6,7 @@ define([
 ], function (cms) {
 
     cms.controller('feedDetailController', class FeedDetailController {
-        constructor(popups, $routeParams, itemDetailService, alert,$location,notify,confirm,$rootScope) {
+        constructor(popups, $routeParams, itemDetailService, alert,$location,notify,confirm,$rootScope,$sessionStorage) {
             this.popups = popups;
             this.itemDetailService = itemDetailService;
             this.alert = alert;
@@ -14,7 +14,8 @@ define([
             this.notify = notify;
             this.confirm = confirm;
             this.$rootScope = $rootScope;
-            console.log($rootScope);
+            this.$sessionStorage = $sessionStorage;
+            this.auth = this.$sessionStorage.auth.auth;
 
             this.id = $routeParams.id;
             if (!this.id) {
