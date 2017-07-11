@@ -131,14 +131,36 @@
                                 </th>
                                 <th>IMG</th>
                                 <th>Code</th>
-                                <th>Name</th>
+                                <th style="min-width: 100px">Name</th>
                                 <th>Model</th>
                                 <th>Status</th>
-                                <th>Total Qty</th>
-                                <th ng-hide="ctrl.flag == 1">Approve price</th>
-                                <th ng-hide="ctrl.flag == 1">Msrp($)</th>
-                                <th ng-hide="ctrl.flag == 1">price($)</th>
-                                <th>Last Received</th>
+                                <th style="min-width: 100px">
+                                    Total Qty
+                                    <button class="opacityBtn"
+                                            ng-if="ctrl.feeds.length"
+                                            ng-click="ctrl.columnOrder('qty')"><i class="fa fa-{{ctrl.getArrowName('qty')}}"></i></button>
+                                </th>
+                                <th ng-hide="ctrl.flag == 1" style="min-width: 100px">
+                                    Approve price
+                                </th>
+                                <th ng-hide="ctrl.flag == 1" style="min-width: 100px">
+                                    Msrp($)
+                                    <button class="opacityBtn"
+                                            ng-if="ctrl.feeds.length"
+                                            ng-click="ctrl.columnOrder('priceMsrp')"><i class="fa fa-{{ctrl.getArrowName('priceMsrp')}}"></i></button>
+                                </th>
+                                <th ng-hide="ctrl.flag == 1" style="min-width: 100px">
+                                    price($)
+                                    <button class="opacityBtn"
+                                            ng-if="ctrl.feeds.length"
+                                            ng-click="ctrl.columnOrder('priceNet')"><i class="fa fa-{{ctrl.getArrowName('priceNet')}}"></i></button>
+                                </th>
+                                <th style="min-width: 120px">
+                                    Last Received
+                                    <button class="opacityBtn"
+                                            ng-if="ctrl.feeds.length"
+                                            ng-click="ctrl.columnOrder('lastReceivedOn')"><i class="fa fa-{{ctrl.getArrowName('lastReceivedOn')}}"></i></button>
+                                </th>
                                 <th>Modifier</th>
                                 <th class="text-center" ng-show="ctrl.flag == 3">Action</th>
                             </tr>
