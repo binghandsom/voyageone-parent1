@@ -17,7 +17,6 @@ define([
             };
             self.updateMap = {};
             //权限控制,默认为最低权限1:new,2:Pending,3:Ready
-
             self.flag = self.$rootScope.auth.selfAuth;
             console.log(self.flag);
             self.status = [false, false, false];
@@ -28,7 +27,6 @@ define([
                     self.getList();
                 }
             };
-
             //设置状态的默认选中
             if(self.flag == 1){
                 self.status[0] = true;
@@ -39,9 +37,6 @@ define([
             if(self.flag == 3){
                 self.status[2] = true;
             }
-
-
-
         }
 
         getList() {
@@ -137,10 +132,10 @@ define([
                 self.alert('Please select at least one！');
                 return false;
             }
-
             self.popups.openBatchApprove({
-                sel_all:self.totalItems,
-                codeList:codeList
+                selAll:self.totalItems,
+                codeList:codeList,
+                searchMap: self.paraMap
             });
         }
 

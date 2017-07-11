@@ -12,9 +12,9 @@ define([
             this.itemDetailService = itemDetailService;
             this.commonService = commonService;
 
-            this.sel_all = context.sel_all; // 是否检索全量
+            this.selAll = context.selAll; // 是否检索全量
             this.codeList = !context.codeList ? [] : context.codeList;
-
+            this.context = context;
             this.price = {
                 msrp:context.msrp,
                 price:context.price
@@ -51,10 +51,10 @@ define([
                 _.extend(approveInfo, _tmp);
             });
             let params = {
-                sel_all:self.sel_all,
+                selAll:self.selAll,
                 codeList:self.codeList,
                 approveInfo:approveInfo,
-                searchMap:{}
+                searchMap:self.context.searchMap
             };
             self.itemDetailService.approve(params).then((res) => {
                 self.$modalInstance.close({success:true});

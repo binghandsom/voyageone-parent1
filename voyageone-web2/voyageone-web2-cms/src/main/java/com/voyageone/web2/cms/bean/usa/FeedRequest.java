@@ -22,7 +22,7 @@ public class FeedRequest {
     // Save or Submit or Approve 操作标识
     private Integer flag;
 
-    private Integer selAll; // 是否检索结果全量
+    private Boolean selAll; // 是否检索结果全量
     private List<String> codeList; // Feed Code Collection
     private Map<String, Object> searchMap; // Feed检索条件
     private Map<Integer, Integer> approveInfo;
@@ -75,11 +75,11 @@ public class FeedRequest {
         this.flag = flag;
     }
 
-    public Integer getSelAll() {
+    public Boolean getSelAll() {
         return selAll;
     }
 
-    public void setSelAll(Integer selAll) {
+    public void setSelAll(Boolean selAll) {
         this.selAll = selAll;
     }
 
