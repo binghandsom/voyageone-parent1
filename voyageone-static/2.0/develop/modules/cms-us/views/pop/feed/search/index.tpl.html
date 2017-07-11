@@ -22,18 +22,18 @@
 
                 <div class="row">
                     <table class="table">
-                        <tr ng-repeat="usPlatform in ctrl.usPlatforms">
+                        <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId < 20">
                             <td>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" ng-model="usPlatform.checked">
+                                        <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="platform.checked">
                                     </label>
                                 </div>
                             </td>
-                            <td class="v-middle">{{usPlatform.name}}</td>
+                            <td class="v-middle">{{platform.add_name2}}</td>
                             <td class="v-middle">Days Old Before Sharing</td>
                             <td class="v-middle">
-                                <input type="number" class="form-control" ng-model="usPlatform.day">
+                                <input type="number" class="form-control" ng-model="platform.day">
                             </td>
                         </tr>
                     </table>
@@ -55,11 +55,11 @@
 
                 <div class="row">
                     <table class="table">
-                        <tr ng-repeat="platform in ctrl.platforms">
+                        <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId >= 20">
                             <td>
                                 <div class="checkbox">
                                     <label>
-                                        <input type="checkbox" ng-model="platform.checked">
+                                        <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="platform.checked">
                                     </label>
                                 </div>
                             </td>
@@ -77,6 +77,6 @@
     </div>
 
     <div class="modal-footer">
-        <button class="btn btn-success" ng-click="ctrl.complete()"><i class="fa fa-check "></i>&nbsp;confirm</button>
+        <button class="btn btn-success" ng-click="ctrl.approve()"><i class="fa fa-check "></i>&nbsp;confirm</button>
     </div>
 </div>

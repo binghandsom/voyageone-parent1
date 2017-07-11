@@ -157,7 +157,9 @@ define([
 
                         codeList:[self.feed.code]
                     };
-                    self.popups.openBatchApprove(ctx);
+                    self.popups.openBatchApprove(ctx).then((res) => {
+                        console.log(res);
+                    });
                     // self.saveFeed(flag);
                 } else {
                     let skus = [];
@@ -269,7 +271,6 @@ define([
                 self.itemDetailService.getTopModel({code:self.feed.code,model:self.feed.model,top:top}).then((res) => {
                     if (res.data) {
                         self.topFeedList = res.data;
-                        console.log(self.topFeedList);
                     }
                 })
             }

@@ -8,6 +8,12 @@ package com.voyageone.web2.cms.views.usa;
  */
 public class UsaCmsUrlConstants {
 
+    interface COMMON {
+        String ROOT = "/cms/us/common";
+
+        String GET_CHANNEL_CART = "getChannelCarts";
+    }
+
     /**
      * USA CMS Feed相关
      */

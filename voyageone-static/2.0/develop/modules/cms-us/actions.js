@@ -58,6 +58,10 @@ define(function () {
                     "save": "save"
                 }
             },
+            commonService: {
+                "root":"/cms/us/common",
+                "getChannelCarts":"getChannelCarts"
+            },
             search: {
                 $feedSearchService: {
                     root: "/cms/search/feed/",
