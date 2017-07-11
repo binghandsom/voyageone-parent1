@@ -73,12 +73,6 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     private Map<Integer, Integer> approveInfo;
 
-    /**
-     * 美国CMS2 Box-image
-     */
-    private List<String> boxImage;
-
-
     public String getSizeChartType() {
         return sizeChartType;
     }
@@ -447,14 +441,6 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setApprovePricing(String approvePricing) {
         this.approvePricing = approvePricing;
-    }
-
-    public List<String> getBoxImage() {
-        return boxImage;
-    }
-
-    public void setBoxImage(List<String> boxImage) {
-        this.boxImage = boxImage;
     }
 
     public Double getPriceClientRetailMin() {
