@@ -96,7 +96,7 @@ public class UsaFeedInfoService extends BaseService {
                 priceClientRetailMax = Double.max(priceClientRetailMax, sku.getPriceClientRetail());
                 priceClientMsrpMin = Double.min(priceClientMsrpMin, sku.getPriceClientMsrp());
                 priceClientMsrpMax = Double.max(priceClientMsrpMax, sku.getPriceClientMsrp());
-            }catch (Exception e){
+            }catch (Exception ignored){
 
             }
         }
@@ -149,13 +149,12 @@ public class UsaFeedInfoService extends BaseService {
         String sortName = (String) searchValue.get("sortName");
         String sortType = (String) searchValue.get("sortType");
         if (StringUtils.isNotEmpty(sortName) && StringUtils.isNotEmpty(sortType)) {
-            StringBuffer buffer = new StringBuffer();
-            buffer.append("{'");
-            buffer.append(sortName);
-            buffer.append("':");
-            buffer.append(sortType);
-            buffer.append("}");
-            queryObject.setSort(buffer.toString());
+            String buffer = "{'" +
+                    sortName +
+                    "':" +
+                    sortType +
+                    "}";
+            queryObject.setSort(buffer);
         }
         //封装分页条件
         Integer pageNum = (Integer) searchValue.get("curr");
@@ -164,8 +163,7 @@ public class UsaFeedInfoService extends BaseService {
             queryObject.setSkip((pageNum - 1) * pageSize);
             queryObject.setLimit(pageSize);
         }
-        List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channel, queryObject);
-        return feedList;
+        return feedInfoService.getList(channel, queryObject);
     }
 
     public List<String> getFeedCodeList(Map<String, Object> searchValue, String channel) {
@@ -208,20 +206,20 @@ public class UsaFeedInfoService extends BaseService {
         if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null) {
             criteria = criteria.and("lastReceivedOn").gte((String) searchValue.get("lastReceivedOnStart"));
         }
-        if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") == null) {
+        else if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") == null) {
             criteria = criteria.and("lastReceivedOn").lte((String) searchValue.get("lastReceivedOnEnd"));
         }
-        if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") != null) {
+        else if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") != null) {
             criteria = criteria.and("lastReceivedOn").gte((String) searchValue.get("lastReceivedOnStart")).lte((String) searchValue.get("lastReceivedOnEnd"));
         }
         //通过创建时间查询
         if (searchValue.get("createdStart") != null && searchValue.get("createdEnd") == null) {
             criteria = criteria.and("created").gte((String) searchValue.get("createdStart"));
         }
-        if (searchValue.get("createdEnd") != null && searchValue.get("createdStart") == null) {
+        else if (searchValue.get("createdEnd") != null && searchValue.get("createdStart") == null) {
             criteria = criteria.and("created").lte((String) searchValue.get("createdEnd"));
         }
-        if (searchValue.get("createdEnd") != null && searchValue.get("createdStart") != null) {
+        else if (searchValue.get("createdEnd") != null && searchValue.get("createdStart") != null) {
             criteria = criteria.and("created").gte((String) searchValue.get("createdStart")).lte((String) searchValue.get("createdEnd"));
         }
         //name模糊查询
@@ -474,7 +472,7 @@ public class UsaFeedInfoService extends BaseService {
         jongoUpdate.setUpdateParameters(0, CmsConstants.UsaFeedStatus.Approved.name(), approveInfo, username, DateTimeUtil.getNow());
 
         WriteResult writeResult = cmsBtFeedInfoDao.updateMulti(jongoUpdate, channelId);
-        $info(String.format("(%s)批量Approve Feed, 结果:", username, JacksonUtil.bean2Json(writeResult)));
+        $info(String.format("(%s)批量Approve Feed, 结果:%s", username, JacksonUtil.bean2Json(writeResult)));
 
     }
 
