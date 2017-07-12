@@ -57,14 +57,34 @@ define([
             let self = this;
             self.paraMap.status = [];
             if (self.status[0] === true) {
-                self.paraMap.status.push("New")
+                self.paraMap.status.push("New");
             }
             if (self.status[1] === true) {
-                self.paraMap.status.push("Pending")
+                self.paraMap.status.push("Pending");
             }
             if (self.status[2] === true) {
-                self.paraMap.status.push("Ready")
+                self.paraMap.status.push("Ready");
             }
+            //根据当前页面权限设置默认状态值
+            if(self.paraMap.status.length == 0){
+                //状态值为空
+                if(self.flag == 1){
+                    //new 权限
+                    self.paraMap.status.push("New");
+                }
+                if(self.flag == 2){
+                    //Pending 权限
+                    self.paraMap.status.push("New");
+                    self.paraMap.status.push("Pending");
+                }
+                if(self.flag == 3){
+                    //Ready 权限
+                    self.paraMap.status.push("New");
+                    self.paraMap.status.push("Pending");
+                    self.paraMap.status.push("Ready");
+                }
+            }
+
             if (self.approvePricing[0] === true && self.approvePricing[1] == false) {
                 self.paraMap.approvePricing = "1";
             }
@@ -167,12 +187,6 @@ define([
         popBatchApproveOne(code) {
             let self = this,
                 codeList = [code];
-           /* self.popups.openBatchApprove(ctx).then((res) => {
-                if (res.success) {
-                    _.extend(self.feed, {approveInfo:res.approveInfo});
-                    self.saveFeed(flag);
-                }
-            });*/
 
             self.popups.openBatchApprove({
                 selAll:false,
@@ -264,6 +278,10 @@ define([
             feed.approvePricing = !feed.approvePricing;
 
             self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
+        }
+
+        test(){
+            alert('a');
         }
 
     });

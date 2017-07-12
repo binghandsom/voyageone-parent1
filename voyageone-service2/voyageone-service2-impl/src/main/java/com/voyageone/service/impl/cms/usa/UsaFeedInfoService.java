@@ -89,8 +89,12 @@ public class UsaFeedInfoService extends BaseService {
         Double priceClientMsrpMax = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientMsrp();
         ;
         for (CmsBtFeedInfoModel_Sku sku : cmsBtFeedInfoModel.getSkus()) {
-            sku.setPriceMsrp(calculatePrice(formulaMsrp, sku));
-            sku.setPriceCurrent(calculatePrice(formulaRetail, sku));
+            try {
+                sku.setPriceMsrp(calculatePrice(formulaMsrp, sku));
+                sku.setPriceCurrent(calculatePrice(formulaRetail, sku));
+            }catch (Exception e){
+
+            }
             priceClientRetailMin = Double.min(priceClientRetailMin, sku.getPriceClientRetail());
             priceClientRetailMax = Double.max(priceClientRetailMax, sku.getPriceClientRetail());
             priceClientMsrpMin = Double.min(priceClientMsrpMin, sku.getPriceClientMsrp());
@@ -116,6 +120,7 @@ public class UsaFeedInfoService extends BaseService {
 
             return price.setScale(0, RoundingMode.UP).doubleValue();
         } catch (SpelEvaluationException sp) {
+            $error("使用固定公式计算时出现错误", sp);
             throw new BusinessException("使用固定公式计算时出现错误", sp);
         }
     }
@@ -198,9 +203,6 @@ public class UsaFeedInfoService extends BaseService {
         if (ListUtils.notNull((List<String>) searchValue.get("status"))) {
             List<String> status = (List<String>) searchValue.get("status");
             criteria = criteria.and("status").in(status);
-        }else{
-            criteria = criteria.and("status").in(Arrays.asList(CmsConstants.UsaFeedStatus.New.toString(),
-                    CmsConstants.UsaFeedStatus.Pending.toString(),CmsConstants.UsaFeedStatus.Ready.toString(),CmsConstants.UsaFeedStatus.Approved.toString()));
         }
         //设置开始和截止的时间
         if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null) {
