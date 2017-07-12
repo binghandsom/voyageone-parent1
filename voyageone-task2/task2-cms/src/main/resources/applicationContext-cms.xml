@@ -187,6 +187,8 @@
         <!-- Liking新独立域名上新（每3分钟一次） -->
         <task:scheduled ref="CmsBuildPlatformProductUploadCnnJob" method="run" cron="0 0/3 0-23 * * ?"/>
 
+        <!-- 同步sn feed库存-->
+        <task:scheduled ref="CmsSynFeedQtyJob"method="run" cron="0 0 0/1 * * ?"/>
         <!-- 检查善品数据是否正确（每天执行一次） -->
         <task:scheduled ref="CmsCheckProductIsRightJob" method="run" cron="0 30 20 * * ?"/>
 
