@@ -341,8 +341,9 @@ define([
                 $rootScope.isTranslator = data.isTranslator;
 
                 //设置sessionstorage
+                let auth = setAuth(data.menuTree);
                 if(!$sessionStorage.auth)
-                    $sessionStorage.auth = setAuth(data.menuTree);
+                    $sessionStorage.auth = auth
             });
         }
         $rootScope.isParentMenu=function(item) {
