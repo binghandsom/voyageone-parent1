@@ -127,6 +127,16 @@ define([
             if (!!self.feed.attribute.amazonBrowseTree && _.size(self.feed.attribute.amazonBrowseTree) > 0) {
                 _.extend(self.feed, {amazonBrowseTree: self.feed.attribute.amazonBrowseTree[0]});
             }
+            // 处理googleCategory、googleDepartment、priceGrabberCategory
+            if (!!self.feed.attribute.googleCategory && _.size(self.feed.attribute.googleCategory) > 0) {
+                _.extend(self.feed, {googleCategory: self.feed.attribute.googleCategory[0]});
+            }
+            if (!!self.feed.attribute.googleDepartment && _.size(self.feed.attribute.googleDepartment) > 0) {
+                _.extend(self.feed, {googleDepartment: self.feed.attribute.googleDepartment[0]});
+            }
+            if (!!self.feed.attribute.priceGrabberCategory && _.size(self.feed.attribute.priceGrabberCategory) > 0) {
+                _.extend(self.feed, {priceGrabberCategory: self.feed.attribute.priceGrabberCategory[0]});
+            }
             // 处理phoneOrderOnly
             if (!!self.feed.attribute.phoneOrderOnly && _.size(self.feed.attribute.phoneOrderOnly) > 0) {
                 _.extend(self.feed, {phoneOrderOnly: self.feed.attribute.phoneOrderOnly[0]});
@@ -288,6 +298,12 @@ define([
             self.feed.attribute.colorMap = [self.feed.colorMap];
             // 处理amazonBrowseTree
             self.feed.attribute.amazonBrowseTree = [self.feed.amazonBrowseTree];
+
+            // 处理googleCategory、googleDepartment、priceGrabberCategory
+            self.feed.attribute.googleCategory = [self.feed.googleCategory];
+            self.feed.attribute.googleDepartment = [self.feed.googleDepartment];
+            self.feed.attribute.priceGrabberCategory = [self.feed.priceGrabberCategory];
+
             // 处理phoneOrderOnly
             self.feed.attribute.phoneOrderOnly = [self.feed.phoneOrderOnly];
             // 处理seoTitle、seoDescription、seoKeywords
