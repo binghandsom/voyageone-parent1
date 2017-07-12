@@ -24,7 +24,7 @@
                                             <input type="text" class="form-control" name="model" ng-model="ctrl.feed.model" required>
                                         </div>
                                         <div class="col-md-1">
-                                            <button type="button" class="btn btn-default btn-pop" ng-click="ctrl.getTopModel(5)">
+                                            <button type="button" class="btn btn-default" ng-click="ctrl.getTopModel(5)">
                                                 <i class="fa fa-angle-double-down" style="font-size: 16px;"></i>
                                             </button>
                                         </div>
@@ -35,13 +35,13 @@
                                     <div class="row">
                                         <div class="col-md-8 col-md-offset-4" ng-if="ctrl.topFeedList.length > 0">
                                             <div class="col-xs-6 col-md-2" ng-repeat="item in ctrl.topFeedList">
-                                                <a href="javascript:void(0);" class="thumbnail" ng-class="{'active':item.status=='Approved'}"
-                                                   style="position: relative">
-                                                    <img alt="{{item.code}}" class="thumb-sm-search" src="{{item.image[0]}}">
+                                                <a href="javascript:void(0);" class="thumbnail pos-relative" ng-class="{'active':item.status=='Approved'}">
+                                                    <img class="thumb-sm-search" src="{{item.image[0]}}">
                                                     <button type="button" class="btn btn-primary pos-absolute-right" ng-click="ctrl.copyAttr(item)">
                                                         <i class="fa fa-copy"></i>
                                                     </button>
                                                 </a>
+                                                <span class="text-wrap"><strong>{{item.code}}</strong></span>
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-md-offset-4" ng-if="ctrl.topFeedList.length == 0">
@@ -302,7 +302,7 @@
                                             <div class="vo_prodGallery">
                                                 <div class="imageContainer">
                                                     <div class="imageWrapper">
-                                                        <img  class="imageWrapper" style="cursor: pointer;max-width: 330px; max-height: 200px;" ng-src="{{ctrl.currentFeedImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentFeedImage)">
+                                                        <img  class="imageWrapper" style="cursor: pointer;max-width: 200px; max-height: 170px;" ng-src="{{ctrl.currentFeedImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentFeedImage)">
                                                     </div>
                                                 </div>
                                             </div>
@@ -330,7 +330,7 @@
                                                     <div class="col-md-12 form-horizontal">
                                                         <div class="form-group">
                                                             <div class="row">
-                                                                <label class="col-md-6 query-title">&nbsp;&nbsp;picture num</label>
+                                                                <label class="col-md-6 query-title">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
                                                                     <input type="text" class="form-control" ng-model="ctrl.feed.imageNum" ng-keyup="ctrl.initImage(ctrl.feed.imageNum)">
                                                                 </div>
@@ -428,7 +428,7 @@
 
                     <div class="skuItem">
                         <div class="skuItem-head">
-                            <h4>SKUS</h4>
+                            <h4>Skus</h4>
                         </div>
                         <div class="skuItem-body">
                             <div class="table-responsive box box-body">

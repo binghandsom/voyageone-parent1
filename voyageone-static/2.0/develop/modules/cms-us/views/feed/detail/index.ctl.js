@@ -381,7 +381,7 @@ define([
                 orderlimitcount:feed.attribute.orderlimitcount
             };
             _.extend(self.feed.attribute, attribute);
-            // self.notify.success('copy success!');
+            this.filterFeed();
         }
 
         /**
