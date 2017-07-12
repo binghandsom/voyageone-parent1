@@ -4,9 +4,9 @@ define([
 
     cms.controller('amazonCategoryController', class AmazonCategoryController {
 
-        constructor(context, productDetailService, $uibModalInstance) {
+        constructor(context, $productDetailService, $uibModalInstance) {
             this.context = context ? context : {};
-            this.productDetailService = productDetailService;
+            this.productDetailService = $productDetailService;
             this.$uibModalInstance = $uibModalInstance;
             this.totalCategory = [];
             this.selected = {};
