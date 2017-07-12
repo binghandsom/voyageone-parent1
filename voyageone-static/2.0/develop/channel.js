@@ -49,11 +49,14 @@ define([
                  * 判断是中国CMS or 美国CMS
                  */
                 $ajax.post('/cms/home/menu/getMenuHeaderInfo').then(function (res) {
+                    let isCn = judgePath(res.data.menuTree);
 
-                    if(judgePath(res.data.menuTree))
-                        location.href = 'modules/cms/app.html#/usa/home';
-                    else
+                    $localStorage.isCn = isCn;
+
+                    if(isCn)
                         location.href = 'modules/cms/app.html#/home';
+                    else
+                        location.href = 'modules/cms/app.html#/usa/home';
                 });
 
 
@@ -83,7 +86,7 @@ define([
 
         function judgePath(menu){
             return _.some(menu, menu=>{
-                return menu.resName === 'Base Items'
+                return menu.resName === 'feed管理';
             })
         }
 

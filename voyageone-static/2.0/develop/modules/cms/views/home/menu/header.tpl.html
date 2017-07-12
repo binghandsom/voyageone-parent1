@@ -13,7 +13,7 @@
         </li>
     </ul>
 
-    <ul class="nav navbar-nav hidden-xs">
+    <ul class="nav navbar-nav hidden-xs" ng-if="isCn">
         <li class="dropdown vo_h_system" uib-dropdown>
             <a href class="dropdown-toggle" uib-dropdown-toggle>
                 <span class="m-n font thin" ng-bind="header.userInfo.application.toUpperCase()"></span><span class="caret"></span>
@@ -26,7 +26,7 @@
         </li>
     </ul>
 
-    <div class="vo_h_searchbar">
+    <div class="vo_h_searchbar" ng-if="isCn">
         <form class="navbar-form navbar-form-sm navbar-left shift" ui-shift="prependTo" target=".navbar-collapse" role="search">
             <div class="form-group">
                 <div class="input-group">
