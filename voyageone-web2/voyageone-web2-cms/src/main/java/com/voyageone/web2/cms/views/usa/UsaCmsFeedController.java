@@ -144,7 +144,6 @@ public class UsaCmsFeedController extends BaseController {
         //获取数据总量
         Long feedListTotal = usaFeedInfoService.getFeedCount(params, selChannelId);
         resultBean.put("feedListTotal", feedListTotal);
-
         // 返回feed信息
         return success(resultBean);
     }
