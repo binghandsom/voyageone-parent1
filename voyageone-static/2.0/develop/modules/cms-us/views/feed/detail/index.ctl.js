@@ -346,7 +346,10 @@ define([
                 sizeType: feed.sizeType,
                 material: feed.material,
                 origin: feed.origin,
-                usageEn: feed.usageEn
+                usageEn: feed.usageEn,
+                shortDescription:feed.shortDescription,
+                longDescription:feed.longDescription
+
             };
             _.extend(self.feed, attribute);
 
