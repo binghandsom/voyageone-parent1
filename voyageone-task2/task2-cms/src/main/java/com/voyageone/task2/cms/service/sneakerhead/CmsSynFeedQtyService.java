@@ -20,6 +20,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -28,12 +29,17 @@ import java.util.List;
  */
 @Service
 public class CmsSynFeedQtyService  extends BaseCronTaskService {
+    protected final VoApiDefaultClient voApiClient;
+    private final FeedInfoService feedInfoService;
+    private final CmsBtFeedInfoDao cmsBtFeedInfoDao;
+
     @Autowired
-    protected VoApiDefaultClient voApiClient;
-    @Autowired
-    private FeedInfoService feedInfoService;
-    @Autowired
-    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
+    public CmsSynFeedQtyService(VoApiDefaultClient voApiClient, FeedInfoService feedInfoService, CmsBtFeedInfoDao cmsBtFeedInfoDao) {
+        this.voApiClient = voApiClient;
+        this.feedInfoService = feedInfoService;
+        this.cmsBtFeedInfoDao = cmsBtFeedInfoDao;
+    }
+
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
         $info("开始同步cms_bt_feed库存");
@@ -41,9 +47,8 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
         final String channelId = ChannelConfigEnums.Channel.SN.getId();
 
         //封装查询条件
-        Criteria criteria = new Criteria();
-        String[] status = new String[]{"New","Pending","Ready"};
-        criteria.and("status").in(status);
+        List<String> status = Arrays.asList("New","Pending","Ready");
+        Criteria criteria = new Criteria("status").in(status);
         JongoQuery queryObject = new JongoQuery(criteria);
         Iterator<CmsBtFeedInfoModel> feeds = feedInfoService.getCursor(channelId, queryObject);
 
@@ -85,7 +90,7 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
                 //更新对应的sku库存
                 JongoUpdate jongoUpdate = new JongoUpdate();
                 jongoUpdate.setQuery("{\"skus.sku\":#}");
-                jongoUpdate.setQueryParameters(sku);
+                jongoUpdate.setQueryParameters(sku.toLowerCase());
                 jongoUpdate.setUpdate("{$set:{\"skus.$.qty\":#}}");
                 jongoUpdate.setUpdateParameters(skuTotal);
                 jongoUpdateList.add(jongoUpdate);
