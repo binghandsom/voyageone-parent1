@@ -1,5 +1,5 @@
-var through = require('through2');
-var fs = require('fs');
+const through = require('through2');
+const fs = require('fs');
 
 function exists(path) {
     try {
@@ -16,14 +16,14 @@ module.exports = function (dirs) {
     
     return through.obj(function (file, enc, cb) {
 
-        var content = String(file.contents);
+        let content = String(file.contents);
 
         if (!(/require\.config/.test(content)))
             return cb(null, file);
 
         content = content.replace(/paths:(.|\n)+?\}/, function(match) {
             return match.replace(/['"].+?['"].+?['"](.+?)['"],?/g, function (row, g1) {
-                var min = dirs.some(function(dir) {
+                let min = dirs.some(function(dir) {
                     return exists(dir + '/' + g1 + '.min.js');
                 });
                 return min ? row.replace(g1, g1 + '.min') : row;

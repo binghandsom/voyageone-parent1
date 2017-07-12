@@ -1,6 +1,6 @@
-var extend = require('extend');
+const extend = require('extend');
 
-var versions = {
+const versions = {
     // 整个工程版本号
     publish: "2.10.0",
     // voyageone-angular-com.js的版本号
@@ -10,7 +10,8 @@ var versions = {
     // 静态资源的版本号
     statics: "2.0.1"
 };
-var build = {
+
+const build = {
     version: versions.statics,
     actions: {
         src: 'develop/modules/*/actions.json'
@@ -57,7 +58,8 @@ var build = {
         }
     }
 };
-var publish = {
+
+const publish = {
     version: versions.publish,
     static: {
         path: 'publish/static/' + versions.statics,
@@ -132,7 +134,8 @@ var publish = {
         'angular_block_ui_css': 'css!libs/angular-block-ui/0.2.1/angular-block-ui.css'
     }
 };
-var tasks = {
+
+const tasks = {
     publish: {
         all: 'publish',
         statics: 'publish-static',

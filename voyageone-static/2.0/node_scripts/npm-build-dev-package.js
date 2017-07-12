@@ -1,5 +1,5 @@
-var fs = require('fs');
-var glob = require('glob');
+const fs = require('fs');
+const glob = require('glob');
 
 glob('admin/shared/ng/*/*.js', function (err, files) {
     if (err) {

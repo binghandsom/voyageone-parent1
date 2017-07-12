@@ -1,7 +1,7 @@
-var fs = require('fs');
-var app = require('./vars').build.common.appCss;
-var login = require('./vars').build.common.loginCss;
-var css;
+const fs = require('fs');
+const app = require('./vars').build.common.appCss;
+const login = require('./vars').build.common.loginCss;
+let css;
 
 css = '@import url(' + app.src.map(i => i.replace(app.dist, '')).join(');\n@import url(') + ');';
 fs.writeFile(app.dist + '/' + app.concat, css);
