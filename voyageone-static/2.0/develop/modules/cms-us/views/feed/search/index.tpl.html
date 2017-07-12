@@ -68,6 +68,37 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
+                                        <label class="col-md-4 control-label query-title">Created On</label>
+                                        <div class="col-md-6">
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <p class="input-group">
+                                                        <input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" date-model-format="yyyy-MM-dd"
+                                                               is-open="createTime1" datepicker-options="dateOptions" max-date="dt2"
+                                                               ng-required="true" close-text="Close" alt-input-formats="altInputFormats" required="required" ng-model="ctrl.paraMap.createdStart">
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default" ng-click="createTime1 = !createTime1"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                                <div class="col-md-1 text-center">~</div>
+                                                <div class="col-md-5">
+                                                    <p class="input-group">
+                                                        <input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" date-model-format="yyyy-MM-dd"
+                                                               is-open="createTime2" datepicker-options="dateOptions" min-date="dt1"
+                                                               ng-required="true" close-text="Close" required="required" ng-model="ctrl.paraMap.createdEnd">
+                                                        <span class="input-group-btn">
+                                                            <button type="button" class="btn btn-default" ng-click="createTime2 = !createTime2"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                        </span>
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
                                         <label class="col-md-4 control-label query-title">name</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.paraMap.name">

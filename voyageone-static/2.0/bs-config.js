@@ -1,17 +1,17 @@
-var morgan = require('morgan'),
+const morgan = require('morgan'),
     proxy = require('http-proxy-middleware');
 
-var proxyUrl = "http://10.0.1.14:8080";
-var proxyMiddleware = proxy(proxyUrl);
+const proxyUrl = "http://10.0.1.14:8080";
+const proxyMiddleware = proxy(proxyUrl);
 
-var jsonPlaceholderProxy = proxy(['/cms','/core'], {
+const jsonPlaceholderProxy = proxy(['/cms','/core'], {
     target: proxyUrl,
     changeOrigin: true,             // for vhosted sites, changes host header to match to target's host
     logLevel: 'debug'
 });
 module.exports = {
     server: {
-        baseDir: "publish/release",
+        baseDir: "develop",
         index: "login.html"
     },
     notify: false,
