@@ -373,7 +373,8 @@ define([
                 origin: feed.origin,
                 usageEn: feed.usageEn,
                 shortDescription:feed.shortDescription,
-                longDescription:feed.longDescription
+                longDescription:feed.longDescription,
+                category:feed.category
 
             };
             _.extend(self.feed, attribute);
