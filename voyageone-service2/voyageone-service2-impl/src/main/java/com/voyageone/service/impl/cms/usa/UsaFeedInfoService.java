@@ -212,6 +212,16 @@ public class UsaFeedInfoService extends BaseService {
         if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") != null) {
             criteria = criteria.and("lastReceivedOn").gte((String) searchValue.get("lastReceivedOnStart")).lte((String) searchValue.get("lastReceivedOnEnd"));
         }
+        //通过创建时间查询
+        if (searchValue.get("createdStart") != null && searchValue.get("createdEnd") == null) {
+            criteria = criteria.and("created").gte((String) searchValue.get("createdStart"));
+        }
+        if (searchValue.get("createdEnd") != null && searchValue.get("createdStart") == null) {
+            criteria = criteria.and("created").lte((String) searchValue.get("createdEnd"));
+        }
+        if (searchValue.get("createdEnd") != null && searchValue.get("createdStart") != null) {
+            criteria = criteria.and("created").gte((String) searchValue.get("createdStart")).lte((String) searchValue.get("createdEnd"));
+        }
         //name模糊查询
 
 
