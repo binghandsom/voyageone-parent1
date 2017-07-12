@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.pop.image;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.masterdate.schema.field.Field;
@@ -109,22 +110,13 @@ public class CmsImageSettingService extends BaseViewService {
 
         String orderChannelId = user.getSelChannelId();
 
-        //FTP服务器保存目录设定
-        String uploadPath = ChannelConfigs.getVal1(user.getSelChannelId(), ChannelConfigEnums.Name.scene7_image_folder);
-        if (StringUtils.isEmpty(uploadPath)) {
-            String err = String.format("channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表", orderChannelId);
-            $error(orderChannelId);
-            throw new BusinessException(err);
-        }
-
         CmsBtProductModel cmsBtProductModel = productService.getProductById(user.getSelChannelId(), productId);
 
         // 获取图片名字
         String imageName = getImageName(cmsBtProductModel, imageType, user, cartId);
 
-
         // 上传图片到Ftp
-        HttpScene7.uploadImageFile(uploadPath, imageName + imageExtend, file.getInputStream());
+        ImageServer.uploadImage(orderChannelId, imageName + imageExtend, file.getInputStream());
 
         // 插入图片表
         CmsBtImagesModel newModel = new CmsBtImagesModel();

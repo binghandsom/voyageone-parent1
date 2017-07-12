@@ -1,18 +1,11 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.HttpScene7;
-import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.ftp.FtpComponentFactory;
-import com.voyageone.components.ftp.FtpConstants;
-import com.voyageone.components.ftp.bean.FtpFileBean;
-import com.voyageone.components.ftp.service.BaseFtpComponent;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.task2.base.BaseCronTaskService;
@@ -20,10 +13,8 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -63,7 +54,7 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
 
                 ExecutorService es  = Executors.newFixedThreadPool(5);
                 try {
-                    List<CmsBtImagesModel> imageUrlList = new ArrayList<>();
+                    List<CmsBtImagesModel> imageUrlList;
 
                     // 获得该渠道要上传Scene7的图片url列表
                     feedImage.setUpdFlg(4);
@@ -157,26 +148,8 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
 
         if (imageUrlList != null && imageUrlList.size() > 0) {
 
-            //FTP服务器保存目录设定
-            String uploadPath = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder);
-            if(StringUtils.isEmpty(uploadPath)){
-                String err = String.format("channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表",orderChannelId);
-                $error(err);
-                throw new BusinessException(err);
-            }
-
-            // FtpBean初期化
-//            BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.SCENE7_FTP);
-
-            InputStream inputStream;
             String imageUrl = null;
-            InputStream stream;
-            InputStreamCacher  cacher = null;
             try {
-                //建立连接
-//                ftpComponent.openConnect();
-//                ftpComponent.enterLocalPassiveMode();
-
                 for (CmsBtImagesModel imagesModel : imageUrlList) {
                     imageUrl = imagesModel.getOriginalUrl();
 
@@ -184,41 +157,25 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
                         successImageUrlList.add(imagesModel);
                         continue;
                     }
-                    try {
-                        $info("thread-" + threadNo + ":" + imageUrl + "流取得开始");
-                        if(ChannelConfigEnums.Channel.Modotex.getId().equalsIgnoreCase(orderChannelId) || ChannelConfigEnums.Channel.WMF.getId().equalsIgnoreCase(orderChannelId)){
-                            imageUrl = imageUrl.replace("https","http");
-                        }
-                        inputStream = HttpUtils.getInputStream(imageUrl);
-                        cacher = new InputStreamCacher(inputStream);
-                        stream = cacher.getInputStream();
+
+                    if(usingHttps(orderChannelId)){
+                        imageUrl = imageUrl.replace("https","http");
+                    }
+
+                    $info("thread-" + threadNo + ":" + imageUrl + "流取得开始");
+
+                    URL url = new URL(imageUrl);
+                    try (InputStream stream = url.openStream()) {
+                        String fileName = imagesModel.getImgName() + ".jpg";
+                        $info("thread-" + threadNo + ":" + imageUrl + "http上传开始");
+                        ImageServer.uploadImage(orderChannelId, fileName, stream);
                     } catch (Exception ex) {
                         // 图片url错误
-                        $error(ex.getMessage(), ex);
-                        imagesModel.setUpdFlg(3);
-                        imagesModel.setModifier(getTaskName());
-                        cmsBtImagesDaoExt.updateImage(imagesModel);
+                        $error("上传图片到 imageServer 时出现了错误", ex);
+                        urlErrorList.add(imagesModel);
                         continue;
                     }
 
-
-                    String fileName = imagesModel.getImgName() + ".jpg";
-
-                    // 直接通过http的方式上传到s7 start
-                    $info("thread-" + threadNo + ":" + imageUrl + "http上传开始");
-
-                    try {
-                        HttpScene7.uploadImageFile(uploadPath, fileName, stream,false);
-                    }catch (Exception e){
-
-                    }
-                    // 直接通过http的方式上传到s7 end
-                    //读取stream
-//                    stream = cacher.getInputStream();
-//                    $info("thread-" + threadNo + ":" + imageUrl + "ftp上传开始");
-//                    FtpFileBean ftpFileBean = new FtpFileBean(stream, uploadPath, fileName);
-//                    ftpComponent.uploadFile(ftpFileBean);
-//                    $info("thread-" + threadNo + ":" + imageUrl + "ftp上传结束");
                     successImageUrlList.add(imagesModel);
                     $info("thread-" + threadNo + ":" + imageUrl + "上传成功!");
                 }
@@ -227,50 +184,15 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
                 $error(ex.getMessage(), ex);
                 issueLog.log(ex, ErrorType.BatchJob, SubSystem.CMS);
                 isSuccess = false;
-            } finally {
-                //断开连接
-//                ftpComponent.closeConnect();
-                if(cacher != null){
-                    cacher.close();
-                }
             }
         }
 
         return isSuccess;
     }
 
-    public class InputStreamCacher {
-        /**
-         * 将InputStream中的字节保存到ByteArrayOutputStream中。
-         */
-        private ByteArrayOutputStream byteArrayOutputStream = null;
-
-        public InputStreamCacher(InputStream inputStream) {
-            byteArrayOutputStream = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int len;
-            try {
-                while ((len = inputStream.read(buffer)) > -1 ) {
-                    byteArrayOutputStream.write(buffer, 0, len);
-                }
-                byteArrayOutputStream.flush();
-                inputStream.close();
-            } catch (IOException e) {
-                logger.error(e.getMessage(), e);
-            }
-        }
-
-        public InputStream getInputStream() {
-
-            return new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
-        }
-        public void close(){
-            try {
-                byteArrayOutputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    private boolean usingHttps(String channel) {
+        return ChannelConfigEnums.Channel.Modotex.getId().equalsIgnoreCase(channel) ||
+                ChannelConfigEnums.Channel.WMF.getId().equalsIgnoreCase(channel);
     }
 }
 
