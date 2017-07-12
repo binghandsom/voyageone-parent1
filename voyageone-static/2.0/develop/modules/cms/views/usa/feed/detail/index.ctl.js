@@ -131,12 +131,12 @@ define([
             if (!!self.feed.attribute.phoneOrderOnly && _.size(self.feed.attribute.phoneOrderOnly) > 0) {
                 _.extend(self.feed, {phoneOrderOnly: self.feed.attribute.phoneOrderOnly[0]});
             }
-            // 处理seoTitle、seoDesc、seoKeywords
+            // 处理seoTitle、seoDescription、seoKeywords
             if (!!self.feed.attribute.seoTitle && _.size(self.feed.attribute.seoTitle) > 0) {
                 _.extend(self.feed, {seoTitle: self.feed.attribute.seoTitle[0]});
             }
-            if (!!self.feed.attribute.seoDesc && _.size(self.feed.attribute.seoDesc) > 0) {
-                _.extend(self.feed, {seoDesc: self.feed.attribute.seoDesc[0]});
+            if (!!self.feed.attribute.seoDescription && _.size(self.feed.attribute.seoDescription) > 0) {
+                _.extend(self.feed, {seoDescription: self.feed.attribute.seoDescription[0]});
             }
             if (!!self.feed.attribute.seoKeywords && _.size(self.feed.attribute.seoKeywords) > 0) {
                 _.extend(self.feed, {seoKeywords: self.feed.attribute.seoKeywords[0]});
@@ -290,9 +290,9 @@ define([
             self.feed.attribute.amazonBrowseTree = [self.feed.amazonBrowseTree];
             // 处理phoneOrderOnly
             self.feed.attribute.phoneOrderOnly = [self.feed.phoneOrderOnly];
-            // 处理seoTitle、seoDesc、seoKeywords
+            // 处理seoTitle、seoDescription、seoKeywords
             self.feed.attribute.seoTitle = [self.feed.seoTitle];
-            self.feed.attribute.seoDesc = [self.feed.seoDesc];
+            self.feed.attribute.seoDescription = [self.feed.seoDescription];
             self.feed.attribute.seoKeywords = [self.feed.seoKeywords];
 
             // 处理特殊属性
@@ -320,7 +320,20 @@ define([
             self.popups.openUsCategory({
                 from:self.feed.category
             }).then(context => {
-                _.extend(self.feed, {category: context.catPath})
+                _.extend(self.feed, {category: context.catPath});
+                if (!!context.mapping) {
+                    let seoInfo = {};
+                    if (!!context.mapping.seoTitle) {
+                        _.extend(seoInfo, {seoTitle:context.mapping.seoTitle});
+                    }
+                    if (!!context.mapping.seoKeywords) {
+                        _.extend(seoInfo, {seoKeywords:context.mapping.seoKeywords});
+                    }
+                    if (!!context.mapping.seoDescription) {
+                        _.extend(seoInfo, {seoDescription:context.mapping.seoDescription});
+                    }
+                    _.extend(self.feed, seoInfo);
+                }
             });
         }
 
