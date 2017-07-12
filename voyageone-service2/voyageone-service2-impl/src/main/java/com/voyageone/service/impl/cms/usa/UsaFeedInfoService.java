@@ -16,6 +16,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -57,6 +58,8 @@ public class UsaFeedInfoService extends BaseService {
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    private ProductService productService;
 
 
     /**
@@ -270,7 +273,7 @@ public class UsaFeedInfoService extends BaseService {
         queryProductStatus.add(CmsConstants.ProductStatus.Ready);
         queryProductStatus.add(CmsConstants.ProductStatus.Pending);
 
-        List<CmsBtProductModel> resultProductList = new ArrayList<>(top);
+        /*List<CmsBtProductModel> resultProductList = new ArrayList<>(top);
         String query = "{\"channelId\":#,\"common.fields.model\":#,\"usPlatforms.P#.status\":#}";
         int count = 0;
         for (CmsConstants.ProductStatus productStatus : queryProductStatus) {
@@ -284,7 +287,22 @@ public class UsaFeedInfoService extends BaseService {
             if (resultProductList.size() >= top) {
                 break;
             }
+        }*/
+
+        // 同一Model下的Product个数不太多，先查出来再排序筛选
+        List<CmsBtProductModel> productModels = productService.getProductListByModel(channelId, model);
+        if (CollectionUtils.isNotEmpty(productModels)) {
+
+            productModels.s
+
+        } else {
+            // Product中无数据,则从Feed中继续查询
         }
+
+
+
+        List<CmsBtProductModel> resultProductList = new ArrayList<>(top);
+        int count = 0;
         // 如果从Product查询不到数据，则再从Feed中查出数据
         if (resultProductList.isEmpty()) {
             count = 0;

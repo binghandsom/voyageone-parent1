@@ -1254,6 +1254,13 @@ public class ProductService extends BaseService {
         return getList(channelId, query);
     }
 
+    public List<CmsBtProductModel> getProductListByModel(String channelId, String model) {
+        JongoQuery query = new JongoQuery();
+        query.setQuery("{\"channelId\": #, \"common.fields.model\": #}");
+        query.setParameters(channelId, model);
+        return getList(channelId, query);
+    }
+
     public List<CustomPropBean> getCustomProp(CmsBtProductModel product) {
         List<CustomPropBean> props = new ArrayList<>();
         cmsBtCustomPropService.setProductCustomProp(product);
