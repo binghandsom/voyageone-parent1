@@ -37,7 +37,7 @@ define([
                     });
                     // 平台过滤
                     self.platforms = _.filter(platforms, cartObj => {
-                        return (cartObj.cartId < 20 && cartObj.lang_id) == "en" || (cartObj.cartId >= 20 && cartObj.lang_id == "cn");
+                        return cartObj.cartId != 0 && ((cartObj.cartId < 20 && cartObj.lang_id) == "en" || (cartObj.cartId >= 20 && cartObj.lang_id == "cn"));
                     })
                 }
             });
