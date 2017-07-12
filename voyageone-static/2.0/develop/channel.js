@@ -50,7 +50,7 @@ define([
                  */
                 $ajax.post('/cms/home/menu/getMenuHeaderInfo').then(function (res) {
 
-                    if(res.data.menuTree[0].resName === 'Base Items')
+                    if(judgePath(res.data.menuTree))
                         location.href = 'modules/cms-us/app.html#/home';
                     else
                         location.href = 'modules/cms/app.html#/home';
@@ -79,6 +79,12 @@ define([
             return _.find(channel.apps, function (item) {
                 return item.application === 'cms';
             });
+        }
+
+        function judgePath(menu){
+            return _.some(menu, menu=>{
+                return menu.resName === 'Base Items'
+            })
         }
 
     });
