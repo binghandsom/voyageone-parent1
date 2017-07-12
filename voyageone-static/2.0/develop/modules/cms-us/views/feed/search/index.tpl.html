@@ -28,7 +28,15 @@
                                 <div class="form-group">
                                     <label class="col-md-4 control-label query-title">Sku/Barcode/Code/Model</label>
                                     <div class="col-md-6">
-                                        <textarea class="form-control no-resize" ng-model="ctrl.paraMap.searchContent"></textarea>
+                                        <textarea class="form-control no-resize" ng-model="ctrl.paraMap.searchContent" placeholder="multiple accurate query"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title">Name</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.paraMap.name" placeholder="fuzzy query">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -97,23 +105,16 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title">Name</label>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.paraMap.name">
-                                        </div>
-                                    </div>
-                                </div>
+
                                 <div class="form-group" ng-hide="ctrl.flag==1">
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title">Approve Pricing</label>
                                         <div class="col-md-6 checkbox" >
                                             <label>
-                                                <input type="checkbox"  ng-model="ctrl.approvePricing[0]">&nbsp;&nbsp;Yes
+                                                <input type="checkbox"  ng-model="ctrl.approvePricing[0]">&nbsp;Yes
                                             </label>&emsp;
                                             <label>
-                                                <input type="checkbox"  ng-model="ctrl.approvePricing[1]">&nbsp;&nbsp;No
+                                                <input type="checkbox"  ng-model="ctrl.approvePricing[1]">&nbsp;No
                                             </label>&emsp;
                                         </div>
                                     </div>
@@ -228,8 +229,7 @@
                                         <span class="input-group-addon cur-p"
                                               ng-click="feed.editMsrp = !feed.editMsrp"><i class="fa fa-pencil"></i></span>
                                         <input type="text" class="form-control" ng-change="feed.priceClientMsrpMax = feed.priceClientMsrpMin"
-                                               ng-blur="ctrl.updateOne(feed,'priceClientMsrp',feed.priceClientMsrpMin)"
-                                               ng-enter="ctrl.test()"
+                                               ng-enter="ctrl.updateOne(feed,'priceClientMsrp',feed.priceClientMsrpMin)"
                                                ng-model="feed.priceClientMsrpMin" ng-disabled="!feed.editMsrp">
                                     </div>
                                 </td>
@@ -240,7 +240,8 @@
                                     <div class="input-group">
                                         <span class="input-group-addon cur-p" ng-click="feed.editRetai = !feed.editRetai"><i class="fa fa-pencil"></i></span>
                                         <input type="text" class="form-control" ng-model="feed.priceClientRetailMin"
-                                               ng-disabled="!feed.editRetai" ng-blur="ctrl.updateOne(feed,'price',feed.priceClientRetailMin)"
+                                               ng-disabled="!feed.editRetai"
+                                               ng-enter="ctrl.updateOne(feed,'price',feed.priceClientRetailMin)"
                                                ng-change="feed.priceClientRetailMax = feed.priceClientRetailMin">
                                     </div>
                                 </td>
