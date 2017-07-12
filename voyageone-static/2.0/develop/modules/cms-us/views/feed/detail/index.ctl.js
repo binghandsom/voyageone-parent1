@@ -142,7 +142,7 @@ define([
         }
 
         // 统一设置SKU属性
-        setSkuProperty(sku, property) {
+        setSkuProperty(sku, property,priceFlag) {
             let self = this;
             if (!sku) {
                 angular.forEach(self.feed.skus, function (item) {
@@ -152,7 +152,9 @@ define([
             } else {
                 sku['priceClientRetail'] = sku['priceNet'];
             }
-            self.setSkuCNPrice();
+            if (priceFlag == "1") {
+                self.setSkuCNPrice();
+            }
         }
 
         // 同步计算中国相关价格
@@ -391,7 +393,7 @@ define([
             let self = this;
 
             self.popups.openAmazonCategory().then(res => {
-                self.feed.attribute.amazonBrowseTree = res.catPath;
+                self.feed.amazonBrowseTree = res.catPath;
             });
         }
 

@@ -151,7 +151,7 @@
                                             </button>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.attribute.amazonBrowseTree" readonly>
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.amazonBrowseTree" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -441,27 +441,27 @@
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.weightOrg" ng-change="ctrl.setSkuProperty('','weightOrg')">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.weightOrg" ng-change="ctrl.setSkuProperty('','weightOrg','0')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
                                                 <select class="form-control" ng-options="weightUnit as weightUnit for weightUnit in ctrl.setting.weightOrgUnits"
-                                                        ng-model="ctrl.setting.weightOrgUnit" ng-change="ctrl.setSkuProperty('','weightOrgUnit')">
+                                                        ng-model="ctrl.setting.weightOrgUnit" ng-change="ctrl.setSkuProperty('','weightOrgUnit','0')">
                                                 </select>
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceClientMsrp" ng-change="ctrl.setSkuProperty('','priceClientMsrp')">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceClientMsrp" ng-change="ctrl.setSkuProperty('','priceClientMsrp','1')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceNet" ng-change="ctrl.setSkuProperty('','priceNet')">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceNet" ng-change="ctrl.setSkuProperty('','priceNet','1')">
                                             </div>
                                         </td>
                                         <td ng-if="ctrl.auth!=1"></td>
