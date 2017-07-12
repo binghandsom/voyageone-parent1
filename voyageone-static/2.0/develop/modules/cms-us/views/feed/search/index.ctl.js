@@ -117,6 +117,7 @@ define([
         clear() {
             let self = this,
                 columnArrow = self.columnArrow;
+            self.paraMap = {};
             self.paraMap = {
                 status: "",
                 approvePricing: null
