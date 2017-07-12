@@ -27,6 +27,7 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -265,47 +266,21 @@ public class UsaFeedInfoService extends BaseService {
      */
     public List<CmsBtFeedInfoModel> getTopFeedByModel(String channelId, String code, String model, int top) {
         if (top <= 0) top = 5;
-        int usOfficialCartId = 1;
-
-        // 先从Product中查询top个满足状态Product
-        List<CmsConstants.ProductStatus> queryProductStatus = new ArrayList<>();
-        queryProductStatus.add(CmsConstants.ProductStatus.Approved);
-        queryProductStatus.add(CmsConstants.ProductStatus.Ready);
-        queryProductStatus.add(CmsConstants.ProductStatus.Pending);
-
-        /*List<CmsBtProductModel> resultProductList = new ArrayList<>(top);
-        String query = "{\"channelId\":#,\"common.fields.model\":#,\"usPlatforms.P#.status\":#}";
-        int count = 0;
-        for (CmsConstants.ProductStatus productStatus : queryProductStatus) {
-            JongoQuery jongoQuery = new JongoQuery(null, query, null, top - resultProductList.size(), 0);
-            jongoQuery.setParameters(channelId, model, usOfficialCartId, productStatus.name());
-            List<CmsBtProductModel> tempResultProductList = cmsBtProductDao.select(jongoQuery, channelId);
-            count = tempResultProductList.size();
-            if (count > 0) {
-                resultProductList.addAll(tempResultProductList);
-            }
-            if (resultProductList.size() >= top) {
-                break;
-            }
-        }*/
 
         // 同一Model下的Product个数不太多，先查出来再排序筛选
-        List<CmsBtProductModel> productModels = productService.getProductListByModel(channelId, model);
+        String query = "{\"channelId\": #, \"common.fields.model\": #}";
+        JongoQuery jongoQuery = new JongoQuery();
+        jongoQuery.setQuery(query);
+        jongoQuery.setParameters(channelId, model);
+        jongoQuery.setLimit(top);
+        List<CmsBtProductModel> productModels = cmsBtProductDao.select(jongoQuery, channelId);
         if (CollectionUtils.isNotEmpty(productModels)) {
-
-            productModels.s
-
+            // 选中同Model的某个Code,则执行覆盖操作,覆盖内容: 除了code, name, color, colorMap, 图片，urlKey以外的code级别属性
+            // 覆盖内容: Brand,ProductType,SizeType,Material,Made In,Amazon Category,Usage,Short Description,Long Description,Order Limit Count,Abstract,Accessory
+            return this.tempConvertToFeedInfo(productModels);
         } else {
-            // Product中无数据,则从Feed中继续查询
-        }
 
-
-
-        List<CmsBtProductModel> resultProductList = new ArrayList<>(top);
-        int count = 0;
-        // 如果从Product查询不到数据，则再从Feed中查出数据
-        if (resultProductList.isEmpty()) {
-            count = 0;
+            int count = 0;
             List<CmsConstants.UsaFeedStatus> queryFeedStatus = new ArrayList<>();
             queryFeedStatus.add(CmsConstants.UsaFeedStatus.Approved);
             queryFeedStatus.add(CmsConstants.UsaFeedStatus.Ready);
@@ -315,7 +290,7 @@ public class UsaFeedInfoService extends BaseService {
             List<CmsBtFeedInfoModel> resultFeedList = new ArrayList<>(top);
             query = "{\"channelId\":#,\"code\":{$ne:#},\"model\":#,\"status\":{$exists:true},\"status\":#}";
             for (CmsConstants.UsaFeedStatus feedStatus : queryFeedStatus) {
-                JongoQuery jongoQuery = new JongoQuery(null, query, null, top - resultFeedList.size(), 0);
+                jongoQuery = new JongoQuery(null, query, null, top - resultFeedList.size(), 0);
                 jongoQuery.setParameters(channelId, code, model, feedStatus.name());
                 List<CmsBtFeedInfoModel> tempResultFeedList = cmsBtFeedInfoDao.select(jongoQuery, channelId);
                 count = tempResultFeedList.size();
@@ -328,13 +303,6 @@ public class UsaFeedInfoService extends BaseService {
             }
             return resultFeedList;
         }
-
-        // 选中同Model的某个Code,则执行覆盖操作,覆盖内容: 除了code, name, color, colorMap, 图片，urlKey以外的code级别属性
-        // 覆盖内容: Brand,ProductType,SizeType,Material,Made In,Amazon Category,Usage,Short Description,Long Description,Order Limit Count,Abstract,Accessory
-        if (!resultProductList.isEmpty()) {
-            return this.tempConvertToFeedInfo(resultProductList);
-        }
-        return Collections.emptyList();
     }
 
     /**
@@ -374,7 +342,18 @@ public class UsaFeedInfoService extends BaseService {
                 // Abstract
                 // Accessory
                 // Feed状态
-                feed.setStatus(product.getPlatform(1).getStatus());
+                if (product.getPlatform(1) != null) {
+                    feed.setStatus(product.getPlatform(1).getStatus());
+                }
+                // Feed image取自Product iamges1
+                List<CmsBtProductModel_Field_Image> productImages1 = fields.getImages1();
+                if (CollectionUtils.isNotEmpty(productImages1)) {
+                    List<String> feedImages = new ArrayList<>();
+                    for (CmsBtProductModel_Field_Image image : productImages1) {
+                        feedImages.add(image.getName());
+                    }
+                    feed.setImage(feedImages);
+                }
                 feedInfoModels.add(feed);
             }
         }

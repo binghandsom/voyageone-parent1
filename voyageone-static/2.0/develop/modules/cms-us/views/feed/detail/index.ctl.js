@@ -319,6 +319,18 @@ define([
                 }).then((res) => {
                     if (res.data) {
                         self.topFeedList = res.data;
+                        // 如果从Product查询的Code属性,那图片只是图片名称,不是完整链接
+                        angular.forEach(self.topFeedList, feed => {
+                            // _id为空则说明信息从Product查询而来
+                            if (!feed._id) {
+                               let newImage = [];
+                                _.each(feed.image, image => {
+                                    image = self.imageUrl + image;
+                                   newImage.push(image);
+                                });
+                                feed.image = newImage;
+                            }
+                        });
                     }
                 })
             }
