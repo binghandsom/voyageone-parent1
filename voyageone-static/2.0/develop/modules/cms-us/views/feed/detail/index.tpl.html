@@ -464,8 +464,8 @@
                                                 <input type="number" class="form-control" ng-model="ctrl.setting.priceNet" ng-change="ctrl.setSkuProperty('','priceNet')">
                                             </div>
                                         </td>
-                                        <td></td>
-                                        <td></td>
+                                        <td ng-if="ctrl.auth!=1"></td>
+                                        <td ng-if="ctrl.auth!=1"></td>
                                         <!--<td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
@@ -487,8 +487,8 @@
                                         <th class="text-center">Weight Unit</th>
                                         <th class="text-right">Msrp($)</th>
                                         <th class="text-right">price($)</th>
-                                        <th class="text-right">cn Msrp(￥)</th>
-                                        <th class="text-right">price(￥)</th>
+                                        <th class="text-right" ng-if="ctrl.auth!=1">cn Msrp(￥)</th>
+                                        <th class="text-right" ng-if="ctrl.auth!=1">price(￥)</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -510,10 +510,10 @@
                                         <td class="text-right">
                                             <input type="number" class="form-control" ng-model="sku.priceNet" ng-change="ctrl.setSkuProperty(sku,'priceNet')"/>
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-right" ng-if="ctrl.auth!=1">
                                             <input type="number" class="form-control" ng-model="sku.priceMsrp" readonly/>
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-right" ng-if="ctrl.auth!=1">
                                             <input type="number" class="form-control" ng-model="sku.priceCurrent" readonly/>
                                         </td>
 
