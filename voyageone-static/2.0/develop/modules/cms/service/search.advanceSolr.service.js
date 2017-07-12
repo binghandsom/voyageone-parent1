@@ -437,7 +437,7 @@ define([
 
                 // 当是中国指导价时，要有价格变化提示
                 if (stakey == 'pPriceRetailSt' && data.skus) {
-                    for (idx in data.skus) {
+                    for (var idx in data.skus) {
                         if (data.skus[idx].priceChgFlg) {
                             var upFlg = data.skus[idx].priceChgFlg.indexOf('U');
                             var downFlg = data.skus[idx].priceChgFlg.indexOf('D');

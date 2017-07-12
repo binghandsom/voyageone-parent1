@@ -183,7 +183,7 @@ define([
             var defer = $q.defer();
             $menuService.getMenuHeaderInfo().then(function (response) {
                         var data = response.data;
-                        userlanguage = data.userInfo.language;
+                        window.userlanguage = data.userInfo.language;
                         // 设置画面用户显示的语言
                         _.forEach(data.languageList, function (language) {
 

@@ -290,7 +290,7 @@ define([
          */
         function _resetGroupList(data, commonProps, customProps, selSalesTypes, selBiDataList, searchParam) {
             tempGroupSelect.clearCurrPageRows();
-            for (idx in data.groupList) {
+            for (var idx in data.groupList) {
                 var prodObj = data.groupList[idx];
                 prodObj._grpPriceInfoList = data.grpPriceInfoList[idx];
             }
@@ -554,7 +554,7 @@ define([
 
                 // 当是中国指导价时，要有价格变化提示
                 if (stakey == 'pPriceRetailSt' && data.skus) {
-                    for (idx in data.skus) {
+                    for (var idx in data.skus) {
                         if (data.skus[idx].priceChgFlg) {
                             var upFlg = data.skus[idx].priceChgFlg.indexOf('U');
                             var downFlg = data.skus[idx].priceChgFlg.indexOf('D');
@@ -590,7 +590,7 @@ define([
             if (searchParam && searchParam.cartId) {
                 fstCode = searchParam.cartId;
             }
-            for (idx in object) {
+            for (var idx in object) {
                 var data = object[idx];
                 if (data == null || data == undefined || data.cartId == null || data.cartId == undefined || data.cartId == 0) {
                     continue;
@@ -620,7 +620,7 @@ define([
 
                 // 当是中国指导价时，要有价格变化提示
                 if (data.skus) {
-                    for (idx in data.skus) {
+                    for (var idx in data.skus) {
                         if (data.skus[idx].priceChgFlg) {
                             var upFlg = data.skus[idx].priceChgFlg.indexOf('U');
                             var downFlg = data.skus[idx].priceChgFlg.indexOf('D');

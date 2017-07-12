@@ -470,19 +470,14 @@ public class UsaFeedInfoService extends BaseService {
             throw new BusinessException("Approve parameter error.");
         }
 
-        List<JongoUpdate> jongoUpdateList = new ArrayList<>();
-        for (String code : codeList) {
+        JongoUpdate jongoUpdate = new JongoUpdate();
+        jongoUpdate.setQuery("{\"channelId\":#,\"code\":{$in:#}}");
+        jongoUpdate.setQueryParameters(channelId, codeList);
 
-            JongoUpdate jongoUpdate = new JongoUpdate();
-            jongoUpdate.setQuery("{\"channelId\":#,\"code\":#}");
-            jongoUpdate.setQueryParameters(channelId, code);
+        jongoUpdate.setUpdate("{$set:{\"updFlg\":#,\"status\":#,\"approveInfo\":#,\"modifier\":#,\"modified\":#}}");
+        jongoUpdate.setUpdateParameters(0, CmsConstants.UsaFeedStatus.Approved.name(), approveInfo, username, DateTimeUtil.getNow());
 
-            jongoUpdate.setUpdate("{$set:{\"updFlg\":#,\"status\":#,\"approveInfo\":#,\"modifier\":#,\"modified\":#}}");
-            jongoUpdate.setUpdateParameters(0, CmsConstants.UsaFeedStatus.Approved.name(), approveInfo, username, DateTimeUtil.getNow());
-            jongoUpdateList.add(jongoUpdate);
-        }
-
-        BulkWriteResult writeResult = cmsBtFeedInfoDao.bulkUpdateWithJongo(channelId, jongoUpdateList);
+        WriteResult writeResult = cmsBtFeedInfoDao.updateMulti(jongoUpdate, channelId);
         $info(String.format("(%s)批量Approve Feed, 结果:", username, JacksonUtil.bean2Json(writeResult)));
 
     }
