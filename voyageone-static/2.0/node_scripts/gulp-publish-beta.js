@@ -1,24 +1,25 @@
-var fs = require('fs');
-var gulp = require('gulp');
-var debug = require('gulp-debug');
-var ngAnnotate = require('gulp-ng-annotate');
-var uglify = require('gulp-uglify');
-var replace = require('gulp-replace');
-var rename = require('gulp-rename');
-var concat = require('gulp-concat');
-var header = require('gulp-header');
-var footer = require('gulp-footer');
-var glob = require('glob');
+const fs = require('fs');
+const gulp = require('gulp');
+const debug = require('gulp-debug');
+const ngAnnotate = require('gulp-ng-annotate');
+const uglify = require('gulp-uglify');
+const replace = require('gulp-replace');
+const rename = require('gulp-rename');
+const concat = require('gulp-concat');
+const header = require('gulp-header');
+const footer = require('gulp-footer');
+const glob = require('glob');
+const babel = require('gulp-babel');
 
-var vars = require('./vars');
-var publish = vars.publish;
-var build = vars.build;
-var tasks = vars.tasks;
-var definePrefix = 'define(function(){\n';
-var defineSuffix = '});';
-var headerSingle = '(function(){\n';
-var footerSingle = '})();';
-var encode = 'utf-8';
+const vars = require('./vars');
+const publish = vars.publish;
+const build = vars.build;
+const tasks = vars.tasks;
+const definePrefix = 'define(function(){\n';
+const defineSuffix = '});';
+const headerSingle = '(function(){\n';
+const footerSingle = '})();';
+const encode = 'utf-8';
 
 // 图片, 字体, 样式, 资源发布
 gulp.task(tasks.beta.statics, function () {
@@ -63,6 +64,7 @@ gulp.task(tasks.beta.angular, function () {
             compress: false,
             output: {beautify: true}
         }))
+        .pipe(babel())
         .pipe(gulp.dest(publish.components.angular.dist))
         .pipe(gulp.dest(publish.release.components));
 });
@@ -81,6 +83,7 @@ gulp.task(tasks.beta.com, function () {
             compress: false,
             output: {beautify: true}
         }))
+        .pipe(babel())
         .pipe(gulp.dest(publish.components.native.dist))
         .pipe(gulp.dest(publish.release.components));
 });
@@ -98,6 +101,7 @@ gulp.task(tasks.beta.modules, function () {
     // build login.app and channel.app
     gulp.src(publish.loginAndChannel.js)
         .pipe(ngAnnotate())
+        .pipe(babel())
         .pipe(gulp.dest(publish.release.loginAndChannel));
 
     gulp.src(publish.loginAndChannel.html)
@@ -106,6 +110,7 @@ gulp.task(tasks.beta.modules, function () {
     // 压缩js文件
     gulp.src(publish.modules.js)
         .pipe(replace('version=', 'v='+ Date.parse(new Date())))
+        .pipe(babel())
         .pipe(gulp.dest(publish.release.modules));
 
     // 压缩html文件
