@@ -330,26 +330,42 @@ define([
             });
         }
 
-        popUsCategory() {
+        /**
+         * @description 展开店铺内分类
+         * @param option{cartId,muiti,from}
+         */
+        popUsCategory(option,attr) {
             let self = this;
 
-            self.popups.openUsCategory({
-                from:self.feed.category
-            }).then(context => {
-                _.extend(self.feed, {category: context.catPath});
-                if (!!context.mapping) {
-                    let seoInfo = {};
-                    if (!!context.mapping.seoTitle) {
-                        _.extend(seoInfo, {seoTitle:context.mapping.seoTitle});
+            self.popups.openUsCategory(option).then(context => {
+                if(option.muiti){
+                    self.feed[attr] = context ;
+                }else{
+                    _.extend(self.feed, {category: context.catPath});
+                    if (!!context.mapping) {
+                        let seoInfo = {};
+                        if (!!context.mapping.seoTitle) {
+                            _.extend(seoInfo, {seoTitle:context.mapping.seoTitle});
+                        }
+                        if (!!context.mapping.seoKeywords) {
+                            _.extend(seoInfo, {seoKeywords:context.mapping.seoKeywords});
+                        }
+                        if (!!context.mapping.seoDescription) {
+                            _.extend(seoInfo, {seoDescription:context.mapping.seoDescription});
+                        }
+                        _.extend(self.feed, seoInfo);
                     }
-                    if (!!context.mapping.seoKeywords) {
-                        _.extend(seoInfo, {seoKeywords:context.mapping.seoKeywords});
-                    }
-                    if (!!context.mapping.seoDescription) {
-                        _.extend(seoInfo, {seoDescription:context.mapping.seoDescription});
-                    }
-                    _.extend(self.feed, seoInfo);
                 }
+
+            });
+        }
+
+        popGoogleCat(option,attr){
+            var self = this;
+
+            self.popups.openUsCategory(option).then(context => {
+                console.log(context);
+
             });
         }
 
