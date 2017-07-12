@@ -89,8 +89,12 @@ public class UsaFeedInfoService extends BaseService {
         Double priceClientMsrpMax = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientMsrp();
         ;
         for (CmsBtFeedInfoModel_Sku sku : cmsBtFeedInfoModel.getSkus()) {
-            sku.setPriceMsrp(calculatePrice(formulaMsrp, sku));
-            sku.setPriceCurrent(calculatePrice(formulaRetail, sku));
+            try {
+                sku.setPriceMsrp(calculatePrice(formulaMsrp, sku));
+                sku.setPriceCurrent(calculatePrice(formulaRetail, sku));
+            }catch (Exception e){
+
+            }
             priceClientRetailMin = Double.min(priceClientRetailMin, sku.getPriceClientRetail());
             priceClientRetailMax = Double.max(priceClientRetailMax, sku.getPriceClientRetail());
             priceClientMsrpMin = Double.min(priceClientMsrpMin, sku.getPriceClientMsrp());
@@ -116,6 +120,7 @@ public class UsaFeedInfoService extends BaseService {
 
             return price.setScale(0, RoundingMode.UP).doubleValue();
         } catch (SpelEvaluationException sp) {
+            $error("使用固定公式计算时出现错误", sp);
             throw new BusinessException("使用固定公式计算时出现错误", sp);
         }
     }
@@ -361,6 +366,10 @@ public class UsaFeedInfoService extends BaseService {
                     }
                     feed.setImage(feedImages);
                 }
+
+                // 部分Code级别属性,Product没有,再去查询同Code Feed,Copy属性
+//                CmsBtFeedInfoModel refFeed = cmsBtFeedInfoDao.
+
                 feedInfoModels.add(feed);
             }
         }

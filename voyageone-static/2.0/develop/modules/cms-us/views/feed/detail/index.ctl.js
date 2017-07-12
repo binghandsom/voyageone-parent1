@@ -31,7 +31,7 @@ define([
             this.colorMap = [{value: "Red", name: "Red"}];
             this.setting = {
                 weightOrg: "",
-                weightOrgUnit: "",
+                weightOrgUnit: "lb",
                 priceClientMsrp: "",
                 priceNet: "",
                 priceMsrp: "",
@@ -84,7 +84,7 @@ define([
         // 处理Feed数据
         filterFeed() {
             let self = this;
-            let hasUrlkey = self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
+            let hasUrlkey = !!self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
             _.extend(self.feed, {hasUrlkey: hasUrlkey});
             if (!hasUrlkey) {
                 // 计算urlKey
@@ -95,19 +95,23 @@ define([
                 sku.weightOrg = parseFloat(sku.weightOrg);
             });
             // 处理Abstract和accessory
-            if (self.feed.attribute.abstract && _.size(self.feed.attribute.abstract) > 0) {
+            if (!!self.feed.attribute.abstract && _.size(self.feed.attribute.abstract) > 0) {
                 _.extend(self.feed, {abstract: self.feed.attribute.abstract[0]});
             }
-            if (self.feed.attribute.accessory && _.size(self.feed.attribute.accessory) > 0) {
+            if (!!self.feed.attribute.accessory && _.size(self.feed.attribute.accessory) > 0) {
                 _.extend(self.feed, {accessory: self.feed.attribute.accessory[0]});
             }
             // 处理orderlimitcount
-            if (self.feed.attribute.orderlimitcount && _.size(self.feed.attribute.orderlimitcount) > 0) {
+            if (!!self.feed.attribute.orderlimitcount && _.size(self.feed.attribute.orderlimitcount) > 0) {
                 _.extend(self.feed, {orderlimitcount: self.feed.attribute.orderlimitcount[0]});
             }
             // 处理colorMap
-            if (self.feed.attribute.colorMap && _.size(self.feed.attribute.colorMap) > 0) {
+            if (!!self.feed.attribute.colorMap && _.size(self.feed.attribute.colorMap) > 0) {
                 _.extend(self.feed, {colorMap: self.feed.attribute.colorMap[0]});
+            }
+            // 处理amazonBrowseTree
+            if (!!self.feed.attribute.amazonBrowseTree && _.size(self.feed.attribute.amazonBrowseTree) > 0) {
+                _.extend(self.feed, {amazonBrowseTree: self.feed.attribute.amazonBrowseTree[0]});
             }
         }
 
@@ -218,6 +222,8 @@ define([
             self.feed.attribute.orderlimitcount = [self.feed.orderlimitcount];
             // 处理colorMap
             self.feed.attribute.colorMap = [self.feed.colorMap];
+            // 处理amazonBrowseTree
+            self.feed.attribute.amazonBrowseTree = [self.feed.amazonBrowseTree];
             let parameter = {feed: self.feed, flag: flag};
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {

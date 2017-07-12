@@ -67,7 +67,6 @@ public class CmsProductAddUpdateMQJob extends TBaseMQCmsService<CmsProductAddUpd
         cmsBtFeedInfoModel.setChannelId(messageBody.getChannelId());
         cmsBtFeedInfoModel.setCreater(messageBody.getSender());
         cmsBtFeedInfoModel.setModifier(messageBody.getSender());
-        cmsBtFeedInfoModel.setLastReceivedOn(DateTimeUtil.getNow());
         cmsBtFeedInfoModel.setCode(messageBody.getCode());
         cmsBtFeedInfoModel.setName(messageBody.getName());
         cmsBtFeedInfoModel.setColor(messageBody.getColor());
@@ -83,6 +82,7 @@ public class CmsProductAddUpdateMQJob extends TBaseMQCmsService<CmsProductAddUpd
             CmsBtFeedInfoModel_Sku sku = new CmsBtFeedInfoModel_Sku();
             sku.setPriceClientMsrp(messageBody.getMsrp());
             sku.setPriceClientRetail(messageBody.getMsrp() - 0.01);
+            sku.setPriceNet(messageBody.getMsrp() - 0.01);
             sku.setSku(item.getSku());
             sku.setClientSku(item.getSku());
             sku.setBarcode(item.getBarcode());
