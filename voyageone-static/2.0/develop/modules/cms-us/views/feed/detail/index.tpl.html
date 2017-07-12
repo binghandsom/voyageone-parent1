@@ -24,7 +24,7 @@
                                             <input type="text" class="form-control" name="model" ng-model="ctrl.feed.model" required>
                                         </div>
                                         <div class="col-md-1">
-                                            <button type="button" class="btn btn-default btn-pop" ng-click="ctrl.getTopModel(5)">
+                                            <button type="button" class="btn btn-default" ng-click="ctrl.getTopModel(5)">
                                                 <i class="fa fa-angle-double-down" style="font-size: 16px;"></i>
                                             </button>
                                         </div>
@@ -35,13 +35,13 @@
                                     <div class="row">
                                         <div class="col-md-8 col-md-offset-4" ng-if="ctrl.topFeedList.length > 0">
                                             <div class="col-xs-6 col-md-2" ng-repeat="item in ctrl.topFeedList">
-                                                <a href="javascript:void(0);" class="thumbnail" ng-class="{'active':item.status=='Approved'}"
-                                                   style="position: relative">
-                                                    <img alt="{{item.code}}" class="thumb-sm-search" src="{{item.image[0]}}">
+                                                <a href="javascript:void(0);" class="thumbnail pos-relative" ng-class="{'active':item.status=='Approved'}">
+                                                    <img class="thumb-sm-search" src="{{item.image[0]}}">
                                                     <button type="button" class="btn btn-primary pos-absolute-right" ng-click="ctrl.copyAttr(item)">
                                                         <i class="fa fa-copy"></i>
                                                     </button>
                                                 </a>
+                                                <span class="text-wrap"><strong>{{item.code}}</strong></span>
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-md-offset-4" ng-if="ctrl.topFeedList.length == 0">
@@ -151,7 +151,7 @@
                                             </button>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.attribute.amazonBrowseTree" readonly>
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.amazonBrowseTree" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -302,7 +302,7 @@
                                             <div class="vo_prodGallery">
                                                 <div class="imageContainer">
                                                     <div class="imageWrapper">
-                                                        <img  class="imageWrapper" style="cursor: pointer;max-width: 330px; max-height: 200px;" ng-src="{{ctrl.currentFeedImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentFeedImage)">
+                                                        <img  class="imageWrapper" style="cursor: pointer;max-width: 200px; max-height: 170px;" ng-src="{{ctrl.currentFeedImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentFeedImage)">
                                                     </div>
                                                 </div>
                                             </div>
@@ -330,7 +330,7 @@
                                                     <div class="col-md-12 form-horizontal">
                                                         <div class="form-group">
                                                             <div class="row">
-                                                                <label class="col-md-6 query-title">&nbsp;&nbsp;picture num</label>
+                                                                <label class="col-md-6 query-title">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
                                                                     <input type="text" class="form-control" ng-model="ctrl.feed.imageNum" ng-keyup="ctrl.initImage(ctrl.feed.imageNum)">
                                                                 </div>
@@ -428,7 +428,7 @@
 
                     <div class="skuItem">
                         <div class="skuItem-head">
-                            <h4>SKUS</h4>
+                            <h4>Skus</h4>
                         </div>
                         <div class="skuItem-body">
                             <div class="table-responsive box box-body">
@@ -441,31 +441,31 @@
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.weightOrg" ng-change="ctrl.setSkuProperty('','weightOrg')">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.weightOrg" ng-change="ctrl.setSkuProperty('','weightOrg','0')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
                                                 <select class="form-control" ng-options="weightUnit as weightUnit for weightUnit in ctrl.setting.weightOrgUnits"
-                                                        ng-model="ctrl.setting.weightOrgUnit" ng-change="ctrl.setSkuProperty('','weightOrgUnit')">
+                                                        ng-model="ctrl.setting.weightOrgUnit" ng-change="ctrl.setSkuProperty('','weightOrgUnit','0')">
                                                 </select>
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceClientMsrp" ng-change="ctrl.setSkuProperty('','priceClientMsrp')">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceClientMsrp" ng-change="ctrl.setSkuProperty('','priceClientMsrp','1')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceNet" ng-change="ctrl.setSkuProperty('','priceNet')">
+                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceNet" ng-change="ctrl.setSkuProperty('','priceNet','1')">
                                             </div>
                                         </td>
-                                        <td></td>
-                                        <td></td>
+                                        <td ng-if="ctrl.auth!=1"></td>
+                                        <td ng-if="ctrl.auth!=1"></td>
                                         <!--<td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
@@ -487,8 +487,8 @@
                                         <th class="text-center">Weight Unit</th>
                                         <th class="text-right">Msrp($)</th>
                                         <th class="text-right">price($)</th>
-                                        <th class="text-right">cn Msrp(￥)</th>
-                                        <th class="text-right">price(￥)</th>
+                                        <th class="text-right" ng-if="ctrl.auth!=1">cn Msrp(￥)</th>
+                                        <th class="text-right" ng-if="ctrl.auth!=1">price(￥)</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -505,15 +505,15 @@
                                             </select>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control" ng-model="sku.priceClientMsrp" ng-change="ctrl.setSkuProperty(sku,'priceClientMsrp')"/>
+                                            <input type="number" class="form-control" ng-model="sku.priceClientMsrp" ng-enter="ctrl.setSkuProperty(sku,'priceClientMsrp')"/>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control" ng-model="sku.priceNet" ng-change="ctrl.setSkuProperty(sku,'priceNet')"/>
+                                            <input type="number" class="form-control" ng-model="sku.priceNet" ng-enter="ctrl.setSkuProperty(sku,'priceNet')"/>
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-right" ng-if="ctrl.auth!=1">
                                             <input type="number" class="form-control" ng-model="sku.priceMsrp" readonly/>
                                         </td>
-                                        <td class="text-right">
+                                        <td class="text-right" ng-if="ctrl.auth!=1">
                                             <input type="number" class="form-control" ng-model="sku.priceCurrent" readonly/>
                                         </td>
 

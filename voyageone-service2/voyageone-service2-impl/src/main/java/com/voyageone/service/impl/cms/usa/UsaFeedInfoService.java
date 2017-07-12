@@ -92,13 +92,13 @@ public class UsaFeedInfoService extends BaseService {
             try {
                 sku.setPriceMsrp(calculatePrice(formulaMsrp, sku));
                 sku.setPriceCurrent(calculatePrice(formulaRetail, sku));
+                priceClientRetailMin = Double.min(priceClientRetailMin, sku.getPriceClientRetail());
+                priceClientRetailMax = Double.max(priceClientRetailMax, sku.getPriceClientRetail());
+                priceClientMsrpMin = Double.min(priceClientMsrpMin, sku.getPriceClientMsrp());
+                priceClientMsrpMax = Double.max(priceClientMsrpMax, sku.getPriceClientMsrp());
             }catch (Exception e){
 
             }
-            priceClientRetailMin = Double.min(priceClientRetailMin, sku.getPriceClientRetail());
-            priceClientRetailMax = Double.max(priceClientRetailMax, sku.getPriceClientRetail());
-            priceClientMsrpMin = Double.min(priceClientMsrpMin, sku.getPriceClientMsrp());
-            priceClientMsrpMax = Double.max(priceClientMsrpMax, sku.getPriceClientMsrp());
         }
         cmsBtFeedInfoModel.setPriceClientMsrpMax(priceClientMsrpMax);
         cmsBtFeedInfoModel.setPriceClientRetailMax(priceClientRetailMax);
@@ -348,11 +348,6 @@ public class UsaFeedInfoService extends BaseService {
                 feed.setShortDescription(fields.getShortDesEn());
                 // Long Description
                 feed.setLongDescription(fields.getLongDesEn());
-                // TODO: 2017/7/6 rex.wu
-                // Amazon Category
-                // Order Limit Count
-                // Abstract
-                // Accessory
                 // Feed状态
                 if (product.getPlatform(1) != null) {
                     feed.setStatus(product.getPlatform(1).getStatus());
@@ -368,7 +363,13 @@ public class UsaFeedInfoService extends BaseService {
                 }
 
                 // 部分Code级别属性,Product没有,再去查询同Code Feed,Copy属性
-//                CmsBtFeedInfoModel refFeed = cmsBtFeedInfoDao.
+                CmsBtFeedInfoModel refFeed = cmsBtFeedInfoDao.selectProductByCode(product.getChannelId(), fields.getCode());
+                if (refFeed != null && refFeed.getModel().equals(fields.getModel())) {
+                    // category
+                    feed.setCategory(refFeed.getCategory());
+                    // attribute.amazonBrowseTree、attribute.abstract、attribute.accessory、attribute.orderlimitcount
+                    feed.setAttribute(refFeed.getAttribute());
+                }
 
                 feedInfoModels.add(feed);
             }

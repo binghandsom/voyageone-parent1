@@ -33,11 +33,16 @@ define([
                 if (res.data) {
                     let platforms = res.data;
                     angular.forEach(platforms, function (cartOjb) {
-                        _.extend(cartOjb, {cartId:parseInt(cartOjb.value), day:0,checked:true});
+                        let cartId = parseInt(cartOjb.value);
+                        let day = 0;
+                        if (cartId == 5) {
+                            day = 45;
+                        }
+                        _.extend(cartOjb, {cartId:parseInt(cartOjb.value), day:day,checked:true});
                     });
                     // 平台过滤
                     self.platforms = _.filter(platforms, cartObj => {
-                        return (cartObj.cartId < 20 && cartObj.lang_id) == "en" || (cartObj.cartId >= 20 && cartObj.lang_id == "cn");
+                        return cartObj.cartId != 0 && ((cartObj.cartId < 20 && cartObj.lang_id) == "en" || (cartObj.cartId >= 20 && cartObj.lang_id == "cn"));
                     })
                 }
             });

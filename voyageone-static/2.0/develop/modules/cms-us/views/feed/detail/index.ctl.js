@@ -90,9 +90,24 @@ define([
                 // 计算urlKey
                 self.generateUrlKey();
             }
-            // 将sku->weightOrg转换成float
+            // 将sku->weightOrg转换成float,如果各价格为空默认设置成0
             angular.forEach(self.feed.skus, function (sku) {
                 sku.weightOrg = parseFloat(sku.weightOrg);
+                if (!sku.priceNet) {
+                    sku.priceNet = 0;
+                }
+                if (!sku.priceClientRetail) {
+                    sku.priceClientRetail = 0;
+                }
+                if (!sku.priceMsrp) {
+                    sku.priceMsrp = 0;
+                }
+                if (!sku.priceCurrent) {
+                    sku.priceCurrent = 0;
+                }
+                if (!sku.isSale) {
+                    sku.isSale = 1;
+                }
             });
             // 处理Abstract和accessory
             if (!!self.feed.attribute.abstract && _.size(self.feed.attribute.abstract) > 0) {
@@ -127,7 +142,7 @@ define([
         }
 
         // 统一设置SKU属性
-        setSkuProperty(sku, property) {
+        setSkuProperty(sku, property,priceFlag) {
             let self = this;
             if (!sku) {
                 angular.forEach(self.feed.skus, function (item) {
@@ -137,7 +152,9 @@ define([
             } else {
                 sku['priceClientRetail'] = sku['priceNet'];
             }
-            self.setSkuCNPrice();
+            if (priceFlag == "1") {
+                self.setSkuCNPrice();
+            }
         }
 
         // 同步计算中国相关价格
@@ -159,6 +176,8 @@ define([
                         priceClientMsrpMax: res.data.priceClientMsrpMax
                     };
                     _.extend(self.feed, priceScope);
+
+                    self.notify.success('update success!');
                 }
             });
         }
@@ -345,7 +364,7 @@ define([
         // Copy其他code部分属性
         copyAttr(feed) {
             let self = this;
-
+            // feed.xx属性复制
             let attribute = {
                 brand: feed.brand,
                 productType: feed.productType,
@@ -358,8 +377,15 @@ define([
 
             };
             _.extend(self.feed, attribute);
-
-            self.notify.success('copy success!');
+            // feed.attribute.xx属性复制
+            attribute = {
+                amazonBrowseTree:feed.attribute.amazonBrowseTree,
+                abstract:feed.attribute.abstract,
+                accessory:feed.attribute.accessory,
+                orderlimitcount:feed.attribute.orderlimitcount
+            };
+            _.extend(self.feed.attribute, attribute);
+            this.filterFeed();
         }
 
         /**
@@ -369,7 +395,7 @@ define([
             let self = this;
 
             self.popups.openAmazonCategory().then(res => {
-                self.feed.attribute.amazonBrowseTree = res.catPath;
+                self.feed.amazonBrowseTree = res.catPath;
             });
         }
 
