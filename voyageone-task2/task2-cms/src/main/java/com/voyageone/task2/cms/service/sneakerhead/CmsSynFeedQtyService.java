@@ -38,7 +38,7 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
         final String channelId = ChannelConfigEnums.Channel.SN.getId();
 
 
-        String subChannlId = "";
+       // String subChannlId = "";
 
         //封装查询条件
         Criteria criteria = new Criteria();
@@ -68,7 +68,7 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
             //调用wms远程接口,获取库存详情
             GetStoreStockDetailRequest2 getStoreStockDetailRequest2 = new GetStoreStockDetailRequest2();
             getStoreStockDetailRequest2.setChannelId(channelId);
-            getStoreStockDetailRequest2.setSubChannelId(subChannlId);
+            getStoreStockDetailRequest2.setSubChannelId(channelId);
             getStoreStockDetailRequest2.setSkuList(skuList);
             //获取到当前feed对应的库存信息
             GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
