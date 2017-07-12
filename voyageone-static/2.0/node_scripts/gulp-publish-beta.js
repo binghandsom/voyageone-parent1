@@ -28,7 +28,7 @@ gulp.task(tasks.beta.statics, function () {
         .pipe(gulp.dest(publish.static.img.dist))
         .pipe(gulp.dest(publish.release.static.img));
 
-    var fonts = glob.sync(publish.static.fonts.src);
+    let fonts = glob.sync(publish.static.fonts.src);
     gulp.src(fonts)
         .pipe(gulp.dest(publish.static.fonts.dist))
         .pipe(gulp.dest(publish.release.static.fonts));

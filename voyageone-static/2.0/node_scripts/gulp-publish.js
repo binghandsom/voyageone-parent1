@@ -2,26 +2,27 @@ require('./gulp-publish-beta');
 //static  server for es6
 require('./server');
 
-var fs = require('fs');
-var glob = require('glob');
-var gulp = require('gulp');
-var debug = require('gulp-debug');
-var ngAnnotate = require('gulp-ng-annotate');
-var minifyCss = require('gulp-minify-css');
-var minifyHtml = require('gulp-minify-html');
-var uglify = require('gulp-uglify');
-var replace = require('gulp-replace');
-var rename = require('gulp-rename');
-var concat = require('gulp-concat');
-var header = require('gulp-header');
+const fs = require('fs');
+const glob = require('glob');
+const gulp = require('gulp');
+const debug = require('gulp-debug');
+const ngAnnotate = require('gulp-ng-annotate');
+const minifyCss = require('gulp-minify-css');
+const minifyHtml = require('gulp-minify-html');
+const uglify = require('gulp-uglify');
+const replace = require('gulp-replace');
+const rename = require('gulp-rename');
+const concat = require('gulp-concat');
+const header = require('gulp-header');
+const babel = require('gulp-babel');
 
-var vars = require('./vars');
-var requireMin = require('./gulp-require-min');
-var publish = vars.publish;
-var build = vars.build;
-var tasks = vars.tasks;
+const vars = require('./vars');
+const requireMin = require('./gulp-require-min');
+const publish = vars.publish;
+const build = vars.build;
+const tasks = vars.tasks;
 
-var searchMin = [
+const searchMin = [
     'develop',
     'publish/release/' + vars.versions.publish
 ];
@@ -32,7 +33,7 @@ gulp.task(tasks.publish.statics, function () {
     gulp.src(publish.static.img.src)
         .pipe(gulp.dest(publish.release.static.img));
 
-    var fonts = glob.sync(publish.static.fonts.src);
+    let fonts = glob.sync(publish.static.fonts.src);
     gulp.src(fonts)
         .pipe(gulp.dest(publish.release.static.fonts));
 
@@ -51,6 +52,7 @@ gulp.task(tasks.publish.statics, function () {
 gulp.task(tasks.publish.angular, [tasks.beta.angular], function () {
     // 压缩 js, 并重新追加 min 后缀
     gulp.src(publish.release.components + '/' + build.common.angular.concat)
+        .pipe(babel())
         .pipe(uglify())
         .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest(publish.release.components));
@@ -59,8 +61,10 @@ gulp.task(tasks.publish.angular, [tasks.beta.angular], function () {
 // release voyageone.com.js.
 gulp.task(tasks.publish.com, [tasks.beta.com], function () {
     gulp.src(publish.release.components + '/' + build.common.native.concat)
+        .pipe(babel())
         .pipe(uglify())
         .pipe(rename({suffix: '.min'}))
+
         .pipe(gulp.dest(publish.release.components));
 });
 
@@ -70,6 +74,7 @@ gulp.task(tasks.publish.modules, function () {
     // build login.app and channel.app
     gulp.src(publish.loginAndChannel.js)
         .pipe(ngAnnotate())
+        .pipe(babel())
         .pipe(uglify())
         .pipe(rename({suffix: ".min"}))
         .pipe(gulp.dest(publish.release.loginAndChannel));
@@ -84,6 +89,7 @@ gulp.task(tasks.publish.modules, function () {
         .pipe(replace('version=', 'v='+ Date.parse(new Date())))
         .pipe(requireMin(searchMin))
         .pipe(ngAnnotate())
+        .pipe(babel())
         .pipe(uglify())
         .pipe(gulp.dest(publish.release.modules));
 
