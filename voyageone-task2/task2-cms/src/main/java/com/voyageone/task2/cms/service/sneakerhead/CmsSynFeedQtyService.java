@@ -1,7 +1,9 @@
 package com.voyageone.task2.cms.service.sneakerhead;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -33,7 +35,8 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        String channlId = "001";
+        final String channelId = ChannelConfigEnums.Channel.SN.getId();
+
 
         String subChannlId = "";
 
@@ -42,7 +45,7 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
         String[] status = new String[]{"New","Pending","Ready"};
         criteria.and("status").in(status);
         JongoQuery queryObject = new JongoQuery(criteria);
-        Iterator<CmsBtFeedInfoModel> feeds = feedInfoService.getCursor(channlId, queryObject);
+        Iterator<CmsBtFeedInfoModel> feeds = feedInfoService.getCursor(channelId, queryObject);
 
         //封装skulist
         int index = 0;
@@ -64,7 +67,7 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
             }
             //调用wms远程接口,获取库存详情
             GetStoreStockDetailRequest2 getStoreStockDetailRequest2 = new GetStoreStockDetailRequest2();
-            getStoreStockDetailRequest2.setChannelId(channlId);
+            getStoreStockDetailRequest2.setChannelId(channelId);
             getStoreStockDetailRequest2.setSubChannelId(subChannlId);
             getStoreStockDetailRequest2.setSkuList(skuList);
             //获取到当前feed对应的库存信息
@@ -74,9 +77,8 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
             List<GetStoreStockDetailData2.Temp> stocks = execute.getData().getStocks();
             //获取每个sku的总库存,并进行更新
             int skuNum = 0;
-            for (int i = 0;i<stocks.size();i++){
-                GetStoreStockDetailData2.Temp temp = stocks.get(i);
-                Integer skuTotal = temp.getBase().getTotal().get(0);
+            for (GetStoreStockDetailData2.Temp value:stocks) {
+                Integer skuTotal = value.getBase().getTotal().get(0);
                 //更新对应的sku库存
                 CmsBtFeedInfoModel_Sku cmsBtFeedInfoModel_sku = skus.get(skuNum);
                 cmsBtFeedInfoModel_sku.setQty(skuTotal);
@@ -84,14 +86,12 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
                 skuNum++;
                 totalQty += skuTotal;
             }
-            //CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(channlId, cmsBtProductModel.getCode());
             cmsBtProductModel.setSkus(skus);
             //更新feed对应的总库存
             cmsBtProductModel.setQty(totalQty);
             feedInfoService.updateFeedInfo(cmsBtProductModel);
             index++;
         }
-
 
 
     }
