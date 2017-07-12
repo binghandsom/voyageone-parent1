@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.feed;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
@@ -564,5 +565,9 @@ public class FeedInfoService extends BaseService {
         }
         updateFeedInfo(cmsBtFeedInfo);
         return true;
+    }
+
+    public WriteResult updateMulti(JongoUpdate updObj, String channelId) {
+        return cmsBtFeedInfoDao.updateMulti(updObj, channelId);
     }
 }

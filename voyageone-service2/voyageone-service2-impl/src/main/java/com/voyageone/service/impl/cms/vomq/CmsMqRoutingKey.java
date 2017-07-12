@@ -141,6 +141,10 @@ public class CmsMqRoutingKey {
     // 高级检索批量修改商品标题
     public static final String CMS_BATCH_UPDATE_PRODUCT_TITLE = "VOCmsBatchUpdateProductTitleMQJobQueue";
 
+    // 同步LastReceiveTime
+    public static final String CMS_SYN_LAST_RECEIVE_TIME = "VoCmsSynLastReceiveTimeMQJobQueue";
+
+    // wms new item
     public static final String CMS_USA_PRODUCT_ADD_UPDATE = "VOCmsUsaProductAddUpdateMQJobQueue";
 
 

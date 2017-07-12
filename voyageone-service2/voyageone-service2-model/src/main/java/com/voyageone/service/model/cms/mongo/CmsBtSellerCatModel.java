@@ -6,6 +6,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Map;
 
 @Document
 public class CmsBtSellerCatModel extends BaseMongoModel {
@@ -20,6 +21,7 @@ public class CmsBtSellerCatModel extends BaseMongoModel {
     private int cartId;
     private String isSpecial;
     private String urlKey;
+    private Map<String, Object> mapping;
 
     private List<CmsBtSellerCatModel> children;
 
@@ -124,5 +126,13 @@ public class CmsBtSellerCatModel extends BaseMongoModel {
 
     public void setUrlKey(String urlKey) {
         this.urlKey = urlKey;
+    }
+
+    public Map<String, Object> getMapping() {
+        return mapping;
+    }
+
+    public void setMapping(Map<String, Object> mapping) {
+        this.mapping = mapping;
     }
 }
