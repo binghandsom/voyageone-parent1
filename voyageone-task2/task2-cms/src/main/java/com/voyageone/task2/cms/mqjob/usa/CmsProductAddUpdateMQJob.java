@@ -67,7 +67,6 @@ public class CmsProductAddUpdateMQJob extends TBaseMQCmsService<CmsProductAddUpd
         cmsBtFeedInfoModel.setChannelId(messageBody.getChannelId());
         cmsBtFeedInfoModel.setCreater(messageBody.getSender());
         cmsBtFeedInfoModel.setModifier(messageBody.getSender());
-        cmsBtFeedInfoModel.setLastReceivedOn(DateTimeUtil.getNow());
         cmsBtFeedInfoModel.setCode(messageBody.getCode());
         cmsBtFeedInfoModel.setName(messageBody.getName());
         cmsBtFeedInfoModel.setColor(messageBody.getColor());
