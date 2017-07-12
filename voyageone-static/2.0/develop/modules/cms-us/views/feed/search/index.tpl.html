@@ -11,22 +11,22 @@
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title">status</label>
+                                        <label class="col-md-4 control-label query-title">Status</label>
                                         <div class="col-md-6 checkbox" >
                                             <label>
-                                                <input type="checkbox" ng-model="ctrl.status[0]">&nbsp;&nbsp;new
+                                                <input type="checkbox" ng-model="ctrl.status[0]">&nbsp;&nbsp;New
                                             </label>&emsp;
                                             <label ng-show="ctrl.flag==2||ctrl.flag==3">
-                                                <input type="checkbox" ng-model="ctrl.status[1]" >&nbsp;&nbsp;pending
+                                                <input type="checkbox" ng-model="ctrl.status[1]" >&nbsp;&nbsp;Pending
                                             </label>&emsp;
                                             <label ng-show="ctrl.flag==3">
-                                                <input type="checkbox" ng-model="ctrl.status[2]" >&nbsp;&nbsp;ready
+                                                <input type="checkbox" ng-model="ctrl.status[2]" >&nbsp;&nbsp;Ready
                                             </label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-md-4 control-label query-title">sku/barcode/code/model</label>
+                                    <label class="col-md-4 control-label query-title">Sku/Barcode/Code/Model</label>
                                     <div class="col-md-6">
                                         <textarea class="form-control no-resize" ng-model="ctrl.paraMap.searchContent"></textarea>
                                     </div>
@@ -37,7 +37,7 @@
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title">Last Recevied Time</label>
+                                        <label class="col-md-4 control-label query-title">Last Recevied</label>
                                         <div class="col-md-6">
                                             <div class="row">
                                                 <div class="col-md-5">
@@ -99,21 +99,21 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title">name</label>
+                                        <label class="col-md-4 control-label query-title">Name</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.paraMap.name">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" ng-hide="ctrl.flag==1">
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title">Approve Pricing</label>
-                                        <div class="col-md-6 checkbox" ng-hide="ctrl.flag==1">
+                                        <div class="col-md-6 checkbox" >
                                             <label>
-                                                <input type="checkbox"  ng-model="ctrl.approvePricing[0]">&nbsp;&nbsp;yes
+                                                <input type="checkbox"  ng-model="ctrl.approvePricing[0]">&nbsp;&nbsp;Yes
                                             </label>&emsp;
                                             <label>
-                                                <input type="checkbox"  ng-model="ctrl.approvePricing[1]">&nbsp;&nbsp;no
+                                                <input type="checkbox"  ng-model="ctrl.approvePricing[1]">&nbsp;&nbsp;No
                                             </label>&emsp;
                                         </div>
                                     </div>
@@ -123,8 +123,8 @@
                     </div>
                     <div class="row">
                         <div class="col-md-4 col-md-offset-4 text-center">
-                            <button type="button" class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-trash" ></i>&nbsp;&nbsp;clear</button>&emsp;
-                            <button type="button" class="btn btn-vo" ng-click="ctrl.getList()"><i class="fa fa-search"></i>&nbsp;&nbsp;search</button>
+                            <button type="button" class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-trash" ></i>&nbsp;&nbsp;CLEAR</button>&emsp;
+                            <button type="button" class="btn btn-vo" ng-click="ctrl.getList()"><i class="fa fa-search"></i>&nbsp;&nbsp;SEARCH</button>
                         </div>
                     </div>
                 </div>
@@ -138,13 +138,13 @@
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="checkbox">
+                            <div class="checkbox" ng-show="ctrl.flag == 3">
                                 <label>
                                     <input type="checkbox" ng-model="ctrl.totalItems"> Select All Items By Query Terms
                                 </label>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-6" ng-show="ctrl.flag == 3">
                             <div class="btn-group pull-right" style="margin-top: 7px; margin-right: 17px;">
                                 <button type="button" class="btn btn-default btn-pop" ng-click="ctrl.popBatchApprove()"><i class="fa fa-gear"></i>&nbsp;Bulk Approve</button>
                             </div>
@@ -157,8 +157,8 @@
                     <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
                         <thead>
                             <tr>
-                                <th class="text-center">
-                                    <input type="checkbox"  ng-model="ctrl.isAll" ng-change="ctrl.selectAll()">
+                                <th class="text-center" ng-show="ctrl.flag == 3">
+                                    <input type="checkbox"  ng-model="ctrl.isAll" ng-change="ctrl.selectAll()" >
                                 </th>
                                 <th class="text-center">IMG</th>
                                 <th class="text-left">Code</th>
@@ -187,6 +187,12 @@
                                             ng-click="ctrl.columnOrder('priceClientRetail')"><i class="fa fa-{{ctrl.getArrowName('priceClientRetail')}}"></i></button>
                                 </th>
                                 <th class="text-center" style="min-width: 120px">
+                                    Created On
+                                    <button class="opacityBtn"
+                                            ng-if="ctrl.feeds.length"
+                                            ng-click="ctrl.columnOrder('created')"><i class="fa fa-{{ctrl.getArrowName('lastReceivedOn')}}"></i></button>
+                                </th>
+                                <th class="text-center" style="min-width: 120px">
                                     Last Received
                                     <button class="opacityBtn"
                                             ng-if="ctrl.feeds.length"
@@ -198,7 +204,7 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="feed in ctrl.feeds">
-                                <td class="text-center">
+                                <td class="text-center" ng-show="ctrl.flag == 3">
                                     <input type="checkbox" ng-model="feed.check" ng-if="feed.approvePricing == '1' && feed.status == 'Ready'">
                                 </td>
                                 <td class="text-center">
@@ -238,6 +244,7 @@
                                 <td class="text-right" ng-if="feed.priceClientRetailMin != feed.priceClientRetailMax" ng-hide="ctrl.flag == 1">
                                     {{feed.priceClientRetailMin}}~{{feed.priceClientRetailMax}}
                                 </td>
+                                <td class="text-center">{{feed.created}}</td>
                                 <td class="text-center">{{feed.lastReceivedOn}}</td>
                                 <td class="text-center">{{feed.modifier}}</td>
                                 <td class="text-center"  ng-show="ctrl.flag == 3">

@@ -198,9 +198,6 @@ public class UsaFeedInfoService extends BaseService {
         if (ListUtils.notNull((List<String>) searchValue.get("status"))) {
             List<String> status = (List<String>) searchValue.get("status");
             criteria = criteria.and("status").in(status);
-        }else{
-            criteria = criteria.and("status").in(Arrays.asList(CmsConstants.UsaFeedStatus.New.toString(),
-                    CmsConstants.UsaFeedStatus.Pending.toString(),CmsConstants.UsaFeedStatus.Ready.toString(),CmsConstants.UsaFeedStatus.Approved.toString()));
         }
         //设置开始和截止的时间
         if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null) {
