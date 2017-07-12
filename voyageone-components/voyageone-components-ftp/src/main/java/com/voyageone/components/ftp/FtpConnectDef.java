@@ -13,6 +13,7 @@ import com.voyageone.components.ftp.bean.FtpConnectBean;
  * @version 2.0.0
  * @since 2.0.0
  */
+@SuppressWarnings({"Duplicates", "WeakerAccess"})
 public class FtpConnectDef {
 
     /**
@@ -96,6 +97,25 @@ public class FtpConnectDef {
         bean.setPassword(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_password));
 
         String strFileCoding = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_file_coding);
+        if (!StringUtils.isEmpty(strFileCoding)) {
+            bean.setCoding(strFileCoding);
+        }
+        return bean;
+    }
+
+    private final static String IS_MID_FTP = "IS_MID_FTP";
+
+    public static FtpConnectBean getImageServerMidFtpBean() {
+        FtpConnectBean bean = new FtpConnectBean();
+        bean.setHostname(Codes.getCodeName(IS_MID_FTP, "DOMAIN"));
+        String strPort = Codes.getCodeName(IS_MID_FTP, "Port");
+        if (!StringUtils.isEmpty(strPort)) {
+            bean.setPort(Integer.parseInt(strPort));
+        }
+        bean.setUsername(Codes.getCodeName(IS_MID_FTP, "UserName"));
+        bean.setPassword(Codes.getCodeName(IS_MID_FTP, "Password"));
+
+        String strFileCoding = Codes.getCodeName(IS_MID_FTP, "FileCoding");
         if (!StringUtils.isEmpty(strFileCoding)) {
             bean.setCoding(strFileCoding);
         }
