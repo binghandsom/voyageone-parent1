@@ -6,7 +6,7 @@ define([
 ], function (cms) {
 
     cms.controller('feedDetailController', class FeedDetailController {
-        constructor(popups, $routeParams, itemDetailService, alert,$location,notify,confirm,$rootScope,$sessionStorage) {
+        constructor(popups, $routeParams, itemDetailService, alert,$location,notify,confirm,$sessionStorage) {
             this.popups = popups;
             this.itemDetailService = itemDetailService;
             this.alert = alert;
