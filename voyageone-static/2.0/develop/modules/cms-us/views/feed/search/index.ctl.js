@@ -266,6 +266,10 @@ define([
             self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
         }
 
+        test(){
+            alert('a');
+        }
+
     });
 
 });
