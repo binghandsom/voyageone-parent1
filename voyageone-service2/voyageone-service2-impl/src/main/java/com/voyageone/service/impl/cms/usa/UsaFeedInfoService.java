@@ -369,6 +369,10 @@ public class UsaFeedInfoService extends BaseService {
                     }
                     feed.setImage(feedImages);
                 }
+
+                // 部分Code级别属性,Product没有,再去查询同Code Feed,Copy属性
+//                CmsBtFeedInfoModel refFeed = cmsBtFeedInfoDao.
+
                 feedInfoModels.add(feed);
             }
         }

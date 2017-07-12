@@ -37,7 +37,7 @@
                                             <div class="col-xs-6 col-md-2" ng-repeat="item in ctrl.topFeedList">
                                                 <a href="javascript:void(0);" class="thumbnail" ng-class="{'active':item.status=='Approved'}"
                                                    style="position: relative">
-                                                    <img alt="{{ctrl.feed.code}}" class="thumb-sm-search" src="{{item.image[0]}}">
+                                                    <img alt="{{item.code}}" class="thumb-sm-search" src="{{item.image[0]}}">
                                                     <button type="button" class="btn btn-primary pos-absolute-right" ng-click="ctrl.copyAttr(item)">
                                                         <i class="fa fa-copy"></i>
                                                     </button>
@@ -480,8 +480,8 @@
                                         </td>-->
                                     </tr>
                                     <tr>
-                                        <th class="text-left">size</th>
-                                        <th class="text-left">sku</th>
+                                        <th class="text-left">Size</th>
+                                        <th class="text-left">Sku</th>
                                         <th class="text-left">Barcode</th>
                                         <th class="text-right">Weight</th>
                                         <th class="text-center">Weight Unit</th>
