@@ -70,7 +70,7 @@
                                     <div class="row">
                                         <div class="col-md-4 text-right vo_reqfield">
                                             <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory()">
-                                                <i class="fa fa-arrow-right"></i>&nbsp;Sneakerhead Primary<br> Category
+                                                <i class="fa fa-arrow-right"></i>&nbsp;SN Primary Category
                                             </button>
                                         </div>
                                         <div class="col-md-6">
@@ -90,12 +90,12 @@
                                     <div class="row">
                                         <div class="col-md-4 text-right">
                                             <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory()">
-                                                <i class="fa fa-arrow-right"></i>&nbsp;Sneakerhead Other<br> Category
+                                                <i class="fa fa-arrow-right"></i>&nbsp;SN Other Category
                                             </button>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" title="{{ctrl.feed.categories}}"
-                                                   name="categories" ng-model="ctrl.feed.categories" readonly>
+                                            <select name="categories" chosen multiple width="'100%'"
+                                                    ng-model="ctrl.feed.categories"></select>
                                         </div>
                                     </div>
                                 </div>
