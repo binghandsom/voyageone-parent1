@@ -92,13 +92,13 @@ public class UsaFeedInfoService extends BaseService {
             try {
                 sku.setPriceMsrp(calculatePrice(formulaMsrp, sku));
                 sku.setPriceCurrent(calculatePrice(formulaRetail, sku));
+                priceClientRetailMin = Double.min(priceClientRetailMin, sku.getPriceClientRetail());
+                priceClientRetailMax = Double.max(priceClientRetailMax, sku.getPriceClientRetail());
+                priceClientMsrpMin = Double.min(priceClientMsrpMin, sku.getPriceClientMsrp());
+                priceClientMsrpMax = Double.max(priceClientMsrpMax, sku.getPriceClientMsrp());
             }catch (Exception e){
 
             }
-            priceClientRetailMin = Double.min(priceClientRetailMin, sku.getPriceClientRetail());
-            priceClientRetailMax = Double.max(priceClientRetailMax, sku.getPriceClientRetail());
-            priceClientMsrpMin = Double.min(priceClientMsrpMin, sku.getPriceClientMsrp());
-            priceClientMsrpMax = Double.max(priceClientMsrpMax, sku.getPriceClientMsrp());
         }
         cmsBtFeedInfoModel.setPriceClientMsrpMax(priceClientMsrpMax);
         cmsBtFeedInfoModel.setPriceClientRetailMax(priceClientRetailMax);

@@ -176,6 +176,8 @@ define([
                         priceClientMsrpMax: res.data.priceClientMsrpMax
                     };
                     _.extend(self.feed, priceScope);
+
+                    self.notify.success('update success!');
                 }
             });
         }

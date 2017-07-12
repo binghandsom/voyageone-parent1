@@ -330,7 +330,7 @@
                                                     <div class="col-md-12 form-horizontal">
                                                         <div class="form-group">
                                                             <div class="row">
-                                                                <label class="col-md-6 query-title">&nbsp;&nbsp;picture num</label>
+                                                                <label class="col-md-6 query-title">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
                                                                     <input type="text" class="form-control" ng-model="ctrl.feed.imageNum" ng-keyup="ctrl.initImage(ctrl.feed.imageNum)">
                                                                 </div>
@@ -505,10 +505,10 @@
                                             </select>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control" ng-model="sku.priceClientMsrp" ng-change="ctrl.setSkuProperty(sku,'priceClientMsrp')"/>
+                                            <input type="number" class="form-control" ng-model="sku.priceClientMsrp" ng-enter="ctrl.setSkuProperty(sku,'priceClientMsrp')"/>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control" ng-model="sku.priceNet" ng-change="ctrl.setSkuProperty(sku,'priceNet')"/>
+                                            <input type="number" class="form-control" ng-model="sku.priceNet" ng-enter="ctrl.setSkuProperty(sku,'priceNet')"/>
                                         </td>
                                         <td class="text-right" ng-if="ctrl.auth!=1">
                                             <input type="number" class="form-control" ng-model="sku.priceMsrp" readonly/>
