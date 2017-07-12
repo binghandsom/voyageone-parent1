@@ -294,7 +294,7 @@ define([
                     $scope.vm.qtyList = res.data.qtyList;
                     $scope.vm.productPageOption.total = res.data.productListTotal;
                     $scope.vm.productSelList = res.data.productSelList;
-                    for (idx in res.data.freeTagsList) {
+                    for (var idx in res.data.freeTagsList) {
                         var prodObj = $scope.vm.productList[idx];
                         prodObj._freeTagsInfo = res.data.freeTagsList[idx];
                     }
@@ -448,7 +448,7 @@ define([
                         $scope.vm.productPageOption.total = res.data.productListTotal;
                         $scope.vm.productSelList = res.data.productSelList;
                         $scope.vm._selall = false;
-                        for (idx in res.data.freeTagsList) {
+                        for (var idx in res.data.freeTagsList) {
                             var prodObj = $scope.vm.productList[idx];
                             prodObj._freeTagsInfo = res.data.freeTagsList[idx];
                         }
