@@ -72,60 +72,89 @@ public class UsaCmsDataAmountJobService extends BaseCronTaskService {
         aggregateList.add(new JongoAggregate("{$match:{\"channelId\":#,\"status\":{$in:#}}}", channelId, feedStatusList));
         aggregateList.add(new JongoAggregate("{$group:{_id:\"$status\",total:{$sum:1}}}"));
         List<Map<String, Object>> feedItemMap = cmsBtFeedInfoDao.aggregateToMap(channelId, aggregateList);
+        List<CmsConstants.UsaFeedStatus> existFeedStatusList = new ArrayList<>();
         for (Map<String, Object> map : feedItemMap) {
             String status = (String) map.get("_id");
             Integer total = (Integer) map.get("total");
 
             CmsConstants.UsaFeedStatus feedStatus = CmsConstants.UsaFeedStatus.valueOf(status);
-            EnumFeedSum feedSum = null;
-            switch (feedStatus) {
-                case New:
-                    feedSum = EnumFeedSum.USA_CMS_FEED_STATUS_NEW;
-                    break;
-                case Pending:
-                    feedSum = EnumFeedSum.USA_CMS_FEED_STATUS_PENDING;
-                    break;
-                case Ready:
-                    feedSum = EnumFeedSum.USA_CMS_FEED_STATUS_READY;
-                    break;
-                default:
-                    break;
-            }
+            EnumFeedSum feedSum = this.getEnumFeedSum(feedStatus);
 
             if (feedSum == null) continue;
+            existFeedStatusList.add(feedStatus);
 
             // insert or update
-            CmsBtDataAmountModel dataAmountModel = new CmsBtDataAmountModel();
-            CmsBtDataAmountModel queryModel = new CmsBtDataAmountModel();
-            queryModel.setChannelId(channelId);
-            queryModel.setAmountName(feedSum.getAmountName());
-            CmsBtDataAmountModel targetModel = cmsBtDataAmountDao.selectOne(queryModel);
-            if (targetModel == null) {
-                dataAmountModel.setChannelId(channelId);
-                dataAmountModel.setAmountName(feedSum.getAmountName());
-                dataAmountModel.setAmountVal(String.valueOf(total));
-                dataAmountModel.setComment(feedSum.getComment());
-                dataAmountModel.setCartId(0);
-                dataAmountModel.setDataAmountTypeId(EnumDataAmountType.UsaFeedSum.getId());
-                dataAmountModel.setLinkUrl(feedSum.getLinkUrl());
-                dataAmountModel.setLinkParameter(feedSum.getLinkParameter());
-                dataAmountModel.setCreated(new Date());
-                dataAmountModel.setCreater(getTaskName());
-                cmsBtDataAmountDao.insert(dataAmountModel);
-            } else {
-                dataAmountModel.setId(targetModel.getId());
-                dataAmountModel.setAmountVal(String.valueOf(total));
-                dataAmountModel.setComment(feedSum.getComment());
-                dataAmountModel.setLinkUrl(feedSum.getLinkUrl());
-                dataAmountModel.setLinkParameter(feedSum.getLinkParameter());
-                dataAmountModel.setModified(new Date());
-                dataAmountModel.setModifier(getTaskName());
-                cmsBtDataAmountDao.update(dataAmountModel);
-            }
+            this.saveOrUpdateDataAmount(channelId, feedSum, String.valueOf(total));
         }
 
+        // MongoDB中没有对应状态的Feed,也要补上对应记录
+        feedStatusList.removeAll(existFeedStatusList);
+        if (!feedStatusList.isEmpty()) {
+            for (CmsConstants.UsaFeedStatus feedStatus : feedStatusList) {
+                EnumFeedSum feedSum = this.getEnumFeedSum(feedStatus);
+                if (feedSum == null) continue;
+                // insert or update
+                this.saveOrUpdateDataAmount(channelId, feedSum, "0");
+            }
+        }
 
         $info("UsaCmsDataAmountJob:   end");
 
     }
+
+    private EnumFeedSum getEnumFeedSum(CmsConstants.UsaFeedStatus feedStatus) {
+        EnumFeedSum feedSum = null;
+        switch (feedStatus) {
+            case New:
+                feedSum = EnumFeedSum.USA_CMS_FEED_STATUS_NEW;
+                break;
+            case Pending:
+                feedSum = EnumFeedSum.USA_CMS_FEED_STATUS_PENDING;
+                break;
+            case Ready:
+                feedSum = EnumFeedSum.USA_CMS_FEED_STATUS_READY;
+                break;
+            default:
+                break;
+        }
+        return feedSum;
+    }
+
+    /**
+     * Insert or Update Feed统计记录
+     *
+     * @param channelId 渠道ID
+     * @param feedSum   分类
+     * @param amountVal 统计值
+     */
+    private void saveOrUpdateDataAmount(String channelId, EnumFeedSum feedSum, String amountVal) {
+        CmsBtDataAmountModel dataAmountModel = new CmsBtDataAmountModel();
+        CmsBtDataAmountModel queryModel = new CmsBtDataAmountModel();
+        queryModel.setChannelId(channelId);
+        queryModel.setAmountName(feedSum.getAmountName());
+        CmsBtDataAmountModel targetModel = cmsBtDataAmountDao.selectOne(queryModel);
+        if (targetModel == null) {
+            dataAmountModel.setChannelId(channelId);
+            dataAmountModel.setAmountName(feedSum.getAmountName());
+            dataAmountModel.setAmountVal(amountVal);
+            dataAmountModel.setComment(feedSum.getComment());
+            dataAmountModel.setCartId(0);
+            dataAmountModel.setDataAmountTypeId(EnumDataAmountType.UsaFeedSum.getId());
+            dataAmountModel.setLinkUrl(feedSum.getLinkUrl());
+            dataAmountModel.setLinkParameter(feedSum.getLinkParameter());
+            dataAmountModel.setCreated(new Date());
+            dataAmountModel.setCreater(getTaskName());
+            cmsBtDataAmountDao.insert(dataAmountModel);
+        } else {
+            dataAmountModel.setId(targetModel.getId());
+            dataAmountModel.setAmountVal(amountVal);
+            dataAmountModel.setComment(feedSum.getComment());
+            dataAmountModel.setLinkUrl(feedSum.getLinkUrl());
+            dataAmountModel.setLinkParameter(feedSum.getLinkParameter());
+            dataAmountModel.setModified(new Date());
+            dataAmountModel.setModifier(getTaskName());
+            cmsBtDataAmountDao.update(dataAmountModel);
+        }
+    }
+
 }
