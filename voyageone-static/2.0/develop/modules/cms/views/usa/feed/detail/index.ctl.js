@@ -143,33 +143,33 @@ define([
             }
 
             // 处理特殊属性
-            if (!!self.feed.specialAttribute.freeShipping && _.size(self.feed.specialAttribute.freeShipping) > 0) {
-                _.extend(self.feed, {freeShipping: self.feed.specialAttribute.freeShipping[0]});
+            if (!!self.feed.attribute.freeShipping && _.size(self.feed.attribute.freeShipping) > 0) {
+                _.extend(self.feed, {freeShipping: self.feed.attribute.freeShipping[0]});
             } else {
                 _.extend(self.feed, {freeShipping: "1"});
             }
-            if (!!self.feed.specialAttribute.rewardEligible && _.size(self.feed.specialAttribute.rewardEligible) > 0) {
-                _.extend(self.feed, {rewardEligible: self.feed.specialAttribute.rewardEligible[0]});
+            if (!!self.feed.attribute.rewardEligible && _.size(self.feed.attribute.rewardEligible) > 0) {
+                _.extend(self.feed, {rewardEligible: self.feed.attribute.rewardEligible[0]});
             } else {
                 _.extend(self.feed, {rewardEligible: "1"});
             }
-            if (!!self.feed.specialAttribute.discountEligible && _.size(self.feed.specialAttribute.discountEligible) > 0) {
-                _.extend(self.feed, {discountEligible: self.feed.specialAttribute.discountEligible[0]});
+            if (!!self.feed.attribute.discountEligible && _.size(self.feed.attribute.discountEligible) > 0) {
+                _.extend(self.feed, {discountEligible: self.feed.attribute.discountEligible[0]});
             } else {
                 _.extend(self.feed, {discountEligible: "1"});
             }
-            if (!!self.feed.specialAttribute.snPlus && _.size(self.feed.specialAttribute.snPlus) > 0) {
-                _.extend(self.feed, {snPlus: self.feed.specialAttribute.snPlus[0]});
+            if (!!self.feed.attribute.sneakerheadPlus && _.size(self.feed.attribute.sneakerheadPlus) > 0) {
+                _.extend(self.feed, {sneakerheadPlus: self.feed.sneakerheadPlus.sneakerheadPlus[0]});
             } else {
-                _.extend(self.feed, {snPlus: "1"});
+                _.extend(self.feed, {sneakerheadPlus: "1"});
             }
-            if (!!self.feed.specialAttribute.newArrival && _.size(self.feed.specialAttribute.newArrival) > 0) {
-                _.extend(self.feed, {newArrival: self.feed.specialAttribute.newArrival[0]});
+            if (!!self.feed.attribute.newArrival && _.size(self.feed.attribute.newArrival) > 0) {
+                _.extend(self.feed, {newArrival: self.feed.attribute.newArrival[0]});
             } else {
                 _.extend(self.feed, {newArrival: "1"});
             }
-            if (!!self.feed.specialAttribute.taxable && _.size(self.feed.specialAttribute.taxable) > 0) {
-                _.extend(self.feed, {taxable: self.feed.specialAttribute.taxable[0]});
+            if (!!self.feed.attribute.taxable && _.size(self.feed.attribute.taxable) > 0) {
+                _.extend(self.feed, {taxable: self.feed.attribute.taxable[0]});
             } else {
                 _.extend(self.feed, {taxable: "1"});
             }
@@ -296,12 +296,12 @@ define([
             self.feed.attribute.seoKeywords = [self.feed.seoKeywords];
 
             // 处理特殊属性
-            self.feed.specialAttribute.freeShipping = [self.feed.freeShipping];
-            self.feed.specialAttribute.rewardEligible = [self.feed.rewardEligible];
-            self.feed.specialAttribute.discountEligible = [self.feed.discountEligible];
-            self.feed.specialAttribute.snPlus = [self.feed.snPlus];
-            self.feed.specialAttribute.newArrival = [self.feed.newArrival];
-            self.feed.specialAttribute.taxable = [self.feed.taxable];
+            self.feed.attribute.freeShipping = [self.feed.freeShipping];
+            self.feed.attribute.rewardEligible = [self.feed.rewardEligible];
+            self.feed.attribute.discountEligible = [self.feed.discountEligible];
+            self.feed.attribute.sneakerheadPlus = [self.feed.sneakerheadPlus];
+            self.feed.attribute.newArrival = [self.feed.newArrival];
+            self.feed.attribute.taxable = [self.feed.taxable];
 
             let parameter = {feed: self.feed, flag: flag};
             self.itemDetailService.update(parameter).then((res) => {

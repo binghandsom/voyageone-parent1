@@ -73,8 +73,6 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     private Map<Integer, Integer> approveInfo;
 
-    private Map<String, List<String>> specialAttribute = new HashMap<>();
-
     public String getSizeChartType() {
         return sizeChartType;
     }
@@ -485,11 +483,4 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         this.approveInfo = approveInfo;
     }
 
-    public Map<String, List<String>> getSpecialAttribute() {
-        return specialAttribute;
-    }
-
-    public void setSpecialAttribute(Map<String, List<String>> specialAttribute) {
-        this.specialAttribute = specialAttribute;
-    }
 }
