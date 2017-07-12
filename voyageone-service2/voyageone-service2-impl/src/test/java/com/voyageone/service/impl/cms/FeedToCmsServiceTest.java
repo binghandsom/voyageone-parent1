@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
+import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,8 +29,24 @@ public class FeedToCmsServiceTest {
     @Autowired
     private  FeedToCmsService  feedToCmsService;
 
+    @Autowired
+    private FeedInfoService feedInfoService;
+
     @Test
     public void testGetFeedCategory() throws Exception {
+
+        CmsBtFeedInfoModel cmsBtFeedInfoModel1 = feedInfoService.getProductByCode("001", "68220-gem");
+        CmsBtFeedInfoModel cmsBtFeedInfoModel2 = feedInfoService.getProductByCode("001", "68220-lag");
+        CmsBtFeedInfoModel cmsBtFeedInfoModel3 = feedInfoService.getProductByCode("001", "68243-bsa");
+
+        cmsBtFeedInfoModel1.getSkus().addAll(cmsBtFeedInfoModel2.getSkus());
+        cmsBtFeedInfoModel1.getSkus().addAll(cmsBtFeedInfoModel3.getSkus());
+        cmsBtFeedInfoModel1.getSkus().get(0).setBarcode("11111");
+        cmsBtFeedInfoModel1.getSkus().get(0).setPriceNet(100000.0);
+        cmsBtFeedInfoModel1.getSkus().get(cmsBtFeedInfoModel1.getSkus().size()-1).setSku("james-sku-test1");
+        cmsBtFeedInfoModel1.setCode("james-test");
+        List<CmsBtFeedInfoModel> temp = feedToCmsService.getRelatedProducts("001",cmsBtFeedInfoModel1);
+        System.out.println(temp.size());
 
 //        CmsMtFeedCategoryTreeModel ret = feedToCmsService.getFeedCategory("013");
 //
