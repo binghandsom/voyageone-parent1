@@ -6,7 +6,7 @@ define([
 ], function (cms) {
 
     cms.controller('feedDetailController', class FeedDetailController {
-        constructor(popups, $routeParams, itemDetailService, alert,$location,notify,confirm,$rootScope,$sessionStorage) {
+        constructor(popups, $routeParams, itemDetailService, alert,$location,notify,confirm,$sessionStorage) {
             this.popups = popups;
             this.itemDetailService = itemDetailService;
             this.alert = alert;
@@ -127,6 +127,62 @@ define([
             if (!!self.feed.attribute.amazonBrowseTree && _.size(self.feed.attribute.amazonBrowseTree) > 0) {
                 _.extend(self.feed, {amazonBrowseTree: self.feed.attribute.amazonBrowseTree[0]});
             }
+            // 处理googleCategory、googleDepartment、priceGrabberCategory
+            if (!!self.feed.attribute.googleCategory && _.size(self.feed.attribute.googleCategory) > 0) {
+                _.extend(self.feed, {googleCategory: self.feed.attribute.googleCategory[0]});
+            }
+            if (!!self.feed.attribute.googleDepartment && _.size(self.feed.attribute.googleDepartment) > 0) {
+                _.extend(self.feed, {googleDepartment: self.feed.attribute.googleDepartment[0]});
+            }
+            if (!!self.feed.attribute.priceGrabberCategory && _.size(self.feed.attribute.priceGrabberCategory) > 0) {
+                _.extend(self.feed, {priceGrabberCategory: self.feed.attribute.priceGrabberCategory[0]});
+            }
+            // 处理phoneOrderOnly
+            if (!!self.feed.attribute.phoneOrderOnly && _.size(self.feed.attribute.phoneOrderOnly) > 0) {
+                _.extend(self.feed, {phoneOrderOnly: self.feed.attribute.phoneOrderOnly[0]});
+            }
+            // 处理seoTitle、seoDescription、seoKeywords
+            if (!!self.feed.attribute.seoTitle && _.size(self.feed.attribute.seoTitle) > 0) {
+                _.extend(self.feed, {seoTitle: self.feed.attribute.seoTitle[0]});
+            }
+            if (!!self.feed.attribute.seoDescription && _.size(self.feed.attribute.seoDescription) > 0) {
+                _.extend(self.feed, {seoDescription: self.feed.attribute.seoDescription[0]});
+            }
+            if (!!self.feed.attribute.seoKeywords && _.size(self.feed.attribute.seoKeywords) > 0) {
+                _.extend(self.feed, {seoKeywords: self.feed.attribute.seoKeywords[0]});
+            }
+
+            // 处理特殊属性
+            if (!!self.feed.attribute.freeShipping && _.size(self.feed.attribute.freeShipping) > 0) {
+                _.extend(self.feed, {freeShipping: self.feed.attribute.freeShipping[0]});
+            } else {
+                _.extend(self.feed, {freeShipping: "1"});
+            }
+            if (!!self.feed.attribute.rewardEligible && _.size(self.feed.attribute.rewardEligible) > 0) {
+                _.extend(self.feed, {rewardEligible: self.feed.attribute.rewardEligible[0]});
+            } else {
+                _.extend(self.feed, {rewardEligible: "1"});
+            }
+            if (!!self.feed.attribute.discountEligible && _.size(self.feed.attribute.discountEligible) > 0) {
+                _.extend(self.feed, {discountEligible: self.feed.attribute.discountEligible[0]});
+            } else {
+                _.extend(self.feed, {discountEligible: "1"});
+            }
+            if (!!self.feed.attribute.sneakerheadPlus && _.size(self.feed.attribute.sneakerheadPlus) > 0) {
+                _.extend(self.feed, {sneakerheadPlus: self.feed.attribute.sneakerheadPlus[0]});
+            } else {
+                _.extend(self.feed, {sneakerheadPlus: "1"});
+            }
+            if (!!self.feed.attribute.newArrival && _.size(self.feed.attribute.newArrival) > 0) {
+                _.extend(self.feed, {newArrival: self.feed.attribute.newArrival[0]});
+            } else {
+                _.extend(self.feed, {newArrival: "1"});
+            }
+            if (!!self.feed.attribute.taxable && _.size(self.feed.attribute.taxable) > 0) {
+                _.extend(self.feed, {taxable: self.feed.attribute.taxable[0]});
+            } else {
+                _.extend(self.feed, {taxable: "1"});
+            }
         }
 
         // 生成UrlKey
@@ -242,6 +298,27 @@ define([
             self.feed.attribute.colorMap = [self.feed.colorMap];
             // 处理amazonBrowseTree
             self.feed.attribute.amazonBrowseTree = [self.feed.amazonBrowseTree];
+
+            // 处理googleCategory、googleDepartment、priceGrabberCategory
+            self.feed.attribute.googleCategory = [self.feed.googleCategory];
+            self.feed.attribute.googleDepartment = [self.feed.googleDepartment];
+            self.feed.attribute.priceGrabberCategory = [self.feed.priceGrabberCategory];
+
+            // 处理phoneOrderOnly
+            self.feed.attribute.phoneOrderOnly = [self.feed.phoneOrderOnly];
+            // 处理seoTitle、seoDescription、seoKeywords
+            self.feed.attribute.seoTitle = [self.feed.seoTitle];
+            self.feed.attribute.seoDescription = [self.feed.seoDescription];
+            self.feed.attribute.seoKeywords = [self.feed.seoKeywords];
+
+            // 处理特殊属性
+            self.feed.attribute.freeShipping = [self.feed.freeShipping];
+            self.feed.attribute.rewardEligible = [self.feed.rewardEligible];
+            self.feed.attribute.discountEligible = [self.feed.discountEligible];
+            self.feed.attribute.sneakerheadPlus = [self.feed.sneakerheadPlus];
+            self.feed.attribute.newArrival = [self.feed.newArrival];
+            self.feed.attribute.taxable = [self.feed.taxable];
+
             let parameter = {feed: self.feed, flag: flag};
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {
@@ -259,7 +336,20 @@ define([
             self.popups.openUsCategory({
                 from:self.feed.category
             }).then(context => {
-                _.extend(self.feed, {category: context.catPath})
+                _.extend(self.feed, {category: context.catPath});
+                if (!!context.mapping) {
+                    let seoInfo = {};
+                    if (!!context.mapping.seoTitle) {
+                        _.extend(seoInfo, {seoTitle:context.mapping.seoTitle});
+                    }
+                    if (!!context.mapping.seoKeywords) {
+                        _.extend(seoInfo, {seoKeywords:context.mapping.seoKeywords});
+                    }
+                    if (!!context.mapping.seoDescription) {
+                        _.extend(seoInfo, {seoDescription:context.mapping.seoDescription});
+                    }
+                    _.extend(self.feed, seoInfo);
+                }
             });
         }
 

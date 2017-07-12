@@ -314,7 +314,7 @@ define([
         }
     }
 
-    function headerCtrl($scope, $rootScope, $window, $location, menuService, $searchAdvanceService2, cRoutes, cCommonRoutes,$sessionStorage) {
+    function headerCtrl($scope, $rootScope, $window, $location, menuService, $searchAdvanceService2, cRoutes, cCommonRoutes,$sessionStorage,$localStorage) {
         var vm = this;
         vm.menuList = {};
         vm.languageList = {};
@@ -327,6 +327,7 @@ define([
         $scope.selectLanguage = selectLanguage;
         $scope.goSearchPage = goSearchPage;
         $scope.logout = logout;
+        $scope.isCn = $localStorage.isCn;
         $scope.loadSearchAutoCompletes = loadSearchAutoCompletes;
 
         function initialize() {
@@ -339,10 +340,10 @@ define([
                 $rootScope.application = data.userInfo.application;
                 $rootScope.isTranslator = data.isTranslator;
 
-                $rootScope.auth = setAuth(data.menuTree);
-
                 //设置sessionstorage
-                $sessionStorage.auth = $rootScope.auth;
+                let auth = setAuth(data.menuTree);
+                if(!$sessionStorage.auth)
+                    $sessionStorage.auth = auth
             });
         }
         $rootScope.isParentMenu=function(item) {
@@ -450,13 +451,14 @@ define([
         }
     }
 
-    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes, $sessionStorage) {
+    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes, $sessionStorage,$localStorage) {
 
         $scope.menuInfo = {};
         $scope.initialize = initialize;
         $scope.selectPlatformType = selectPlatformType;
         $scope.goSearchPage = goSearchPage;
         $scope.linkPage = linkPage;
+        $scope.isCn = $localStorage.isCn;
         $scope.goAdvanceSearchByFeedCat=goAdvanceSearchByFeedCat;
 
         function initialize() {

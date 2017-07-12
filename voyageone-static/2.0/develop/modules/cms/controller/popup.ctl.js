@@ -666,6 +666,30 @@ define([
             controllerUrl: "modules/cms/views/pop/error/mqSkuCodeError.ctl",
             controller: 'mqSkuCodeErrorController as ctrl',
             size: 'md'
+        },
+        us:{
+            search: {
+                batchApprove: {
+                    "templateUrl": "views/pop/usa/search/index.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/usa/search/index.ctl",
+                    "controller": 'batchApproveController as ctrl',
+                    "size": 'md'
+                }
+            },
+            detail: {
+                usCategory: {
+                    "templateUrl": "views/pop/usa/detail/usCategory/index.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/usa/detail/usCategory/index.ctl",
+                    "controller": 'usCategoryController as ctrl',
+                    "size": 'lg'
+                },
+                amazonCategory:{
+                    "templateUrl": "views/pop/usa/detail/amazonCategory/index.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/usa/detail/amazonCategory/index.ctl",
+                    "controller": 'amazonCategoryController as ctrl',
+                    "size": 'lg'
+                }
+            }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -1536,7 +1560,7 @@ define([
 
         $scope.openEditGroup = function(context){
             return openModal(popActions.group.editGroup, context);
-        }
+        };
 
         /**
          * 自定义下载选择列模态框
@@ -1544,6 +1568,18 @@ define([
         $scope.openColumnForDownLoad = function (context) {
             return openModal(popActions.custom.columnForDownLoad, context);
         };
+
+        $scope.openBatchApprove = function (context) {
+            return openModal(popActions.us.search.batchApprove, context);
+        };
+
+        $scope.openUsCategory = function (context) {
+            return openModal(popActions.us.detail.usCategory, context);
+        };
+
+        $scope.openAmazonCategory = function (context) {
+            return openModal(popActions.us.detail.amazonCategory, context);
+        }
 
     }).factory('popups', function ($controller, $rootScope) {
 

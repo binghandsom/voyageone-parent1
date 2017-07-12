@@ -25,7 +25,7 @@
                                         </div>
                                         <div class="col-md-1">
                                             <button type="button" class="btn btn-default" ng-click="ctrl.getTopModel(5)">
-                                                <i class="fa fa-angle-double-down" style="font-size: 16px;"></i>
+                                                <i ng-class="{'fa-angle-double-down':!ctrl.isShowModal,'fa-angle-double-up':ctrl.isShowModal}" class="fa" style="font-size: 16px;"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -58,7 +58,7 @@
                                     <div class="row">
                                         <div class="col-md-4 text-right vo_reqfield">
                                             <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory()">
-                                                <i class="fa fa-arrow-right"></i>&nbsp;US Official Category
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Sneakerhead Primary<br> Category
                                             </button>
                                         </div>
                                         <div class="col-md-6">
@@ -67,6 +67,76 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory()">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Sneakerhead Other<br> Category
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.categories}}"
+                                                   name="categories" ng-model="ctrl.feed.categories" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_reqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.popAmazonCategory()">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Amazon Browse Tree
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="amazonBrowseTree" ng-model="ctrl.feed.amazonBrowseTree" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory()">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Google Category
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.googleCategory}}"
+                                                   name="googleCategory" ng-model="ctrl.feed.googleCategory" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory()">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Google DepartMent
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.googleDepartment}}"
+                                                   name="googleDepartment" ng-model="ctrl.feed.googleDepartment" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory()">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;PriceGrabber Category
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.priceGrabberCategory}}"
+                                                   name="priceGrabberCategory" ng-model="ctrl.feed.priceGrabberCategory" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="form-group">
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_reqfield">Name</label>
@@ -143,18 +213,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-4 text-right">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.popAmazonCategory()">
-                                                <i class="fa fa-arrow-right"></i>&nbsp;Amazon Category
-                                            </button>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.amazonBrowseTree" readonly>
-                                        </div>
-                                    </div>
-                                </div>
+
                                 <div class="form-group">
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title ">Usage</label>
@@ -211,74 +270,105 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--<div class="form-group">-->
-                                <!--<div class="row">-->
-                                <!--<label class="col-md-4 control-label query-title ">Sneakerfolio</label>-->
-                                <!--<div class="col-md-6 checkbox">-->
-                                <!--<label>-->
-                                <!--<input type="checkbox" >-->
-                                <!--</label>&nbsp;Yes-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                <!--<div class="row">-->
-                                <!--<label class="col-md-4 control-label query-title ">New Arrival ?</label>-->
-                                <!--<div class="col-md-6 checkbox">-->
-                                <!--<label>-->
-                                <!--<input type="checkbox">-->
-                                <!--</label>&nbsp;Yes-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                <!--<div class="row">-->
-                                <!--<label class="col-md-4 control-label query-title ">Reward Eligible ?</label>-->
-                                <!--<div class="col-md-6 checkbox">-->
-                                <!--<label>-->
-                                <!--<input type="checkbox">-->
-                                <!--</label>&nbsp;Yes-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                <!--<div class="row">-->
-                                <!--<label class="col-md-4 control-label query-title ">Discount Eligible ?</label>-->
-                                <!--<div class="col-md-6 checkbox">-->
-                                <!--<label>-->
-                                <!--<input type="checkbox">-->
-                                <!--</label>&nbsp;Yes-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                <!--<div class="row">-->
-                                <!--<label class="col-md-4 control-label query-title ">Free Shipping</label>-->
-                                <!--<div class="col-md-6 checkbox">-->
-                                <!--<label>-->
-                                <!--<input type="checkbox">-->
-                                <!--</label>&nbsp;Yes-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                <!--<div class="row">-->
-                                <!--<label class="col-md-4 control-label query-title ">Phone Order Only ?</label>-->
-                                <!--<div class="col-md-6 checkbox">-->
-                                <!--<label>-->
-                                <!--<input type="checkbox">-->
-                                <!--</label>&nbsp;Yes-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                <!--<div class="row">-->
-                                <!--<label class="col-md-4 control-label query-title ">Phone Order Message</label>-->
-                                <!--<div class="col-md-6">-->
-                                <!--<input type="text" class="form-control">-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
+
+
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">Is Phone Order Only</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.phoneOrderOnly">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">SEO Title</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.seoTitle">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">SEO Description</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.seoDescription">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">SEO Keywords</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.seoKeywords">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--特殊属性 Begin-->
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">Is Free Shipping</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.freeShipping">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">Is Reward Eligible</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.rewardEligible">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">Is Discount Eligible</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.discountEligible">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">Is Sneakerhead+</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.sneakerheadPlus">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">Is New Arrival</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.newArrival">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">Is Taxable</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.taxable">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--特殊属性 End-->
+
                                 <div class="form-group">
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title ">Approve Pricing ?</label>
