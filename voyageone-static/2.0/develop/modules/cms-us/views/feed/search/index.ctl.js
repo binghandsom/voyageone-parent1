@@ -158,6 +158,7 @@ define([
                     angular.forEach(self.feeds, function (feed) {
                         feed.check = false;
                     })
+                    self.totalItems = false;
                     self.getList();
                 }
             });
