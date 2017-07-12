@@ -591,7 +591,7 @@ define([
                 };
 
                 scope.canMoreCode = function () {
-                    _mastData = scope.vm.mastData;
+                    var _mastData = scope.vm.mastData;
 
                     if (!_mastData || !_mastData.images || _mastData.images.length === 0)
                         return false;
