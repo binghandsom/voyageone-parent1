@@ -169,7 +169,7 @@ define([
                 _.extend(self.feed, {discountEligible: "1"});
             }
             if (!!self.feed.attribute.sneakerheadPlus && _.size(self.feed.attribute.sneakerheadPlus) > 0) {
-                _.extend(self.feed, {sneakerheadPlus: self.feed.sneakerheadPlus.sneakerheadPlus[0]});
+                _.extend(self.feed, {sneakerheadPlus: self.feed.attribute.sneakerheadPlus[0]});
             } else {
                 _.extend(self.feed, {sneakerheadPlus: "1"});
             }
