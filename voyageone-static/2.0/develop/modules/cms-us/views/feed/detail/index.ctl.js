@@ -26,9 +26,9 @@ define([
             this.brandList = [];
             this.productTypeList = [];
             this.sizeTypeList = [];
-            this.materialList = [{value: "wood", name: "wood"}];
-            this.originList = [{value: "CN", name: "CN"}];
-            this.colorMap = [{value: "Red", name: "Red"}];
+            this.materialList = [];
+            this.originList = [];
+            this.colorMap = [];
             this.setting = {
                 weightOrg: "",
                 weightOrgUnit: "lb",
@@ -56,10 +56,9 @@ define([
                     self.productTypeList = resp.data.productTypeList;
                     self.sizeTypeList = resp.data.sizeTypeList;
 
-                    // TODO 配置项，暂时无数据
-                    // self.materialList = resp.data.materialList;
-                    // self.originList = resp.data.originList;
-                    // self.colorMap = resp.data.colorMap;
+                    self.materialList = resp.data.materialList;
+                    self.originList = resp.data.originList;
+                    self.colorMap = resp.data.colorMap;
                     if (self.feed && _.size(self.feed.image) > 0) {
                         self.currentFeedImage = self.feed.image[0];
                         _.extend(self.feed, {imageNum:_.size(self.feed.image)});

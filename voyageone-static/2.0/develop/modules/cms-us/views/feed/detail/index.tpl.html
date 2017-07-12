@@ -441,7 +441,7 @@
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.weightOrg" ng-change="ctrl.setSkuProperty('','weightOrg','0')">
+                                                <input type="number" class="form-control text-right" ng-model="ctrl.setting.weightOrg" ng-change="ctrl.setSkuProperty('','weightOrg','0')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
@@ -455,13 +455,13 @@
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceClientMsrp" ng-change="ctrl.setSkuProperty('','priceClientMsrp','1')">
+                                                <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceClientMsrp" ng-change="ctrl.setSkuProperty('','priceClientMsrp','1')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceNet" ng-change="ctrl.setSkuProperty('','priceNet','1')">
+                                                <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceNet" ng-change="ctrl.setSkuProperty('','priceNet','1')">
                                             </div>
                                         </td>
                                         <td ng-if="ctrl.auth!=1"></td>
@@ -497,7 +497,7 @@
                                         <td class="text-left">{{sku.sku}}</td>
                                         <td class="text-left">{{sku.barcode}}</td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control" ng-model="sku.weightOrg"/>
+                                            <input type="number" class="form-control text-right" ng-model="sku.weightOrg"/>
                                         </td>
                                         <td class="text-center">
                                             <select class="form-control" ng-options="weightUnit as weightUnit for weightUnit in ctrl.setting.weightOrgUnits"
@@ -505,16 +505,16 @@
                                             </select>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control" ng-model="sku.priceClientMsrp" ng-enter="ctrl.setSkuProperty(sku,'priceClientMsrp')"/>
+                                            <input type="number" class="form-control text-right" ng-model="sku.priceClientMsrp" ng-enter="ctrl.setSkuProperty(sku,'priceClientMsrp')"/>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control" ng-model="sku.priceNet" ng-enter="ctrl.setSkuProperty(sku,'priceNet')"/>
+                                            <input type="number" class="form-control text-right" ng-model="sku.priceNet" ng-enter="ctrl.setSkuProperty(sku,'priceNet')"/>
                                         </td>
                                         <td class="text-right" ng-if="ctrl.auth!=1">
-                                            <input type="number" class="form-control" ng-model="sku.priceMsrp" readonly/>
+                                            <input type="number" class="form-control text-right" ng-model="sku.priceMsrp" readonly/>
                                         </td>
                                         <td class="text-right" ng-if="ctrl.auth!=1">
-                                            <input type="number" class="form-control" ng-model="sku.priceCurrent" readonly/>
+                                            <input type="number" class="form-control text-right" ng-model="sku.priceCurrent" readonly/>
                                         </td>
 
                                     </tr>
