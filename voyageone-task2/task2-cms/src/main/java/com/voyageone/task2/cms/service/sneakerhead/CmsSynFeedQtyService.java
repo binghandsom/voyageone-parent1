@@ -5,10 +5,10 @@ import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
@@ -32,13 +32,13 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
     protected VoApiDefaultClient voApiClient;
     @Autowired
     private FeedInfoService feedInfoService;
+    @Autowired
+    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+        $info("开始同步cms_bt_feed库存");
 
         final String channelId = ChannelConfigEnums.Channel.SN.getId();
-
-
-       // String subChannlId = "";
 
         //封装查询条件
         Criteria criteria = new Criteria();
@@ -73,23 +73,31 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
             //获取到当前feed对应的库存信息
             GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
             //初始化feed总库存
+            List<JongoUpdate> jongoUpdateList = new ArrayList<>();
             Integer totalQty = 0;
             List<GetStoreStockDetailData2.Temp> stocks = execute.getData().getStocks();
             //获取每个sku的总库存,并进行更新
-            int skuNum = 0;
             for (GetStoreStockDetailData2.Temp value:stocks) {
+                //每个sku的总库存
                 Integer skuTotal = value.getBase().getTotal().get(0);
+                //获取到对应的sku
+                String sku = value.getBase().getSku();
                 //更新对应的sku库存
-                CmsBtFeedInfoModel_Sku cmsBtFeedInfoModel_sku = skus.get(skuNum);
-                cmsBtFeedInfoModel_sku.setQty(skuTotal);
-                //totalQty += total;
-                skuNum++;
+                JongoUpdate jongoUpdate = new JongoUpdate();
+                jongoUpdate.setQuery("{\"skus.sku\":#}");
+                jongoUpdate.setQueryParameters(sku);
+                jongoUpdate.setUpdate("{$set:{\"skus.$.qty\":#}}");
+                jongoUpdate.setUpdateParameters(skuTotal);
+                jongoUpdateList.add(jongoUpdate);
                 totalQty += skuTotal;
             }
-            cmsBtProductModel.setSkus(skus);
-            //更新feed对应的总库存
-            cmsBtProductModel.setQty(totalQty);
-            feedInfoService.updateFeedInfo(cmsBtProductModel);
+            JongoUpdate jongoUpdate = new JongoUpdate();
+            jongoUpdate.setQuery("{\"code\":#}");
+            jongoUpdate.setQueryParameters(cmsBtProductModel.getCode());
+            jongoUpdate.setUpdate("{$set:{\"qty\":#}}");
+            jongoUpdate.setUpdateParameters(totalQty);
+            jongoUpdateList.add(jongoUpdate);
+            cmsBtFeedInfoDao.bulkUpdateWithJongo(channelId, jongoUpdateList);
             index++;
         }
 
