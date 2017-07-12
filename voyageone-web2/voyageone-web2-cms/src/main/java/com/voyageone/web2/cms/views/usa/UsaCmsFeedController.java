@@ -61,7 +61,6 @@ public class UsaCmsFeedController extends BaseController {
         CmsBtFeedInfoModel feed = usaFeedInfoService.getFeedById(channelId, reqParams.getId());
         resultMap.put("feed", feed);
         if (feed != null) {
-            TypeChannels.reload();
             resultMap.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, channelId, getLang()));
             resultMap.put("productTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, channelId, getLang()));
             resultMap.put("sizeTypeList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, channelId, getLang()));
