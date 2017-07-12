@@ -96,25 +96,6 @@ define([
                 self.feeds = resp.data.feedList;
                 self.feedListTotal = resp.data.feedListTotal;
                 self.paging.total = resp.data.feedListTotal;
-                //对页面显示的价格区间进行转化
-                if (self.feeds != null) {
-                    angular.forEach(self.feeds, function (feed) {
-                        var skus = feed.skus;
-                        var arr1 = [];
-                        var arr2 = [];
-                        angular.forEach(skus, function (value) {
-                            arr1.push(value.priceMsrp);
-                            arr2.push(value.priceNet);
-                        })
-                        arr1.sort();
-                        arr2.sort();
-                        feed.priceMsrps = [arr1[0], arr1[arr1.length - 1]];
-                        feed.priceNets = [arr2[0], arr2[arr2.length - 1]];
-
-
-                    })
-                }
-
             });
 
         }
@@ -136,7 +117,6 @@ define([
         clear() {
             let self = this,
                 columnArrow = self.columnArrow;
-
             self.paraMap = {};
             self.paraMap = {
                 status: "",
@@ -178,6 +158,7 @@ define([
                     angular.forEach(self.feeds, function (feed) {
                         feed.check = false;
                     })
+                    self.totalItems = false;
                     self.getList();
                 }
             });
@@ -198,6 +179,7 @@ define([
                     angular.forEach(self.feeds, function (feed) {
                         feed.check = false;
                     })
+                    self.totalItems = false;
                     self.getList();
                 }
             });
@@ -279,11 +261,6 @@ define([
 
             self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
         }
-
-        test(){
-            alert('a');
-        }
-
     });
 
 });

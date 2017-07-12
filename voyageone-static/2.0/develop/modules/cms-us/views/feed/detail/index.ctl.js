@@ -26,9 +26,9 @@ define([
             this.brandList = [];
             this.productTypeList = [];
             this.sizeTypeList = [];
-            this.materialList = [{value: "wood", name: "wood"}];
-            this.originList = [{value: "CN", name: "CN"}];
-            this.colorMap = [{value: "Red", name: "Red"}];
+            this.materialList = [];
+            this.originList = [];
+            this.colorMap = [];
             this.setting = {
                 weightOrg: "",
                 weightOrgUnit: "lb",
@@ -56,10 +56,9 @@ define([
                     self.productTypeList = resp.data.productTypeList;
                     self.sizeTypeList = resp.data.sizeTypeList;
 
-                    // TODO 配置项，暂时无数据
-                    // self.materialList = resp.data.materialList;
-                    // self.originList = resp.data.originList;
-                    // self.colorMap = resp.data.colorMap;
+                    self.materialList = resp.data.materialList;
+                    self.originList = resp.data.originList;
+                    self.colorMap = resp.data.colorMap;
                     if (self.feed && _.size(self.feed.image) > 0) {
                         self.currentFeedImage = self.feed.image[0];
                         _.extend(self.feed, {imageNum:_.size(self.feed.image)});
@@ -142,7 +141,7 @@ define([
         }
 
         // 统一设置SKU属性
-        setSkuProperty(sku, property) {
+        setSkuProperty(sku, property,priceFlag) {
             let self = this;
             if (!sku) {
                 angular.forEach(self.feed.skus, function (item) {
@@ -152,7 +151,9 @@ define([
             } else {
                 sku['priceClientRetail'] = sku['priceNet'];
             }
-            self.setSkuCNPrice();
+            if (priceFlag == "1") {
+                self.setSkuCNPrice();
+            }
         }
 
         // 同步计算中国相关价格
@@ -174,6 +175,8 @@ define([
                         priceClientMsrpMax: res.data.priceClientMsrpMax
                     };
                     _.extend(self.feed, priceScope);
+
+                    self.notify.success('update success!');
                 }
             });
         }
@@ -369,7 +372,8 @@ define([
                 origin: feed.origin,
                 usageEn: feed.usageEn,
                 shortDescription:feed.shortDescription,
-                longDescription:feed.longDescription
+                longDescription:feed.longDescription,
+                category:feed.category
 
             };
             _.extend(self.feed, attribute);
@@ -391,7 +395,7 @@ define([
             let self = this;
 
             self.popups.openAmazonCategory().then(res => {
-                self.feed.attribute.amazonBrowseTree = res.catPath;
+                self.feed.amazonBrowseTree = res.catPath;
             });
         }
 
