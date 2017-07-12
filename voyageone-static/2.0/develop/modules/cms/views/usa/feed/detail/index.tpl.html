@@ -217,77 +217,101 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title ">Is Phone Order Only</label>
-                                        <div class="col-md-6 checkbox">
-                                            <label>
-                                                <input type="checkbox">
-                                            </label>&nbsp;Yes
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title ">New
-                                            Arrival ?</label>
-                                        <div class="col-md-6 checkbox">
-                                            <label>
-                                                <input type="checkbox">
-                                            </label>&nbsp;Yes
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Reward
-                                            Eligible ?</label>
-                                        <div class="col-md-6 checkbox">
-                                            <label>
-                                                <input type="checkbox">
-                                            </label>&nbsp;Yes
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Discount
-                                            Eligible ?</label>
-                                        <div class="col-md-6 checkbox">
-                                            <label>
-                                                <input type="checkbox">
-                                            </label>&nbsp;Yes
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Free
-                                            Shipping</label>
-                                        <div class="col-md-6 checkbox">
-                                            <label>
-                                                <input type="checkbox">
-                                            </label>&nbsp;Yes
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Phone
-                                            Order Only ?</label>
-                                        <div class="col-md-6 checkbox">
-                                            <label>
-                                                <input type="checkbox">
-                                            </label>&nbsp;Yes
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Phone
-                                            Order Message</label>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control">
+                                            <label>
+                                                <input type="text" ng-model="ctrl.feed.phoneOrderOnly">
+                                            </label>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">SEO Title</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.seoTitle">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">SEO Description</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.seoDesc">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">SEO Keywords</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.seoKeywords">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--特殊属性 Begin-->
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">Is Free Shipping</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.freeShipping">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">Is Reward Eligible</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.rewardEligible">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">Is Discount Eligible</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.discountEligible">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">Is Sneakerhead+</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.snPlus">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">Is New Arrival</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.newArrival">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title ">Is Taxable</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.taxable">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--特殊属性 End-->
+
                                 <div class="form-group">
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title ">Approve Pricing ?</label>

@@ -127,6 +127,52 @@ define([
             if (!!self.feed.attribute.amazonBrowseTree && _.size(self.feed.attribute.amazonBrowseTree) > 0) {
                 _.extend(self.feed, {amazonBrowseTree: self.feed.attribute.amazonBrowseTree[0]});
             }
+            // 处理phoneOrderOnly
+            if (!!self.feed.attribute.phoneOrderOnly && _.size(self.feed.attribute.phoneOrderOnly) > 0) {
+                _.extend(self.feed, {phoneOrderOnly: self.feed.attribute.phoneOrderOnly[0]});
+            }
+            // 处理seoTitle、seoDesc、seoKeywords
+            if (!!self.feed.attribute.seoTitle && _.size(self.feed.attribute.seoTitle) > 0) {
+                _.extend(self.feed, {seoTitle: self.feed.attribute.seoTitle[0]});
+            }
+            if (!!self.feed.attribute.seoDesc && _.size(self.feed.attribute.seoDesc) > 0) {
+                _.extend(self.feed, {seoDesc: self.feed.attribute.seoDesc[0]});
+            }
+            if (!!self.feed.attribute.seoKeywords && _.size(self.feed.attribute.seoKeywords) > 0) {
+                _.extend(self.feed, {seoKeywords: self.feed.attribute.seoKeywords[0]});
+            }
+
+            // 处理特殊属性
+            if (!!self.feed.specialAttribute.freeShipping && _.size(self.feed.specialAttribute.freeShipping) > 0) {
+                _.extend(self.feed, {freeShipping: self.feed.specialAttribute.freeShipping[0]});
+            } else {
+                _.extend(self.feed, {freeShipping: "1"});
+            }
+            if (!!self.feed.specialAttribute.rewardEligible && _.size(self.feed.specialAttribute.rewardEligible) > 0) {
+                _.extend(self.feed, {rewardEligible: self.feed.specialAttribute.rewardEligible[0]});
+            } else {
+                _.extend(self.feed, {rewardEligible: "1"});
+            }
+            if (!!self.feed.specialAttribute.discountEligible && _.size(self.feed.specialAttribute.discountEligible) > 0) {
+                _.extend(self.feed, {discountEligible: self.feed.specialAttribute.discountEligible[0]});
+            } else {
+                _.extend(self.feed, {discountEligible: "1"});
+            }
+            if (!!self.feed.specialAttribute.snPlus && _.size(self.feed.specialAttribute.snPlus) > 0) {
+                _.extend(self.feed, {snPlus: self.feed.specialAttribute.snPlus[0]});
+            } else {
+                _.extend(self.feed, {snPlus: "1"});
+            }
+            if (!!self.feed.specialAttribute.newArrival && _.size(self.feed.specialAttribute.newArrival) > 0) {
+                _.extend(self.feed, {newArrival: self.feed.specialAttribute.newArrival[0]});
+            } else {
+                _.extend(self.feed, {newArrival: "1"});
+            }
+            if (!!self.feed.specialAttribute.taxable && _.size(self.feed.specialAttribute.taxable) > 0) {
+                _.extend(self.feed, {taxable: self.feed.specialAttribute.taxable[0]});
+            } else {
+                _.extend(self.feed, {taxable: "1"});
+            }
         }
 
         // 生成UrlKey
@@ -242,6 +288,21 @@ define([
             self.feed.attribute.colorMap = [self.feed.colorMap];
             // 处理amazonBrowseTree
             self.feed.attribute.amazonBrowseTree = [self.feed.amazonBrowseTree];
+            // 处理phoneOrderOnly
+            self.feed.attribute.phoneOrderOnly = [self.feed.phoneOrderOnly];
+            // 处理seoTitle、seoDesc、seoKeywords
+            self.feed.attribute.seoTitle = [self.feed.seoTitle];
+            self.feed.attribute.seoDesc = [self.feed.seoDesc];
+            self.feed.attribute.seoKeywords = [self.feed.seoKeywords];
+
+            // 处理特殊属性
+            self.feed.specialAttribute.freeShipping = [self.feed.freeShipping];
+            self.feed.specialAttribute.rewardEligible = [self.feed.rewardEligible];
+            self.feed.specialAttribute.discountEligible = [self.feed.discountEligible];
+            self.feed.specialAttribute.snPlus = [self.feed.snPlus];
+            self.feed.specialAttribute.newArrival = [self.feed.newArrival];
+            self.feed.specialAttribute.taxable = [self.feed.taxable];
+
             let parameter = {feed: self.feed, flag: flag};
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {
