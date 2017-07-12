@@ -51,7 +51,7 @@ define([
                 $ajax.post('/cms/home/menu/getMenuHeaderInfo').then(function (res) {
 
                     if(judgePath(res.data.menuTree))
-                        location.href = 'modules/cms-us/app.html#/home';
+                        location.href = 'modules/cms/app.html#/usa/home';
                     else
                         location.href = 'modules/cms/app.html#/home';
                 });

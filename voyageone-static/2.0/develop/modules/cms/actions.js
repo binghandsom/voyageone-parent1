@@ -819,6 +819,21 @@ define(function () {
                 createXlsFileTask: "createXlsFileTask",
                 get_channel_list: "get_channel_list",
                 deleteTask: "deleteTask"
+            },
+            commonService: {
+                "root":"/cms/us/common",
+                "getChannelCarts":"getChannelCarts",
+                "getFeedInfo":"getFeedInfo"
+            },
+            itemDetailService:{
+                root:'/cms/us/feed',
+                detail:"detail",
+                update:"update",
+                getTopModel:"getTopModel",
+                updateOne:"updateOne",
+                setPrice:"setPrice",
+                list:"list",
+                approve:"approve"
             }
         }
     };

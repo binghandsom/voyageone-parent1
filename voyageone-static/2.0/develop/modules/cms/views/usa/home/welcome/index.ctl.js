@@ -6,7 +6,7 @@ define([
     'cms'
 ], function (cms) {
 
-    cms.controller('datachartController', class DatachartController {
+    cms.controller('usaDatachartController', class UsaDatachartController {
 
         constructor($menuService,alert,commonService,$location,$rootScope,$sessionStorage,$scope) {
             this.vm = {};

@@ -19,7 +19,7 @@
             </div>
 
             <div ng-switch-default>
-                <a  ng-if="!$root.isParentMenu(item)" href="{{item.resUrl}}">
+                <a  ng-if="!$root.isParentMenu(item)" href="javascript:void(0)" ng-click="linkPage(item)">
                     <i class="{{item.icon}}"></i>
                     <span >{{item.resName}}</span>
                 </a>

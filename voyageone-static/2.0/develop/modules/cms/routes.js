@@ -478,11 +478,28 @@ define(function () {
             "controllerUrl": "modules/cms/views/channel/feedConfigSet/index.ctl",
             "controller": "feedConfigSet as ctrl"
         },
-        "bi_report":
-        {
+        "bi_report":{
             "hash": "/bi_report/download",
             "templateUrl": "views/bi_report/bi_report_list.tpl.html",
             "controllerUrl": "modules/cms/views/bi_report/bi_report_list.ctl"
+        },
+        "us-home": {
+            hash: "/usa/home",
+            templateUrl: "views/usa/home/welcome/index.tpl.html",
+            controllerUrl: "modules/cms/views/usa/home/welcome/index.ctl",
+            controller: 'usaDatachartController as ctrl'
+        },
+        "us-feed":{
+            hash: "/feed/usa/search",
+            templateUrl: "views/usa/feed/search/index.tpl.html",
+            controllerUrl: "modules/cms/views/usa/feed/search/index.ctl",
+            controller: 'feedSearchController as ctrl'
+        },
+        "us-itemDetail":{
+            hash: "/feed/detail/:id?",
+            templateUrl: "views/usa/feed/detail/index.tpl.html",
+            controllerUrl: "modules/cms/views/usa/feed/detail/index.ctl",
+            controller: 'feedDetailController as ctrl'
         }
     };
 });

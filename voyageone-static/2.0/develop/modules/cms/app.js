@@ -314,7 +314,7 @@ define([
         }
     }
 
-    function headerCtrl($scope, $rootScope, $window, $location, menuService, $searchAdvanceService2, cRoutes, cCommonRoutes) {
+    function headerCtrl($scope, $rootScope, $window, $location, menuService, $searchAdvanceService2, cRoutes, cCommonRoutes,$sessionStorage) {
         var vm = this;
         vm.menuList = {};
         vm.languageList = {};
@@ -338,6 +338,11 @@ define([
                 $rootScope.feedCategoryTreeList=data.feedCategoryTreeList;
                 $rootScope.application = data.userInfo.application;
                 $rootScope.isTranslator = data.isTranslator;
+
+                $rootScope.auth = setAuth(data.menuTree);
+
+                //设置sessionstorage
+                $sessionStorage.auth = $rootScope.auth;
             });
         }
         $rootScope.isParentMenu=function(item) {
@@ -401,6 +406,18 @@ define([
                 $window.location = cCommonRoutes.login.url;
             })
         }
+
+        function setAuth(menus) {
+            let authArr = _.find(menus, item => {
+                return item.resName === 'Base Items';
+            });
+
+            _.each(authArr.children, (item, index) => {
+                item.selfAuth = index + 1
+            });
+
+            return {auth: authArr.children.length};
+        }
     }
 
     function breadcrumbsCtrl($scope, $rootScope, $location, menuService, cRoutes) {
@@ -433,12 +450,13 @@ define([
         }
     }
 
-    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes, cookieService) {
+    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes, $sessionStorage) {
 
         $scope.menuInfo = {};
         $scope.initialize = initialize;
         $scope.selectPlatformType = selectPlatformType;
         $scope.goSearchPage = goSearchPage;
+        $scope.linkPage = linkPage;
         $scope.goAdvanceSearchByFeedCat=goAdvanceSearchByFeedCat;
 
         function initialize() {
@@ -495,6 +513,14 @@ define([
                     $location.path(cRoutes.search_advance_param.url + "3/" + $rootScope.platformType.cartId + "/" + catId + "/" + encodeCatPath);
                     break;
             }
+        }
+
+        function linkPage(menu) {
+            $sessionStorage.auth.selfAuth = menu.selfAuth;
+
+            let timeStamp = new Date().getTime();
+
+            location.href = `${menu.resUrl}?time=${timeStamp}`;
         }
     }
 
