@@ -11,14 +11,9 @@ var jsonPlaceholderProxy = proxy(['/cms','/core'], {
 });
 module.exports = {
     server: {
-        baseDir: "develop",
+        baseDir: "publish/release",
         index: "login.html"
     },
-/*    files: [
-        'develop/static/!**!/!*.css',
-        'develop/modules/!**!/!*.{html,js}',
-        'develop/components/!**!/!*.js'
-    ],*/
     notify: false,
     port: 3000,
     middleware: [

@@ -31,10 +31,14 @@ define([
             let self = this;
             self.commonService.getChannelCarts().then((res) => {
                 if (res.data) {
-                    self.platforms = res.data;
-                    angular.forEach(self.platforms, function (cartOjb) {
+                    let platforms = res.data;
+                    angular.forEach(platforms, function (cartOjb) {
                         _.extend(cartOjb, {cartId:parseInt(cartOjb.value), day:0,checked:true});
                     });
+                    // 平台过滤
+                    self.platforms = _.filter(platforms, cartObj => {
+                        return (cartObj.cartId < 20 && cartObj.lang_id) == "en" || (cartObj.cartId >= 20 && cartObj.lang_id == "cn");
+                    })
                 }
             });
         }
