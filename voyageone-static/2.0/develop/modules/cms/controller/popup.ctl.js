@@ -670,22 +670,22 @@ define([
         us:{
             search: {
                 batchApprove: {
-                    "templateUrl": "views/pop/feed/search/index.tpl.html",
-                    "controllerUrl": "modules/cms-us/views/pop/feed/search/index.ctl",
+                    "templateUrl": "views/pop/usa/search/index.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/usa/search/index.ctl",
                     "controller": 'batchApproveController as ctrl',
                     "size": 'md'
                 }
             },
             detail: {
                 usCategory: {
-                    "templateUrl": "views/pop/feed/detail/usCategory/index.tpl.html",
-                    "controllerUrl": "modules/cms-us/views/pop/feed/detail/usCategory/index.ctl",
+                    "templateUrl": "views/pop/usa/detail/usCategory/index.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/usa/detail/usCategory/index.ctl",
                     "controller": 'usCategoryController as ctrl',
                     "size": 'lg'
                 },
                 amazonCategory:{
-                    "templateUrl": "views/pop/feed/detail/amazonCategory/index.tpl.html",
-                    "controllerUrl": "modules/cms-us/views/pop/feed/detail/amazonCategory/index.ctl",
+                    "templateUrl": "views/pop/usa/detail/amazonCategory/index.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/usa/detail/amazonCategory/index.ctl",
                     "controller": 'amazonCategoryController as ctrl',
                     "size": 'lg'
                 }
