@@ -3,4 +3,9 @@
 @import url(font-awesome/css/font-awesome.css);
 @import url(simple-line-icons/css/simple-line-icons.css);
 @import url(glyphicons-regular/css/font.css);
-@import url(app.css);
+@import url(app.reset.css);
+@import url(app.bootstrap.custom.css);
+@import url(app.old.css);
+@import url(app.custom.css);
+@import url(app.components.css);
+@import url(app.pages.css);
