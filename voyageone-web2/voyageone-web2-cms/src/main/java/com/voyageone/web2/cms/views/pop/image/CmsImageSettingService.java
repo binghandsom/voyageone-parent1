@@ -8,7 +8,6 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.HttpScene7;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ftp.FtpComponentFactory;
 import com.voyageone.components.ftp.FtpConstants;
@@ -80,7 +79,7 @@ public class CmsImageSettingService extends BaseViewService {
 
 
         // 上传图片到Ftp
-        HttpScene7.uploadImageFile(uploadPath, imageName + imageExtend, file.getInputStream());
+        ImageServer.uploadImage(uploadPath, imageName + imageExtend, file.getInputStream());
 
         // 插入图片表
         CmsBtImagesModel newModel = new CmsBtImagesModel();
