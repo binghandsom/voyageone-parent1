@@ -517,11 +517,11 @@ define([
         /**
          * @description 弹出亚马逊类目  cartId：5
          */
-        popAmazonCategory(){
+        popCategory(option,attrName){
             let self = this;
 
-            self.popups.openAmazonCategory().then(res => {
-                self.feed.amazonBrowseTree = res.catPath;
+            self.popups.openAmazonCategory(option).then(res => {
+                self.feed[attrName] = res.catPath;
             });
         }
 

@@ -2388,6 +2388,13 @@ a.text-vo:focus {
     font-weight: bold;
 }
 
+.vo_unreqfield:after {
+    content: " *";
+    visibility: hidden;
+    font-size: 13px;
+    font-weight: bold;
+}
+
 .mar-top {
     margin-top: 40px;
 }

@@ -15,11 +15,32 @@ define([
         init() {
             const self = this;
 
-            self.productDetailService.getPlatformCategories({cartId: 5}).then(res => {
+            self.productDetailService.getPlatformCategories({cartId: self.context.cartId}).then(res => {
                 let len = self.totalCategory.length;
                 self.totalCategory.push({index: len, children: res.data});
 
+                self.defaultSpread();
             });
+
+        }
+
+        defaultSpread() {
+            let self = this,
+                totalCategory = self.totalCategory;
+
+            if (!self.context.from || self.context.from === '')
+                return;
+
+            self.context.from.split(">").forEach((catPath, index) => {
+                totalCategory[index].children.forEach((item) => {
+                    if (item.catName === catPath) {
+                        totalCategory[index].selectedCat = item;
+                        if (item.children.length > 0)
+                            totalCategory.push({index: totalCategory.length, children: item.children});
+                    }
+                });
+            });
+
 
         }
 
