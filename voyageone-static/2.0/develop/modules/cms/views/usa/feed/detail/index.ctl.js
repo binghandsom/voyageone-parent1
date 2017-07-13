@@ -389,18 +389,23 @@ define([
 
         initImage(num) {
             let self = this;
-            if (!!self.feed.urlkey && num > 0) {
-                if (!self.feed.image) {
-                    self.feed.image = [];
-                }
-                let count = _.size(self.feed.image);
-                let add = num - count;
-                if (add > 0) {
-                    for (let i = 1; i <= add; i++) {
-                        self.feed.image.push(self.imageUrl + self.feed.urlkey + "-" + (count + i));
+            if (!num || num <= 0) {
+                self.currentFeedImage = "";
+                self.feed.image = [];
+            } else {
+                if (!!self.feed.urlkey) {
+                    if (!self.feed.image) {
+                        self.feed.image = [];
                     }
-                } else {
-                    self.feed.image.splice(add);
+                    let count = _.size(self.feed.image);
+                    let add = num - count;
+                    if (add > 0) {
+                        for (let i = 1; i <= add; i++) {
+                            self.feed.image.push(self.imageUrl + self.feed.urlkey + "-" + (count + i));
+                        }
+                    } else {
+                        self.feed.image.splice(add);
+                    }
                 }
             }
         }
@@ -419,22 +424,32 @@ define([
             self.feed.image.splice(index, 1);
             let imageNum = self.feed.imageNum - 1;
             self.feed.imageNum = imageNum;
+            if (imageNum == 0) {
+                self.currentFeedImage = "";
+            } else {
+                self.currentFeedImage = self.feed.image[0];
+            }
         }
 
         initBoxImage(num) {
             let self = this;
-            if (!!self.feed.urlkey && num > 0) {
-                if (!self.feed.attribute.boximages) {
-                    self.feed.attribute.boximages = [];
-                }
-                let count = _.size(self.feed.attribute.boximages);
-                let add = num - count;
-                if (add > 0) {
-                    for (let i = 1; i <= add; i++) {
-                        self.feed.attribute.boximages.push(self.imageUrl + self.feed.urlkey + "-2" + (count + i));
+            if (!num || num <= 0) {
+                self.currentBoxImage = "";
+                self.feed.attribute.boximages = [];
+            } else {
+                if (!!self.feed.urlkey) {
+                    if (!self.feed.attribute.boximages) {
+                        self.feed.attribute.boximages = [];
                     }
-                } else {
-                    self.feed.attribute.boximages.splice(add);
+                    let count = _.size(self.feed.attribute.boximages);
+                    let add = num - count;
+                    if (add > 0) {
+                        for (let i = 1; i <= add; i++) {
+                            self.feed.attribute.boximages.push(self.imageUrl + self.feed.urlkey + "-2" + (count + i));
+                        }
+                    } else {
+                        self.feed.attribute.boximages.splice(add);
+                    }
                 }
             }
         }
@@ -453,6 +468,11 @@ define([
             self.feed.attribute.boximages.splice(index, 1);
             let boxImageNum = self.feed.boxImageNum - 1;
             self.feed.boxImageNum = boxImageNum;
+            if (boxImageNum == 0) {
+                self.currentBoxImage = "";
+            } else {
+                self.currentBoxImage = self.feed.attribute.boximages[0];
+            }
         }
 
         // 同Model
