@@ -53,7 +53,10 @@ define([
 
                     // 记录Feed数据原始是否有URL Key
                     let hasUrlkey = !!self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
-                    _.extend(self.feed, {hasUrlkey:hasUrlkey,urlkey:self.feed.attribute.urlkey[0]});
+                    _.extend(self.feed, {hasUrlkey:hasUrlkey});
+                    if (hasUrlkey) {
+                        _.extend(self.feed, {urlkey:self.feed.attribute.urlkey[0]});
+                    }
                     // 处理Feed数据
                     self.filterFeed();
 
@@ -415,8 +418,9 @@ define([
         }
 
         initImage(num) {
+            console.log(num);
             let self = this;
-            if (!num || num <= 0) {
+            if (num <= 0) {
                 self.currentFeedImage = "";
                 self.feed.image = [];
             } else {
@@ -426,16 +430,18 @@ define([
                     }
                     let count = _.size(self.feed.image);
                     let add = num - count;
-                    if (add > 0) {
-                        for (let i = 1; i <= add; i++) {
-                            self.feed.image.push(self.imageUrl + self.feed.urlkey + "-" + (count + i));
+                    if (add != 0) {
+                        if (add > 0) {
+                            for (let i = 1; i <= add; i++) {
+                                self.feed.image.push(self.imageUrl + self.feed.urlkey + "-" + (count + i));
+                            }
+                        } else {
+                            self.feed.image.splice(add);
                         }
-                    } else {
-                        self.feed.image.splice(add);
-                    }
 
-                    if (self.currentFeedImage === "" && self.feed.image.length > 0)
-                        self.currentFeedImage = self.feed.image[0];
+                        if (self.currentFeedImage === "" && self.feed.image.length > 0)
+                            self.currentFeedImage = self.feed.image[0];
+                    }
                 }
             }
         }
@@ -476,12 +482,17 @@ define([
                     }
                     let count = _.size(self.feed.attribute.boximages);
                     let add = num - count;
-                    if (add > 0) {
-                        for (let i = 1; i <= add; i++) {
-                            self.feed.attribute.boximages.push(self.imageUrl + self.feed.urlkey + "-2" + (count + i));
+                    if (num != 0) {
+                        if (add > 0) {
+                            for (let i = 1; i <= add; i++) {
+                                self.feed.attribute.boximages.push(self.imageUrl + self.feed.urlkey + "-2" + (count + i));
+                            }
+                        } else {
+                            self.feed.attribute.boximages.splice(add);
                         }
-                    } else {
-                        self.feed.attribute.boximages.splice(add);
+
+                        if (self.currentBoxImage === "" && self.feed.attribute.boximages.length > 0)
+                            self.currentBoxImage = self.feed.attribute.boximages[0];
                     }
                 }
             }
