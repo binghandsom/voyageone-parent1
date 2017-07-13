@@ -51,8 +51,8 @@
                                                 <div class="col-md-5">
                                                     <p class="input-group">
                                                         <input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" date-model-format="yyyy-MM-dd"
-                                                                is-open="dataPicker1" datepicker-options="dateOptions" max-date="dt2"
-                                                               ng-required="true" close-text="Close" alt-input-formats="altInputFormats" required="required" ng-model="ctrl.paraMap.lastReceivedOnStart">
+                                                                is-open="dataPicker1" datepicker-options="dateOptions"
+                                                               ng-required="true" close-text="Close" alt-input-formats="altInputFormats" required="required" ng-model="ctrl.paraMap.lastReceivedOnStart" max-date="ctrl.paraMap.lastReceivedOnEnd">
                                                         <span class="input-group-btn">
                                                             <button type="button" class="btn btn-default" ng-click="dataPicker1 = !dataPicker1"><i class="glyphicon glyphicon-calendar"></i></button>
                                                         </span>
@@ -62,8 +62,8 @@
                                                 <div class="col-md-5">
                                                     <p class="input-group">
                                                         <input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" date-model-format="yyyy-MM-dd"
-                                                               is-open="dataPicker2" datepicker-options="dateOptions" min-date="dt1"
-                                                               ng-required="true" close-text="Close" required="required" ng-model="ctrl.paraMap.lastReceivedOnEnd">
+                                                               is-open="dataPicker2" datepicker-options="dateOptions"
+                                                               ng-required="true" close-text="Close" required="required" ng-model="ctrl.paraMap.lastReceivedOnEnd"  min-date="ctrl.paraMap.lastReceivedOnStart">
                                                         <span class="input-group-btn">
                                                             <button type="button" class="btn btn-default" ng-click="dataPicker2 = !dataPicker2"><i class="glyphicon glyphicon-calendar"></i></button>
                                                         </span>
@@ -82,7 +82,7 @@
                                                 <div class="col-md-5">
                                                     <p class="input-group">
                                                         <input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" date-model-format="yyyy-MM-dd"
-                                                               is-open="createTime1" datepicker-options="dateOptions" max-date="dt2"
+                                                               is-open="createTime1" datepicker-options="dateOptions" max-date="ctrl.paraMap.createdEnd"
                                                                ng-required="true" close-text="Close" alt-input-formats="altInputFormats" required="required" ng-model="ctrl.paraMap.createdStart">
                                                         <span class="input-group-btn">
                                                             <button type="button" class="btn btn-default" ng-click="createTime1 = !createTime1"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -93,7 +93,7 @@
                                                 <div class="col-md-5">
                                                     <p class="input-group">
                                                         <input type="text" class="form-control" uib-datepicker-popup="yyyy-MM-dd" date-model-format="yyyy-MM-dd"
-                                                               is-open="createTime2" datepicker-options="dateOptions" min-date="dt1"
+                                                               is-open="createTime2" datepicker-options="dateOptions" min-date="ctrl.paraMap.createdStart"
                                                                ng-required="true" close-text="Close" required="required" ng-model="ctrl.paraMap.createdEnd">
                                                         <span class="input-group-btn">
                                                             <button type="button" class="btn btn-default" ng-click="createTime2 = !createTime2"><i class="glyphicon glyphicon-calendar"></i></button>
