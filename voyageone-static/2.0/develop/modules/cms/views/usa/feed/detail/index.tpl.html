@@ -95,7 +95,7 @@
                                             </button>
                                         </div>
                                         <div class="col-md-6">
-                                            <select name="categories" chosen multiple width="'100%'"
+                                            <select name="categories" chosen multiple width="'100%'" disabled
                                                     ng-options="cat as cat.catPath for cat in ctrl.feed.categories"
                                                     ng-model="ctrl.feed.categories"></select>
                                         </div>
@@ -181,7 +181,8 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_reqfield">Brand</label>
                                         <div class="col-md-6">
-                                            <select class="form-control" name="brand" ng-options="brand.value as brand.name for brand in ctrl.brandList"
+                                            <select class="form-control" name="brand" chosen search-contain="true"
+                                                    ng-options="brand.value as brand.name for brand in ctrl.brandList"
                                                     ng-model="ctrl.feed.brand" required>
                                             </select>
                                         </div>
@@ -197,7 +198,8 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_reqfield">Product Type</label>
                                         <div class="col-md-6">
-                                            <select class="form-control" name="productType" ng-options="productType.value as productType.name for productType in ctrl.productTypeList"
+                                            <select class="form-control" name="productType" chosen search-contain="true"
+                                                    ng-options="productType.value as productType.name for productType in ctrl.productTypeList"
                                                     ng-model="ctrl.feed.productType" required>
                                             </select>
                                         </div>
@@ -213,7 +215,8 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_reqfield">Size Type</label>
                                         <div class="col-md-6">
-                                            <select class="form-control" name="sizeType" ng-options="sizeType.value as sizeType.name for sizeType in ctrl.sizeTypeList"
+                                            <select class="form-control" name="sizeType"  chosen search-contain="true"
+                                                    ng-options="sizeType.value as sizeType.name for sizeType in ctrl.sizeTypeList"
                                                     ng-model="ctrl.feed.sizeType" required>
                                             </select>
                                         </div>
@@ -229,7 +232,8 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_reqfield">Material</label>
                                         <div class="col-md-6">
-                                            <select class="form-control" name="material" ng-options="material.value as material.name for material in ctrl.materialList"
+                                            <select class="form-control" name="material"  chosen search-contain="true"
+                                                    ng-options="material.value as material.name for material in ctrl.materialList"
                                                     ng-model="ctrl.feed.material" required>
                                             </select>
                                         </div>
@@ -245,7 +249,8 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title ">Made in</label>
                                         <div class="col-md-6">
-                                            <select class="form-control" name="origin" ng-options="origin.value as origin.name for origin in ctrl.originList"
+                                            <select class="form-control" name="origin"  chosen search-contain="true"
+                                                    ng-options="origin.value as origin.name for origin in ctrl.originList"
                                                     ng-model="ctrl.feed.origin">
                                             </select>
                                         </div>
@@ -255,7 +260,8 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title ">Color Map</label>
                                         <div class="col-md-6">
-                                            <select class="form-control" name="origin" ng-options="color.value as color.name for color in ctrl.colorMap"
+                                            <select class="form-control" name="origin" chosen search-contain="true"
+                                                    ng-options="color.value as color.name for color in ctrl.colorMap"
                                                     ng-model="ctrl.feed.colorMap">
                                             </select>
                                         </div>
@@ -683,14 +689,14 @@
         <nav class="bs-docs-sidebar">
             <h3 drag-handle>导航栏</h3>
             <ul class="nav bs-docs-sidenav">
-                <li class="text-center">
-                    <button class="opacityBtn text-black" ng-disabled="feedForm.$invalid" ng-if="!(ctrl.auth!=3 && ctrl.feed.status == 'Ready')  " ng-click="ctrl.save('0')">Save</button>
+                <li class="text-center" style="margin: 7px">
+                    <button class="btn btn-info text-black" ng-disabled="feedForm.$invalid" ng-if="!(ctrl.auth!=3 && ctrl.feed.status == 'Ready')  " ng-click="ctrl.save('0')"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Save</button>
                 </li>
-                <li class="text-center">
-                    <button class="opacityBtn text-black" ng-disabled="feedForm.$invalid" ng-if="ctrl.feed.status != 'Ready'" ng-click="ctrl.save('1')">Submit</button>
+                <li class="text-center" style="margin: 7px">
+                    <button class="btn btn-info text-black" ng-disabled="feedForm.$invalid" ng-if="ctrl.feed.status != 'Ready'" ng-click="ctrl.save('1')"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Submit</button>
                 </li>
-                <li class="text-center">
-                    <button class="opacityBtn text-black" ng-disabled="feedForm.$invalid" ng-if="ctrl.auth==3 && ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')">Approve</button>
+                <li class="text-center" style="margin: 7px">
+                    <button class="btn btn-info text-black" ng-disabled="feedForm.$invalid" ng-if="ctrl.auth==3 && ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Approve</button>
                 </li>
             </ul>
         </nav>
