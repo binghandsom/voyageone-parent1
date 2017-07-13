@@ -107,7 +107,7 @@ public class UsaCmsFeedController extends BaseController {
         List<String> status = new ArrayList<>();
         status.add(CmsConstants.ProductStatus.Ready.toString());
         reqParams.getSearchMap().put("status",status );
-        reqParams.getSearchMap().put("approvePricing","1");
+        reqParams.getSearchMap().put("approvePricing", Collections.singletonList("1"));
         reqParams.getSearchMap().put("codeList",codeList);
         codeList = usaFeedInfoService.getFeedCodeList(reqParams.getSearchMap(), getUser().getSelChannelId());
 
