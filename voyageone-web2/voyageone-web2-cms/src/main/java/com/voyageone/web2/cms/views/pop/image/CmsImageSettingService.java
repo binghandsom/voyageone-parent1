@@ -58,7 +58,7 @@ public class CmsImageSettingService extends BaseViewService {
     @Autowired
     private CmsProductPlatformDetailService cmsProductPlatformDetailService;
 
-    public Map<String, Object> uploadImage(MultipartFile file, Long productId, String imageType, UserSessionBean user, String imageExtend) throws Exception {
+    public Map<String, Object> uploadImage(MultipartFile file, Long productId, String imageType, UserSessionBean user) throws Exception {
 
         Map<String, Object> response;
 
@@ -71,7 +71,7 @@ public class CmsImageSettingService extends BaseViewService {
 
 
         // 上传图片到Ftp
-        ImageServer.uploadImage(orderChannelId, imageName + imageExtend, file.getInputStream());
+        ImageServer.uploadImage(orderChannelId, imageName, file.getInputStream());
 
         // 插入图片表
         CmsBtImagesModel newModel = new CmsBtImagesModel();
@@ -96,7 +96,7 @@ public class CmsImageSettingService extends BaseViewService {
     }
 
     public Map<String, Object> uploadPlatformImage(MultipartFile file, Long productId, String imageType,
-                                                   UserSessionBean user, String imageExtend, Integer cartId) throws IOException {
+                                                   UserSessionBean user, Integer cartId) throws IOException {
         Map<String, Object> response = new HashMap<>();
 
         String orderChannelId = user.getSelChannelId();
@@ -107,7 +107,7 @@ public class CmsImageSettingService extends BaseViewService {
         String imageName = getImageName(cmsBtProductModel, imageType, user, cartId);
 
         // 上传图片到Ftp
-        ImageServer.uploadImage(orderChannelId, imageName + imageExtend, file.getInputStream());
+        ImageServer.uploadImage(orderChannelId, imageName, file.getInputStream());
 
         // 插入图片表
         CmsBtImagesModel newModel = new CmsBtImagesModel();

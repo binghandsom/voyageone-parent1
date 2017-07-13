@@ -166,7 +166,7 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
 
                     URL url = new URL(imageUrl);
                     try (InputStream stream = url.openStream()) {
-                        String fileName = imagesModel.getImgName() + ".jpg";
+                        String fileName = imagesModel.getImgName();
                         $info("thread-" + threadNo + ":" + imageUrl + "http上传开始");
                         ImageServer.uploadImage(orderChannelId, fileName, stream);
                     } catch (Exception ex) {
