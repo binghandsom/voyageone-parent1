@@ -8,6 +8,7 @@ import com.taobao.api.domain.Item;
 import com.taobao.api.domain.ScItem;
 import com.taobao.api.domain.ScItemMap;
 import com.taobao.top.schema.exception.TopSchemaException;
+import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.InputField;
@@ -409,6 +410,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
      */
     public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp,
                               List<String> tmTonggouFeedAttrList, Map<String, List<Map<String, String>>> categoryMappingListMap) {
+
 
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
@@ -2443,7 +2445,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         } else {
             // 更新商品的时候
             result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
-
             if (result == null) {
                 List<Map<String, Object>> skuTmallList = null;
                 tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
@@ -2460,7 +2461,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 }
                 if (ListUtils.notNull(skuTmallList)) {
                     List<Map<String, Object>> skuCmsList;
-                    String skuCmsJson = (String) JacksonUtil.jsonToMap(productInfoXml).get("skus");
+                    String skuCmsJson = ((InputField)SchemaReader.readXmlForMap(productInfoXml).get("skus")).getValue();
                     skuCmsList = JacksonUtil.jsonToMapList(skuCmsJson);
                     if (skuCmsList.size() != skuTmallList.size()) {
                         return "ERROR: 检查商品时发现sku数量不一致，请及时确认！ ";

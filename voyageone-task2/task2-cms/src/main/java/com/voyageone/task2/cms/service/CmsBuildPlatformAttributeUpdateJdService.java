@@ -293,7 +293,7 @@ public class CmsBuildPlatformAttributeUpdateJdService extends BaseCronTaskServic
                     }
                 }
             } else {
-                sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+                sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId, true);
                 if (sxData == null) {
                     String errorMsg = String.format("取得上新用的商品数据(SxData)信息失败！请向管理员确认 [sxData=null][workloadId:%s][groupId:%s]:", work.getId(), work.getGroupId());
                     $error(errorMsg);

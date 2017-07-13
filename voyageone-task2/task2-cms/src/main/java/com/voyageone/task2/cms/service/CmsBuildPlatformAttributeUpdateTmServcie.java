@@ -246,7 +246,7 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
         long prodStartTime = System.currentTimeMillis();
         work.setModified(new Date(prodStartTime));
         try {
-            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId, true);
 
             if (sxData == null) {
                 String errorMsg = String.format("(SxData)信息失败！[sxData=null][workloadId:%s][groupId:%s]:", work.getId(), work.getGroupId());
@@ -265,6 +265,8 @@ public class CmsBuildPlatformAttributeUpdateTmServcie extends BaseCronTaskServic
                     // 有错误的时候，直接报错
                     throw new BusinessException(errorMsg);
                 }
+            } else {
+                sxData.setErrorMessage(null);
             }
             // 主产品等列表取得
             CmsBtProductModel mainProduct = sxData.getMainProduct();

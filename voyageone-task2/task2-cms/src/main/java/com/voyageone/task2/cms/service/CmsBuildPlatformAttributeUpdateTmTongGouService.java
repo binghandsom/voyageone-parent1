@@ -280,7 +280,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         work.setModified(new Date(prodStartTime));
         try {
 
-            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId, true);
 
             int cartId = sxData.getCartId();
             if (sxData == null) {
