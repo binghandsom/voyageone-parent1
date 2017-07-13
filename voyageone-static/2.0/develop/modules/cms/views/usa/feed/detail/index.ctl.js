@@ -481,7 +481,7 @@ define([
                     }
                     let count = _.size(self.feed.attribute.boximages);
                     let add = num - count;
-                    if (num != 0) {
+                    if (add != 0) {
                         if (add > 0) {
                             for (let i = 1; i <= add; i++) {
                                 self.feed.attribute.boximages.push(self.imageUrl + self.feed.urlkey + "-2" + (count + i));
