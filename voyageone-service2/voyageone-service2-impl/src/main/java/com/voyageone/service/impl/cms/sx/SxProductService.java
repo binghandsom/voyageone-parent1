@@ -543,12 +543,6 @@ public class SxProductService extends BaseService {
      * @param user        更新者
      */
     public Map<String, String> uploadImage(String channelId, int cartId, String groupId, ShopBean shopBean, Set<String> imageUrlSet, String user) throws Exception {
-        KoalaConfig koalaConfig = null;
-        if (CartEnums.Cart.KL.getValue() == cartId) {
-            koalaConfig = Shops.getShopKoala(channelId, String.valueOf(cartId));
-        }
-
-
         // Map<srcUrl, destUrl>
         Map<String, String> retUrls = new HashMap<>();
 
@@ -600,6 +594,7 @@ public class SxProductService extends BaseService {
                             }
                             // 20170227 增加上传图片到京东图片空间 charis END
                         } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.NTES.getId())) {
+                            KoalaConfig koalaConfig = Shops.getShopKoala(channelId, String.valueOf(cartId));
                             String[] picture = uploadImageByUrl_KL(srcUrl, koalaConfig, groupId);
                             if (picture != null && picture.length > 0) {
                                 destUrl = picture[0];
@@ -657,6 +652,7 @@ public class SxProductService extends BaseService {
                         }
                         // 20170227 增加上传图片到京东图片空间 charis END
                     } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.NTES.getId())) {
+                        KoalaConfig koalaConfig = Shops.getShopKoala(channelId, String.valueOf(cartId));
                         String[] picture = uploadImageByUrl_KL(srcUrl, koalaConfig, groupId);
                         if (picture != null && picture.length > 0) {
                             destUrl = picture[0];
@@ -6039,11 +6035,11 @@ public class SxProductService extends BaseService {
 
         // 20170418 tom CMSDOC-592 START
         // 先用Liking的匠心界做试点， 运行一段时间后没发现什么后遗症的话， 再推广到所有店铺
-        if (ChannelConfigEnums.Channel.USJGJ.getId().equals(shopBean.getOrder_channel_id())
-                && CartEnums.Cart.JGJ.getId().equals(shopBean.getCart_id())
-                ) {
+//        if (ChannelConfigEnums.Channel.USJGJ.getId().equals(shopBean.getOrder_channel_id())
+//                && CartEnums.Cart.JGJ.getId().equals(shopBean.getCart_id())
+//                ) {
             // s7开头的图片就不用一直保存在京东图片空间里了
-            if (picUrl.startsWith("http://s7d5.scene7.com/")) {
+//            if (picUrl.startsWith("http://s7d5.scene7.com/")) {
                 // 删除图片
                 try {
                     jdImgzoneService.deletePictures(shopBean, imageUrl[1]);
@@ -6052,9 +6048,9 @@ public class SxProductService extends BaseService {
                 }
 
                 // 图片id无需保存（只需要保存图片地址， 下次可能还能用到）
-                imageUrl[1] = "";
-            }
-        }
+//                imageUrl[1] = "";
+//            }
+//        }
         // 20170418 tom CMSDOC-592 END
 
         return imageUrl;
