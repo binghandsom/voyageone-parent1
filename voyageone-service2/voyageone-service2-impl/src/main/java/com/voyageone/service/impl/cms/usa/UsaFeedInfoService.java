@@ -9,6 +9,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
@@ -71,13 +72,17 @@ public class UsaFeedInfoService extends BaseService {
      */
     public CmsBtFeedInfoModel setPrice(CmsBtFeedInfoModel cmsBtFeedInfoModel) {
 
-        CmsChannelConfigBean msrpConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_MSRP, cmsBtFeedInfoModel.getProductType());
+        String productType = cmsBtFeedInfoModel.getProductType();
+        if(!StringUtil.isEmpty(productType)){
+            productType = productType.toLowerCase();
+        }
+        CmsChannelConfigBean msrpConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_MSRP, productType);
         if (msrpConfig == null) {
             msrpConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_MSRP, "0");
         }
         String formulaMsrp = msrpConfig.getConfigValue1();
 
-        CmsChannelConfigBean retailConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_RETAIL, cmsBtFeedInfoModel.getProductType());
+        CmsChannelConfigBean retailConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_RETAIL, productType);
         if (retailConfig == null) {
             retailConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_RETAIL, "0");
         }

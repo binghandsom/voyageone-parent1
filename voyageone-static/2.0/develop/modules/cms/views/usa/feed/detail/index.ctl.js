@@ -37,7 +37,7 @@ define([
                 priceMsrp: "",
                 priceCurrent: "",
 
-                weightOrgUnits: ['kg', 'lb']
+                weightOrgUnits: ['lb', 'kg']
             };
             this.topFeedList = null; // 同Model查询结果
             this.imageUrl = "http://image.sneakerhead.com/is/image/sneakerhead/";
@@ -84,8 +84,9 @@ define([
         filterFeed() {
             let self = this;
             let hasUrlkey = !!self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
-            _.extend(self.feed, {hasUrlkey: hasUrlkey});
-            if (!hasUrlkey) {
+            if (hasUrlkey) {
+                _.extend(self.feed, {urlkey: self.feed.attribute.urlkey[0]});
+            } else {
                 // 计算urlKey
                 self.generateUrlKey();
             }
@@ -106,6 +107,10 @@ define([
                 }
                 if (!sku.isSale) {
                     sku.isSale = 1;
+                }
+                // 重量单位,默认lb
+                if (!sku.weightOrgUnit) {
+                    sku.weightOrgUnit = "lb";
                 }
             });
             // 处理Abstract和accessory
@@ -188,11 +193,13 @@ define([
         // 生成UrlKey
         generateUrlKey() {
             let self = this;
-            if (!self.feed.hasUrlkey && self.feed.name) {
+            if (self.feed.name) {
                 let urlkey = self.feed.name + "-" + self.feed.code;
                 urlkey = urlkey.replace(/[^a-zA-Z0-9]+/g, " ");
                 urlkey = urlkey.replace(/\s+/g, "-");
-                self.feed.attribute.urlkey = [urlkey.toLowerCase()];
+                urlkey = urlkey.toLowerCase();
+                self.feed.attribute.urlkey = [urlkey];
+                _.extend(self.feed, {urlkey:urlkey});
             }
         }
 
@@ -231,8 +238,6 @@ define([
                         priceClientMsrpMax: res.data.priceClientMsrpMax
                     };
                     _.extend(self.feed, priceScope);
-
-                    self.notify.success('update success!');
                 }
             });
         }
@@ -246,9 +251,22 @@ define([
                     self.alert("Please check 'Approve Pricing'.");
                     return;
                 }
-                // Msrp or price O或500时Confirm
+                // Msrp or price O时禁止Approve
                 let checkSkus = _.filter(self.feed.skus, function (sku) {
-                    return sku.priceClientMsrp == 0 || sku.priceClientMsrp == 500 || sku.priceNet == 0 || sku.priceNet == 500;
+                    // return sku.priceClientMsrp == 0 || sku.priceClientMsrp == 500 || sku.priceNet == 0 || sku.priceNet == 500;
+                    return sku.priceClientMsrp == 0 || sku.priceNet == 0;
+                });
+                let skus = [];
+                angular.forEach(checkSkus, function (sku) {
+                    skus.push(sku.sku);
+                });
+                if (_.size(checkSkus) > 0) {
+                    let message = `SKU[${skus}] Msrp($) or price($) is 0, feed can't be approved.`;
+                    self.alert(message);
+                    return;
+                }
+                checkSkus = _.filter(self.feed.skus, function (sku) {
+                    return sku.priceClientMsrp == 500 || sku.priceNet == 500;
                 });
                 if (!checkSkus || _.size(checkSkus) == 0) {
                     let ctx = {
@@ -262,11 +280,11 @@ define([
                         }
                     });
                 } else {
-                    let skus = [];
+                    skus = [];
                     angular.forEach(checkSkus, function (sku) {
                         skus.push(sku.sku);
                     });
-                    let message = `SKU[${skus}] Msrp($) or price($) is 0 or 500, continue to Approve?`;
+                    let message = `SKU[${skus}] Msrp($) or price($) is 500, continue to approve?`;
                     self.confirm(message).then((confirmed) => {
                         let ctx = {
                             updateModel: true,
@@ -360,31 +378,28 @@ define([
             });
         }
 
-        popGoogleCat(option,attr){
-            var self = this;
-
-            self.popups.openUsCategory(option).then(context => {
-                console.log(context);
-
-            });
-        }
-
         initImage(num) {
             let self = this;
-            let urlKey = "";
-            if (self.feed.hasUrlkey && num > 0) {
-                urlKey = self.feed.attribute.urlkey[0];
-                if (!self.feed.image) {
-                    self.feed.image = [];
-                }
-                let count = _.size(self.feed.image);
-                let add = num - count;
-                if (add > 0) {
-                    for (let i = 1; i <= add; i++) {
-                        self.feed.image.push(self.imageUrl + urlKey + "-" + (count + i));
+            if (!num || num <= 0) {
+                self.currentFeedImage = "";
+                self.feed.image = [];
+            } else {
+                if (self.feed.urlkey) {
+                    if (!self.feed.image) {
+                        self.feed.image = [];
                     }
-                } else {
-                    self.feed.image.splice(add);
+                    let count = _.size(self.feed.image);
+                    let add = num - count;
+                    if (add > 0) {
+                        for (let i = 1; i <= add; i++) {
+                            self.feed.image.push(self.imageUrl + self.feed.urlkey + "-" + (count + i));
+                        }
+                    } else {
+                        self.feed.image.splice(add);
+                    }
+
+                    if(self.currentFeedImage === "" && self.feed.image.length > 0)
+                        self.currentFeedImage = self.feed.image[0];
                 }
             }
         }
@@ -395,29 +410,43 @@ define([
                 self.feed.image = [];
             }
             self.feed.image.push("");
+            self.feed.imageNum = _.size(self.feed.image);
+
+            if(self.currentFeedImage === "" && self.feed.image.length > 0)
+                self.currentFeedImage = self.feed.image[0];
         }
 
         deleteImage(index) {
             let self = this;
             self.feed.image.splice(index, 1);
+            let imageNum = self.feed.imageNum - 1;
+            self.feed.imageNum = imageNum;
+            if (imageNum == 0) {
+                self.currentFeedImage = "";
+            } else {
+                self.currentFeedImage = self.feed.image[0];
+            }
         }
 
         initBoxImage(num) {
             let self = this;
-            let urlKey = "";
-            if (self.feed.hasUrlkey && num > 0) {
-                urlKey = self.feed.attribute.urlkey[0];
-                if (!self.feed.attribute.boximages) {
-                    self.feed.attribute.boximages = [];
-                }
-                let count = _.size(self.feed.attribute.boximages);
-                let add = num - count;
-                if (add > 0) {
-                    for (let i = 1; i <= add; i++) {
-                        self.feed.attribute.boximages.push(self.imageUrl + urlKey + "-2" + (count + i));
+            if (!num || num <= 0) {
+                self.currentBoxImage = "";
+                self.feed.attribute.boximages = [];
+            } else {
+                if (!!self.feed.urlkey) {
+                    if (!self.feed.attribute.boximages) {
+                        self.feed.attribute.boximages = [];
                     }
-                } else {
-                    self.feed.attribute.boximages.splice(add);
+                    let count = _.size(self.feed.attribute.boximages);
+                    let add = num - count;
+                    if (add > 0) {
+                        for (let i = 1; i <= add; i++) {
+                            self.feed.attribute.boximages.push(self.imageUrl + self.feed.urlkey + "-2" + (count + i));
+                        }
+                    } else {
+                        self.feed.attribute.boximages.splice(add);
+                    }
                 }
             }
         }
@@ -428,11 +457,19 @@ define([
                 self.feed.attribute.boximages = [];
             }
             self.feed.attribute.boximages.push("");
+            self.feed.boxImageNum = _.size(self.feed.attribute.boximages);
         }
 
         deleteBoxImage(index) {
             let self = this;
             self.feed.attribute.boximages.splice(index, 1);
+            let boxImageNum = self.feed.boxImageNum - 1;
+            self.feed.boxImageNum = boxImageNum;
+            if (boxImageNum == 0) {
+                self.currentBoxImage = "";
+            } else {
+                self.currentBoxImage = self.feed.attribute.boximages[0];
+            }
         }
 
         // 同Model
@@ -497,11 +534,11 @@ define([
         /**
          * @description 弹出亚马逊类目  cartId：5
          */
-        popAmazonCategory(){
+        popCategory(option,attrName){
             let self = this;
 
-            self.popups.openAmazonCategory().then(res => {
-                self.feed.amazonBrowseTree = res.catPath;
+            self.popups.openAmazonCategory(option).then(res => {
+                self.feed[attrName] = res.catPath;
             });
         }
 
@@ -510,6 +547,10 @@ define([
                 return;
 
             window.open(url);
+        }
+
+        changeImages(index,imageUrl,arrays){
+            arrays.splice(index,1,imageUrl);
         }
 
     });

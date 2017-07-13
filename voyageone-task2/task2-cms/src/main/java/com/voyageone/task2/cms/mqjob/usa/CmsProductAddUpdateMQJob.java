@@ -78,6 +78,7 @@ public class CmsProductAddUpdateMQJob extends TBaseMQCmsService<CmsProductAddUpd
         cmsBtFeedInfoModel.setPriceClientRetailMax(messageBody.getMsrp() - 0.01);
         List<CmsBtFeedInfoModel_Sku> skus = new ArrayList<>(messageBody.getSkuList().size());
         cmsBtFeedInfoModel.setSkus(skus);
+        cmsBtFeedInfoModel.setApprovePricing("0");
         messageBody.getSkuList().forEach(item -> {
             CmsBtFeedInfoModel_Sku sku = new CmsBtFeedInfoModel_Sku();
             sku.setPriceClientMsrp(messageBody.getMsrp());
