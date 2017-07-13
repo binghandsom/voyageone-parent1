@@ -52,6 +52,15 @@ define([
             let self = this;
             self.getList();
         }
+        getListSearch(){
+            let self = this;
+            self.isAll = false;
+            angular.forEach(self.feeds, function (feed) {
+                feed.check = false;
+            })
+            self.totalItems = false;
+            self.getList();
+        }
 
         getList() {
 
