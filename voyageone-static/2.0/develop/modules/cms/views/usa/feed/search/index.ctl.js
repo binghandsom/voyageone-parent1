@@ -297,7 +297,7 @@ define([
             if(feed.approvePricing == 0){
                 if(feed.priceClientMsrpMin == 0 || feed.priceClientRetailMin == 0){
                     //价格为0时不能修改
-                    self.alert("`Msrp($) or price($) is 0, can not change!!!`");
+                    self.alert("Msrp($) or price($) is 0, can not change!!!");
                     return;
                 }
 
