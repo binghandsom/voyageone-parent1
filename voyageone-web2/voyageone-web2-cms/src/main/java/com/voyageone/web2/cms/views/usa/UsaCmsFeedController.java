@@ -1,7 +1,6 @@
 package com.voyageone.web2.cms.views.usa;
 
 import com.mongodb.WriteResult;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
@@ -148,6 +147,11 @@ public class UsaCmsFeedController extends BaseController {
         return success(resultBean);
     }
 
+    /**
+     * 修改Approve price,Msrp($),price($)
+     * @param params
+     * @return
+     */
     @RequestMapping(value = UsaCmsUrlConstants.FEED.UPDATEONE)
     public AjaxResponse upDateOne(@RequestBody Map params) {
         WriteResult writeResult = null;
@@ -164,7 +168,6 @@ public class UsaCmsFeedController extends BaseController {
             if (priceClientMsrp != null) {
                 msrpPrice = Double.parseDouble(priceClientMsrp);
             }
-
             String price1 = (String) params.get("price");
             if (price1 != null) {
                 price = Double.parseDouble(price1);

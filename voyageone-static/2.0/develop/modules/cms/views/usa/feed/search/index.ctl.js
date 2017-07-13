@@ -7,17 +7,18 @@ define([
 
     cms.controller('feedSearchController', class FeedSearchController {
 
-        constructor(popups, itemDetailService, alert,$sessionStorage,notify) {
+        constructor(popups, itemDetailService, alert,$sessionStorage,notify,confirm) {
             let self = this;
 
             self.$sessionStorage = $sessionStorage;
             self.notify = notify;
             self.alert = alert;
+            self.confirm = confirm;
             self.popups = popups;
             self.feedListTotal = 0;
             self.paraMap = {
                 status: [],
-                approvePricing: null
+                approvePricing: []
             };
             self.updateMap = {};
             self.totalItems = false;
@@ -56,6 +57,7 @@ define([
 
             let self = this;
             self.paraMap.status = [];
+            self.paraMap.approvePricing = [];
             if (self.status[0] === true) {
                 self.paraMap.status.push("New");
             }
@@ -66,18 +68,18 @@ define([
                 self.paraMap.status.push("Ready");
             }
             //根据当前页面权限设置默认状态值
-            if(self.paraMap.status.length == 0){
+            if (self.paraMap.status.length == 0) {
                 //状态值为空
-                if(self.flag == 1){
+                if (self.flag == 1) {
                     //new 权限
                     self.paraMap.status.push("New");
                 }
-                if(self.flag == 2){
+                if (self.flag == 2) {
                     //Pending 权限
                     self.paraMap.status.push("New");
                     self.paraMap.status.push("Pending");
                 }
-                if(self.flag == 3){
+                if (self.flag == 3) {
                     //Ready 权限
                     self.paraMap.status.push("New");
                     self.paraMap.status.push("Pending");
@@ -85,11 +87,36 @@ define([
                 }
             }
 
-            if (self.approvePricing[0] === true && self.approvePricing[1] == false) {
-                self.paraMap.approvePricing = "1";
+            if (self.approvePricing[0] === true)
+            {
+                self.paraMap.approvePricing.push("1");
+            }
+            if (self.approvePricing[1] === true)
+            {
+                self.paraMap.approvePricing.push("0");
+            }
+
+            /*if (self.approvePricing[0] === true && self.approvePricing[1] == false) {
+                self.paraMap.approvePricing.push("1");
             }
             if (self.approvePricing[1] === true && self.approvePricing[0] === false) {
-                self.paraMap.approvePricing = "0";
+                self.paraMap.approvePricing.push("0");
+            }
+            if (self.approvePricing[1] === true && self.approvePricing[0] === true) {
+                self.paraMap.approvePricing.push("0");
+                self.paraMap.approvePricing.push("1");
+            }*/
+            if(self.paraMap.lastReceivedOnStart != null){
+                self.paraMap.lastReceivedOnStart += " 00:00:00";
+            }
+            if(self.paraMap.lastReceivedOnEnd != null){
+                self.paraMap.lastReceivedOnEnd += " 23:59:59";
+            }
+            if(self.paraMap.createdStart != null){
+                self.paraMap.createdStart += " 00:00:00";
+            }
+            if(self.paraMap.createdEnd != null){
+                self.paraMap.createdEnd += " 23:59:59";
             }
 
             self.itemDetailService.list(_.extend(self.paraMap, self.paging)).then(resp => {
@@ -101,12 +128,13 @@ define([
         }
 
         updateOne(feed, key, value) {
-            let self = this,
-                requestMap = {};
-            requestMap.code = feed.code;
-            requestMap[key] = value;
+            let self = this;
+            self.requestMap = {};
+           // _.extend(self.requestMap,feed.code,value);
+            self.requestMap.code = feed.code;
+            self.requestMap[key] = value;
 
-            self.itemDetailService.updateOne(requestMap).then(resp => {
+            self.itemDetailService.updateOne(self.requestMap).then(resp => {
                 self.notify.success('update success!');
 
                 feed.editMsrp = false;
@@ -125,7 +153,7 @@ define([
             self.status = [false, false, false];
             self.approvePricing = [false, false];
             self.paging.curr = 1;
-            self.paging.total = 0;
+           // self.paging.total = 0;
 
             if (columnArrow) {
                 _.forEach(columnArrow, function (value, key) {
@@ -256,10 +284,30 @@ define([
 
         canApprovePrice(feed){
             let self = this;
+            //进行校验,no到yes
+            if(feed.approvePricing == 0){
+                if(feed.priceClientMsrpMin == 0 || feed.priceClientRetailMin == 0){
+                    //价格为0时不能修改
+                    self.alert("`Msrp($) or price($) is 0, can not change!!!`");
+                    return;
+                }
 
-            feed.approvePricing = !feed.approvePricing;
+                if(feed.priceClientMsrpMin == 500){
+                    let message = `Msrp($) is 500, continue to change?`;
+                    self.confirm(message).then((confirmed) => {
+                        feed.approvePricing = !feed.approvePricing;
+                        self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
+                    })
 
-            self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
+
+                }else{
+                    feed.approvePricing = !feed.approvePricing;
+                    self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
+                }
+            }else{
+                feed.approvePricing = !feed.approvePricing;
+                self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
+            }
         }
     });
 

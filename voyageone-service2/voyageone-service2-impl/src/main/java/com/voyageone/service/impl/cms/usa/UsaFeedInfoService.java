@@ -203,8 +203,8 @@ public class UsaFeedInfoService extends BaseService {
         //封装查询条件
         Criteria criteria = new Criteria();
         //状态
-        if (ListUtils.notNull((List<String>) searchValue.get("status"))) {
-            List<String> status = (List<String>) searchValue.get("status");
+        if (ListUtils.notNull((List) searchValue.get("status"))) {
+            List status = (List) searchValue.get("status");
             criteria = criteria.and("status").in(status);
         }
         //设置开始和截止的时间
@@ -252,8 +252,8 @@ public class UsaFeedInfoService extends BaseService {
             criteria.orOperator(new Criteria("code").in(searchContents), new Criteria("model").in(searchContents), new Criteria("skus.sku").in(searchContent), new Criteria("skus.barcode").in(searchContent));
         }
 
-        if (StringUtils.isNotEmpty((String)searchValue.get("approvePricing"))) {
-            criteria = criteria.and("approvePricing").is((String) searchValue.get("approvePricing"));
+        if (ListUtils.notNull((List) searchValue.get("approvePricing"))) {
+            criteria = criteria.and("approvePricing").in((List)searchValue.get("approvePricing"));
         }
 
         if(ListUtils.notNull((List) searchValue.get("codeList"))){

@@ -6,7 +6,7 @@ define([
 ], function (cms) {
 
     cms.controller('feedDetailController', class FeedDetailController {
-        constructor(popups, $routeParams, itemDetailService, alert,$location,notify,confirm,$sessionStorage) {
+        constructor(popups, $routeParams, itemDetailService, alert, $location, notify, confirm, $sessionStorage) {
             this.popups = popups;
             this.itemDetailService = itemDetailService;
             this.alert = alert;
@@ -61,12 +61,12 @@ define([
                     self.colorMap = resp.data.colorMap;
                     if (self.feed && _.size(self.feed.image) > 0) {
                         self.currentFeedImage = self.feed.image[0];
-                        _.extend(self.feed, {imageNum:_.size(self.feed.image)});
+                        _.extend(self.feed, {imageNum: _.size(self.feed.image)});
                     }
 
                     if (self.feed && self.feed.attribute.boximages && _.size(self.feed.attribute.boximages) > 0) {
                         self.currentBoxImage = self.feed.attribute.boximages[0];
-                        _.extend(self.feed, {boxImageNum:_.size(self.feed.attribute.boximages)});
+                        _.extend(self.feed, {boxImageNum: _.size(self.feed.attribute.boximages)});
                     }
 
                 } else {
@@ -203,12 +203,12 @@ define([
                 urlkey = urlkey.replace(/\s+/g, "-");
                 urlkey = urlkey.toLowerCase();
                 self.feed.attribute.urlkey = [urlkey];
-                _.extend(self.feed, {urlkey:urlkey});
+                _.extend(self.feed, {urlkey: urlkey});
             }
         }
 
         // 统一设置SKU属性
-        setSkuProperty(sku, property,priceFlag) {
+        setSkuProperty(sku, property, priceFlag) {
             let self = this;
             if (!sku) {
                 angular.forEach(self.feed.skus, function (item) {
@@ -358,7 +358,7 @@ define([
          * @description 展开店铺内分类
          * @param option{cartId,muiti,from}
          */
-        popUsCategory(option,attr) {
+        popUsCategory(option, attr) {
             let self = this;
 
             self.popups.openUsCategory(option).then(context => {
@@ -372,13 +372,13 @@ define([
                     if (!!context.mapping) {
                         let seoInfo = {};
                         if (!!context.mapping.seoTitle) {
-                            _.extend(seoInfo, {seoTitle:context.mapping.seoTitle});
+                            _.extend(seoInfo, {seoTitle: context.mapping.seoTitle});
                         }
                         if (!!context.mapping.seoKeywords) {
-                            _.extend(seoInfo, {seoKeywords:context.mapping.seoKeywords});
+                            _.extend(seoInfo, {seoKeywords: context.mapping.seoKeywords});
                         }
                         if (!!context.mapping.seoDescription) {
-                            _.extend(seoInfo, {seoDescription:context.mapping.seoDescription});
+                            _.extend(seoInfo, {seoDescription: context.mapping.seoDescription});
                         }
                         _.extend(self.feed, seoInfo);
                     }
@@ -407,7 +407,7 @@ define([
                         self.feed.image.splice(add);
                     }
 
-                    if(self.currentFeedImage === "" && self.feed.image.length > 0)
+                    if (self.currentFeedImage === "" && self.feed.image.length > 0)
                         self.currentFeedImage = self.feed.image[0];
                 }
             }
@@ -421,7 +421,7 @@ define([
             self.feed.image.push("");
             self.feed.imageNum = _.size(self.feed.image);
 
-            if(self.currentFeedImage === "" && self.feed.image.length > 0)
+            if (self.currentFeedImage === "" && self.feed.image.length > 0)
                 self.currentFeedImage = self.feed.image[0];
         }
 
@@ -499,10 +499,10 @@ define([
                         angular.forEach(self.topFeedList, feed => {
                             // _id为空则说明信息从Product查询而来
                             if (!feed._id) {
-                               let newImage = [];
+                                let newImage = [];
                                 _.each(feed.image, image => {
                                     image = self.imageUrl + image;
-                                   newImage.push(image);
+                                    newImage.push(image);
                                 });
                                 feed.image = newImage;
                             }
@@ -523,18 +523,18 @@ define([
                 material: feed.material,
                 origin: feed.origin,
                 usageEn: feed.usageEn,
-                shortDescription:feed.shortDescription,
-                longDescription:feed.longDescription,
-                category:feed.category
+                shortDescription: feed.shortDescription,
+                longDescription: feed.longDescription,
+                category: feed.category
 
             };
             _.extend(self.feed, attribute);
             // feed.attribute.xx属性复制
             attribute = {
-                amazonBrowseTree:feed.attribute.amazonBrowseTree,
-                abstract:feed.attribute.abstract,
-                accessory:feed.attribute.accessory,
-                orderlimitcount:feed.attribute.orderlimitcount
+                amazonBrowseTree: feed.attribute.amazonBrowseTree,
+                abstract: feed.attribute.abstract,
+                accessory: feed.attribute.accessory,
+                orderlimitcount: feed.attribute.orderlimitcount
             };
             _.extend(self.feed.attribute, attribute);
             this.filterFeed();
@@ -543,7 +543,7 @@ define([
         /**
          * @description 弹出亚马逊类目  cartId：5
          */
-        popCategory(option,attrName){
+        popCategory(option, attrName) {
             let self = this;
 
             self.popups.openAmazonCategory(option).then(res => {
@@ -558,8 +558,8 @@ define([
             window.open(url);
         }
 
-        changeImages(index,imageUrl,arrays){
-            arrays.splice(index,1,imageUrl);
+        changeImages(index, imageUrl, arrays) {
+            arrays.splice(index, 1, imageUrl);
         }
 
     });
