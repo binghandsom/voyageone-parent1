@@ -455,7 +455,7 @@
                                                 <div class="imageContainer">
                                                     <div class="imageWrapper">
                                                         <img  class="imageWrapper" style="cursor: pointer;max-width: 200px; max-height: 170px;"
-                                                              src="{{ctrl.currentFeedImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentFeedImage)">
+                                                              src="{{ctrl.currentFeedImage}}" title="【click me】" ng-click="FeedDetailController.goDetail(ctrl.currentFeedImage)">
                                                     </div>
                                                 </div>
                                             </div>
@@ -518,7 +518,8 @@
                                             <div class="vo_prodGallery">
                                                 <div class="imageContainer">
                                                     <div class="imageWrapper">
-                                                        <img  class="imageWrapper" style="cursor: pointer;max-width: 330px; max-height: 200px;" ng-src="{{ctrl.currentBoxImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentBoxImage)">
+                                                        <img  class="imageWrapper"  style="cursor: pointer;max-width: 200px; max-height: 170px;"
+                                                              ng-src="{{ctrl.currentBoxImage}}" title="【click me】" ng-click="FeedDetailController.goDetail(ctrl.currentBoxImage)">
                                                     </div>
                                                 </div>
                                             </div>
@@ -529,7 +530,7 @@
                                                         <div class="row">
                                                             <div class="col-md-3" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
                                                                 <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="active" style="height: 88px">
-                                                                    <img style="max-height: 80px" class="thumb-group" ng-src="{{image}}" ng-click="ctrl.currentBoxImage = image">
+                                                                    <img style="max-height: 80px" class="thumb-group" src="{{image}}" ng-click="ctrl.currentBoxImage = image">
                                                                 </a>
                                                             </div>
                                                             <div class="col-md-3 text-center m-t-md">
@@ -560,7 +561,7 @@
                                                     <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
                                                         <div class="row">
                                                             <div class="col-md-10">
-                                                                <textarea class="form-control no-resize" ng-model="image" rows="3"></textarea>
+                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-blur="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
                                                             </div>
                                                             <div class="col-md-2">
                                                                 <button type="button" class="btn btn-default" ng-click="ctrl.deleteBoxImage($index)"><i class="fa fa-trash"></i></button>
