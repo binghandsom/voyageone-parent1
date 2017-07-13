@@ -673,7 +673,7 @@ define([
                     "templateUrl": "views/pop/usa/search/index.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/usa/search/index.ctl",
                     "controller": 'batchApproveController as ctrl',
-                    "size": 'md'
+                    "size": 'lg'
                 }
             },
             detail: {

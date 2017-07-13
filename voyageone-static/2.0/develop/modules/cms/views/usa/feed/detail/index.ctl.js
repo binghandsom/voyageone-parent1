@@ -50,8 +50,13 @@ define([
             self.itemDetailService.detail({id: self.id}).then((resp) => {
                 if (resp.data && resp.data.feed) {
                     self.feed = resp.data.feed;
+
+                    // 记录Feed数据原始是否有URL Key
+                    let hasUrlkey = !!self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
+                    _.extend(self.feed, {hasUrlkey:hasUrlkey,urlkey:self.feed.attribute.urlkey[0]});
                     // 处理Feed数据
                     self.filterFeed();
+
                     self.brandList = resp.data.brandList;
                     self.productTypeList = resp.data.productTypeList;
                     self.sizeTypeList = resp.data.sizeTypeList;
@@ -68,7 +73,6 @@ define([
                         self.currentBoxImage = self.feed.attribute.boximages[0];
                         _.extend(self.feed, {boxImageNum: _.size(self.feed.attribute.boximages)});
                     }
-
                 } else {
                     let id = self.id;
                     let message = `Feed(id:${id}) not exists.`;
@@ -83,11 +87,7 @@ define([
         // 处理Feed数据
         filterFeed() {
             let self = this;
-            let hasUrlkey = !!self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
-            if (hasUrlkey) {
-                _.extend(self.feed, {urlkey: self.feed.attribute.urlkey[0]});
-            } else {
-                // 计算urlKey
+            if (!self.feed.hasUrlkey) {
                 self.generateUrlKey();
             }
             // 将sku->weightOrg转换成float,如果各价格为空默认设置成0
@@ -127,6 +127,10 @@ define([
             // 处理colorMap
             if (!!self.feed.attribute.colorMap && _.size(self.feed.attribute.colorMap) > 0) {
                 _.extend(self.feed, {colorMap: self.feed.attribute.colorMap[0]});
+            }
+            // 处理attribute.categoriesTree
+            if (!!self.feed.attribute.categoriesTree && _.size(self.feed.attribute.categoriesTree) > 0) {
+                _.extend(self.feed, {categoriesTree: eval(self.feed.attribute.categoriesTree[0])});
             }
             // 处理amazonBrowseTree
             if (!!self.feed.attribute.amazonBrowseTree && _.size(self.feed.attribute.amazonBrowseTree) > 0) {
@@ -193,13 +197,18 @@ define([
         // 生成UrlKey
         generateUrlKey() {
             let self = this;
-            if (self.feed.name) {
-                let urlkey = self.feed.name + "-" + self.feed.code;
-                urlkey = urlkey.replace(/[^a-zA-Z0-9]+/g, " ");
-                urlkey = urlkey.replace(/\s+/g, "-");
-                urlkey = urlkey.toLowerCase();
-                self.feed.attribute.urlkey = [urlkey];
-                _.extend(self.feed, {urlkey: urlkey});
+            if (!self.feed.hasUrlkey) {
+                if (self.feed.name) {
+                    let urlkey = self.feed.name + "-" + self.feed.code;
+                    urlkey = urlkey.replace(/[^a-zA-Z0-9]+/g, " ");
+                    urlkey = urlkey.replace(/\s+/g, "-");
+                    urlkey = urlkey.toLowerCase();
+                    self.feed.attribute.urlkey = [urlkey];
+                    _.extend(self.feed, {urlkey: urlkey});
+                } else {
+                    self.feed.attribute.urlkey = null;
+                    _.extend(self.feed, {urlkey: null});
+                }
             }
         }
 
@@ -316,6 +325,8 @@ define([
             self.feed.attribute.colorMap = [self.feed.colorMap];
             // 处理amazonBrowseTree
             self.feed.attribute.amazonBrowseTree = [self.feed.amazonBrowseTree];
+            // 处理attribute.categoriesTree
+            self.feed.attribute.categoriesTree = [JSON.stringify(self.feed.categoriesTree)];
 
             // 处理googleCategory、googleDepartment、priceGrabberCategory
             self.feed.attribute.googleCategory = [self.feed.googleCategory];
@@ -356,9 +367,12 @@ define([
             let self = this;
 
             self.popups.openUsCategory(option).then(context => {
-                if (option.muiti) {
-                    self.feed[attr] = context;
-                } else {
+                if(option.muiti){
+                    let categories = _.pluck(context, "catPath");
+                    let categoriesResult = {categories:categories,categoriesTree:context};
+                    _.extend(self.feed, categoriesResult);
+                    _.extend(self.feed.attribute, categoriesResult);
+                }else{
                     _.extend(self.feed, {category: context.catPath});
                     if (!!context.mapping) {
                         let seoInfo = {};
@@ -371,6 +385,13 @@ define([
                         if (!!context.mapping.seoDescription) {
                             _.extend(seoInfo, {seoDescription: context.mapping.seoDescription});
                         }
+                        // amazon、googleCategory、googleDepartment、priceGrabber
+                        let category = {
+                            amazonBrowseTree:context.mapping.amazon,
+                            googleCategory:context.mapping.googleCategory,
+                            googleDepartment:context.mapping.googleDepartment,
+                            priceGrabberCategory:context.mapping.priceGrabber};
+                        _.extend(self.feed, category);
                         _.extend(self.feed, seoInfo);
                     }
                 }
@@ -525,7 +546,13 @@ define([
                 amazonBrowseTree: feed.attribute.amazonBrowseTree,
                 abstract: feed.attribute.abstract,
                 accessory: feed.attribute.accessory,
-                orderlimitcount: feed.attribute.orderlimitcount
+                orderlimitcount: feed.attribute.orderlimitcount,
+                amazonBrowseTree:feed.attribute.amazonBrowseTree,
+                googleCategory:feed.attribute.googleCategory,
+                googleDepartment:feed.attribute.googleDepartment,
+                priceGrabberCategory:feed.attribute.priceGrabberCategory,
+                categories:feed.attribute.categories,
+                categoriesTree:feed.attribute.categoriesTree
             };
             _.extend(self.feed.attribute, attribute);
             this.filterFeed();

@@ -13,7 +13,7 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_reqfield">Code</label>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" name="code" ng-model="ctrl.feed.code" required disabled>
+                                            <input type="text" class="form-control" name="code" ng-model="ctrl.feed.code" required readonly>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -90,14 +90,14 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-4 text-right vo_unreqfield">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory({cartId:1,froms:ctrl.feed.categories,muiti:true},'categories')">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory({cartId:1,froms:ctrl.feed.categoriesTree,muiti:true})">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;SN Other Category
                                             </button>
                                         </div>
                                         <div class="col-md-6">
                                             <select name="categories" chosen multiple width="'100%'" disabled
-                                                    ng-options="cat as cat.catPath for cat in ctrl.feed.categories"
-                                                    ng-model="ctrl.feed.categories"></select>
+                                                    ng-options="cat as cat.catPath for cat in ctrl.feed.categoriesTree"
+                                                    ng-model="ctrl.feed.categoriesTree"></select>
                                         </div>
                                     </div>
                                 </div>
@@ -497,7 +497,7 @@
                                                     <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.image track by $index">
                                                         <div class="row">
                                                             <div class="col-md-10">
-                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-blur="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
+                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-change="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
                                                             </div>
                                                             <div class="col-md-2">
                                                                 <button type="button" class="btn btn-default" ng-click="ctrl.deleteImage($index)"><i class="fa fa-trash"></i></button>
@@ -561,7 +561,7 @@
                                                     <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
                                                         <div class="row">
                                                             <div class="col-md-10">
-                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-blur="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
+                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-change="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
                                                             </div>
                                                             <div class="col-md-2">
                                                                 <button type="button" class="btn btn-default" ng-click="ctrl.deleteBoxImage($index)"><i class="fa fa-trash"></i></button>
@@ -595,7 +595,7 @@
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control text-right" ng-model="ctrl.setting.weightOrg" ng-change="ctrl.setSkuProperty('','weightOrg','0')">
+                                                <input type="number" class="form-control text-right" ng-model="ctrl.setting.weightOrg" ng-enter="ctrl.setSkuProperty('','weightOrg','0')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
@@ -610,14 +610,14 @@
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
                                                 <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceClientMsrp"
-                                                       ng-disabled="ctrl.feed.approvePricing=='1'" ng-change="ctrl.setSkuProperty('','priceClientMsrp','1')">
+                                                       ng-disabled="ctrl.feed.approvePricing=='1'" ng-enter="ctrl.setSkuProperty('','priceClientMsrp','1')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
                                                 <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceNet"
-                                                       ng-disabled="ctrl.feed.approvePricing=='1'" ng-change="ctrl.setSkuProperty('','priceNet','1')">
+                                                       ng-disabled="ctrl.feed.approvePricing=='1'" ng-enter="ctrl.setSkuProperty('','priceNet','1')">
                                             </div>
                                         </td>
                                         <td ng-if="ctrl.auth!=1"></td>

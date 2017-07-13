@@ -294,7 +294,7 @@ define([
         canApprovePrice(feed){
             let self = this;
             //进行校验,no到yes
-            if(feed.approvePricing == 0){
+            if(feed.approvePricing == 0 || feed.approvePricing == false){
                 if(feed.priceClientMsrpMin == 0 || feed.priceClientRetailMin == 0){
                     //价格为0时不能修改
                     self.alert("Msrp($) or price($) is 0, can not change!!!");
@@ -304,18 +304,25 @@ define([
                 if(feed.priceClientMsrpMin == 500){
                     let message = `Msrp($) is 500, continue to change?`;
                     self.confirm(message).then((confirmed) => {
-                        feed.approvePricing = !feed.approvePricing;
-                        self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
+                        if(feed.approvePricing == 1)
+                            feed.approvePricing = 0;
+                        else
+                            feed.approvePricing = 1;
+                        self.updateOne(feed,'approvePricing',feed.approvePricing + '');
                     })
-
-
                 }else{
-                    feed.approvePricing = !feed.approvePricing;
-                    self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
+                    if(feed.approvePricing == 1)
+                        feed.approvePricing = 0;
+                    else
+                        feed.approvePricing = 1;
+                    self.updateOne(feed,'approvePricing' , feed.approvePricing + '');
                 }
             }else{
-                feed.approvePricing = !feed.approvePricing;
-                self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
+                if(feed.approvePricing == 1)
+                    feed.approvePricing = 0;
+                else
+                    feed.approvePricing = 1;
+                self.updateOne(feed,'approvePricing',feed.approvePricing + '');
             }
         }
     });
