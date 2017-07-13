@@ -1,6 +1,8 @@
 package com.voyageone.common;
 
+import com.voyageone.common.configs.Codes;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -9,30 +11,35 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
 
 /**
  * 提供图片服务器的配置
  */
 public class ImageServer {
 
-    private static final String FILE_NAME = "image-server.properties";
-
     private static ImageServer imageServer;
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static Logger logger = LoggerFactory.getLogger(ImageServer.class);
 
-    private String domain = "image.voyageone.com.cn";
+    private String domain;
 
-    private ImageServer() {
-        init();
+    @PostConstruct
+    public void afterPropertiesSet() {
+        String domain = Codes.getCodeName("IMAGE_SERVER", "domain");
+        if (StringUtils.isNotBlank(domain)) {
+            this.domain = domain;
+            return;
+        }
+        this.domain = "image.voyageone.com.cn";
+        logger.warn("没有从 Codes 配置中获取到图片服务的配置，将使用默认值 {}", this.domain);
     }
+
 
     /**
      * 上传文件到图片服务
@@ -71,7 +78,7 @@ public class ImageServer {
     }
 
     public static String imageServerUrl(String path) {
-        return "http://" + imageServerDomain() + "/" + path;
+        return "http://" + domain() + "/" + path;
     }
 
     private static String imageServerUploadFilePath(String channel) {
@@ -79,32 +86,23 @@ public class ImageServer {
     }
 
     private static String imageServerUrl(String channel, String path) {
-        return "http://" + imageServerDomain() + "/" + channel + "/" + path;
+        return "http://" + domain() + "/" + channel + "/" + path;
     }
 
     /**
      * 获取当前配置的图片服务器地址
      */
-    private static String imageServerDomain() {
-        if (imageServer == null)
-            imageServer = new ImageServer();
+    private static String domain() {
+        if (imageServer == null) {
+            throw new TooEarlyException();
+        }
 
         return imageServer.domain;
     }
 
-    private void init() {
-        Resource resource = new ClassPathResource(FILE_NAME, this.getClass());
-
-        if (!resource.exists()) {
-            return;
-        }
-
-        try {
-            Properties properties = PropertiesLoaderUtils.loadProperties(resource);
-            this.domain = properties.getProperty("domain");
-        } catch (IOException e) {
-            logger.warn("尝试读取 ImageServer 的配置，出现了未知异常，所以使用了默认配置。Cause by IOException: {}",
-                    e.getMessage());
+    public static class TooEarlyException extends RuntimeException {
+        TooEarlyException() {
+            super("尝试获取图片服务的域名太早了。Spring 还没有初始化 ImageServer 的示例");
         }
     }
 
@@ -115,6 +113,17 @@ public class ImageServer {
 
         FailUploadingException(int code, String reasonPhrase, String content) {
             super(String.format("%s %s; %s", code, reasonPhrase, content));
+        }
+    }
+
+    /**
+     * 自动初始化一个 ImageServer 的实例，并保存到静态单例变量中
+     */
+    @Configuration
+    public static class ImageServerAutoConfiguration {
+        @Bean
+        public ImageServer imageServer() {
+            return imageServer = new ImageServer();
         }
     }
 }
