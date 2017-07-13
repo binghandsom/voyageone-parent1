@@ -60,17 +60,9 @@ public class CmsImageSettingService extends BaseViewService {
 
     public Map<String, Object> uploadImage(MultipartFile file, Long productId, String imageType, UserSessionBean user, String imageExtend) throws Exception {
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response;
 
         String orderChannelId = user.getSelChannelId();
-
-        //FTP服务器保存目录设定
-        String uploadPath = ChannelConfigs.getVal1(user.getSelChannelId(), ChannelConfigEnums.Name.scene7_image_folder);
-        if (StringUtils.isEmpty(uploadPath)) {
-            String err = String.format("channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表", orderChannelId);
-            $error(orderChannelId);
-            throw new BusinessException(err);
-        }
 
         CmsBtProductModel cmsBtProductModel = productService.getProductById(user.getSelChannelId(), productId);
 
@@ -79,7 +71,7 @@ public class CmsImageSettingService extends BaseViewService {
 
 
         // 上传图片到Ftp
-        ImageServer.uploadImage(uploadPath, imageName + imageExtend, file.getInputStream());
+        ImageServer.uploadImage(orderChannelId, imageName + imageExtend, file.getInputStream());
 
         // 插入图片表
         CmsBtImagesModel newModel = new CmsBtImagesModel();
