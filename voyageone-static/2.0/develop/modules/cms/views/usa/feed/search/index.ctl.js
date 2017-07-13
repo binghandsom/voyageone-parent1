@@ -304,16 +304,25 @@ define([
                 if(feed.priceClientMsrpMin == 500){
                     let message = `Msrp($) is 500, continue to change?`;
                     self.confirm(message).then((confirmed) => {
-                        feed.approvePricing = !feed.approvePricing;
-                        self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
+                        if(feed.approvePricing == 1)
+                            feed.approvePricing = 0;
+                        else
+                            feed.approvePricing = 1;
+                        self.updateOne(feed,'approvePricing',feed.approvePricing + '');
                     })
                 }else{
-                    feed.approvePricing = !feed.approvePricing;
-                    self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
+                    if(feed.approvePricing == 1)
+                        feed.approvePricing = 0;
+                    else
+                        feed.approvePricing = 1;
+                    self.updateOne(feed,'approvePricing' , feed.approvePricing + '');
                 }
             }else{
-                feed.approvePricing = !feed.approvePricing;
-                self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
+                if(feed.approvePricing == 1)
+                    feed.approvePricing = 0;
+                else
+                    feed.approvePricing = 1;
+                self.updateOne(feed,'approvePricing',feed.approvePricing + '');
             }
         }
     });
