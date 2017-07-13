@@ -541,7 +541,13 @@ define([
                 amazonBrowseTree: feed.attribute.amazonBrowseTree,
                 abstract: feed.attribute.abstract,
                 accessory: feed.attribute.accessory,
-                orderlimitcount: feed.attribute.orderlimitcount
+                orderlimitcount: feed.attribute.orderlimitcount,
+                amazonBrowseTree:feed.attribute.amazonBrowseTree,
+                googleCategory:feed.attribute.googleCategory,
+                googleDepartment:feed.attribute.googleDepartment,
+                priceGrabberCategory:feed.attribute.priceGrabberCategory,
+                categories:feed.attribute.categories,
+                categoriesTree:feed.attribute.categoriesTree
             };
             _.extend(self.feed.attribute, attribute);
             this.filterFeed();
