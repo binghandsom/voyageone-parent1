@@ -378,15 +378,6 @@ define([
             });
         }
 
-        popGoogleCat(option,attr){
-            var self = this;
-
-            self.popups.openUsCategory(option).then(context => {
-                console.log(context);
-
-            });
-        }
-
         initImage(num) {
             let self = this;
             if (!!self.feed.urlkey && num > 0) {
