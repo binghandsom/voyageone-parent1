@@ -90,14 +90,14 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-4 text-right vo_unreqfield">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory({cartId:1,froms:ctrl.feed.categories,muiti:true},'categories')">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory({cartId:1,froms:ctrl.feed.categoriesTree,muiti:true})">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;SN Other Category
                                             </button>
                                         </div>
                                         <div class="col-md-6">
                                             <select name="categories" chosen multiple width="'100%'" disabled
-                                                    ng-options="cat as cat.catPath for cat in ctrl.feed.categories"
-                                                    ng-model="ctrl.feed.categories"></select>
+                                                    ng-options="cat as cat.catPath for cat in ctrl.feed.categoriesTree"
+                                                    ng-model="ctrl.feed.categoriesTree"></select>
                                         </div>
                                     </div>
                                 </div>
@@ -497,7 +497,7 @@
                                                     <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.image track by $index">
                                                         <div class="row">
                                                             <div class="col-md-10">
-                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-blur="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
+                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-change="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
                                                             </div>
                                                             <div class="col-md-2">
                                                                 <button type="button" class="btn btn-default" ng-click="ctrl.deleteImage($index)"><i class="fa fa-trash"></i></button>
