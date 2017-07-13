@@ -561,7 +561,7 @@
                                                     <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
                                                         <div class="row">
                                                             <div class="col-md-10">
-                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-blur="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
+                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-change="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
                                                             </div>
                                                             <div class="col-md-2">
                                                                 <button type="button" class="btn btn-default" ng-click="ctrl.deleteBoxImage($index)"><i class="fa fa-trash"></i></button>
