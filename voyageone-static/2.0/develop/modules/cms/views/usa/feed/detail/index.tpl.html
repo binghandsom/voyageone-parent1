@@ -692,24 +692,24 @@
     <!--2、Pending有Save和Submit Button-->
     <!--3、Ready有Save和Approve Button-->
     <sticky top-fix="-100" style="position: absolute; top: 380px; right: 47px;" drag ng-if="ctrl.feed.status != 'Approved' && ctrl.feed.feedAuth <= ctrl.auth">
-        <nav class="bs-docs-sidebar">
+        <nav class="bs-docs-sidebar" style="opacity: 1">
             <h3 drag-handle>导航栏</h3>
             <ul class="nav bs-docs-sidenav">
                 <li class="text-center" style="margin: 7px">
-                    <button class="btn btn-info text-black" style="min-width: 82px;"
+                    <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
                             ng-disabled="feedForm.$invalid" ng-click="ctrl.save('0')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Save
                     </button>
                 </li>
                 <li class="text-center" style="margin: 7px">
-                    <button class="btn btn-info text-black" style="min-width: 82px;"
+                    <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
                             ng-disabled="feedForm.$invalid"
                             ng-if="ctrl.feed.status != 'Ready'" ng-click="ctrl.save('1')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Submit
                     </button>
                 </li>
                 <li class="text-center" style="margin: 7px">
-                    <button class="btn btn-info text-black" style="min-width: 82px;"
+                    <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
                             ng-disabled="feedForm.$invalid"
                             ng-if="ctrl.auth==3 && ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Approve
