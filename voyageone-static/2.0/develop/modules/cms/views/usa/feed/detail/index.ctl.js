@@ -418,7 +418,6 @@ define([
         }
 
         initImage(num) {
-            console.log(num);
             let self = this;
             if (num <= 0) {
                 self.currentFeedImage = "";
