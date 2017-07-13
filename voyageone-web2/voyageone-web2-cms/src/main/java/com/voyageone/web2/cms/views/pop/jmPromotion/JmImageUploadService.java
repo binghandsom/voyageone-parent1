@@ -1,11 +1,7 @@
 package com.voyageone.web2.cms.views.pop.jmPromotion;
 
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.configs.ChannelConfigs;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.HttpScene7;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmImageTemplateService;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -68,15 +64,6 @@ public class JmImageUploadService extends BaseViewService {
     }
 
     private void uploadToServer(String orderChannelId, String upLoadName, MultipartFile file) throws Exception {
-        //FTP服务器保存目录设定
-        String uploadPath = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder);
-        if (StringUtils.isEmpty(uploadPath)) {
-            String err = String.format("channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表", orderChannelId);
-            $error(orderChannelId);
-            throw new BusinessException(err);
-        }
-
-        HttpScene7.uploadImageFile(uploadPath, upLoadName, file.getInputStream());
+        ImageServer.uploadImage(orderChannelId, upLoadName, file.getInputStream());
     }
-
 }
