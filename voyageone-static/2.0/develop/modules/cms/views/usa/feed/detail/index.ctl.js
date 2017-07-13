@@ -380,6 +380,9 @@ define([
                         if (!!context.mapping.seoDescription) {
                             _.extend(seoInfo, {seoDescription: context.mapping.seoDescription});
                         }
+                        // amazon、googleCategory、googleDepartment、priceGrabber
+                        let category = {amazonBrowseTree:mapping.amazon, googleCategory:googleCategory, googleDepartment:googleDepartment, priceGrabberCategory:priceGrabber};
+                        _.extend(self.feed, category);
                         _.extend(self.feed, seoInfo);
                     }
                 }
