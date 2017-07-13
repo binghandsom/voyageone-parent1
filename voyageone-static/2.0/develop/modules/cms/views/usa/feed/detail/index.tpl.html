@@ -198,7 +198,7 @@
                                         <label class="col-md-4 control-label query-title vo_reqfield">Product Type</label>
                                         <div class="col-md-6">
                                             <select class="form-control" name="productType" ng-options="productType.value as productType.name for productType in ctrl.productTypeList"
-                                                    ng-model="ctrl.feed.productType" required>
+                                                    ng-model="ctrl.feed.productType" ng-change="ctrl.setSkuProperty(null,null,'1')" required>
                                             </select>
                                         </div>
                                     </div>
@@ -306,7 +306,7 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title ">URL Key</label>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.attribute.urlkey" ng-disabled="ctrl.feed.hasUrlkey">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.urlkey" ng-disabled="ctrl.feed.urlkey">
                                         </div>
                                     </div>
                                 </div>
@@ -349,7 +349,7 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title ">SEO Description</label>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.seoDescription">
+                                            <textarea class="form-control" ng-model="ctrl.feed.seoDescription"/>
                                         </div>
                                     </div>
                                 </div>
@@ -357,7 +357,7 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title ">SEO Keywords</label>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.seoKeywords">
+                                            <textarea class="form-control" ng-model="ctrl.feed.seoKeywords"/>
                                         </div>
                                     </div>
                                 </div>
@@ -651,10 +651,10 @@
                                             </select>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control text-right" ng-model="sku.priceClientMsrp" ng-enter="ctrl.setSkuProperty(sku,'priceClientMsrp')"/>
+                                            <input type="number" class="form-control text-right" ng-model="sku.priceClientMsrp" ng-enter="ctrl.setSkuProperty(sku,'priceClientMsrp','1')"/>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control text-right" ng-model="sku.priceNet" ng-enter="ctrl.setSkuProperty(sku,'priceNet')"/>
+                                            <input type="number" class="form-control text-right" ng-model="sku.priceNet" ng-enter="ctrl.setSkuProperty(sku,'priceNet','1')"/>
                                         </td>
                                         <td class="text-right" ng-if="ctrl.auth!=1">
                                             <input type="number" class="form-control text-right" ng-model="sku.priceMsrp" readonly/>

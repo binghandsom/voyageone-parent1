@@ -37,7 +37,7 @@ define([
                 priceMsrp: "",
                 priceCurrent: "",
 
-                weightOrgUnits: ['kg', 'lb']
+                weightOrgUnits: ['lb', 'kg']
             };
             this.topFeedList = null; // 同Model查询结果
             this.imageUrl = "http://image.sneakerhead.com/is/image/sneakerhead/";
@@ -84,8 +84,9 @@ define([
         filterFeed() {
             let self = this;
             let hasUrlkey = !!self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
-            _.extend(self.feed, {hasUrlkey: hasUrlkey});
-            if (!hasUrlkey) {
+            if (hasUrlkey) {
+                _.extend(self.feed, {urlkey: self.feed.attribute.urlkey[0]});
+            } else {
                 // 计算urlKey
                 self.generateUrlKey();
             }
@@ -106,6 +107,10 @@ define([
                 }
                 if (!sku.isSale) {
                     sku.isSale = 1;
+                }
+                // 重量单位,默认lb
+                if (!sku.weightOrgUnit) {
+                    sku.weightOrgUnit = "lb";
                 }
             });
             // 处理Abstract和accessory
@@ -188,11 +193,13 @@ define([
         // 生成UrlKey
         generateUrlKey() {
             let self = this;
-            if (!self.feed.hasUrlkey && self.feed.name) {
+            if (self.feed.name) {
                 let urlkey = self.feed.name + "-" + self.feed.code;
                 urlkey = urlkey.replace(/[^a-zA-Z0-9]+/g, " ");
                 urlkey = urlkey.replace(/\s+/g, "-");
-                self.feed.attribute.urlkey = [urlkey.toLowerCase()];
+                urlkey = urlkey.toLowerCase();
+                self.feed.attribute.urlkey = [urlkey];
+                _.extend(self.feed, {urlkey:urlkey});
             }
         }
 
@@ -231,8 +238,6 @@ define([
                         priceClientMsrpMax: res.data.priceClientMsrpMax
                     };
                     _.extend(self.feed, priceScope);
-
-                    self.notify.success('update success!');
                 }
             });
         }
@@ -371,9 +376,7 @@ define([
 
         initImage(num) {
             let self = this;
-            let urlKey = "";
-            if (self.feed.hasUrlkey && num > 0) {
-                urlKey = self.feed.attribute.urlkey[0];
+            if (!!self.feed.urlkey && num > 0) {
                 if (!self.feed.image) {
                     self.feed.image = [];
                 }
@@ -381,7 +384,7 @@ define([
                 let add = num - count;
                 if (add > 0) {
                     for (let i = 1; i <= add; i++) {
-                        self.feed.image.push(self.imageUrl + urlKey + "-" + (count + i));
+                        self.feed.image.push(self.imageUrl + self.feed.urlkey + "-" + (count + i));
                     }
                 } else {
                     self.feed.image.splice(add);
@@ -400,13 +403,13 @@ define([
         deleteImage(index) {
             let self = this;
             self.feed.image.splice(index, 1);
+            let imageNum = self.feed.imageNum - 1;
+            self.feed.imageNum = imageNum;
         }
 
         initBoxImage(num) {
             let self = this;
-            let urlKey = "";
-            if (self.feed.hasUrlkey && num > 0) {
-                urlKey = self.feed.attribute.urlkey[0];
+            if (!!self.feed.urlkey && num > 0) {
                 if (!self.feed.attribute.boximages) {
                     self.feed.attribute.boximages = [];
                 }
@@ -414,7 +417,7 @@ define([
                 let add = num - count;
                 if (add > 0) {
                     for (let i = 1; i <= add; i++) {
-                        self.feed.attribute.boximages.push(self.imageUrl + urlKey + "-2" + (count + i));
+                        self.feed.attribute.boximages.push(self.imageUrl + self.feed.urlkey + "-2" + (count + i));
                     }
                 } else {
                     self.feed.attribute.boximages.splice(add);
@@ -433,6 +436,8 @@ define([
         deleteBoxImage(index) {
             let self = this;
             self.feed.attribute.boximages.splice(index, 1);
+            let boxImageNum = self.feed.boxImageNum - 1;
+            self.feed.boxImageNum = boxImageNum;
         }
 
         // 同Model
