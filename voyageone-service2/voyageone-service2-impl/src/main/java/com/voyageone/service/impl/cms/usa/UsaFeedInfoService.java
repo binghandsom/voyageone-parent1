@@ -247,7 +247,7 @@ public class UsaFeedInfoService extends BaseService {
 
         if (StringUtils.isNotEmpty((String)searchValue.get("searchContent"))) {
             String searchContent = (String) searchValue.get("searchContent");
-            String[] split = searchContent.split("/n");
+            String[] split = searchContent.split("\n");
             List<String> searchContents = Arrays.asList(split);
             criteria.orOperator(new Criteria("code").in(searchContents), new Criteria("model").in(searchContents), new Criteria("skus.sku").in(searchContent), new Criteria("skus.barcode").in(searchContent));
         }
