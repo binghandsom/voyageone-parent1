@@ -50,8 +50,13 @@ define([
             self.itemDetailService.detail({id: self.id}).then((resp) => {
                 if (resp.data && resp.data.feed) {
                     self.feed = resp.data.feed;
+
+                    // 记录Feed数据原始是否有URL Key
+                    let hasUrlkey = !!self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
+                    _.extend(self.feed, {hasUrlkey:hasUrlkey,urlkey:self.feed.attribute.urlkey[0]});
                     // 处理Feed数据
                     self.filterFeed();
+
                     self.brandList = resp.data.brandList;
                     self.productTypeList = resp.data.productTypeList;
                     self.sizeTypeList = resp.data.sizeTypeList;
@@ -68,7 +73,6 @@ define([
                         self.currentBoxImage = self.feed.attribute.boximages[0];
                         _.extend(self.feed, {boxImageNum: _.size(self.feed.attribute.boximages)});
                     }
-
                 } else {
                     let id = self.id;
                     let message = `Feed(id:${id}) not exists.`;
@@ -83,11 +87,22 @@ define([
         // 处理Feed数据
         filterFeed() {
             let self = this;
-            let hasUrlkey = !!self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
-            if (hasUrlkey) {
-                _.extend(self.feed, {urlkey: self.feed.attribute.urlkey[0]});
+
+            // 用户Feed操作权限和Feed状态对比
+            let feedStatus = self.feed.status;
+            let feedAuth = 0;
+            if (feedStatus == "Ready") {
+                feedAuth = 3;
+            } else if (feedStatus == "Pending") {
+                feedAuth = 2;
+            } else if (feedStatus == "New") {
+                feedAuth = 1;
             } else {
-                // 计算urlKey
+                feedAuth = 4;
+            }
+            _.extend(self.feed, {feedAuth:feedAuth});
+
+            if (!self.feed.hasUrlkey) {
                 self.generateUrlKey();
             }
             // 将sku->weightOrg转换成float,如果各价格为空默认设置成0
@@ -197,13 +212,18 @@ define([
         // 生成UrlKey
         generateUrlKey() {
             let self = this;
-            if (self.feed.name) {
-                let urlkey = self.feed.name + "-" + self.feed.code;
-                urlkey = urlkey.replace(/[^a-zA-Z0-9]+/g, " ");
-                urlkey = urlkey.replace(/\s+/g, "-");
-                urlkey = urlkey.toLowerCase();
-                self.feed.attribute.urlkey = [urlkey];
-                _.extend(self.feed, {urlkey: urlkey});
+            if (!self.feed.hasUrlkey) {
+                if (self.feed.name) {
+                    let urlkey = self.feed.name + "-" + self.feed.code;
+                    urlkey = urlkey.replace(/[^a-zA-Z0-9]+/g, " ");
+                    urlkey = urlkey.replace(/\s+/g, "-");
+                    urlkey = urlkey.toLowerCase();
+                    self.feed.attribute.urlkey = [urlkey];
+                    _.extend(self.feed, {urlkey: urlkey});
+                } else {
+                    self.feed.attribute.urlkey = null;
+                    _.extend(self.feed, {urlkey: null});
+                }
             }
         }
 
