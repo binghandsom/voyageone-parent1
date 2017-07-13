@@ -466,7 +466,7 @@
                                                         <div class="row">
                                                             <div class="col-md-3" ng-repeat="image in ctrl.feed.image track by $index">
                                                                 <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="active" style="height: 88px">
-                                                                    <img style="max-height: 80px" class="thumb-group" src="{{image}}" ng-click="ctrl.currentFeedImage = image">
+                                                                    <img style="max-height: 80px" class="thumb-group" src="{{image}}" ng-click="ctrl.test(image)">
                                                                 </a>
                                                             </div>
                                                             <div class="col-md-3 text-center m-t-md">
@@ -610,14 +610,18 @@
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
                                                 <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceClientMsrp"
-                                                       ng-disabled="ctrl.feed.approvePricing=='1'" ng-enter="ctrl.setSkuProperty('','priceClientMsrp','1')">
+                                                       ng-disabled="ctrl.feed.approvePricing=='1'"
+                                                       ng-blur="ctrl.setSkuProperty('','priceClientMsrp','1')"
+                                                       ng-enter="ctrl.setSkuProperty('','priceClientMsrp','1')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
                                                 <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceNet"
-                                                       ng-disabled="ctrl.feed.approvePricing=='1'" ng-enter="ctrl.setSkuProperty('','priceNet','1')">
+                                                       ng-disabled="ctrl.feed.approvePricing=='1'"
+                                                       ng-blur="ctrl.setSkuProperty('','priceNet','1')"
+                                                       ng-enter="ctrl.setSkuProperty('','priceNet','1')">
                                             </div>
                                         </td>
                                         <td ng-if="ctrl.auth!=1"></td>
@@ -662,11 +666,11 @@
                                         </td>
                                         <td class="text-right">
                                             <input type="number" class="form-control text-right" ng-model="sku.priceClientMsrp"
-                                                   ng-disabled="ctrl.feed.approvePricing=='1'" ng-enter="ctrl.setSkuProperty(sku,'priceClientMsrp','1')"/>
+                                                   ng-disabled="ctrl.feed.approvePricing=='1'" ng-change="ctrl.setSkuProperty(sku,'priceClientMsrp','1')"/>
                                         </td>
                                         <td class="text-right">
                                             <input type="number" class="form-control text-right" ng-model="sku.priceNet"
-                                                   ng-disabled="ctrl.feed.approvePricing=='1'" ng-enter="ctrl.setSkuProperty(sku,'priceNet','1')"/>
+                                                   ng-disabled="ctrl.feed.approvePricing=='1'" ng-change="ctrl.setSkuProperty(sku,'priceNet','1')"/>
                                         </td>
                                         <td class="text-right" ng-if="ctrl.auth!=1">
                                             <input type="number" class="form-control text-right" ng-model="sku.priceMsrp" readonly/>
