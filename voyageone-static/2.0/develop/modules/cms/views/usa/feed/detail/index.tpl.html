@@ -13,7 +13,7 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_reqfield">Code</label>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" name="code" ng-model="ctrl.feed.code" required disabled>
+                                            <input type="text" class="form-control" name="code" ng-model="ctrl.feed.code" required readonly>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -595,7 +595,7 @@
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control text-right" ng-model="ctrl.setting.weightOrg" ng-change="ctrl.setSkuProperty('','weightOrg','0')">
+                                                <input type="number" class="form-control text-right" ng-model="ctrl.setting.weightOrg" ng-enter="ctrl.setSkuProperty('','weightOrg','0')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
@@ -610,14 +610,14 @@
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
                                                 <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceClientMsrp"
-                                                       ng-disabled="ctrl.feed.approvePricing=='1'" ng-change="ctrl.setSkuProperty('','priceClientMsrp','1')">
+                                                       ng-disabled="ctrl.feed.approvePricing=='1'" ng-enter="ctrl.setSkuProperty('','priceClientMsrp','1')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
                                                 <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceNet"
-                                                       ng-disabled="ctrl.feed.approvePricing=='1'" ng-change="ctrl.setSkuProperty('','priceNet','1')">
+                                                       ng-disabled="ctrl.feed.approvePricing=='1'" ng-enter="ctrl.setSkuProperty('','priceNet','1')">
                                             </div>
                                         </td>
                                         <td ng-if="ctrl.auth!=1"></td>
