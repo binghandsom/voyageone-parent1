@@ -384,7 +384,7 @@ define([
                 self.currentFeedImage = "";
                 self.feed.image = [];
             } else {
-                if (!!self.feed.urlkey) {
+                if (self.feed.urlkey) {
                     if (!self.feed.image) {
                         self.feed.image = [];
                     }
@@ -397,6 +397,9 @@ define([
                     } else {
                         self.feed.image.splice(add);
                     }
+
+                    if(self.currentFeedImage === "" && self.feed.image.length > 0)
+                        self.currentFeedImage = self.feed.image[0];
                 }
             }
         }
@@ -408,6 +411,9 @@ define([
             }
             self.feed.image.push("");
             self.feed.imageNum = _.size(self.feed.image);
+
+            if(self.currentFeedImage === "" && self.feed.image.length > 0)
+                self.currentFeedImage = self.feed.image[0];
         }
 
         deleteImage(index) {
