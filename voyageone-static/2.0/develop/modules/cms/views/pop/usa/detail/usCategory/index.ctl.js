@@ -59,7 +59,7 @@ define([
 
                 let from = self.catArrs =  angular.copy(self.context.froms);
                 angular.forEach(from, function (element) {
-                    var _element = {};
+                    let _element = {};
                     _element[element.catId] = element.catPath;
                     _.extend(self.selectObj, _element);
                 });

@@ -89,7 +89,7 @@
 
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-md-4 text-right">
+                                        <div class="col-md-4 text-right vo_unreqfield">
                                             <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory({cartId:1,froms:ctrl.feed.categories,muiti:true},'categories')">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;SN Other Category
                                             </button>
@@ -105,7 +105,7 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-4 text-right vo_reqfield">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.popGoogleCat({cartId:17,from:ctrl.feed.amazonBrowseTree},'amazonBrowseTree')">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.popCategory({cartId:5},'amazonBrowseTree')">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;Amazon Browse Tree
                                             </button>
                                         </div>
@@ -123,8 +123,8 @@
 
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-md-4 text-right">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popGoogleCat({cartId:18,from:ctrl.feed.googleCategory},'googleCategory')">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:17,from:ctrl.feed.googleCategory},'googleCategory')">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;Google Category
                                             </button>
                                         </div>
@@ -137,8 +137,8 @@
 
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-md-4 text-right">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory()">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:18,from:ctrl.feed.googleDepartment},'googleDepartment')">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;Google DepartMent
                                             </button>
                                         </div>
@@ -151,8 +151,8 @@
 
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-md-4 text-right">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popGoogleCat({cartId:18,from:ctrl.feed.priceGrabberCategory},'priceGrabberCategory')">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:19,from:ctrl.feed.priceGrabberCategory},'priceGrabberCategory')">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;PriceGrabber Category
                                             </button>
                                         </div>
@@ -247,7 +247,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Made in</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Made in</label>
                                         <div class="col-md-6">
                                             <select class="form-control" name="origin"  chosen search-contain="true"
                                                     ng-options="origin.value as origin.name for origin in ctrl.originList"
@@ -258,7 +258,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Color Map</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Color Map</label>
                                         <div class="col-md-6">
                                             <select class="form-control" name="origin" chosen search-contain="true"
                                                     ng-options="color.value as color.name for color in ctrl.colorMap"
@@ -269,7 +269,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Color</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Color</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.feed.color">
                                         </div>
@@ -278,7 +278,7 @@
 
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Usage</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Usage</label>
                                         <div class="col-md-6">
                                             <textarea class="form-control no-resize" ng-model="ctrl.feed.usageEn"></textarea>
                                         </div>
@@ -286,7 +286,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Short Description</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Short Description</label>
                                         <div class="col-md-6">
                                             <textarea class="form-control no-resize" ng-model="ctrl.feed.shortDescription"></textarea>
                                         </div>
@@ -294,7 +294,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Long Description</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Long Description</label>
                                         <div class="col-md-6">
                                             <textarea class="form-control no-resize" ng-model="ctrl.feed.longDescription"></textarea>
                                         </div>
@@ -302,7 +302,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Order Limit Count</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Order Limit Count</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.feed.orderlimitcount">
                                         </div>
@@ -310,7 +310,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">URL Key</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">URL Key</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.feed.urlkey" ng-disabled="ctrl.feed.urlkey">
                                         </div>
@@ -318,7 +318,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Abstract</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Abstract</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.feed.abstract">
                                         </div>
@@ -326,7 +326,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Accessory</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Accessory</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.feed.accessory">
                                         </div>
@@ -337,7 +337,7 @@
 
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Is Phone Order Only</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Phone Order Only</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.feed.phoneOrderOnly">
                                         </div>
@@ -345,7 +345,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">SEO Title</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Title</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.feed.seoTitle">
                                         </div>
@@ -353,7 +353,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">SEO Description</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Description</label>
                                         <div class="col-md-6">
                                             <textarea class="form-control" ng-model="ctrl.feed.seoDescription"/>
                                         </div>
@@ -361,7 +361,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">SEO Keywords</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Keywords</label>
                                         <div class="col-md-6">
                                             <textarea class="form-control" ng-model="ctrl.feed.seoKeywords"/>
                                         </div>
@@ -371,7 +371,7 @@
                                 <!--特殊属性 Begin-->
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Is Free Shipping</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Free Shipping</label>
                                         <div class="col-md-6 checkbox">
                                             <label>
                                                 <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.freeShipping">
@@ -381,7 +381,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Is Reward Eligible</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Reward Eligible</label>
                                         <div class="col-md-6 checkbox">
                                             <label>
                                                 <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.rewardEligible">
@@ -391,7 +391,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Is Discount Eligible</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Discount Eligible</label>
                                         <div class="col-md-6 checkbox">
                                             <label>
                                                 <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.discountEligible">
@@ -401,7 +401,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Is Sneakerhead+</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Sneakerhead+</label>
                                         <div class="col-md-6 checkbox">
                                             <label>
                                                 <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.sneakerheadPlus">
@@ -411,7 +411,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Is New Arrival</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is New Arrival</label>
                                         <div class="col-md-6 checkbox">
                                             <label>
                                                 <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.newArrival">
@@ -421,7 +421,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Is Taxable</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Taxable</label>
                                         <div class="col-md-6 checkbox">
                                             <label>
                                                 <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.taxable">
@@ -433,7 +433,7 @@
 
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Approve Pricing ?</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Approve Pricing ?</label>
                                         <div class="col-md-6 checkbox" style="padding: 7px;">
                                             <label>
                                                 <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.approvePricing">&nbsp;Yes
