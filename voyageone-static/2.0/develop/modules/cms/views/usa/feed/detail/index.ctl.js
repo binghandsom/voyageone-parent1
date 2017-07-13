@@ -87,6 +87,21 @@ define([
         // 处理Feed数据
         filterFeed() {
             let self = this;
+
+            // 用户Feed操作权限和Feed状态对比
+            let feedStatus = self.feed.status;
+            let feedAuth = 0;
+            if (feedStatus == "Ready") {
+                feedAuth = 3;
+            } else if (feedStatus == "Pending") {
+                feedAuth = 2;
+            } else if (feedStatus == "New") {
+                feedAuth = 1;
+            } else {
+                feedAuth = 4;
+            }
+            _.extend(self.feed, {feedAuth:feedAuth});
+
             if (!self.feed.hasUrlkey) {
                 self.generateUrlKey();
             }
