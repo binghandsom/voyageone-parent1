@@ -251,9 +251,22 @@ define([
                     self.alert("Please check 'Approve Pricing'.");
                     return;
                 }
-                // Msrp or price O或500时Confirm
+                // Msrp or price O时禁止Approve
                 let checkSkus = _.filter(self.feed.skus, function (sku) {
-                    return sku.priceClientMsrp == 0 || sku.priceClientMsrp == 500 || sku.priceNet == 0 || sku.priceNet == 500;
+                    // return sku.priceClientMsrp == 0 || sku.priceClientMsrp == 500 || sku.priceNet == 0 || sku.priceNet == 500;
+                    return sku.priceClientMsrp == 0 || sku.priceNet == 0;
+                });
+                let skus = [];
+                angular.forEach(checkSkus, function (sku) {
+                    skus.push(sku.sku);
+                });
+                if (_.size(checkSkus) > 0) {
+                    let message = `SKU[${skus}] Msrp($) or price($) is 0, you can't approve feed.`;
+                    self.alert(message);
+                    return;
+                }
+                checkSkus = _.filter(self.feed.skus, function (sku) {
+                    return sku.priceClientMsrp == 500 || sku.priceNet == 500;
                 });
                 if (!checkSkus || _.size(checkSkus) == 0) {
                     let ctx = {
@@ -267,11 +280,11 @@ define([
                         }
                     });
                 } else {
-                    let skus = [];
+                    skus = [];
                     angular.forEach(checkSkus, function (sku) {
                         skus.push(sku.sku);
                     });
-                    let message = `SKU[${skus}] Msrp($) or price($) is 0 or 500, continue to Approve?`;
+                    let message = `SKU[${skus}] Msrp($) or price($) is 500, continue to approve?`;
                     self.confirm(message).then((confirmed) => {
                         let ctx = {
                             updateModel: true,
