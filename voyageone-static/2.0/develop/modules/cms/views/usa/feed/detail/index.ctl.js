@@ -398,6 +398,7 @@ define([
                 self.feed.image = [];
             }
             self.feed.image.push("");
+            self.feed.imageNum = _.size(self.feed.image);
         }
 
         deleteImage(index) {
@@ -431,6 +432,7 @@ define([
                 self.feed.attribute.boximages = [];
             }
             self.feed.attribute.boximages.push("");
+            self.feed.boxImageNum = _.size(self.feed.attribute.boximages);
         }
 
         deleteBoxImage(index) {
