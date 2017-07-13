@@ -294,7 +294,7 @@ define([
         canApprovePrice(feed){
             let self = this;
             //进行校验,no到yes
-            if(feed.approvePricing == 0){
+            if(feed.approvePricing == 0 || feed.approvePricing == false){
                 if(feed.priceClientMsrpMin == 0 || feed.priceClientRetailMin == 0){
                     //价格为0时不能修改
                     self.alert("Msrp($) or price($) is 0, can not change!!!");
@@ -307,8 +307,6 @@ define([
                         feed.approvePricing = !feed.approvePricing;
                         self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
                     })
-
-
                 }else{
                     feed.approvePricing = !feed.approvePricing;
                     self.updateOne(feed,'approvePricing',feed.approvePricing ? '1' : '0');
