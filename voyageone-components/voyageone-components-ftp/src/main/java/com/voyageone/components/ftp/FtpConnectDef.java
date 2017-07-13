@@ -107,7 +107,7 @@ public class FtpConnectDef {
 
     public static FtpConnectBean getImageServerMidFtpBean() {
         FtpConnectBean bean = new FtpConnectBean();
-        bean.setHostname(Codes.getCodeName(IS_MID_FTP, "DOMAIN"));
+        bean.setHostname(Codes.getCodeName(IS_MID_FTP, "Domain"));
         String strPort = Codes.getCodeName(IS_MID_FTP, "Port");
         if (!StringUtils.isEmpty(strPort)) {
             bean.setPort(Integer.parseInt(strPort));
@@ -115,7 +115,7 @@ public class FtpConnectDef {
         bean.setUsername(Codes.getCodeName(IS_MID_FTP, "UserName"));
         bean.setPassword(Codes.getCodeName(IS_MID_FTP, "Password"));
 
-        String strFileCoding = Codes.getCodeName(IS_MID_FTP, "FileCoding");
+        String strFileCoding = Codes.getCodeName(IS_MID_FTP, "Encoding");
         if (!StringUtils.isEmpty(strFileCoding)) {
             bean.setCoding(strFileCoding);
         }
