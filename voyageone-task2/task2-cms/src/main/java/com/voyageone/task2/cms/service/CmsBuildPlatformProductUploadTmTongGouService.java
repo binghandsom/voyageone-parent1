@@ -411,16 +411,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp,
                               List<String> tmTonggouFeedAttrList, Map<String, List<Map<String, String>>> categoryMappingListMap) {
 
-        // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
-        List<String> channelIdList = new ArrayList() {{
-            add("033");
-        }};
-        channelConditionConfig = new HashMap<>();
-        if (ListUtils.notNull(channelIdList)) {
-            for (final String orderChannelID : channelIdList) {
-                channelConditionConfig.put(orderChannelID, conditionPropValueRepo.getAllByChannelId(orderChannelID));
-            }
-        }
 
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
@@ -2454,8 +2444,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
         } else {
             // 更新商品的时候
-//            result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
-            result = null;
+            result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
             if (result == null) {
                 List<Map<String, Object>> skuTmallList = null;
                 tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
