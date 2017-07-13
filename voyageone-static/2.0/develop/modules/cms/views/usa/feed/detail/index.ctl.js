@@ -6,7 +6,7 @@ define([
 ], function (cms) {
 
     cms.controller('feedDetailController', class FeedDetailController {
-        constructor(popups, $routeParams, itemDetailService, alert,$location,notify,confirm,$rootScope,$sessionStorage) {
+        constructor(popups, $routeParams, itemDetailService, alert,$location,notify,confirm,$sessionStorage) {
             this.popups = popups;
             this.itemDetailService = itemDetailService;
             this.alert = alert;
@@ -37,7 +37,7 @@ define([
                 priceMsrp: "",
                 priceCurrent: "",
 
-                weightOrgUnits: ['kg', 'lb']
+                weightOrgUnits: ['lb', 'kg']
             };
             this.topFeedList = null; // 同Model查询结果
             this.imageUrl = "http://image.sneakerhead.com/is/image/sneakerhead/";
@@ -84,8 +84,9 @@ define([
         filterFeed() {
             let self = this;
             let hasUrlkey = !!self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
-            _.extend(self.feed, {hasUrlkey: hasUrlkey});
-            if (!hasUrlkey) {
+            if (hasUrlkey) {
+                _.extend(self.feed, {urlkey: self.feed.attribute.urlkey[0]});
+            } else {
                 // 计算urlKey
                 self.generateUrlKey();
             }
@@ -107,6 +108,10 @@ define([
                 if (!sku.isSale) {
                     sku.isSale = 1;
                 }
+                // 重量单位,默认lb
+                if (!sku.weightOrgUnit) {
+                    sku.weightOrgUnit = "lb";
+                }
             });
             // 处理Abstract和accessory
             if (!!self.feed.attribute.abstract && _.size(self.feed.attribute.abstract) > 0) {
@@ -127,16 +132,74 @@ define([
             if (!!self.feed.attribute.amazonBrowseTree && _.size(self.feed.attribute.amazonBrowseTree) > 0) {
                 _.extend(self.feed, {amazonBrowseTree: self.feed.attribute.amazonBrowseTree[0]});
             }
+            // 处理googleCategory、googleDepartment、priceGrabberCategory
+            if (!!self.feed.attribute.googleCategory && _.size(self.feed.attribute.googleCategory) > 0) {
+                _.extend(self.feed, {googleCategory: self.feed.attribute.googleCategory[0]});
+            }
+            if (!!self.feed.attribute.googleDepartment && _.size(self.feed.attribute.googleDepartment) > 0) {
+                _.extend(self.feed, {googleDepartment: self.feed.attribute.googleDepartment[0]});
+            }
+            if (!!self.feed.attribute.priceGrabberCategory && _.size(self.feed.attribute.priceGrabberCategory) > 0) {
+                _.extend(self.feed, {priceGrabberCategory: self.feed.attribute.priceGrabberCategory[0]});
+            }
+            // 处理phoneOrderOnly
+            if (!!self.feed.attribute.phoneOrderOnly && _.size(self.feed.attribute.phoneOrderOnly) > 0) {
+                _.extend(self.feed, {phoneOrderOnly: self.feed.attribute.phoneOrderOnly[0]});
+            }
+            // 处理seoTitle、seoDescription、seoKeywords
+            if (!!self.feed.attribute.seoTitle && _.size(self.feed.attribute.seoTitle) > 0) {
+                _.extend(self.feed, {seoTitle: self.feed.attribute.seoTitle[0]});
+            }
+            if (!!self.feed.attribute.seoDescription && _.size(self.feed.attribute.seoDescription) > 0) {
+                _.extend(self.feed, {seoDescription: self.feed.attribute.seoDescription[0]});
+            }
+            if (!!self.feed.attribute.seoKeywords && _.size(self.feed.attribute.seoKeywords) > 0) {
+                _.extend(self.feed, {seoKeywords: self.feed.attribute.seoKeywords[0]});
+            }
+
+            // 处理特殊属性
+            if (!!self.feed.attribute.freeShipping && _.size(self.feed.attribute.freeShipping) > 0) {
+                _.extend(self.feed, {freeShipping: self.feed.attribute.freeShipping[0]});
+            } else {
+                _.extend(self.feed, {freeShipping: "1"});
+            }
+            if (!!self.feed.attribute.rewardEligible && _.size(self.feed.attribute.rewardEligible) > 0) {
+                _.extend(self.feed, {rewardEligible: self.feed.attribute.rewardEligible[0]});
+            } else {
+                _.extend(self.feed, {rewardEligible: "1"});
+            }
+            if (!!self.feed.attribute.discountEligible && _.size(self.feed.attribute.discountEligible) > 0) {
+                _.extend(self.feed, {discountEligible: self.feed.attribute.discountEligible[0]});
+            } else {
+                _.extend(self.feed, {discountEligible: "1"});
+            }
+            if (!!self.feed.attribute.sneakerheadPlus && _.size(self.feed.attribute.sneakerheadPlus) > 0) {
+                _.extend(self.feed, {sneakerheadPlus: self.feed.attribute.sneakerheadPlus[0]});
+            } else {
+                _.extend(self.feed, {sneakerheadPlus: "1"});
+            }
+            if (!!self.feed.attribute.newArrival && _.size(self.feed.attribute.newArrival) > 0) {
+                _.extend(self.feed, {newArrival: self.feed.attribute.newArrival[0]});
+            } else {
+                _.extend(self.feed, {newArrival: "1"});
+            }
+            if (!!self.feed.attribute.taxable && _.size(self.feed.attribute.taxable) > 0) {
+                _.extend(self.feed, {taxable: self.feed.attribute.taxable[0]});
+            } else {
+                _.extend(self.feed, {taxable: "1"});
+            }
         }
 
         // 生成UrlKey
         generateUrlKey() {
             let self = this;
-            if (!self.feed.hasUrlkey && self.feed.name) {
+            if (self.feed.name) {
                 let urlkey = self.feed.name + "-" + self.feed.code;
                 urlkey = urlkey.replace(/[^a-zA-Z0-9]+/g, " ");
                 urlkey = urlkey.replace(/\s+/g, "-");
-                self.feed.attribute.urlkey = [urlkey.toLowerCase()];
+                urlkey = urlkey.toLowerCase();
+                self.feed.attribute.urlkey = [urlkey];
+                _.extend(self.feed, {urlkey:urlkey});
             }
         }
 
@@ -175,8 +238,6 @@ define([
                         priceClientMsrpMax: res.data.priceClientMsrpMax
                     };
                     _.extend(self.feed, priceScope);
-
-                    self.notify.success('update success!');
                 }
             });
         }
@@ -190,9 +251,22 @@ define([
                     self.alert("Please check 'Approve Pricing'.");
                     return;
                 }
-                // Msrp or price O或500时Confirm
+                // Msrp or price O时禁止Approve
                 let checkSkus = _.filter(self.feed.skus, function (sku) {
-                    return sku.priceClientMsrp == 0 || sku.priceClientMsrp == 500 || sku.priceNet == 0 || sku.priceNet == 500;
+                    // return sku.priceClientMsrp == 0 || sku.priceClientMsrp == 500 || sku.priceNet == 0 || sku.priceNet == 500;
+                    return sku.priceClientMsrp == 0 || sku.priceNet == 0;
+                });
+                let skus = [];
+                angular.forEach(checkSkus, function (sku) {
+                    skus.push(sku.sku);
+                });
+                if (_.size(checkSkus) > 0) {
+                    let message = `SKU[${skus}] Msrp($) or price($) is 0, feed can't be approved.`;
+                    self.alert(message);
+                    return;
+                }
+                checkSkus = _.filter(self.feed.skus, function (sku) {
+                    return sku.priceClientMsrp == 500 || sku.priceNet == 500;
                 });
                 if (!checkSkus || _.size(checkSkus) == 0) {
                     let ctx = {
@@ -206,11 +280,11 @@ define([
                         }
                     });
                 } else {
-                    let skus = [];
+                    skus = [];
                     angular.forEach(checkSkus, function (sku) {
                         skus.push(sku.sku);
                     });
-                    let message = `SKU[${skus}] Msrp($) or price($) is 0 or 500, continue to Approve?`;
+                    let message = `SKU[${skus}] Msrp($) or price($) is 500, continue to approve?`;
                     self.confirm(message).then((confirmed) => {
                         let ctx = {
                             updateModel: true,
@@ -242,6 +316,27 @@ define([
             self.feed.attribute.colorMap = [self.feed.colorMap];
             // 处理amazonBrowseTree
             self.feed.attribute.amazonBrowseTree = [self.feed.amazonBrowseTree];
+
+            // 处理googleCategory、googleDepartment、priceGrabberCategory
+            self.feed.attribute.googleCategory = [self.feed.googleCategory];
+            self.feed.attribute.googleDepartment = [self.feed.googleDepartment];
+            self.feed.attribute.priceGrabberCategory = [self.feed.priceGrabberCategory];
+
+            // 处理phoneOrderOnly
+            self.feed.attribute.phoneOrderOnly = [self.feed.phoneOrderOnly];
+            // 处理seoTitle、seoDescription、seoKeywords
+            self.feed.attribute.seoTitle = [self.feed.seoTitle];
+            self.feed.attribute.seoDescription = [self.feed.seoDescription];
+            self.feed.attribute.seoKeywords = [self.feed.seoKeywords];
+
+            // 处理特殊属性
+            self.feed.attribute.freeShipping = [self.feed.freeShipping];
+            self.feed.attribute.rewardEligible = [self.feed.rewardEligible];
+            self.feed.attribute.discountEligible = [self.feed.discountEligible];
+            self.feed.attribute.sneakerheadPlus = [self.feed.sneakerheadPlus];
+            self.feed.attribute.newArrival = [self.feed.newArrival];
+            self.feed.attribute.taxable = [self.feed.taxable];
+
             let parameter = {feed: self.feed, flag: flag};
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {
@@ -253,32 +348,58 @@ define([
             });
         }
 
-        popUsCategory() {
+        /**
+         * @description 展开店铺内分类
+         * @param option{cartId,muiti,from}
+         */
+        popUsCategory(option,attr) {
             let self = this;
 
-            self.popups.openUsCategory({
-                from:self.feed.category
-            }).then(context => {
-                _.extend(self.feed, {category: context.catPath})
+            self.popups.openUsCategory(option).then(context => {
+                if(option.muiti){
+                    self.feed[attr] = context ;
+                }else{
+                    _.extend(self.feed, {category: context.catPath});
+                    if (!!context.mapping) {
+                        let seoInfo = {};
+                        if (!!context.mapping.seoTitle) {
+                            _.extend(seoInfo, {seoTitle:context.mapping.seoTitle});
+                        }
+                        if (!!context.mapping.seoKeywords) {
+                            _.extend(seoInfo, {seoKeywords:context.mapping.seoKeywords});
+                        }
+                        if (!!context.mapping.seoDescription) {
+                            _.extend(seoInfo, {seoDescription:context.mapping.seoDescription});
+                        }
+                        _.extend(self.feed, seoInfo);
+                    }
+                }
+
             });
         }
 
         initImage(num) {
             let self = this;
-            let urlKey = "";
-            if (self.feed.hasUrlkey && num > 0) {
-                urlKey = self.feed.attribute.urlkey[0];
-                if (!self.feed.image) {
-                    self.feed.image = [];
-                }
-                let count = _.size(self.feed.image);
-                let add = num - count;
-                if (add > 0) {
-                    for (let i = 1; i <= add; i++) {
-                        self.feed.image.push(self.imageUrl + urlKey + "-" + (count + i));
+            if (!num || num <= 0) {
+                self.currentFeedImage = "";
+                self.feed.image = [];
+            } else {
+                if (self.feed.urlkey) {
+                    if (!self.feed.image) {
+                        self.feed.image = [];
                     }
-                } else {
-                    self.feed.image.splice(add);
+                    let count = _.size(self.feed.image);
+                    let add = num - count;
+                    if (add > 0) {
+                        for (let i = 1; i <= add; i++) {
+                            self.feed.image.push(self.imageUrl + self.feed.urlkey + "-" + (count + i));
+                        }
+                    } else {
+                        self.feed.image.splice(add);
+                    }
+
+                    if(self.currentFeedImage === "" && self.feed.image.length > 0)
+                        self.currentFeedImage = self.feed.image[0];
                 }
             }
         }
@@ -289,29 +410,43 @@ define([
                 self.feed.image = [];
             }
             self.feed.image.push("");
+            self.feed.imageNum = _.size(self.feed.image);
+
+            if(self.currentFeedImage === "" && self.feed.image.length > 0)
+                self.currentFeedImage = self.feed.image[0];
         }
 
         deleteImage(index) {
             let self = this;
             self.feed.image.splice(index, 1);
+            let imageNum = self.feed.imageNum - 1;
+            self.feed.imageNum = imageNum;
+            if (imageNum == 0) {
+                self.currentFeedImage = "";
+            } else {
+                self.currentFeedImage = self.feed.image[0];
+            }
         }
 
         initBoxImage(num) {
             let self = this;
-            let urlKey = "";
-            if (self.feed.hasUrlkey && num > 0) {
-                urlKey = self.feed.attribute.urlkey[0];
-                if (!self.feed.attribute.boximages) {
-                    self.feed.attribute.boximages = [];
-                }
-                let count = _.size(self.feed.attribute.boximages);
-                let add = num - count;
-                if (add > 0) {
-                    for (let i = 1; i <= add; i++) {
-                        self.feed.attribute.boximages.push(self.imageUrl + urlKey + "-2" + (count + i));
+            if (!num || num <= 0) {
+                self.currentBoxImage = "";
+                self.feed.attribute.boximages = [];
+            } else {
+                if (!!self.feed.urlkey) {
+                    if (!self.feed.attribute.boximages) {
+                        self.feed.attribute.boximages = [];
                     }
-                } else {
-                    self.feed.attribute.boximages.splice(add);
+                    let count = _.size(self.feed.attribute.boximages);
+                    let add = num - count;
+                    if (add > 0) {
+                        for (let i = 1; i <= add; i++) {
+                            self.feed.attribute.boximages.push(self.imageUrl + self.feed.urlkey + "-2" + (count + i));
+                        }
+                    } else {
+                        self.feed.attribute.boximages.splice(add);
+                    }
                 }
             }
         }
@@ -322,11 +457,19 @@ define([
                 self.feed.attribute.boximages = [];
             }
             self.feed.attribute.boximages.push("");
+            self.feed.boxImageNum = _.size(self.feed.attribute.boximages);
         }
 
         deleteBoxImage(index) {
             let self = this;
             self.feed.attribute.boximages.splice(index, 1);
+            let boxImageNum = self.feed.boxImageNum - 1;
+            self.feed.boxImageNum = boxImageNum;
+            if (boxImageNum == 0) {
+                self.currentBoxImage = "";
+            } else {
+                self.currentBoxImage = self.feed.attribute.boximages[0];
+            }
         }
 
         // 同Model
@@ -391,11 +534,11 @@ define([
         /**
          * @description 弹出亚马逊类目  cartId：5
          */
-        popAmazonCategory(){
+        popCategory(option,attrName){
             let self = this;
 
-            self.popups.openAmazonCategory().then(res => {
-                self.feed.amazonBrowseTree = res.catPath;
+            self.popups.openAmazonCategory(option).then(res => {
+                self.feed[attrName] = res.catPath;
             });
         }
 
@@ -404,6 +547,10 @@ define([
                 return;
 
             window.open(url);
+        }
+
+        changeImages(index,imageUrl,arrays){
+            arrays.splice(index,1,imageUrl);
         }
 
     });

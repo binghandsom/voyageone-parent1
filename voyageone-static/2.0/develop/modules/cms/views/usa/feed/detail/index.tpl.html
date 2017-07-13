@@ -16,6 +16,12 @@
                                             <input type="text" class="form-control" name="code" ng-model="ctrl.feed.code" required disabled>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.code"></vo-message>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
@@ -25,8 +31,14 @@
                                         </div>
                                         <div class="col-md-1">
                                             <button type="button" class="btn btn-default" ng-click="ctrl.getTopModel(5)">
-                                                <i class="fa fa-angle-double-down" style="font-size: 16px;"></i>
+                                                <i ng-class="{'fa-angle-double-down':!ctrl.isShowModal,'fa-angle-double-up':ctrl.isShowModal}" class="fa" style="font-size: 16px;"></i>
                                             </button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.model"></vo-message>
                                         </div>
                                     </div>
 
@@ -57,8 +69,9 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-4 text-right vo_reqfield">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory()">
-                                                <i class="fa fa-arrow-right"></i>&nbsp;US Official Category
+                                            <button type="button" class="btn btn-info btn-pop"
+                                                    ng-click="ctrl.popUsCategory({cartId:1,from:ctrl.feed.category})">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;SN Primary Category
                                             </button>
                                         </div>
                                         <div class="col-md-6">
@@ -66,7 +79,90 @@
                                                    name="category" ng-model="ctrl.feed.category"  required readonly>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.category"></vo-message>
+                                        </div>
+                                    </div>
                                 </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory({cartId:1,froms:ctrl.feed.categories,muiti:true},'categories')">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;SN Other Category
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <select name="categories" chosen multiple width="'100%'" disabled
+                                                    ng-options="cat as cat.catPath for cat in ctrl.feed.categories"
+                                                    ng-model="ctrl.feed.categories"></select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_reqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.popCategory({cartId:5},'amazonBrowseTree')">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Amazon Browse Tree
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="amazonBrowseTree" ng-model="ctrl.feed.amazonBrowseTree" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.amazonBrowseTree"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:17,from:ctrl.feed.googleCategory},'googleCategory')">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Google Category
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.googleCategory}}"
+                                                   name="googleCategory" ng-model="ctrl.feed.googleCategory" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:18,from:ctrl.feed.googleDepartment},'googleDepartment')">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Google DepartMent
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.googleDepartment}}"
+                                                   name="googleDepartment" ng-model="ctrl.feed.googleDepartment" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:19,from:ctrl.feed.priceGrabberCategory},'priceGrabberCategory')">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;PriceGrabber Category
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.priceGrabberCategory}}"
+                                                   name="priceGrabberCategory" ng-model="ctrl.feed.priceGrabberCategory" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="form-group">
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_reqfield">Name</label>
@@ -74,14 +170,27 @@
                                             <input type="text" class="form-control" name="name" ng-model="ctrl.feed.name" ng-change="ctrl.generateUrlKey()" required>
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.name"></vo-message>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_reqfield">Brand</label>
                                         <div class="col-md-6">
-                                            <select class="form-control" name="brand" ng-options="brand.value as brand.name for brand in ctrl.brandList"
+                                            <select class="form-control" name="brand" chosen search-contain="true"
+                                                    ng-options="brand.value as brand.name for brand in ctrl.brandList"
                                                     ng-model="ctrl.feed.brand" required>
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.brand"></vo-message>
                                         </div>
                                     </div>
                                 </div>
@@ -89,9 +198,16 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_reqfield">Product Type</label>
                                         <div class="col-md-6">
-                                            <select class="form-control" name="productType" ng-options="productType.value as productType.name for productType in ctrl.productTypeList"
-                                                    ng-model="ctrl.feed.productType" required>
+                                            <select class="form-control" name="productType" chosen search-contain="true"
+                                                    ng-options="productType.value as productType.name for productType in ctrl.productTypeList"
+                                                    ng-model="ctrl.feed.productType" ng-change="ctrl.setSkuProperty(null,null,'1')" required>
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.productType"></vo-message>
                                         </div>
                                     </div>
                                 </div>
@@ -99,9 +215,16 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_reqfield">Size Type</label>
                                         <div class="col-md-6">
-                                            <select class="form-control" name="sizeType" ng-options="sizeType.value as sizeType.name for sizeType in ctrl.sizeTypeList"
+                                            <select class="form-control" name="sizeType"  chosen search-contain="true"
+                                                    ng-options="sizeType.value as sizeType.name for sizeType in ctrl.sizeTypeList"
                                                     ng-model="ctrl.feed.sizeType" required>
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.sizeType"></vo-message>
                                         </div>
                                     </div>
                                 </div>
@@ -109,17 +232,25 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_reqfield">Material</label>
                                         <div class="col-md-6">
-                                            <select class="form-control" name="material" ng-options="material.value as material.name for material in ctrl.materialList"
+                                            <select class="form-control" name="material"  chosen search-contain="true"
+                                                    ng-options="material.value as material.name for material in ctrl.materialList"
                                                     ng-model="ctrl.feed.material" required>
                                             </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.material"></vo-message>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Made in</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Made in</label>
                                         <div class="col-md-6">
-                                            <select class="form-control" name="origin" ng-options="origin.value as origin.name for origin in ctrl.originList"
+                                            <select class="form-control" name="origin"  chosen search-contain="true"
+                                                    ng-options="origin.value as origin.name for origin in ctrl.originList"
                                                     ng-model="ctrl.feed.origin">
                                             </select>
                                         </div>
@@ -127,9 +258,10 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Color Map</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Color Map</label>
                                         <div class="col-md-6">
-                                            <select class="form-control" name="origin" ng-options="color.value as color.name for color in ctrl.colorMap"
+                                            <select class="form-control" name="origin" chosen search-contain="true"
+                                                    ng-options="color.value as color.name for color in ctrl.colorMap"
                                                     ng-model="ctrl.feed.colorMap">
                                             </select>
                                         </div>
@@ -137,27 +269,16 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Color</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Color</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.feed.color">
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-md-4 text-right">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.popAmazonCategory()">
-                                                <i class="fa fa-arrow-right"></i>&nbsp;Amazon Category
-                                            </button>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.amazonBrowseTree" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Usage</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Usage</label>
                                         <div class="col-md-6">
                                             <textarea class="form-control no-resize" ng-model="ctrl.feed.usageEn"></textarea>
                                         </div>
@@ -165,7 +286,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Short Description</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Short Description</label>
                                         <div class="col-md-6">
                                             <textarea class="form-control no-resize" ng-model="ctrl.feed.shortDescription"></textarea>
                                         </div>
@@ -173,7 +294,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Long Description</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Long Description</label>
                                         <div class="col-md-6">
                                             <textarea class="form-control no-resize" ng-model="ctrl.feed.longDescription"></textarea>
                                         </div>
@@ -181,7 +302,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Order Limit Count</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Order Limit Count</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.feed.orderlimitcount">
                                         </div>
@@ -189,15 +310,15 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">URL Key</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">URL Key</label>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.attribute.urlkey" ng-disabled="ctrl.feed.hasUrlkey">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.urlkey" ng-disabled="ctrl.feed.urlkey">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Abstract</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Abstract</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.feed.abstract">
                                         </div>
@@ -205,83 +326,114 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Accessory</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Accessory</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.feed.accessory">
                                         </div>
                                     </div>
                                 </div>
-                                <!--<div class="form-group">-->
-                                <!--<div class="row">-->
-                                <!--<label class="col-md-4 control-label query-title ">Sneakerfolio</label>-->
-                                <!--<div class="col-md-6 checkbox">-->
-                                <!--<label>-->
-                                <!--<input type="checkbox" >-->
-                                <!--</label>&nbsp;Yes-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                <!--<div class="row">-->
-                                <!--<label class="col-md-4 control-label query-title ">New Arrival ?</label>-->
-                                <!--<div class="col-md-6 checkbox">-->
-                                <!--<label>-->
-                                <!--<input type="checkbox">-->
-                                <!--</label>&nbsp;Yes-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                <!--<div class="row">-->
-                                <!--<label class="col-md-4 control-label query-title ">Reward Eligible ?</label>-->
-                                <!--<div class="col-md-6 checkbox">-->
-                                <!--<label>-->
-                                <!--<input type="checkbox">-->
-                                <!--</label>&nbsp;Yes-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                <!--<div class="row">-->
-                                <!--<label class="col-md-4 control-label query-title ">Discount Eligible ?</label>-->
-                                <!--<div class="col-md-6 checkbox">-->
-                                <!--<label>-->
-                                <!--<input type="checkbox">-->
-                                <!--</label>&nbsp;Yes-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                <!--<div class="row">-->
-                                <!--<label class="col-md-4 control-label query-title ">Free Shipping</label>-->
-                                <!--<div class="col-md-6 checkbox">-->
-                                <!--<label>-->
-                                <!--<input type="checkbox">-->
-                                <!--</label>&nbsp;Yes-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                <!--<div class="row">-->
-                                <!--<label class="col-md-4 control-label query-title ">Phone Order Only ?</label>-->
-                                <!--<div class="col-md-6 checkbox">-->
-                                <!--<label>-->
-                                <!--<input type="checkbox">-->
-                                <!--</label>&nbsp;Yes-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--<div class="form-group">-->
-                                <!--<div class="row">-->
-                                <!--<label class="col-md-4 control-label query-title ">Phone Order Message</label>-->
-                                <!--<div class="col-md-6">-->
-                                <!--<input type="text" class="form-control">-->
-                                <!--</div>-->
-                                <!--</div>-->
-                                <!--</div>-->
+
+
+
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title ">Approve Pricing ?</label>
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Phone Order Only</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.phoneOrderOnly">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Title</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.seoTitle">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Description</label>
+                                        <div class="col-md-6">
+                                            <textarea class="form-control" ng-model="ctrl.feed.seoDescription"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Keywords</label>
+                                        <div class="col-md-6">
+                                            <textarea class="form-control" ng-model="ctrl.feed.seoKeywords"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--特殊属性 Begin-->
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Free Shipping</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.freeShipping">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Reward Eligible</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.rewardEligible">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Discount Eligible</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.discountEligible">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Sneakerhead+</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.sneakerheadPlus">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is New Arrival</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.newArrival">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Taxable</label>
+                                        <div class="col-md-6 checkbox">
+                                            <label>
+                                                <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.taxable">
+                                            </label>&nbsp;Yes
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--特殊属性 End-->
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Approve Pricing ?</label>
                                         <div class="col-md-6 checkbox" style="padding: 7px;">
                                             <label>
                                                 <input type="checkbox" ng-true-value="'1'" ng-false-value="'0'" ng-model="ctrl.feed.approvePricing">&nbsp;Yes
@@ -302,7 +454,8 @@
                                             <div class="vo_prodGallery">
                                                 <div class="imageContainer">
                                                     <div class="imageWrapper">
-                                                        <img  class="imageWrapper" style="cursor: pointer;max-width: 200px; max-height: 170px;" ng-src="{{ctrl.currentFeedImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentFeedImage)">
+                                                        <img  class="imageWrapper" style="cursor: pointer;max-width: 200px; max-height: 170px;"
+                                                              src="{{ctrl.currentFeedImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentFeedImage)">
                                                     </div>
                                                 </div>
                                             </div>
@@ -313,11 +466,11 @@
                                                         <div class="row">
                                                             <div class="col-md-3" ng-repeat="image in ctrl.feed.image track by $index">
                                                                 <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="active" style="height: 88px">
-                                                                    <img style="max-height: 80px" class="thumb-group" ng-src="{{image}}" ng-click="ctrl.currentFeedImage = image">
+                                                                    <img style="max-height: 80px" class="thumb-group" src="{{image}}" ng-click="ctrl.currentFeedImage = image">
                                                                 </a>
                                                             </div>
                                                             <div class="col-md-3 text-center m-t-md">
-                                                                <button type="button" ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.addImage()"><i class="glyphicon glyphicon-plus"></i></button>
+                                                                <button type="button" class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.addImage()"><i class="glyphicon glyphicon-plus"></i></button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -344,7 +497,7 @@
                                                     <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.image track by $index">
                                                         <div class="row">
                                                             <div class="col-md-10">
-                                                                <textarea class="form-control no-resize" ng-model="image" rows="3"></textarea>
+                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-blur="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
                                                             </div>
                                                             <div class="col-md-2">
                                                                 <button type="button" class="btn btn-default" ng-click="ctrl.deleteImage($index)"><i class="fa fa-trash"></i></button>
@@ -393,7 +546,7 @@
                                                     <div class="col-md-12 form-horizontal">
                                                         <div class="form-group">
                                                             <div class="row">
-                                                                <label class="col-md-6 query-title">&nbsp;&nbsp;picture num</label>
+                                                                <label class="col-md-6 query-title">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
                                                                     <input type="text" class="form-control" ng-model="ctrl.feed.boxImageNum" ng-keyup="ctrl.initBoxImage(ctrl.feed.boxImageNum)">
                                                                 </div>
@@ -455,13 +608,15 @@
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceClientMsrp" ng-change="ctrl.setSkuProperty('','priceClientMsrp','1')">
+                                                <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceClientMsrp"
+                                                       ng-disabled="ctrl.feed.approvePricing=='1'" ng-change="ctrl.setSkuProperty('','priceClientMsrp','1')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
-                                                <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceNet" ng-change="ctrl.setSkuProperty('','priceNet','1')">
+                                                <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceNet"
+                                                       ng-disabled="ctrl.feed.approvePricing=='1'" ng-change="ctrl.setSkuProperty('','priceNet','1')">
                                             </div>
                                         </td>
                                         <td ng-if="ctrl.auth!=1"></td>
@@ -505,10 +660,12 @@
                                             </select>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control text-right" ng-model="sku.priceClientMsrp" ng-enter="ctrl.setSkuProperty(sku,'priceClientMsrp')"/>
+                                            <input type="number" class="form-control text-right" ng-model="sku.priceClientMsrp"
+                                                   ng-disabled="ctrl.feed.approvePricing=='1'" ng-enter="ctrl.setSkuProperty(sku,'priceClientMsrp','1')"/>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control text-right" ng-model="sku.priceNet" ng-enter="ctrl.setSkuProperty(sku,'priceNet')"/>
+                                            <input type="number" class="form-control text-right" ng-model="sku.priceNet"
+                                                   ng-disabled="ctrl.feed.approvePricing=='1'" ng-enter="ctrl.setSkuProperty(sku,'priceNet','1')"/>
                                         </td>
                                         <td class="text-right" ng-if="ctrl.auth!=1">
                                             <input type="number" class="form-control text-right" ng-model="sku.priceMsrp" readonly/>
@@ -537,14 +694,26 @@
         <nav class="bs-docs-sidebar">
             <h3 drag-handle>导航栏</h3>
             <ul class="nav bs-docs-sidenav">
-                <li class="text-center">
-                    <button class="opacityBtn text-black" ng-disabled="feedForm.$invalid" ng-if="!(ctrl.auth!=3 && ctrl.feed.status == 'Ready')  " ng-click="ctrl.save('0')">Save</button>
+                <li class="text-center" style="margin: 7px">
+                    <button class="btn btn-info text-black" style="min-width: 82px;"
+                            ng-disabled="feedForm.$invalid"
+                            ng-if="!(ctrl.auth!=3 && ctrl.feed.status == 'Ready')  " ng-click="ctrl.save('0')">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Save
+                    </button>
                 </li>
-                <li class="text-center">
-                    <button class="opacityBtn text-black" ng-disabled="feedForm.$invalid" ng-if="ctrl.feed.status != 'Ready'" ng-click="ctrl.save('1')">Submit</button>
+                <li class="text-center" style="margin: 7px">
+                    <button class="btn btn-info text-black" style="min-width: 82px;"
+                            ng-disabled="feedForm.$invalid"
+                            ng-if="ctrl.feed.status != 'Ready'" ng-click="ctrl.save('1')">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Submit
+                    </button>
                 </li>
-                <li class="text-center">
-                    <button class="opacityBtn text-black" ng-disabled="feedForm.$invalid" ng-if="ctrl.auth==3 && ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')">Approve</button>
+                <li class="text-center" style="margin: 7px">
+                    <button class="btn btn-info text-black" style="min-width: 82px;"
+                            ng-disabled="feedForm.$invalid"
+                            ng-if="ctrl.auth==3 && ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Approve
+                    </button>
                 </li>
             </ul>
         </nav>

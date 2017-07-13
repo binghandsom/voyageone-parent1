@@ -482,4 +482,5 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     public void setApproveInfo(Map<Integer, Integer> approveInfo) {
         this.approveInfo = approveInfo;
     }
+
 }
