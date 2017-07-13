@@ -261,7 +261,7 @@ define([
                     skus.push(sku.sku);
                 });
                 if (_.size(checkSkus) > 0) {
-                    let message = `SKU[${skus}] Msrp($) or price($) is 0, you can't approve feed.`;
+                    let message = `SKU[${skus}] Msrp($) or price($) is 0, feed can't be approved.`;
                     self.alert(message);
                     return;
                 }
