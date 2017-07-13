@@ -585,6 +585,7 @@ define([
         }
 
         goDetail(url) {
+            console.log(url);
             if (!url)
                 return;
 
