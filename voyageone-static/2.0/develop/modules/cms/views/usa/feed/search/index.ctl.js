@@ -135,7 +135,7 @@ define([
                 return;
             }else{
                 self.requestMap.code = feed.code;
-                self.requestMap[key] = value;
+                self.requestMap[key] = value + '';
 
                 self.itemDetailService.updateOne(self.requestMap).then(resp => {
                     self.notify.success('update success!');
