@@ -14,6 +14,7 @@ import com.voyageone.web2.cms.bean.usa.FeedRequest;
 import com.voyageone.web2.core.bean.UserSessionBean;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -165,11 +166,11 @@ public class UsaCmsFeedController extends BaseController {
             }
             //这里有类型转换异常
             String priceClientMsrp = (String) params.get("priceClientMsrp");
-            if (priceClientMsrp != null) {
+            if (StringUtils.isNotEmpty(priceClientMsrp)) {
                 msrpPrice = Double.parseDouble(priceClientMsrp);
             }
             String price1 = (String) params.get("price");
-            if (price1 != null) {
+            if (StringUtils.isNotEmpty(price1)) {
                 price = Double.parseDouble(price1);
             }
 

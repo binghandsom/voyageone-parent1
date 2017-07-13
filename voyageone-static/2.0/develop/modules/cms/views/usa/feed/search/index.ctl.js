@@ -30,7 +30,7 @@ define([
             self.approvePricing = [false, false];
             self.itemDetailService = itemDetailService;
             self.paging = {
-                curr: 1, total: 0, fetch: function () {
+                curr: 1,size:10, total: 0, fetch: function () {
                     self.getList();
                 }
             };
@@ -104,17 +104,6 @@ define([
             {
                 self.paraMap.approvePricing.push("0");
             }
-
-            /*if (self.approvePricing[0] === true && self.approvePricing[1] == false) {
-                self.paraMap.approvePricing.push("1");
-            }
-            if (self.approvePricing[1] === true && self.approvePricing[0] === false) {
-                self.paraMap.approvePricing.push("0");
-            }
-            if (self.approvePricing[1] === true && self.approvePricing[0] === true) {
-                self.paraMap.approvePricing.push("0");
-                self.paraMap.approvePricing.push("1");
-            }*/
             if(self.paraMap.lastReceivedOnStart != null){
                 self.paraMap.lastReceivedOnStart += " 00:00:00";
             }
@@ -139,16 +128,22 @@ define([
         updateOne(feed, key, value) {
             let self = this;
             self.requestMap = {};
-           // _.extend(self.requestMap,feed.code,value);
-            self.requestMap.code = feed.code;
-            self.requestMap[key] = value;
-
-            self.itemDetailService.updateOne(self.requestMap).then(resp => {
-                self.notify.success('update success!');
-
+            if(value == null || value == ''){
+                self.alert("value can not be null!!!");
                 feed.editMsrp = false;
                 feed.editRetai = false;
-            });
+                return;
+            }else{
+                self.requestMap.code = feed.code;
+                self.requestMap[key] = value;
+
+                self.itemDetailService.updateOne(self.requestMap).then(resp => {
+                    self.notify.success('update success!');
+
+                    feed.editMsrp = false;
+                    feed.editRetai = false;
+                });
+            }
         }
 
         clear() {
@@ -294,8 +289,8 @@ define([
         canApprovePrice(feed){
             let self = this;
             //进行校验,no到yes
-            if(feed.approvePricing == 0 || feed.approvePricing == false){
-                if(feed.priceClientMsrpMin == 0 || feed.priceClientRetailMin == 0){
+            if(feed.approvePricing == 0){
+                if(feed.priceClientMsrpMin == 0 ||feed.priceClientMsrpMin == null || feed.priceClientRetailMin == 0 || feed.priceClientRetailMin == null){
                     //价格为0时不能修改
                     self.alert("Msrp($) or price($) is 0, can not change!!!");
                     return;
