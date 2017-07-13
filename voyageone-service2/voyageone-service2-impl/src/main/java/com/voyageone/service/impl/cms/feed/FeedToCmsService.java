@@ -446,8 +446,8 @@ public class FeedToCmsService extends BaseService {
 
     public Boolean checkProduct(CmsBtFeedInfoModel product) {
         if (!product.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())
-                && !product.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.REAL_MADRID.getId())
-                && !product.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.KitBag.getId())) {
+//                && !product.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.KitBag.getId())
+                && !product.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.REAL_MADRID.getId())) {
             if (product.getImage() == null || product.getImage().size() == 0) {
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
                 product.setUpdMessage("没有图片");
