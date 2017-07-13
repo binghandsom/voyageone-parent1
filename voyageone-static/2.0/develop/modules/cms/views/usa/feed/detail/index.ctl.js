@@ -381,7 +381,11 @@ define([
                             _.extend(seoInfo, {seoDescription: context.mapping.seoDescription});
                         }
                         // amazon、googleCategory、googleDepartment、priceGrabber
-                        let category = {amazonBrowseTree:mapping.amazon, googleCategory:googleCategory, googleDepartment:googleDepartment, priceGrabberCategory:priceGrabber};
+                        let category = {
+                            amazonBrowseTree:context.mapping.amazon,
+                            googleCategory:context.mapping.googleCategory,
+                            googleDepartment:context.mapping.googleDepartment,
+                            priceGrabberCategory:context.mapping.priceGrabber};
                         _.extend(self.feed, category);
                         _.extend(self.feed, seoInfo);
                     }
