@@ -486,6 +486,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 if (ArrayUtils.contains(_prodCol, prop.get("propId"))) {
                     continue;
                 }
+                if("image".equals(prop.get("propId"))){
+                    continue;
+                }
                 FileUtils.cell(row1, index++, style1).setCellValue(StringUtils.null2Space2((prop.get("propName"))));
             }
         }
@@ -580,6 +583,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
         if (commonProps != null) {
             for (Map<String, String> prop : commonProps) {
                 if (ArrayUtils.contains(_prodCol, prop.get("propId"))) {
+                    continue;
+                }
+                if("image".equals(prop.get("propId"))){
                     continue;
                 }
                 FileUtils.cell(row1, index++, style1).setCellValue(StringUtils.null2Space2((prop.get("propName"))));
@@ -740,28 +746,28 @@ public class CmsAdvSearchExportFileService extends BaseService {
             }
             codeList.add(fields.getCode());
         }
-        List<Map> imgList = imagesService.getImagesByCode(channelId, codeList);
-
-        Map<String, Object> codeImgMap = new HashMap<>(imgList.size());
-        for (Map imgItem : imgList) {
-            String prodCode = (String) imgItem.get("code");
-            String imgUrl = (String) imgItem.get("original_url");
-            if (imgUrl.indexOf("http") != 0) {
-                continue;
-            }
-
-            Integer imgCnt = (Integer) codeImgMap.get(prodCode + "_img_cnt");
-            String urlTxt = (String) codeImgMap.get(prodCode);
-            if (urlTxt != null) {
-                imgCnt++;
-                urlTxt = urlTxt + "\n" + imgUrl;
-            } else {
-                imgCnt = 0;
-                urlTxt = (String) imgItem.get("original_url");
-            }
-            codeImgMap.put(prodCode, urlTxt);
-            codeImgMap.put(prodCode + "_img_cnt", imgCnt);
-        }
+//        List<Map> imgList = imagesService.getImagesByCode(channelId, codeList);
+//
+//        Map<String, Object> codeImgMap = new HashMap<>(imgList.size());
+//        for (Map imgItem : imgList) {
+//            String prodCode = (String) imgItem.get("code");
+//            String imgUrl = (String) imgItem.get("original_url");
+//            if (imgUrl.indexOf("http") != 0) {
+//                continue;
+//            }
+//
+//            Integer imgCnt = (Integer) codeImgMap.get(prodCode + "_img_cnt");
+//            String urlTxt = (String) codeImgMap.get(prodCode);
+//            if (urlTxt != null) {
+//                imgCnt++;
+//                urlTxt = urlTxt + "\n" + imgUrl;
+//            } else {
+//                imgCnt = 0;
+//                urlTxt = (String) imgItem.get("original_url");
+//            }
+//            codeImgMap.put(prodCode, urlTxt);
+//            codeImgMap.put(prodCode + "_img_cnt", imgCnt);
+//        }
 
         // 现有表格的列，请参照本工程目录下 /contents/cms/file_template/productList-template.xlsx
         Sheet sheet = book.getSheetAt(0);
@@ -824,6 +830,20 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     String propId = prop.get("propId");
                     if (ArrayUtils.contains(_prodCol, propId)) {
                         continue;
+                    }
+                    if("image".equals(prop.get("propId"))){
+                        String image="";
+                        List<CmsBtProductModel_Field_Image> imgList = item.getCommonNotNull().getFieldsNotNull().getImages6();
+                        if (!imgList.isEmpty()) {
+                            image = imgList.get(0).getName();
+                        }
+                        if(StringUtil.isEmpty(image)){
+                            imgList = item.getCommonNotNull().getFieldsNotNull().getImages1();
+                            if (!imgList.isEmpty()) {
+                                image = imgList.get(0).getName();
+                            }
+                        }
+                        FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(image == null ? "" : image));
                     }
                     if ("comment".equals(propId)) {
                         Object value = item.getCommon().getComment();
@@ -1002,6 +1022,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 for (Map<String, String> prop : commonProps) {
                     String propId = prop.get("propId");
                     if (ArrayUtils.contains(_prodCol, propId)) {
+                        continue;
+                    }
+                    if("image".equals(prop.get("propId"))){
                         continue;
                     }
                     if ("comment".equals(propId)) {
@@ -1220,6 +1243,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     for (Map<String, String> prop : commonProps) {
                         String propId = prop.get("propId");
                         if (ArrayUtils.contains(_prodCol, propId)) {
+                            continue;
+                        }
+                        if("image".equals(prop.get("propId"))){
                             continue;
                         }
                         if ("comment".equals(propId)) {

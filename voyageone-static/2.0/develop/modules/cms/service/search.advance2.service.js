@@ -22,7 +22,7 @@ define([
         var tempGroupSelect = new selectRowsFactory();
         var tempProductSelect = new selectRowsFactory();
 
-        var commonFilter=["skuCnt","priceSale","priceRetail","priceMsrp","quantitySale","quantity","brand"];
+        var commonFilter=["skuCnt","priceSale","priceRetail","priceMsrp","quantitySale","quantity","brand","image"];
 
         this.commonFilter = commonFilter;
         /**
