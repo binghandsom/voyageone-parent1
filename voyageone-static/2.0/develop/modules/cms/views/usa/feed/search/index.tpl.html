@@ -205,9 +205,9 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td colspan="14" if-no-rows="ctrl.feeds.length"></td>
+                                <td colspan="14" if-no-rows="ctrl.feeds.length"  style="padding: 0px"></td>
                             </tr>
-                            <tr ng-repeat="feed in ctrl.feeds">
+                            <tr ng-repeat="feed in ctrl.feeds" style="height: 90px">
                                 <td class="text-center" ng-show="ctrl.flag == 3">
                                     <input type="checkbox" ng-model="feed.check" ng-if="feed.approvePricing == '1' && feed.status == 'Ready'">
                                 </td>
