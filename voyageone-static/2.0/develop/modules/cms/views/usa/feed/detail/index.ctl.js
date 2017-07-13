@@ -31,7 +31,7 @@ define([
             this.colorMap = [];
             this.setting = {
                 weightOrg: "",
-                weightOrgUnit: "lb",
+                weightOrgUnit: "",
                 priceClientMsrp: "",
                 priceNet: "",
                 priceMsrp: "",
@@ -585,6 +585,7 @@ define([
         }
 
         goDetail(url) {
+            console.log(url);
             if (!url)
                 return;
 

@@ -47,8 +47,9 @@
                                     <div class="row">
                                         <div class="col-md-8 col-md-offset-4" ng-if="ctrl.topFeedList.length > 0">
                                             <div class="col-xs-6 col-md-2" ng-repeat="item in ctrl.topFeedList">
-                                                <a href="javascript:void(0);" class="thumbnail pos-relative" ng-class="{'active':item.status=='Approved'}">
-                                                    <img class="thumb-sm-search" src="{{item.image[0]}}">
+                                                <a href="javascript:void(0);" class="thumbnail pos-relative" style="height: 88px;padding: 0px"
+                                                   ng-class="{'active':item.status=='Approved'}">
+                                                    <img class="thumb-sm-search pos-abt" style="top: 30%" src="{{item.image[0]}}">
                                                     <button type="button" class="btn btn-primary pos-absolute-right" ng-click="ctrl.copyAttr(item)">
                                                         <i class="fa fa-copy"></i>
                                                     </button>
@@ -455,7 +456,7 @@
                                                 <div class="imageContainer">
                                                     <div class="imageWrapper">
                                                         <img  class="imageWrapper" style="cursor: pointer;max-width: 200px; max-height: 170px;"
-                                                              src="{{ctrl.currentFeedImage}}" title="【click me】" ng-click="FeedDetailController.goDetail(ctrl.currentFeedImage)">
+                                                              src="{{ctrl.currentFeedImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentFeedImage)">
                                                     </div>
                                                 </div>
                                             </div>
@@ -465,8 +466,9 @@
                                                     <div class="tab-pane active">
                                                         <div class="row">
                                                             <div class="col-md-3" ng-repeat="image in ctrl.feed.image track by $index">
-                                                                <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="active" style="height: 88px">
-                                                                    <img style="max-height: 80px" class="thumb-group" src="{{image}}" ng-click="ctrl.currentFeedImage = image">
+                                                                <a href="javascript:void(0)" class="thumbnail clear-margin-bottom pos-relative" ng-class="active" style="height: 88px;padding: 0px">
+                                                                    <img style="max-height: 80px; top:30%" class="thumb-group pos-abt"
+                                                                         src="{{image}}" ng-click="ctrl.currentFeedImage = image">
                                                                 </a>
                                                             </div>
                                                             <div class="col-md-3 text-center m-t-md">
@@ -519,7 +521,7 @@
                                                 <div class="imageContainer">
                                                     <div class="imageWrapper">
                                                         <img  class="imageWrapper"  style="cursor: pointer;max-width: 200px; max-height: 170px;"
-                                                              ng-src="{{ctrl.currentBoxImage}}" title="【click me】" ng-click="FeedDetailController.goDetail(ctrl.currentBoxImage)">
+                                                              ng-src="{{ctrl.currentBoxImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentBoxImage)">
                                                     </div>
                                                 </div>
                                             </div>
@@ -529,8 +531,9 @@
                                                     <div class="tab-pane active">
                                                         <div class="row">
                                                             <div class="col-md-3" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
-                                                                <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="active" style="height: 88px">
-                                                                    <img style="max-height: 80px" class="thumb-group" src="{{image}}" ng-click="ctrl.currentBoxImage = image">
+                                                                <a href="javascript:void(0)" class="thumbnail clear-margin-bottom pos-relative"
+                                                                   ng-class="active" style="height: 88px;padding: 0px">
+                                                                    <img style="max-height: 80px;top: 30%" class="thumb-group pos-abt" src="{{image}}" ng-click="ctrl.currentBoxImage = image">
                                                                 </a>
                                                             </div>
                                                             <div class="col-md-3 text-center m-t-md">
@@ -610,14 +613,18 @@
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
                                                 <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceClientMsrp"
-                                                       ng-disabled="ctrl.feed.approvePricing=='1'" ng-enter="ctrl.setSkuProperty('','priceClientMsrp','1')">
+                                                       ng-disabled="ctrl.feed.approvePricing=='1'"
+                                                       ng-blur="ctrl.setSkuProperty('','priceClientMsrp','1')"
+                                                       ng-enter="ctrl.setSkuProperty('','priceClientMsrp','1')">
                                             </div>
                                         </td>
                                         <td class="text-right form-horizontal">
                                             <div class="form-group query-title">default:</div>
                                             <div class="form-group">
                                                 <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceNet"
-                                                       ng-disabled="ctrl.feed.approvePricing=='1'" ng-enter="ctrl.setSkuProperty('','priceNet','1')">
+                                                       ng-disabled="ctrl.feed.approvePricing=='1'"
+                                                       ng-blur="ctrl.setSkuProperty('','priceNet','1')"
+                                                       ng-enter="ctrl.setSkuProperty('','priceNet','1')">
                                             </div>
                                         </td>
                                         <td ng-if="ctrl.auth!=1"></td>
@@ -662,11 +669,11 @@
                                         </td>
                                         <td class="text-right">
                                             <input type="number" class="form-control text-right" ng-model="sku.priceClientMsrp"
-                                                   ng-disabled="ctrl.feed.approvePricing=='1'" ng-enter="ctrl.setSkuProperty(sku,'priceClientMsrp','1')"/>
+                                                   ng-disabled="ctrl.feed.approvePricing=='1'" ng-change="ctrl.setSkuProperty(sku,'priceClientMsrp','1')"/>
                                         </td>
                                         <td class="text-right">
                                             <input type="number" class="form-control text-right" ng-model="sku.priceNet"
-                                                   ng-disabled="ctrl.feed.approvePricing=='1'" ng-enter="ctrl.setSkuProperty(sku,'priceNet','1')"/>
+                                                   ng-disabled="ctrl.feed.approvePricing=='1'" ng-change="ctrl.setSkuProperty(sku,'priceNet','1')"/>
                                         </td>
                                         <td class="text-right" ng-if="ctrl.auth!=1">
                                             <input type="number" class="form-control text-right" ng-model="sku.priceMsrp" readonly/>
@@ -692,24 +699,24 @@
     <!--2、Pending有Save和Submit Button-->
     <!--3、Ready有Save和Approve Button-->
     <sticky top-fix="-100" style="position: absolute; top: 380px; right: 47px;" drag ng-if="ctrl.feed.status != 'Approved' && ctrl.feed.feedAuth <= ctrl.auth">
-        <nav class="bs-docs-sidebar">
+        <nav class="bs-docs-sidebar" style="opacity: 1">
             <h3 drag-handle>导航栏</h3>
             <ul class="nav bs-docs-sidenav">
                 <li class="text-center" style="margin: 7px">
-                    <button class="btn btn-info text-black" style="min-width: 82px;"
+                    <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
                             ng-disabled="feedForm.$invalid" ng-click="ctrl.save('0')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Save
                     </button>
                 </li>
                 <li class="text-center" style="margin: 7px">
-                    <button class="btn btn-info text-black" style="min-width: 82px;"
+                    <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
                             ng-disabled="feedForm.$invalid"
                             ng-if="ctrl.feed.status != 'Ready'" ng-click="ctrl.save('1')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Submit
                     </button>
                 </li>
                 <li class="text-center" style="margin: 7px">
-                    <button class="btn btn-info text-black" style="min-width: 82px;"
+                    <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
                             ng-disabled="feedForm.$invalid"
                             ng-if="ctrl.auth==3 && ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Approve
