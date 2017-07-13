@@ -549,6 +549,10 @@ define([
             window.open(url);
         }
 
+        changeImages(index,imageUrl,arrays){
+            arrays.splice(index,1,imageUrl);
+        }
+
     });
 
 });
