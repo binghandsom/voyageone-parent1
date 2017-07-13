@@ -8,6 +8,8 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.fluent.Request;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +18,8 @@ import java.io.InputStream;
  * 提供图片服务器的配置
  */
 public class ImageServer {
+
+    private final static Logger logger = LoggerFactory.getLogger(ImageServer.class);
 
     /**
      * 上传文件到图片服务
@@ -26,7 +30,9 @@ public class ImageServer {
                 .addBinaryBody("file", inputStream, ContentType.DEFAULT_BINARY, "image")
                 .build();
         try {
-            HttpResponse response = Request.Post(imageServerUploadFilePath(channel))
+            String uploadApiUrl = imageServerUploadFilePath(channel);
+            logger.info("上传图片 {}, 服务地址 {}", imageName, uploadApiUrl);
+            HttpResponse response = Request.Post(uploadApiUrl)
                     .body(entity)
                     .execute()
                     .returnResponse();
