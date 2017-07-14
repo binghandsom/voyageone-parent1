@@ -108,6 +108,9 @@ public class FeedToCmsService extends BaseService {
             isSetCategory = "1".equalsIgnoreCase(cmsChannelConfigs.getConfigValue1());
         }
         for (CmsBtFeedInfoModel productItem : productList) {
+            if(StringUtil.isEmpty(productItem.getCode())){
+                continue;
+            }
             List<CmsBtFeedInfoModel> products = getRelatedProducts(channelId, productItem);
             for (CmsBtFeedInfoModel product : products) {
                 product.setCode(product.getCode().replaceAll("\"", "-"));
