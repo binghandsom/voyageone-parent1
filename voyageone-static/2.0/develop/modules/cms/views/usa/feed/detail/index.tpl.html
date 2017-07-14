@@ -96,7 +96,7 @@
                                             </button>
                                         </div>
                                         <div class="col-md-6">
-                                            <select name="categories" chosen multiple width="'100%'" disabled
+                                            <select name="categories" chosen multiple width="'100%'"
                                                     ng-options="cat as cat.catPath for cat in ctrl.feed.categoriesTree"
                                                     ng-model="ctrl.feed.categoriesTree"></select>
                                         </div>
@@ -432,7 +432,7 @@
                                 </div>
                                 <!--特殊属性 End-->
 
-                                <div class="form-group">
+                                <div class="form-group" ng-if="ctrl.feed.status!='New'">
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_unreqfield">Approve Pricing ?</label>
                                         <div class="col-md-6 checkbox" style="padding: 7px;">

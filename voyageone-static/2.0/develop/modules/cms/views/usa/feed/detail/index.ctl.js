@@ -389,7 +389,7 @@ define([
                     let categories = _.pluck(context, "catPath");
                     let categoriesResult = {categories:categories,categoriesTree:context};
                     _.extend(self.feed, categoriesResult);
-                    _.extend(self.feed.attribute, categoriesResult);
+                    // _.extend(self.feed.attribute, categoriesResult);
                 }else{
                     _.extend(self.feed, {category: context.catPath});
                     if (!!context.mapping) {
@@ -418,7 +418,6 @@ define([
         }
 
         initImage(num) {
-            console.log(num);
             let self = this;
             if (num <= 0) {
                 self.currentFeedImage = "";
@@ -482,7 +481,7 @@ define([
                     }
                     let count = _.size(self.feed.attribute.boximages);
                     let add = num - count;
-                    if (num != 0) {
+                    if (add != 0) {
                         if (add > 0) {
                             for (let i = 1; i <= add; i++) {
                                 self.feed.attribute.boximages.push(self.imageUrl + self.feed.urlkey + "-2" + (count + i));
