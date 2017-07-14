@@ -229,6 +229,7 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                   (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())
                 || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())
                 || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())
+                || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.NTES.getId())
                 )) {
             map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, imageSet, user);
         }
