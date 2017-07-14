@@ -389,7 +389,7 @@ define([
                     let categories = _.pluck(context, "catPath");
                     let categoriesResult = {categories:categories,categoriesTree:context};
                     _.extend(self.feed, categoriesResult);
-                    _.extend(self.feed.attribute, categoriesResult);
+                    // _.extend(self.feed.attribute, categoriesResult);
                 }else{
                     _.extend(self.feed, {category: context.catPath});
                     if (!!context.mapping) {
