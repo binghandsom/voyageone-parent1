@@ -486,7 +486,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             // 20170417 全链路库存改造 charis STA
             // 判断一下是否需要做货品绑定
             String storeCode = taobaoScItemService.doGetLikingStoreCode(shopProp, sxData.getMainProduct().getOrgChannelId());
-            if (!StringUtils.isEmpty(storeCode) && !channelId.equals("928")) {
+            if (!StringUtils.isEmpty(storeCode) && !ChannelConfigEnums.Channel.USJGJ.getId().equals(channelId)) {
                 String title = getTitleForTongGou(mainProduct, sxData, errorWord);
                 Map<String, ScItem> scItemMap = new HashMap<>();
                 for (String sku_outerId : strSkuCodeList) {
@@ -2468,12 +2468,12 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     }
                     if (ListUtils.notNull(skuCmsList)) {
                         for (Map<String, Object> skuCms : skuCmsList) {
+                            BigDecimal skuCmsPrice = new BigDecimal(String.valueOf(skuCms.get("price")));
+                            String skuCmsOuterId = String.valueOf(skuCms.get("outer_id"));
                             for (Map<String, Object> skuTmall : skuTmallList) {
-                                String skuCmsPrice = String.valueOf(skuCms.get("price"));
-                                String skuTmallPrice = String.valueOf(skuTmall.get("price"));
-                                String skuCmsOuterId = String.valueOf(skuCms.get("outer_id"));
+                                BigDecimal skuTmallPrice = new BigDecimal(String.valueOf(skuTmall.get("price")));
                                 String skuTmallOuterId = String.valueOf(skuTmall.get("outer_id"));
-                                if (skuCmsOuterId.equals(skuTmallOuterId) && !skuCmsPrice.equals(skuTmallPrice)) {
+                                if (skuCmsOuterId.equals(skuTmallOuterId) && skuCmsPrice.compareTo(skuTmallPrice) != 0) {
                                     return "ERROR: 检查商品时发现部分sku价格不一致! ";
                                 }
                             }
