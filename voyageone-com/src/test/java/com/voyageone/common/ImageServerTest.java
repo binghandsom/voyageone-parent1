@@ -16,4 +16,13 @@ public class ImageServerTest {
         String url = ImageServer.imageServerUrl("");
         assertEquals("http://10.0.0.44:2080/", url);
     }
+
+    @Test
+    public void testSendMain() {
+        try {
+            ImageServer.uploadImage("1000", "some", null);
+        } catch (ImageServer.FailUploadingException e) {
+            e.printStackTrace();
+        }
+    }
 }
