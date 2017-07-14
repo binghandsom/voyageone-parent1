@@ -387,8 +387,8 @@ define([
             self.popups.openUsCategory(option).then(context => {
                 if(option.muiti){
                     let categories = _.pluck(context, "catPath");
-                    let categoriesResult = {categories:categories,categoriesTree:context};
-                    _.extend(self.feed, categoriesResult);
+                    _.extend(self.feed.attribute, {categories:categories});
+                    _.extend(self.feed, {categoriesTree:context});
                 }else{
                     _.extend(self.feed, {category: context.catPath, categoryCatId:context.catId});
                     if (!!context.mapping) {
