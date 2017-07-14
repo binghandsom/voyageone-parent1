@@ -26,6 +26,8 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     private String catId;
     private String category;
+    // add 2017/7/14 category对应的catId
+    private String categoryCatId;
     private String mainCategoryEn;
     private String mainCategoryCn;
     private String code;
@@ -103,6 +105,14 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getCategoryCatId() {
+        return categoryCatId;
+    }
+
+    public void setCategoryCatId(String categoryCatId) {
+        this.categoryCatId = categoryCatId;
     }
 
     public String getCode() {
@@ -249,6 +259,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
         // 增加了code级别的共通属性的支持
         attribute.put("category", this.category);
+        attribute.put("categoryCatId", this.categoryCatId);
         attribute.put("code", this.code);
         attribute.put("name", this.name);
         attribute.put("model", this.model);
@@ -319,6 +330,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         cmsBtFeedInfoModel.setMainCategoryEn(this.mainCategoryEn);
         cmsBtFeedInfoModel.setMainCategoryCn(this.mainCategoryCn);
         cmsBtFeedInfoModel.setCategory(this.getCategory());
+        cmsBtFeedInfoModel.setCategoryCatId(this.getCategoryCatId());
         cmsBtFeedInfoModel.setSizeChartType(this.sizeChartType);
         cmsBtFeedInfoModel.setCode(this.getCode());
         cmsBtFeedInfoModel.setName(this.getName());

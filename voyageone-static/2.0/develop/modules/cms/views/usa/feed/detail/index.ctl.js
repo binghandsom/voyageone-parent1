@@ -389,9 +389,8 @@ define([
                     let categories = _.pluck(context, "catPath");
                     let categoriesResult = {categories:categories,categoriesTree:context};
                     _.extend(self.feed, categoriesResult);
-                    // _.extend(self.feed.attribute, categoriesResult);
                 }else{
-                    _.extend(self.feed, {category: context.catPath});
+                    _.extend(self.feed, {category: context.catPath, categoryCatId:context.catId});
                     if (!!context.mapping) {
                         let seoInfo = {};
                         if (!!context.mapping.seoTitle) {
