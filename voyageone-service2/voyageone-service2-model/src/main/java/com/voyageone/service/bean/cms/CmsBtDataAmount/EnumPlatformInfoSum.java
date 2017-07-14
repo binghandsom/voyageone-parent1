@@ -40,7 +40,12 @@ public enum EnumPlatformInfoSum implements IEnumDataAmountSum {
     }),
     CMS_PLATFORM_pStatus_OnSale_pReallyStatus_Violation("CMS_PLATFORM_PSTATUS_ONSALE_PREALLYSTATUS_VIOLATION","{lock:'0',\"platforms.P%s.pReallyStatus\":'Violation'}","", "", "违规下架商品数", (m) -> {
         return String.format(m.getQueryStr(), m.getCartId(), m.getCartId());
-    });
+    }),
+
+    // =============================================================================================
+    // =====================================美国CMS2 常量定义=========================================
+    //==============================================================================================
+    USA_CMS_PLATFORMS_AMOUNT("%s Items", "", "", "", "Total product int Platform(%s)");
 
 
     EnumPlatformInfoSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {

@@ -2,17 +2,23 @@ package com.voyageone.task2.cms.usa.job;
 
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumDataAmountType;
 import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumFeedSum;
 import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.model.cms.CmsBtDataAmountModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 
-import org.jongo.Aggregate;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 美国CMS2 data amount 相关Job
@@ -34,6 +41,8 @@ public class UsaCmsDataAmountJobService extends BaseCronTaskService {
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
     @Autowired
     private CmsBtDataAmountDao cmsBtDataAmountDao;
+    @Autowired
+    private CmsBtProductDao cmsBtProductDao;
 
     /**
      * 获取子系统
@@ -95,6 +104,34 @@ public class UsaCmsDataAmountJobService extends BaseCronTaskService {
                 if (feedSum == null) continue;
                 // insert or update
                 this.saveOrUpdateDataAmount(channelId, feedSum, "0");
+            }
+        }
+
+        // =========================================================================================
+        // =================================统计美国各平台Product信息===================================
+        // =========================================================================================
+        List<TypeChannelBean> cartsBeanList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, "en");
+        // 过滤到美国平台, cartId<20
+        List<TypeChannelBean> usaCartBeanList = cartsBeanList.stream().filter(
+                cart -> StringUtils.isNotBlank(cart.getValue()) && Integer.valueOf(cart.getValue()) < 20).collect(Collectors.toList());
+        if (CollectionUtils.isNotEmpty(usaCartBeanList)) {
+            for (TypeChannelBean usaCart : usaCartBeanList) {
+                // 统计各平台各状态商品数
+                List<JongoAggregate> productAggregateList = new ArrayList<>();
+                productAggregateList.add(new JongoAggregate(
+                        String.format("{$match:{\"channelId\":#,\"usPlatforms.P%s\":{$exists:true},\"usPlatforms.P%s.status\":{$exists:true}}}", usaCart.getValue(), usaCart.getValue()),
+                        channelId));
+                productAggregateList.add(new JongoAggregate(String.format("{$group:{_id:\"$usPlatforms.P%s.status\",total:{$sum:1}}}", usaCart.getValue())));
+                List<Map<String, Object>> productItemsMap = cmsBtProductDao.aggregateToMap(channelId, productAggregateList);
+                for (Map<String, Object> map : productItemsMap) {
+                    String pStatus = (String) map.get("_id");
+                    Integer pStatusCount = (Integer) map.get("total");
+
+                    System.out.println(String.format("平台%s状态: %s, 总条数: %s", usaCart.getName(), pStatus, pStatusCount));
+                    // insert or update 各平台各状态商品的统计数
+
+
+                }
             }
         }
 
