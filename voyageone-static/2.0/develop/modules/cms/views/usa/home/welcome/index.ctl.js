@@ -20,6 +20,7 @@ define([
 
             // 页面数据
             this.feedInfo = [];
+            this.platformInfo = {};
 
             // 数据初始化
             this.init();
@@ -36,6 +37,18 @@ define([
             self.commonService.getFeedInfo().then((res) => {
                 if (res.data) {
                     self.feedInfo = res.data.feedInfo == null ? [] : res.data.feedInfo;
+
+                    // 平台信息分类
+                    if (res.data.platformInfo) {
+                        _.each(res.data.platformInfo, platform => {
+                            if (!self.platformInfo[platform.cartId]) {
+                                self.platformInfo[platform.cartId] = [];
+                            }
+                            self.platformInfo[platform.cartId].push(platform);
+                        })
+                    }
+                    console.log(this.platformInfo);
+
                 }
             });
         }

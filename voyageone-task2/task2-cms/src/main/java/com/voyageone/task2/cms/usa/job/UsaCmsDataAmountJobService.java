@@ -9,6 +9,7 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumDataAmountType;
 import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumFeedSum;
+import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumPlatformInfoSum;
 import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -128,9 +129,41 @@ public class UsaCmsDataAmountJobService extends BaseCronTaskService {
                     Integer pStatusCount = (Integer) map.get("total");
 
                     System.out.println(String.format("平台%s状态: %s, 总条数: %s", usaCart.getName(), pStatus, pStatusCount));
+
+//                    CmsConstants.ProductStatus productStatus = CmsConstants.ProductStatus.valueOf(pStatus);
+//                    // 找不到平台状态枚举值则直接跳过
+//                    if (productStatus == null) {
+//                        continue;
+//                    }
+
                     // insert or update 各平台各状态商品的统计数
+                    CmsBtDataAmountModel platformAmountQueryModel = new CmsBtDataAmountModel();
+                    platformAmountQueryModel.setChannelId(channelId);
+                    platformAmountQueryModel.setCartId(Integer.valueOf(usaCart.getValue()));
+                    platformAmountQueryModel.setAmountName(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getAmountName(), pStatus));
 
-
+                    CmsBtDataAmountModel platformAmountModel = cmsBtDataAmountDao.selectOne(platformAmountQueryModel);
+                    if (platformAmountModel == null) {
+                        platformAmountModel = new CmsBtDataAmountModel();
+                        platformAmountModel.setChannelId(channelId);
+                        platformAmountModel.setCartId(Integer.valueOf(usaCart.getValue()));
+                        platformAmountModel.setAmountName(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getAmountName(), pStatus));
+                        platformAmountModel.setAmountVal(String.valueOf(pStatusCount));
+                        platformAmountModel.setComment(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getComment(), usaCart.getName()));
+                        platformAmountModel.setDataAmountTypeId(EnumDataAmountType.UsaPlatformSum.getId());
+                        platformAmountModel.setCreater(getTaskName());
+                        platformAmountModel.setCreated(new Date());
+                        cmsBtDataAmountDao.insert(platformAmountModel);
+                    } else {
+                        CmsBtDataAmountModel updateModel = new CmsBtDataAmountModel();
+                        updateModel.setId(platformAmountModel.getId());
+                        updateModel.setAmountName(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getAmountName(), pStatus));
+                        updateModel.setAmountVal(String.valueOf(pStatusCount));
+                        updateModel.setComment(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getComment(), usaCart.getName()));
+                        updateModel.setModifier(getTaskName());
+                        updateModel.setModified(new Date());
+                        cmsBtDataAmountDao.update(updateModel);
+                    }
                 }
             }
         }

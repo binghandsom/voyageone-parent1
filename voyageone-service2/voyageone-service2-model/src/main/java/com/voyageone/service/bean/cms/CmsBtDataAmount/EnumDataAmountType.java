@@ -13,7 +13,8 @@ public enum  EnumDataAmountType {
     //==================================美国CMS2枚举定义==============================================
     //==============================================================================================
 
-    UsaFeedSum(5, "UsaFeedSum");
+    UsaFeedSum(5, "UsaFeedSum"),
+    UsaPlatformSum(6, "UsaPlatformSum");
 
     EnumDataAmountType(int id, String name) {
         this.id = id;

@@ -36,6 +36,11 @@ public class UsaDataAmountService extends BaseService {
         homeDataMap.put("feedInfo", cmsBtDataAmountDao.selectList(queryModel));
 
 
+        queryModel.setDataAmountTypeId(EnumDataAmountType.UsaPlatformSum.getId());
+        List<CmsBtDataAmountModel> platformDataAmountList = cmsBtDataAmountDao.selectList(queryModel);
+        homeDataMap.put("platformInfo", platformDataAmountList);
+
+
         return homeDataMap;
 
 
