@@ -109,6 +109,7 @@ public class FeedToCmsService extends BaseService {
         }
         for (CmsBtFeedInfoModel productItem : productList) {
             if(StringUtil.isEmpty(productItem.getCode())){
+                $error("code为空"+ JacksonUtil.bean2Json(productItem));
                 continue;
             }
             List<CmsBtFeedInfoModel> products = getRelatedProducts(channelId, productItem);
