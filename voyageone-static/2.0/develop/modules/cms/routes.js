@@ -500,6 +500,12 @@ define(function () {
             templateUrl: "views/usa/feed/detail/index.tpl.html",
             controllerUrl: "modules/cms/views/usa/feed/detail/index.ctl",
             controller: 'feedDetailController as ctrl'
+        },
+        "us-product/search":{
+            hash: "/product/usa/search/:code?",
+            templateUrl: "views/usa/product/search/index.tpl.html",
+            controllerUrl: "modules/cms/views/usa/product/search/index.ctl",
+            controller: 'usProductSearchController as ctrl'
         }
     };
 });
