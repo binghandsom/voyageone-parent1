@@ -63,6 +63,7 @@ import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.service.model.cms.CmsBtFeedImportSizeModel;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
+import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -166,6 +167,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
     @Autowired
     MtCategoryKeysDao mtCategoryKeysDao;
+
+    @Autowired
+    SellerCatService sellerCatService;
 
 
     /**
@@ -1058,7 +1062,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                     // 不存在的场合, 新建一个product
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1, originalFeed.getCode());
-
+                    if(feed.getChannelId().equals(ChannelConfigEnums.Channel.SN.getId()) && CmsConstants.UsaFeedStatus.Approved.name().equals(feed.getStatus())){
+                        doCreateUsaPlatform(cmsProduct, feed);
+                    }
                     // Champion特殊处理
                     if (feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
                         cmsProduct.getCommon().getFields().setOriginalTitleCn(feed.getName());
@@ -1161,6 +1167,148 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
         }
 
+        private void doCreateUsaPlatform(CmsBtProductModel cmsProduct, CmsBtFeedInfoModel feed) {
+            for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
+                // add desmond 2016/07/05 start
+                // P0（主数据）等平台不用设置分平台共通属性(typeChannel表里面保存的是0)
+                int iCartId = Integer.parseInt(typeChannelBean.getValue());
+                if (iCartId >= CmsConstants.ACTIVE_CARTID_MIN && iCartId > 0) {
+                    continue;
+                }
+                // add desmond 2016/07/05 end
+                CmsBtProductModel_Platform_Cart platform = new CmsBtProductModel_Platform_Cart();
+                // cartId
+                platform.setCartId(Integer.parseInt(typeChannelBean.getValue()));
+                // 设定是否主商品
+                // 如果是聚美或者独立官网的话，那么就是一个Code对应一个Group
+                CmsBtProductGroupModel group = null;
+
+                group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), typeChannelBean.getValue());
+
+                if (group == null) {
+                    platform.setpIsMain(1);
+                    platform.setMainProductCode(feed.getCode());  // add desmond 2016/07/04
+                } else {
+                    platform.setpIsMain(0);
+                    platform.setMainProductCode(group.getMainProductCode());    // add desmond 2016/07/04
+                }
+
+                // 平台类目状态(新增时)
+                platform.setpCatStatus("0");  // add desmond 2016/07/05
+                // 商品状态
+                // cartID是928的场合 状态直接是approved james.li
+                if (platform.getCartId() == CartEnums.Cart.USJGJ.getValue()) {
+                    platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
+                } else {
+                    platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                }
+                // 平台属性状态(新增时)
+                platform.setpAttributeStatus("0");    // add desmond 2016/07/05
+
+                // 平台sku
+                List<BaseMongoMap<String, Object>> skuList = new ArrayList<>();
+                for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
+                    BaseMongoMap<String, Object> skuInfo = new BaseMongoMap();
+                    skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.skuCode.name(), sku.getSku());
+                    skuInfo.put("clientMsrpPrice", sku.getPriceClientMsrp());
+                    skuInfo.put("clientRetailPrice", sku.getPriceClientRetail());
+                    skuInfo.put("clientNetPrice", sku.getPriceClientRetail());
+                    Boolean isSale = true;
+                    if(sku.getIsSale() != null && sku.getIsSale() == 0) isSale = false;
+                    skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), isSale);
+                    skuList.add(skuInfo);
+                }
+
+                BaseMongoMap<String, Object> fields = new BaseMongoMap<>();
+                platform.setFields(fields);
+                if(iCartId == CartEnums.Cart.SN.getValue()){
+                    platform.setpCatId(feed.getCategoryCatId());
+                    platform.setpCatPath(feed.getCategory());
+                    platform.getFields().setAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                    platform.getFields().setAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                    platform.getFields().setAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                    platform.getFields().setAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                    platform.getFields().setAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                    platform.getFields().setAttribute("freeShipping", feed.getAttribute().get("freeShipping"));
+                    platform.getFields().setAttribute("rewardEligible", feed.getAttribute().get("rewardEligible"));
+                    platform.getFields().setAttribute("discountEligible", feed.getAttribute().get("discountEligible"));
+                    platform.getFields().setAttribute("sneakerheadPlus", feed.getAttribute().get("sneakerheadPlus"));
+                    platform.getFields().setAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                    platform.getFields().setAttribute("sneakerfoiko", false);
+
+                    List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
+                    if(!StringUtil.isEmpty(feed.getCategory())) {
+                        CmsBtProductModel_SellerCat sellerCat = getSellerCat(feed.getChannelId(), CartEnums.Cart.SN.getValue(), feed.getCategory());
+                        if(sellerCat != null) {
+                            sellerCats.add(sellerCat);
+                        }
+                    }
+                    if(ListUtils.notNull(feed.getAttribute().get("categoriesTree"))){
+                        feed.getAttribute().get("categoriesTree").forEach(item->{
+                            Map categoryMode = JacksonUtil.jsonToMap(item);
+                            CmsBtProductModel_SellerCat sellerCat = getSellerCat(feed.getChannelId(), CartEnums.Cart.SN.getValue(), (String) categoryMode.get("catPath"));
+                            if(sellerCat != null) {
+                                sellerCats.add(sellerCat);
+                            }
+                        });
+                    }
+
+                    platform.setSellerCats(sellerCats);
+
+                }else if(iCartId == CartEnums.Cart.Xsneakers.getValue()){
+                    platform.setpCatId(feed.getCategoryCatId());
+                    platform.setpCatPath(feed.getCategory());
+                    platform.getFields().setAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                    platform.getFields().setAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                    platform.getFields().setAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                    platform.getFields().setAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                    platform.getFields().setAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                    platform.getFields().setAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                }else if(iCartId == CartEnums.Cart.SneakerRx.getValue()){
+                    platform.setpCatId(feed.getCategoryCatId());
+                    platform.setpCatPath(feed.getCategory());
+                    platform.getFields().setAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                    platform.getFields().setAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                    platform.getFields().setAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                    platform.getFields().setAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                    platform.getFields().setAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                    platform.getFields().setAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                }else if(iCartId == CartEnums.Cart.iKicks.getValue()){
+                    platform.setpCatId(feed.getCategoryCatId());
+                    platform.setpCatPath(feed.getCategory());
+                    platform.getFields().setAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                    platform.getFields().setAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                    platform.getFields().setAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                    platform.getFields().setAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                    platform.getFields().setAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                    platform.getFields().setAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                }else if(iCartId == CartEnums.Cart.Amazon.getValue()){
+                    platform.setpCatPath(feed.getAttribute().get("amazonBrowseTree")==null?"":feed.getAttribute().get("amazonBrowseTree").get(0));
+                    platform.getFields().setAttribute("sellerFulfilledPrime", true);
+                }
+
+                platform.setSkus(skuList);
+                Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = new HashMap<>();
+                usPlatforms.put("P" + typeChannelBean.getValue(), platform);
+                cmsProduct.setUsPlatforms(usPlatforms);
+            }
+        }
+
+
+        private CmsBtProductModel_SellerCat getSellerCat(String channelId, Integer cartId, String category){
+            CmsBtProductModel_SellerCat sellerCat = new CmsBtProductModel_SellerCat();
+            List<CmsBtSellerCatModel> sellerCatModels = sellerCatService.findNode(channelId, cartId, category);
+            if(ListUtils.isNull(sellerCatModels)) return null;
+            sellerCat.setcId(sellerCatModels.get(sellerCatModels.size() - 1).getCatId());
+            sellerCat.setcName(sellerCatModels.get(sellerCatModels.size() - 1).getCatName());
+            sellerCat.setcIds(new ArrayList<>());
+            sellerCat.setcNames(new ArrayList<>());
+            sellerCatModels.forEach(item -> {
+                sellerCat.getcIds().add(item.getCatId());
+                sellerCat.getcNames().add(item.getCatName());
+            });
+            return sellerCat;
+        }
         private void checkProduct(CmsBtProductModel cmsProduct) {
             if (usjoi) {
                 if (StringUtil.isEmpty(cmsProduct.getCommonNotNull().getCatPath())) {
@@ -1766,7 +1914,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
                     BaseMongoMap<String, Object> skuInfo = new BaseMongoMap();
                     skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.skuCode.name(), sku.getSku());
-                    skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), true);
+                    Boolean isSale = true;
+                    if(sku.getIsSale() != null && sku.getIsSale() == 0) isSale = false;
+                    skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), isSale);
                     skuList.add(skuInfo);
                 }
 
