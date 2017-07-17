@@ -440,7 +440,7 @@ public class ChannelConfigEnums {
         /**
          * 图片上传到图片服务 FTP 中间服务器的目录
          */
-        image_server_ftp_folder
+        image_server_bulk_path
     }
 
     /**

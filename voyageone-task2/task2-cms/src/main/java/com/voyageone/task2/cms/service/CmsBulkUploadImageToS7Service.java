@@ -36,7 +36,7 @@ import java.util.concurrent.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Name.image_server_ftp_folder;
+import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Name.image_server_bulk_path;
 
 /**
  * CMS 批量上传图片文件到Scene Server Ftp Service
@@ -317,7 +317,7 @@ public class CmsBulkUploadImageToS7Service extends BaseCronTaskService {
         $info("Prepare upload to image server (mid) ftp, tempDir %s, errorDir %s, channelId %s",
                 tempDir, errorDir, channelId);
 
-        String uploadPath = ChannelConfigs.getVal1(channelId, image_server_ftp_folder);
+        String uploadPath = ChannelConfigs.getVal1(channelId, image_server_bulk_path);
 
         if (StringUtils.isEmpty(uploadPath)) {
             MissingImageServerFtpFolderException exception = new MissingImageServerFtpFolderException(channelId);
@@ -564,7 +564,7 @@ public class CmsBulkUploadImageToS7Service extends BaseCronTaskService {
 
     private class MissingImageServerFtpFolderException extends RuntimeException {
         MissingImageServerFtpFolderException(String channelId) {
-            super("没有为渠道 "+ channelId +" 在 tm_order_channel_config 表中配置 image_server_ftp_folder 配置项");
+            super("没有为渠道 "+ channelId +" 在 tm_order_channel_config 表中配置 image_server_bulk_path 配置项");
         }
     }
 }
