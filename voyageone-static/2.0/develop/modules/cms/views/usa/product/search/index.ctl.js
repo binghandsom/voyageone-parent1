@@ -3,7 +3,8 @@
  * @author piao
  */
 define([
-    'cms'
+    'cms',
+    'modules/cms/directives/navBar.directive'
 ], function (cms) {
 
     cms.controller('usProductSearchController', class UsProductSearchController {
@@ -14,6 +15,10 @@ define([
 
         init(){
 
+        }
+
+        test(){
+            alert('test');
         }
 
     });
