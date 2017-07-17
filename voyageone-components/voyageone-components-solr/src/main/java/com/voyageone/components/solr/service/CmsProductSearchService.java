@@ -80,6 +80,8 @@ public class CmsProductSearchService extends BaseSearchService {
 
         cmsProductSearchModel.setFreeTags(cmsBtProductModel.getFreeTags());
 
+        cmsProductSearchModel.setUsFreeTags(cmsBtProductModel.getUsFreeTags());
+
         cmsProductSearchModel.setTags(cmsBtProductModel.getTags());
 
         cmsProductSearchModel.setProductType(field.getProductType());

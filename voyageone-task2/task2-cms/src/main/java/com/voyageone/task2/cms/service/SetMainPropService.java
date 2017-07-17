@@ -1042,6 +1042,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 设置sku数
                     cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
 
+                    doCreateUsaPlatform(cmsProduct, feed);
+
                     // productService.updateProduct(channelId, requestModel);
                     // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
                     int updCnt = productService.updateProductFeedToMaster(usjoi ? "928" : channelId, cmsProduct, getTaskName(), "feed->master导入");
@@ -1169,6 +1171,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
         private void doCreateUsaPlatform(CmsBtProductModel cmsProduct, CmsBtFeedInfoModel feed) {
             Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = new HashMap<>();
+            feed.setCategory(feed.getCategory().replaceAll("-",">").replaceAll("－","-"));
             if(!StringUtil.isEmpty(cmsProduct.getFeed().getCatPath())){
                 cmsProduct.getFeed().setCatPath(cmsProduct.getFeed().getCatPath().replaceAll(">","-"));
                 cmsProduct.getFeed().setCatId(feed.getCategoryCatId());
@@ -1284,7 +1287,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
                 platform.setSkus(skuList);
 
-                if(!feed.getApproveInfo().containsKey(iCartId)){
+                if(feed.getApproveInfo() != null && !feed.getApproveInfo().containsKey(iCartId)){
                     platform.setLock("1");
                     platform.setIsSale("0");
                 }else{
@@ -1292,7 +1295,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     platform.setIsSale("1");
                 }
                 // 商品状态
-                if(ccAutoSyncCartList.contains(iCartId+"") && "1".equals(platform.getIsSale())){
+                if(ccAutoSyncCartList != null && ccAutoSyncCartList.contains(iCartId+"") && "1".equals(platform.getIsSale())){
                     platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
                     platform.setpStatus(CmsConstants.PlatformStatus.OnSale.toString());
                 }else{
