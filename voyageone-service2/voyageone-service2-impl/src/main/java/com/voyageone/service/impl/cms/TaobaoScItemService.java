@@ -14,22 +14,18 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.components.tmall.service.TbItemSchema;
 import com.voyageone.components.tmall.service.TbItemService;
-import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.components.tmall.service.TbScItemService;
 import com.voyageone.service.bean.cms.product.SxData;
 import com.voyageone.service.dao.cms.CmsBtTmScItemDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsBtTmScItemModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -335,6 +331,42 @@ public class TaobaoScItemService extends BaseService {
 
 		return storeCode;
 
+	}
+
+	/**
+	 * 集合了doGetLikingStoreCode和doCheckNeedSetScItem方法
+	 * 但是没有doCheckNeedSetScItem方法判断邮关的逻辑，仅仅和平台设定相关，同平台通用，降低耦合性
+	 *
+	 * @param channelId
+	 * @param cartId
+	 * @param orgChannelId channelId是928:liking店时，必须
+     * @return
+     */
+	public String doGetStoreCode(String channelId, int cartId, String orgChannelId) {
+		String configCode;
+		if (ChannelConfigEnums.Channel.USJGJ.getId().equals(channelId)) {
+			configCode = cartId + "_" + orgChannelId;
+		} else {
+			configCode = String.valueOf(cartId);
+		}
+
+		// 获取当前channel的配置
+		CmsChannelConfigBean scItemConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SCITEM, configCode);
+
+		String useScItem = null;
+		String storeCode = null;
+		if (scItemConfig != null) {
+			useScItem = org.apache.commons.lang3.StringUtils.trimToNull(scItemConfig.getConfigValue1());
+			storeCode = org.apache.commons.lang3.StringUtils.trimToNull(scItemConfig.getConfigValue2());
+		}
+
+		// 如果没有配置： 出错
+		// 如果商家仓库编码为空： 出错
+		if (StringUtils.isEmpty(useScItem) || !"1".equals(useScItem) || StringUtils.isEmpty(storeCode)) {
+			return null;
+		}
+
+		return storeCode;
 	}
 
 	private String doSetLikingScItemSku(

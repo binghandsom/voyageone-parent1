@@ -533,6 +533,42 @@ public class SxProductService extends BaseService {
     }
 
     /**
+     * 回写ims_bt_product表
+     *
+     */
+    public void updateImsBtProduct(String channelId, String orgChannelId, int cartId, List<String> codes, String numIId, boolean isSku, String modifier) {
+        // s:sku级别, p:product级别
+        String updateType = isSku ? "s" : "p";
+
+        // voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的
+        for (String code : codes) {
+            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(
+                    channelId,
+                    cartId,
+                    code,
+                    orgChannelId);
+            if (imsBtProductModel == null) {
+                // 没找到就插入
+                imsBtProductModel = new ImsBtProductModel();
+                imsBtProductModel.setChannelId(channelId);
+                imsBtProductModel.setCartId(cartId);
+                imsBtProductModel.setCode(code);
+                imsBtProductModel.setNumIid(numIId);
+                imsBtProductModel.setQuantityUpdateType(updateType);
+                imsBtProductModel.setOrgChannelId(orgChannelId);
+
+                imsBtProductDao.insertImsBtProduct(imsBtProductModel, modifier);
+            } else {
+                // 找到了, 更新
+                imsBtProductModel.setNumIid(numIId);
+                imsBtProductModel.setQuantityUpdateType(updateType);
+
+                imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, modifier);
+            }
+        }
+    }
+
+    /**
      * 上传图片到天猫(或聚美)图片空间
      *
      * @param channelId   渠道id
