@@ -25,3 +25,12 @@
     right: 0;
     bottom: 0;
 }
+
+/**advance search*/
+.tab-title{
+    width: 175px;
+    height: 30px;
+    margin-bottom: 7px;
+    padding-left: 7px;
+    border-bottom: 3px solid #e67e22;
+}
