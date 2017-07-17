@@ -807,15 +807,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                             throw new Exception("关联货品失败 sku如下：" + error);
                         }
                     } catch (Exception e) {
-//                        String error = "";
-//                        if (e.getMessage().contains("创建关联失败") && !updateWare) {
-//                            try {
-//                                tbProductService.delItem(shopProp, String.valueOf(numIId));
-//                            } catch (ApiException e1) {
-//                                error = "商品上新的场合,关联货品失败后做删除商品的动作时失败了！";
-//                            }
-//                        }
-                        throw new Exception(e.getMessage());
+                        throw e;
                     }
 
                 }
@@ -2479,7 +2471,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                             }
                         }
 
-                        errorResult.append("由于天猫超时,请确认sku以外的属性是否更新成功！");
+                        errorResult.append("友情提示(并不是错误)：由于天猫超时,请确认sku以外的属性是否更新成功！");
                     }
                 }
             }
