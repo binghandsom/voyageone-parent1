@@ -81,9 +81,7 @@ define([
                     let id = self.id;
                     let message = `Feed(id:${id}) not exists.`;
                     self.alert(message);
-                    // self.alert(message).then((res) => {
-                    //     self.$location.path("");
-                    // });
+
                 }
             });
         }
