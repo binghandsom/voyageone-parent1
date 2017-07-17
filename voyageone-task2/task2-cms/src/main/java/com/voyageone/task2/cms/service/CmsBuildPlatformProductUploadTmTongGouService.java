@@ -488,9 +488,10 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             String storeCode = taobaoScItemService.doGetLikingStoreCode(shopProp, sxData.getMainProduct().getOrgChannelId());
             if (!StringUtils.isEmpty(storeCode) && !ChannelConfigEnums.Channel.USJGJ.getId().equals(channelId)) {
                 String title = getTitleForTongGou(mainProduct, sxData, errorWord);
-                Map<String, ScItem> scItemMap = new HashMap<>();
+//                Map<String, ScItem> scItemMap = new HashMap<>();
                 for (String sku_outerId : strSkuCodeList) {
                     ScItem scItem;
+                    boolean isNew = false;
                     // 检查是否发布过仓储商品
                     try {
                         scItem = tbScItemService.getScItemByOuterCode(shopProp, sku_outerId);
@@ -502,14 +503,16 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                         // 没有发布过仓储商品的场合， 发布仓储商品
                         try {
                             scItem = tbScItemService.addScItemSimple(shopProp, title, sku_outerId);
+                            isNew = true;
                         } catch (ApiException e) {
                             String errMsg = String.format("自动设置天猫商品全链路库存管理:发布仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
                             throw new BusinessException(errMsg);
                         }
                     }
-                    scItemMap.put(sku_outerId, scItem);
+//                    scItemMap.put(sku_outerId, scItem);
+                    sxData.putSxScItem(sku_outerId, scItem, isNew);
                 }
-                sxData.setScItemMap(scItemMap);
+//                sxData.setScItemMap(scItemMap);
             }
             // 20170417 全链路库存改造 charis END
 
@@ -781,20 +784,20 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 if (skuMapList != null) {
                     String error = "";
                     try {
-                        // 先去看看是否已经创建过关联了
-                        List<ScItemMap> scItemMapList = tbScItemService.getScItemMap(shopProp, Long.parseLong(numIId), null);
-                        Map<String, String> skuIdScIdMap = new HashMap<>();
-                        if (scItemMapList != null && scItemMapList.size() > 0) {
-                            scItemMapList.stream()
-                                    .forEach(scItemMap -> skuIdScIdMap.put(String.valueOf(scItemMap.getSkuId()), String.valueOf(scItemMap.getRelItemId())));
-                        }
+//                        // 先去看看是否已经创建过关联了
+//                        List<ScItemMap> scItemMapList = tbScItemService.getScItemMap(shopProp, Long.parseLong(numIId), null);
+//                        Map<String, String> skuIdScIdMap = new HashMap<>();
+//                        if (scItemMapList != null && scItemMapList.size() > 0) {
+//                            scItemMapList.stream()
+//                                    .forEach(scItemMap -> skuIdScIdMap.put(String.valueOf(scItemMap.getSkuId()), String.valueOf(scItemMap.getRelItemId())));
+//                        }
                         for (Map<String, Object> skuMap : skuMapList) {
 //                        skuMap: outer_id, price, quantity, sku_id
                             try {
                                 skuMap.put("scProductId",
                                         taobaoScItemService.doSetLikingScItem(
                                                 shopProp, sxData,
-                                                Long.parseLong(numIId), skuMap, skuIdScIdMap));
+                                                Long.parseLong(numIId), skuMap));
                                 saveCmsBtTmScItem_Liking(sxData, cartId, skuMap);
                             } catch (Exception e) {
 

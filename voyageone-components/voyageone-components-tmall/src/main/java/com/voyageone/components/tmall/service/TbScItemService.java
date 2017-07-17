@@ -117,7 +117,7 @@ public class TbScItemService extends TbBase {
 		ScitemAddResponse res = reqTaobaoApi(shopBean, request);
 
 		if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
-			return null;
+			throw new BusinessException(res.getSubCode() + ":" + res.getSubMsg());
 		}
 
 		return res.getScItem();

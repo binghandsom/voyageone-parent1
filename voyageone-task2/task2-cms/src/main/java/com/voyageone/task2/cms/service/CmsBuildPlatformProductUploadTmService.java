@@ -433,10 +433,11 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             storeCode = taobaoScItemService.doCheckNeedSetScItem(shopProp, mainProduct);
             if (!StringUtils.isEmpty(storeCode)) {
                 String title = sxProductService.getProductValueByMasterMapping("title", shopProp, expressionParser, getTaskName());
-                Map<String, ScItem> scItemMap = new HashMap<>();
+//                Map<String, ScItem> scItemMap = new HashMap<>();
                 for (String sku_outerId : strSkuCodeList) {
                     // 皇马店先看scItem表有没有该货品 20170627 STA
                     ScItem scItem;
+                    boolean isNew = false;
                     if (ChannelConfigEnums.Channel.REAL_MADRID.getId().equals(channelId)) {
                         scItem = new ScItem();
                         Map<String, Object> searchParam = new HashMap<>();
@@ -463,6 +464,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                             // 没有发布过仓储商品的场合， 发布仓储商品
                             try {
                                 scItem = tbScItemService.addScItemSimple(shopProp, title, sku_outerId);
+                                isNew = true;
                             } catch (ApiException e) {
                                 String errMsg = String.format("自动设置天猫商品全链路库存管理:发布仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
                                 throw new BusinessException(errMsg);
@@ -470,9 +472,9 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         }
                     }
 
-                    scItemMap.put(sku_outerId, scItem);
+                    sxData.putSxScItem(sku_outerId, scItem, isNew);
                 }
-                sxData.setScItemMap(scItemMap);
+//                sxData.setScItemMap(scItemMap);
             }
             // 20170417 全链路库存改造 charis END
 

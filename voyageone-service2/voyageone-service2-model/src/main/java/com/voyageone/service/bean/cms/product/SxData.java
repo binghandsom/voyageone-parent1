@@ -3,6 +3,7 @@ package com.voyageone.service.bean.cms.product;
 import com.taobao.api.domain.ScItem;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.service.model.cms.CmsTmpSxCnCodeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -43,8 +44,21 @@ public class SxData {
 	private Map<String, SxDarwinSkuProps> mapDarwinSkuProps; // Map<sku, SxDarwinSkuProps>
 
 	private Integer sizeChartId;
-	private Map<String, ScItem> scItemMap; // sku对应全链路后端商品
+	private Map<String, SxScItem> scItemMap; // sku对应全链路后端商品
 
+	public class SxScItem extends ScItem {
+		private boolean isNew;
+
+		private SxScItem(){}
+
+		public boolean isNew() {
+			return isNew;
+		}
+
+		public void setNew(boolean aNew) {
+			isNew = aNew;
+		}
+	}
 
 	public class SxDarwinSkuProps {
 		private SxDarwinSkuProps() {}
@@ -293,12 +307,23 @@ public class SxData {
 		this.sizeChartId = sizeChartId;
 	}
 
-	public Map<String, ScItem> getScItemMap() {
+	public Map<String, SxScItem> getScItemMap() {
 		return scItemMap;
 	}
 
-	public void setScItemMap(Map<String, ScItem> scItemMap) {
+	public void setScItemMap(Map<String, SxScItem> scItemMap) {
 		this.scItemMap = scItemMap;
+	}
+
+	public void putSxScItem(String sku, ScItem scItem, boolean isNew) {
+		if (this.scItemMap == null) {
+			this.scItemMap = new HashMap<>();
+		}
+		SxScItem item = new SxScItem();
+		BeanUtils.copy(scItem, item);
+		item.setNew(isNew);
+		this.scItemMap.put(sku, item);
+
 	}
 
 
