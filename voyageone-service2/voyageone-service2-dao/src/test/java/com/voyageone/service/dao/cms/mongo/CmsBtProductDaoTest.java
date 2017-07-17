@@ -83,6 +83,5 @@ public class CmsBtProductDaoTest {
         list.add(shoe);
         list.add(football);
         cmsBtProductDao.updateSellerCat("018", list, 27, "will");
-
     }
 }
