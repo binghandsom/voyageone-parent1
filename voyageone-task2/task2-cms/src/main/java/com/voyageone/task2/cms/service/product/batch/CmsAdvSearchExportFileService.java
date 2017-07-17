@@ -857,11 +857,12 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             longDes = longDes.substring(0, CELL_LENGTH_LIMIT);
                         }
                         FileUtils.cell(row, index++, unlock).setCellValue(longDes);
-                    } else if("skuCnt".equals(propId)){
+                    }else if("skuCnt".equals(propId)){
                         FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getSkus().size());
-                    }
-                    else if("quantity".equals(propId)){
+                    }else if("quantity".equals(propId)){
                         FileUtils.cell(row, index++, unlock).setCellValue(item.getCommon().getFieldsNotNull().getQuantity());
+                    }else if("created".equals(propId)){
+                        FileUtils.cell(row, index++, unlock).setCellValue(item.getCreated());
                     }else {
                         Object value = fields.getAttribute(propId);
                         FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
