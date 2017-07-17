@@ -11,6 +11,20 @@ public class CartEnums {
      * 对应 ct_cart 表中存在的配置名称
      */
     public enum Cart {
+
+        SN("1"),
+
+        Xsneakers("12"),
+
+        iKicks("3"),
+
+        eBay("10"),
+
+        Amazon("5"),
+
+        SneakerRx("6"),
+
+
         /**
          * 天猫
          */

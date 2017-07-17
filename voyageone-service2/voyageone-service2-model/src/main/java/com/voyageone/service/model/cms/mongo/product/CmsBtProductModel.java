@@ -37,7 +37,7 @@ public class CmsBtProductModel extends ChannelPartitionModel implements Cloneabl
     //平台属性Map
     private Map<String, CmsBtProductModel_Platform_Cart> platforms = new HashMap<>();
     //平台属性Map
-    private Map<String, CmsBtProductModel_UsPlatform_Cart> usPlatforms = new HashMap<>();
+    private Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = new HashMap<>();
     //品牌方数据
     private CmsBtProductModel_Feed feed = new CmsBtProductModel_Feed();
     //销售数据统计
@@ -209,11 +209,11 @@ public class CmsBtProductModel extends ChannelPartitionModel implements Cloneabl
     }
 
     // usPlatforms
-    public Map<String, CmsBtProductModel_UsPlatform_Cart> getUsPlatforms() {
+    public Map<String, CmsBtProductModel_Platform_Cart> getUsPlatforms() {
         return usPlatforms;
     }
 
-    public void setUsPlatforms(Map<String, CmsBtProductModel_UsPlatform_Cart> usPlatforms) {
+    public void setUsPlatforms(Map<String, CmsBtProductModel_Platform_Cart> usPlatforms) {
         this.usPlatforms = usPlatforms;
     }
 
