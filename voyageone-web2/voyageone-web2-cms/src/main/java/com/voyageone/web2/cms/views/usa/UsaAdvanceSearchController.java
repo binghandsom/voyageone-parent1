@@ -13,6 +13,7 @@ import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
 import com.voyageone.service.impl.cms.usa.UsaAdvanceSearchService;
+import com.voyageone.service.impl.cms.usa.UsaCustomColumnService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -59,6 +60,8 @@ public class UsaAdvanceSearchController extends CmsController {
 
     @Autowired
     private UsaAdvanceSearchService usaAdvanceSearchService;
+    @Autowired
+    private UsaCustomColumnService usaCustomColumnService;
 
     /**
      * 统一的当前语言环境提供
@@ -75,10 +78,10 @@ public class UsaAdvanceSearchController extends CmsController {
     public AjaxResponse init() throws IOException {
         UserSessionBean userInfo = getUser();
         CmsSessionBean cmsSession = getCmsSession();
-        advSearchCustColumnService.getUserCustColumns(userInfo.getSelChannelId(), userInfo.getUserId(), cmsSession, getLang());
-        Map<String, Object> resultMap = searchIndexService.getMasterData(userInfo, cmsSession, getLang());
-        resultMap.put("channelId", userInfo.getSelChannelId());
-        return success(resultMap);
+//        usaCustomColumnService.getUserCustColumns(userInfo.getSelChannelId(), userInfo.getUserId(), cmsSession, getLang());
+//        Map<String, Object> resultMap = usaCustomColumnService.getMasterData(userInfo, cmsSession, getLang());
+//        resultMap.put("channelId", userInfo.getSelChannelId());
+        return success(null);
     }
 
 
@@ -119,9 +122,8 @@ public class UsaAdvanceSearchController extends CmsController {
     @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.GET_CUSTOM_COLUMNS)
     public AjaxResponse getCustomColumns() {
         UserSessionBean userInfo = getUser();
-
         // 获取该用户自定义显示列设置
-        Map<String, Object> colData = advSearchCustColumnService.getUserCustColumns(userInfo, getLang());
+        Map<String, Object> colData = usaCustomColumnService.getCustomColumnsWithChecked(userInfo.getSelChannelId(), userInfo.getUserId(), getLang());
         // 返回用户信息
         return success(colData);
     }
