@@ -12,8 +12,6 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
@@ -35,7 +33,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -361,7 +358,8 @@ public class FeedToCmsService extends BaseService {
                     if (targetSku != null) {
                         triggerPrice = !((targetSku.getPriceNet() == null || targetSku.getPriceNet() == 0)
                                 && (targetSku.getPriceClientRetail() == null || targetSku.getPriceClientRetail() == 0)
-                                && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0));
+                                && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0))
+                                || (targetSku.getIsSale() != null && targetSku.getIsSale() != skuInfo.getIsSale());
 
                         // 同步价格
                         if (targetSku.getPriceNet() != null && targetSku.getPriceNet() != 0)
@@ -396,6 +394,8 @@ public class FeedToCmsService extends BaseService {
                     // 计算人民币价格
                     if (triggerPrice) {
                         priceService.setFeedPrice(orgFeedInfo);
+                        if (orgFeedInfo.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Succeed)
+                            orgFeedInfo.setUpdFlg(0);
                     }
 
                     // 原feed数据导入成功或者导入失败,则自动重新导入一次
