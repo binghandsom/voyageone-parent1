@@ -54,11 +54,9 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                 for (String productCode : productCodes) {
                     CmsBtProductModel cmsBtProductModel = productService.getProductByCode(messageBody.getChannelId(), productCode);
                     if (cmsBtProductModel != null){
-                        Map<String, CmsBtProductModel_UsPlatform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
-                        if (usPlatforms != null){
-                            CmsBtProductModel_UsPlatform_Cart cmsBtProductModel_usPlatform_cart = usPlatforms.get("P" + cartId);
-
-                            List<BaseMongoMap<String, Object>> skus = cmsBtProductModel_usPlatform_cart.getSkus();
+                        CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getPlatform(cartId);
+                        if (platform != null){
+                            List<BaseMongoMap<String, Object>> skus = platform.getSkus();
                             if (skus != null){
                                 for (BaseMongoMap<String, Object> sku : skus) {
                                     //获取到对应的skuCode
@@ -78,10 +76,9 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                                     if ("-".equals(optionType)){
                                         newPrice = basePrice - value1;
                                     }
-
                                     JongoUpdate jongoUpdate = new JongoUpdate();
                                     jongoUpdate.setQuery("{\"platforms.P23.skus.skuCode\":#}");
-                                    //jongoUpdate.setQueryParameters(sku.toLowerCase());
+                                    jongoUpdate.setQueryParameters(skuCode.toLowerCase());
                                     jongoUpdate.setUpdate("{$set:{\"skus.$.qty\":#}}");
                                     //jongoUpdate.setUpdateParameters(skuTotal);
 
