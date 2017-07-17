@@ -26,6 +26,10 @@
     bottom: 0;
 }
 
+.white-space-noWrap{
+    white-space: nowrap;
+}
+
 /**advance search*/
 .tab-title{
     width: 175px;
