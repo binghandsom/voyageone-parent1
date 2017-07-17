@@ -35,7 +35,7 @@ public class ImageServer {
         Class<ImageServer> imageServerClass = ImageServer.class;
 
         template = getTemplateOrDefault(imageServerClass, "main.template", "%s");
-        httpTemplate = getTemplateOrDefault(imageServerClass, "http.template", "HTTP status %s %s, $s");
+        httpTemplate = getTemplateOrDefault(imageServerClass, "http.template", "HTTP status %s %s, %s");
         exTemplate = getTemplateOrDefault(imageServerClass, "exception.template", "%s: %s<p>%s");
     }
 
