@@ -269,6 +269,7 @@ define(function () {
                     "getPromotionSkuList": "getPromotionSkuList",
                     "saveSkuPromotionPrices": "saveSkuPromotionPrices",
                     "updatePromotionProductTag": "updatePromotionProductTag",
+                    "updatePromotionListProductTag":"updatePromotionListProductTag",
                     "addPromotionByGroup": "addPromotionByGroup"
                 }
             },

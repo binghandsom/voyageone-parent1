@@ -2,10 +2,10 @@ define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
-    angularAMD.controller('popTagModifyCtl', function ($scope,jmPromotionDetailService,alert,context, $routeParams) {
+    angularAMD.controller('TagModifyCtl', function ($scope,promotionDetailService,alert,context, $routeParams) {
         $scope.vm={tagNameList:[],tagList:[],actionType:0};
-        var listPromotionProduct=[];
-        var jmPromotionId=undefined;
+        var selectProductList=[];
+        var promotionId=undefined;
         var isBegin=false;
         /**
          * 初始化数据.
@@ -18,22 +18,26 @@ define([
             }
             //$scope.vm.attsList = $routeParams.attsList;
             if (context) {
-                listPromotionProduct = context.listPromotionProduct;
-                jmPromotionId = context.jmPromotionId;
+                selectProductList = context.selectProductList;
+                promotionId = context.promotionId;
                 $scope.vm.tagList = context.tagList;
                 isBegin = context.isBegin;
             }
         };
         $scope.ok = function () {
-            if (listPromotionProduct.length == 0 && context.selAll == false) {
+            if (selectProductList.length == 0 && context.selAll == false) {
                 alert("请选择修改tag的商品!");
                 return;
             }
+            var listPromotionProductId = [];
+            for (var i = 0; i < selectProductList.length; i++) {
+                listPromotionProductId.push(selectProductList[i].id);
+            }
 
             var parameter = {};
-            parameter.listPromotionProductId = $scope.getSelectedPromotionProductIdList(listPromotionProduct);
-            parameter.jmPromotionId = jmPromotionId;
-            parameter.searchInfo = context.searchInfo;
+            parameter.listPromotionProductId = listPromotionProductId;
+            parameter.promotionId = promotionId;
+            parameter.key = context.key;
             parameter.selAll = context.selAll;
             parameter.actionType = $scope.vm.actionType;
             var productTagList = [];
@@ -45,7 +49,8 @@ define([
                 productTagList.push({tagId: tag.id, tagName: tag.tagName,checked:2});//checked=2 新增
             }
             parameter.tagList = productTagList;
-            jmPromotionDetailService.updatePromotionListProductTag(parameter).then(function (res) {
+
+            promotionDetailService.updatePromotionListProductTag(parameter).then(function (res) {
                 $scope.$close();
                 context.search();
             }, function (res) {

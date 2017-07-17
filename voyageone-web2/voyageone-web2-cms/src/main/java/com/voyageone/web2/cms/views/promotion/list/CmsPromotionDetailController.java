@@ -1,20 +1,27 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.CmsBtPromotionGroupsBean;
 import com.voyageone.service.bean.cms.businessmodel.CmsPromotionDetail.SaveSkuPromotionPricesParameter;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdateListPromotionProductTagParameter;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
+import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodesTagService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.promotion.PromotionSkuService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsSneakerHeadAddPromotionMQMessageBody;
+import com.voyageone.service.model.util.MapModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
+import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
 import com.voyageone.web2.core.bean.UserSessionBean;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +34,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author james 2015/12/15
@@ -51,6 +59,8 @@ public class CmsPromotionDetailController extends CmsController {
     private  CmsMqSenderService cmsMqSenderService;
     @Autowired
     private PromotionService promotionService;
+    @Autowired
+    private PromotionCodeService promotionCodeService;
 
     @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_GROUP)
     public AjaxResponse getPromotionGroup(@RequestBody Map<String, Object> params) {
@@ -101,6 +111,24 @@ public class CmsPromotionDetailController extends CmsController {
         promotionCodesTagService.updatePromotionProductTag(parameter, userSessionBean.getSelChannelId(), userSessionBean.getUserName());
 
        return success(null);
+    }
+
+    //批量修改商品tag
+    @RequestMapping(CmsUrlConstants.PROMOTION.LIST.DETAIL.UpdatePromotionListProductTag)
+    public AjaxResponse updatePromotionListProductTag(@RequestBody UpdateListPromotionProductTagParameter parameter) {
+        if (parameter.isSelAll()) {
+            Map<String, Object> param = new HashMap<>();
+            param.put("channelId", getUser().getSelChannelId());
+            param.put("promotionId", parameter.getPromotionId());
+            param.put("key", parameter.getKey());
+            List<CmsBtPromotionCodesBean> promotionCodeList = promotionCodeService.getPromotionCodeList(param);
+            if (CollectionUtils.isNotEmpty(promotionCodeList)) {
+                parameter.setListPromotionProductId(promotionCodeList.stream().map(item->item.getId()).collect(Collectors.toList()));
+            }
+        }
+        UserSessionBean userSessionBean = getUser();
+        promotionCodesTagService.updatePromotionListProductTag(parameter, userSessionBean.getSelChannelId(), userSessionBean.getUserName());
+        return success(null);
     }
         @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_SKU)
     public AjaxResponse getPromotionSku(@RequestBody Map<String, Object> params) {
