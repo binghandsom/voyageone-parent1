@@ -5,6 +5,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JsonUtil;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,6 +70,14 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
             super.remove(key);
         } else {
             super.put(key, value);
+        }
+    }
+
+    public void setAttribute(K key, List value) {
+        if (value == null) {
+            super.remove(key);
+        } else {
+            super.put(key, (V) value.get(0));
         }
     }
 

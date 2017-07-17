@@ -472,6 +472,25 @@ public class SellerCatService extends BaseService {
 
     }
 
+    public List<CmsBtSellerCatModel> findNode(String channelId, Integer cartId, String catPath){
+        List<CmsBtSellerCatModel> ret = new ArrayList<>();
+        String[] cats = catPath.split(">");
+        List<CmsBtSellerCatModel> cmsBtSellerCats = getSellerCatsByChannelCart(channelId, cartId);
+        for(int i=0;i<cats.length;i++){
+            CmsBtSellerCatModel item = findNode(cmsBtSellerCats, cats[i]);
+            if(item != null){
+                ret.add(item);
+            }
+            cmsBtSellerCats = item.getChildren();
+        }
+        return ret;
+    }
+
+    public CmsBtSellerCatModel findNode(List<CmsBtSellerCatModel> tree, String catName){
+        if(tree == null) return null;
+        return tree.stream().filter(item->item.getCatName().equals(catName)).findFirst().orElse(null);
+    }
+
     /**
      * 商品所属分类被删除，插入履历
      * @param channelId

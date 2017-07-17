@@ -42,6 +42,7 @@ define([
             this.topFeedList = null; // 同Model查询结果
             this.imageUrl = "http://image.sneakerhead.com/is/image/sneakerhead/";
             this.init();
+            this.flag = '';
         }
 
         init() {

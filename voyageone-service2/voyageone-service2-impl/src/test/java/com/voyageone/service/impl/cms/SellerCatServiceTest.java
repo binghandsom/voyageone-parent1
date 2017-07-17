@@ -26,6 +26,7 @@ public class SellerCatServiceTest {
     @Test
     public void testGetSellerCatsByChannelCart() throws Exception {
 
+        List<CmsBtSellerCatModel> aa = sellerCatService.findNode("001",1,"Men's>Supra>Supra Bleeker");
         List<CmsBtSellerCatModel> result  = sellerCatService.getSellerCatsByChannelCart("017", 23, false);
         System.out.println(JsonUtil.bean2Json(result));
 
