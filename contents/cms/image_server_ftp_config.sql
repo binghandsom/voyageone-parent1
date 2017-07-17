@@ -8,3 +8,12 @@ INSERT INTO synship.tm_code (id, code, name, name1, des, active, created, create
 ('IMAGE_SERVER', 'maintainer', 'jonas.gao@voyageone.cn', '', 'Image Server 维护人', 1, now(), 'system', now(), 'system');
 
 SELECT * FROM synship.tm_code WHERE id = 'IS_MID_FTP';
+
+-- 为每个渠道创建路径配置
+SELECT
+  order_channel_id,
+  'image_server_bulk_path',
+  concat('/vdb/imgunzip/', order_channel_id, '/'),
+  '',
+  ''
+FROM tm_order_channel;
