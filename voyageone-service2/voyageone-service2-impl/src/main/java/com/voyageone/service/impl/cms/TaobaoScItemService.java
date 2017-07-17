@@ -343,7 +343,7 @@ public class TaobaoScItemService extends BaseService {
 	}
 
 	private String doSetLikingScItemSku(ShopBean shopBean, String orgChannelId,	long numIId, String sku_outerId,
-										String sku_id, String qty, SxData.SxScItem scItem) {
+										String sku_id, String qty, ScItem scItem) {
 
 		// Liking天猫国际同购店， 获取子店货品绑定的 天猫商家仓库编码
 		String storeCode = doGetLikingStoreCode(shopBean, orgChannelId);
