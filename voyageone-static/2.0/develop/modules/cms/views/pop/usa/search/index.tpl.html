@@ -10,55 +10,67 @@
 
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-6">
-                    <div class="panel panel-primary">
+                <div class="col-md-8">
+                    <div class="panel panel-success">
                         <div class="panel-heading">
                             <strong>USA</strong>
                         </div>
                         <div class="panel-body" style="height: 400px; max-height: 410px;overflow-y: scroll;">
                             <div class="row">
                                 <table class="table">
-                                    <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId < 20 && platform.lang_id=='en'">
-                                        <td>
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input type="checkbox" ng-model="platform.checked">
-                                                </label>
-                                            </div>
-                                        </td>
-                                        <td class="v-middle">{{platform.name}}</td>
-                                        <td class="v-middle">Days Old Before Sharing</td>
-                                        <td class="v-middle">
-                                            <input type="number" class="form-control" ng-model="platform.day">
-                                        </td>
-                                    </tr>
+                                    <thead>
+                                        <th colspan="2">
+                                            USA Platform
+                                        </th>
+                                        <th class="white-space-noWrap">Days Old Before Sharing</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId < 20 && platform.lang_id=='en'">
+                                            <td>
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" ng-model="platform.checked">
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td class="v-middle">{{platform.name}}</td>
+                                            <td class="v-middle">
+                                                <input type="number" class="form-control" ng-model="platform.day">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="panel panel-primary">
+                <div class="col-md-4">
+                    <div class="panel panel-success">
                         <div class="panel-heading">
                             <strong>CN</strong>
                         </div>
                         <div class="panel-body" style="height: 400px; max-height: 410px;overflow-y: scroll;">
                             <div class="row">
                                 <table class="table">
-                                    <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId >= 20 && platform.lang_id=='cn'">
-                                        <td>
-                                            <div class="checkbox">
-                                                <label>
-                                                    <input type="checkbox" ng-model="platform.checked">
-                                                </label>
-                                            </div>
-                                        </td>
-                                        <td class="v-middle">{{platform.add_name2}}</td>
-                                        <td class="v-middle">Days Old Before Sharing</td>
-                                        <td class="v-middle">
-                                            <input type="number" class="form-control" ng-model="platform.day" value="0">
-                                        </td>
-                                    </tr>
+                                    <thead>
+                                        <th colspan="2">
+                                            CN Platform
+                                        </th>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId >= 20 && platform.lang_id=='cn'">
+                                            <td>
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" ng-model="platform.checked">
+                                                    </label>
+                                                </div>
+                                            </td>
+                                            <td class="v-middle">{{platform.add_name2}}</td>
+                                        </tr>
+                                    </tbody>
+
                                 </table>
                             </div>
                         </div>

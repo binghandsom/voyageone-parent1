@@ -68,12 +68,7 @@
                                     </button>
                                 </div>
                                 <div class="col-sm-8">
-                                    <label class="checkbox-inline c-radio">
-                                        <input type="radio" name="freeTagOperation" value="1" ng-model="vm.searchInfo.freeTagType"><span class="fa fa-check"></span> 包含
-                                    </label>
-                                    <label class="checkbox-inline c-radio">
-                                        <input type="radio" name="freeTagOperation" value="2" ng-model="vm.searchInfo.freeTagType"><span class="fa fa-check"></span> 不包含
-                                    </label>
+                                    <input type="text" class="form-control">
                                 </div>
                             </div>
 
@@ -170,12 +165,7 @@
                                     </button>
                                 </div>
                                 <div class="col-sm-8">
-                                    <label class="checkbox-inline c-radio">
-                                        <input type="radio" name="freeTagOperation" value="1" ng-model="vm.searchInfo.freeTagType"><span class="fa fa-check"></span> 包含
-                                    </label>
-                                    <label class="checkbox-inline c-radio">
-                                        <input type="radio" name="freeTagOperation" value="2" ng-model="vm.searchInfo.freeTagType"><span class="fa fa-check"></span> 不包含
-                                    </label>
+                                    <input type="text" class="form-control">
                                 </div>
                             </div>
 
@@ -204,14 +194,14 @@
 
                             <div class="form-group">
                                 <lable class="col-sm-3 control-label query-title">Sale Price</lable>
-                                <div class="col-sm-9">
-                                    <div class="col-sm-5">
+                                <div class="col-sm-9 form-inline">
+                                    <div class="col-sm-5 input-group">
                                         <input type="text" class="form-control">
                                     </div>
-                                    <div class="col-sm-1 text-center">
-                                        ~
-                                    </div>
-                                    <div class="col-sm-5">
+                                    <!--<div class="col-sm-1 text-center">-->
+                                        &nbsp;~&nbsp;
+                                    <!--</div>-->
+                                    <div class="col-sm-5 input-group">
                                         <input type="text" class="form-control">
                                     </div>
                                 </div>
@@ -280,7 +270,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr><td colspan="14" if-no-rows="vm.productList.length"></td></tr>
+                                    <tr><td colspan="14" if-no-rows="vm.productList.length"></td></tr>
                                 </tbody>
                                 <tbody class="box-body" ng-repeat="productInfo in vm.productList" style="border-bottom: 1px solid #ddd; height: 80px;">
                                 <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;height: 40px;">
