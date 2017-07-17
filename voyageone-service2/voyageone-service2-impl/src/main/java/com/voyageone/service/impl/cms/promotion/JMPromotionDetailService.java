@@ -270,7 +270,7 @@ public class JMPromotionDetailService extends BaseService {
 
         //tag数组转为位以竖线(|)分隔的字符串
         StringBuilder sbPromotionTag = new StringBuilder();
-        tagList.forEach(f ->
+        tagList.stream().distinct().forEach(f ->
                 {
                     if (!StringUtils.isEmpty(f)) {
                         sbPromotionTag.append("|").append(f);

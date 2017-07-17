@@ -85,9 +85,11 @@ define([
                 isSelAll: self.context.isSelAll,
                 activityStart: self.groupInfo.startTime,
                 activityEnd: self.groupInfo.endTime,
-                searchInfo:self.context.searchInfo
+                searchInfo: self.context.searchInfo
             }).then(function (res) {
                 self.listTreeNode = res.data.listTreeNode;
+
+                self.initTreeNode = angular.copy(res.data.listTreeNode);
 
                 //清空原来选中状态
                 self.allCheckNodes = self.halfCheckNodes = {};
@@ -226,12 +228,33 @@ define([
                 codeList: self.getCodeList(),
                 idList: self.getProductIdList(),
                 listTagTreeNode: self.listTreeNode,
-                searchInfo:context.searchInfo
+                searchInfo: context.searchInfo
             }, groupInfo)).then(function () {
                 notify.success("添加成功！");
                 $uibModalInstance.close();
             });
 
+        };
+
+        JoinPromotionCtl.prototype.getPromotion = function () {
+            var self = this;
+
+            self.listTreeNode = _.filter(self.initTreeNode,function (node) {
+                    return node.id === self.selPromotionName;
+            });
+
+        };
+
+        JoinPromotionCtl.prototype.initTags = function () {
+            var self = this,
+                childNode = self.listTreeNode[0];
+
+            self.checkNodes[childNode.id] = true;
+
+            self.categoryContainer = childNode.children;
+            self.parentNode = childNode;
+
+            self.canSelectChild(self.parentNode);
         };
 
         return JoinPromotionCtl;
