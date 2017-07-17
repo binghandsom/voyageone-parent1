@@ -65,14 +65,16 @@ public class TaobaoScItemService extends BaseService {
 			return null;
 		}
 
-		ScItem scItem = sxData.getScItemMap().get(sku_outerId);
+		SxData.SxScItem scItem = sxData.getScItemMap().get(sku_outerId);
 
 		if (scItem == null) {
 			// 如果没有创建成功， 不需要做库存初始化， 直接跳出
 			return null;
 		}
-
 		String scProductId = String.valueOf(scItem.getItemId());
+		if (!scItem.isNew()) {
+			return scProductId;
+		}
 
 		// 进行库存初始化
 		try {
@@ -278,7 +280,7 @@ public class TaobaoScItemService extends BaseService {
 	 * @param sxData sxData
 	 * @param skuMap {outer_id: xx, price: xx, quantity: xx, sku_id: xx}
 	 */
-	public String doSetLikingScItem(ShopBean shopBean, SxData sxData, long numIId, Map<String, Object> skuMap, Map<String, String> skuIdScIdMap) {
+	public String doSetLikingScItem(ShopBean shopBean, SxData sxData, long numIId, Map<String, Object> skuMap) {
 
 		String orgChannelId = sxData.getMainProduct().getOrgChannelId();
 
@@ -292,17 +294,20 @@ public class TaobaoScItemService extends BaseService {
 		String outerId = String.valueOf(skuMap.get("outer_id"));
 		String skuId = String.valueOf(skuMap.get("sku_id")); // 可能为null
 		String qty = String.valueOf(skuMap.get("quantity"));
-		if (StringUtils.isNullOrBlank2(skuId)) {
-			if (!StringUtils.isEmpty(skuIdScIdMap.get("0"))) {
-				return skuIdScIdMap.get("0");
-			}
-		} else {
-			if (!StringUtils.isEmpty(skuIdScIdMap.get(skuId))) {
-				return skuIdScIdMap.get(skuId);
-			}
-		}
+//		if (StringUtils.isNullOrBlank2(skuId)) {
+//			if (!StringUtils.isEmpty(skuIdScIdMap.get("0"))) {
+//				return skuIdScIdMap.get("0");
+//			}
+//		} else {
+//			if (!StringUtils.isEmpty(skuIdScIdMap.get(skuId))) {
+//				return skuIdScIdMap.get(skuId);
+//			}
+//		}
 
-		ScItem scItem = sxData.getScItemMap().get(outerId);
+		SxData.SxScItem scItem = sxData.getScItemMap().get(outerId);
+		if (!scItem.isNew()) {
+			return String.valueOf(scItem.getItemId());
+		}
 
 		return doSetLikingScItemSku(shopBean, orgChannelId, numIId, outerId, skuId, qty, scItem);
 
@@ -337,9 +342,8 @@ public class TaobaoScItemService extends BaseService {
 
 	}
 
-	private String doSetLikingScItemSku(
-			ShopBean shopBean, String orgChannelId,
-			long numIId, String sku_outerId, String sku_id, String qty, ScItem scItem) {
+	private String doSetLikingScItemSku(ShopBean shopBean, String orgChannelId,	long numIId, String sku_outerId,
+										String sku_id, String qty, SxData.SxScItem scItem) {
 
 		// Liking天猫国际同购店， 获取子店货品绑定的 天猫商家仓库编码
 		String storeCode = doGetLikingStoreCode(shopBean, orgChannelId);
