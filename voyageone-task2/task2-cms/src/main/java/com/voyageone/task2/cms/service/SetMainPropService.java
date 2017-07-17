@@ -1651,14 +1651,15 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             // 追加P0(主数据)平台属性
             CmsBtProductModel_Platform_Cart platformP0 = new CmsBtProductModel_Platform_Cart();
             platformP0.setCartId(0);
-            CmsBtProductGroupModel groupP0 = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), "0");
+            CmsBtProductGroupModel groupP0 = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), "0",usjoi ? feed.getChannelId():null);
             if (groupP0 == null) {
                 platformP0.setMainProductCode(common.getFields().getCode());
             } else {
                 platformP0.setMainProductCode(groupP0.getMainProductCode());
 
                 // 把主商品的几个状态复制过来 james 2016/08/29
-                copyAttributeFromMainProduct(feed.getChannelId(), common, groupP0.getMainProductCode());
+                // 把主商品的自由标签复制过来 rex 2017/07/04
+                copyAttributeFromMainProduct(product.getChannelId(), product, groupP0.getMainProductCode());
             }
             platforms.put("P0", platformP0);
             // add desmond 2016/07/04 end
@@ -1721,7 +1722,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 if (!CartEnums.Cart.JM.getId().equals(typeChannelBean.getValue())
                         && !CartEnums.Cart.CN.getId().equals(typeChannelBean.getValue())
                         && !CartEnums.Cart.KL.getId().equals(typeChannelBean.getValue())) {
-                    group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), typeChannelBean.getValue());
+                    group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), typeChannelBean.getValue(),usjoi ? feed.getChannelId():null);
                 }
                 if (group == null) {
                     platform.setpIsMain(1);
@@ -1729,6 +1730,13 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 } else {
                     platform.setpIsMain(0);
                     platform.setMainProductCode(group.getMainProductCode());    // add desmond 2016/07/04
+
+                    // 复制主商品的店铺内分类
+                    CmsBtProductModel mainProductModel = productService.getProductByCode(product.getChannelId(), group.getMainProductCode());
+                    if (mainProductModel != null && mainProductModel.getPlatform(iCartId) != null) {
+                        platform.setSellerCats(mainProductModel.getPlatform(iCartId).getSellerCats());
+                    }
+
                 }
 
                 // 平台类目状态(新增时)
@@ -2476,7 +2484,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         //取得当前code的创建的时间
                         LocalDate feedDate = formatter.parseLocalDate(feed.getCreated());
                         //取得当前group的创建的时间
-                        CmsBtProductGroupModel groupCode = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), shop.getValue());
+                        CmsBtProductGroupModel groupCode = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), shop.getValue(),usjoi ? feed.getChannelId():null);
                         if (groupCode != null) {
                             LocalDate groupDate = formatter.parseLocalDate(groupCode.getCreated());
                             //feed和group的创建时间作比较
@@ -2489,7 +2497,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                             }
                         }
                     } else {
-                        group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), shop.getValue());
+                        group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), shop.getValue(),usjoi ? feed.getChannelId():null);
                     }
                 }
 
@@ -2536,9 +2544,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
          * @return group对象
          */
         // private long getGroupIdByFeedModel(String channelId, String modelCode, String cartId) {
-        private CmsBtProductGroupModel getGroupIdByFeedModel(String channelId, String modelCode, String cartId) {
+        private CmsBtProductGroupModel getGroupIdByFeedModel(String channelId, String modelCode, String cartId, String orgChannelId ) {
             // 先去看看是否有存在的了
-            return productGroupService.selectProductGroupByModelCodeAndCartId(channelId, modelCode, cartId);
+            return productGroupService.selectProductGroupByModelCodeAndCartId(channelId, modelCode, cartId, orgChannelId);
         }
         /**
          * 根据code, 到group表中去查找所有的group信息
@@ -3009,9 +3017,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             });
         }
 
-        private void copyAttributeFromMainProduct(String channelId, CmsBtProductModel_Common common, String mainProductCode) {
+        private void copyAttributeFromMainProduct(String channelId, CmsBtProductModel productModel, String mainProductCode) {
             CmsBtProductModel mainProduct = productService.getProductByCode(channelId, mainProductCode);
             if (mainProduct != null) {
+                CmsBtProductModel_Common common = productModel.getCommon();
                 common.setCatId(mainProduct.getCommon().getCatId());
                 common.setCatPath(mainProduct.getCommon().getCatPath());
 
@@ -3035,6 +3044,20 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 common.getFields().setOriginalTitleCn(mainProduct.getCommon().getFields().getOriginalTitleCn());
                 common.getFields().setMaterialCn(mainProduct.getCommon().getFields().getMaterialCn());
                 common.getFields().setUsageCn(mainProduct.getCommon().getFields().getUsageCn());
+
+                // 复制主商品自由标签
+                List<String> mainFreeTags = mainProduct.getFreeTags();
+                if (!ListUtils.isNull(mainFreeTags)) {
+                    if (ListUtils.isNull(productModel.getFreeTags())) {
+                        productModel.setFreeTags(mainFreeTags);
+                    } else {
+                        for (String tag : mainFreeTags) {
+                            if (!productModel.getFreeTags().contains(tag)) {
+                                productModel.getFreeTags().add(tag);
+                            }
+                        }
+                    }
+                }
             }
         }
 
