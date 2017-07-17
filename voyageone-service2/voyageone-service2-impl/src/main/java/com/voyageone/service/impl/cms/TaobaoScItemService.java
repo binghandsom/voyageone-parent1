@@ -342,6 +342,42 @@ public class TaobaoScItemService extends BaseService {
 
 	}
 
+	/**
+	 * 集合了doGetLikingStoreCode和doCheckNeedSetScItem方法
+	 * 但是没有doCheckNeedSetScItem方法判断邮关的逻辑，仅仅和平台设定相关，同平台通用，降低耦合性
+	 *
+	 * @param channelId
+	 * @param cartId
+	 * @param orgChannelId channelId是928:liking店时，必须
+	 * @return
+	 */
+	public String doGetStoreCode(String channelId, int cartId, String orgChannelId) {
+		String configCode;
+		if (ChannelConfigEnums.Channel.USJGJ.getId().equals(channelId)) {
+			configCode = cartId + "_" + orgChannelId;
+		} else {
+			configCode = String.valueOf(cartId);
+		}
+
+		// 获取当前channel的配置
+		CmsChannelConfigBean scItemConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.SCITEM, configCode);
+
+		String useScItem = null;
+		String storeCode = null;
+		if (scItemConfig != null) {
+			useScItem = org.apache.commons.lang3.StringUtils.trimToNull(scItemConfig.getConfigValue1());
+			storeCode = org.apache.commons.lang3.StringUtils.trimToNull(scItemConfig.getConfigValue2());
+		}
+
+		// 如果没有配置： 出错
+		// 如果商家仓库编码为空： 出错
+		if (StringUtils.isEmpty(useScItem) || !"1".equals(useScItem) || StringUtils.isEmpty(storeCode)) {
+			return null;
+		}
+
+		return storeCode;
+	}
+
 	private String doSetLikingScItemSku(ShopBean shopBean, String orgChannelId,	long numIId, String sku_outerId,
 										String sku_id, String qty, ScItem scItem) {
 
