@@ -154,6 +154,10 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String, Object
         setAttribute("pStatus", pStatus == null ? "" : pStatus.name());
     }
 
+    public void setpStatus(String pStatus) {
+        setAttribute("pStatus", pStatus == null ? "" : pStatus);
+    }
+
     //pPublishError
     public String getpPublishError() {
         return getStringAttribute("pPublishError");
@@ -550,6 +554,13 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String, Object
         return getStringAttribute("lock");
     }
 
+    public void setIsSale(String isSale) {
+        setAttribute("isSale", isSale);
+    }
+
+    public String getIsSale() {
+        return getStringAttribute("isSale");
+    }
     @Override
     @SuppressWarnings("unchecked")
     public Object put(String key, Object value) {

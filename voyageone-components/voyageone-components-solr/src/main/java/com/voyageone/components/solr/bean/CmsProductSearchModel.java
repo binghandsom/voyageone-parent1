@@ -33,6 +33,7 @@ public class CmsProductSearchModel {
     private Integer quantity;
     private String catPath;
     private List<String>freeTags;
+    private List<String>usFreeTags;
     private List<String>tags;
     private String categoryStatus;
     private String hsCodeStatus;
@@ -44,6 +45,8 @@ public class CmsProductSearchModel {
     private List<String>subCategories;
 
     private Map<String, CmsProductSearchPlatformModel> platform;
+
+    private String lastReceivedOn;
 
 
     public String getId() {
@@ -245,5 +248,21 @@ public class CmsProductSearchModel {
 
     public void setSubCategories(List<String> subCategories) {
         this.subCategories = subCategories;
+    }
+
+    public String getLastReceivedOn() {
+        return lastReceivedOn;
+    }
+
+    public void setLastReceivedOn(String lastReceivedOn) {
+        this.lastReceivedOn = lastReceivedOn;
+    }
+
+    public List<String> getUsFreeTags() {
+        return usFreeTags;
+    }
+
+    public void setUsFreeTags(List<String> usFreeTags) {
+        this.usFreeTags = usFreeTags;
     }
 }
