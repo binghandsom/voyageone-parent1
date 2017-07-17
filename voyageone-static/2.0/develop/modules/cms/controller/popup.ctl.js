@@ -629,12 +629,12 @@ define([
                 "controller": 'loadAttributeController as ctrl'
             }
         },
-        "group":{
+        "group": {
             "editGroup": {
                 "templateUrl": "views/pop/group/editGroup.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/group/editGroup.ctl",
                 "controller": 'editGroupController as ctrl',
-                "size":"lg"
+                "size": "lg"
             }
         },
         "shelves": {
@@ -667,29 +667,42 @@ define([
             controller: 'mqSkuCodeErrorController as ctrl',
             size: 'md'
         },
-        us:{
-            search: {
-                batchApprove: {
-                    "templateUrl": "views/pop/usa/search/index.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/usa/search/index.ctl",
-                    "controller": 'batchApproveController as ctrl',
-                    "size": 'md'
+        us: {
+            feed: {
+                search: {
+                    batchApprove: {
+                        "templateUrl": "views/pop/usa/feed/search/index.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/usa/feed/search/index.ctl",
+                        "controller": 'batchApproveController as ctrl',
+                        "size": 'md'
+                    }
+                },
+                detail: {
+                    usCategory: {
+                        "templateUrl": "views/pop/usa/feed/detail/usCategory/index.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/usa/feed/detail/usCategory/index.ctl",
+                        "controller": 'usCategoryController as ctrl',
+                        "size": 'lg'
+                    },
+                    amazonCategory: {
+                        "templateUrl": "views/pop/usa/feed/detail/amazonCategory/index.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/usa/feed/detail/amazonCategory/index.ctl",
+                        "controller": 'amazonCategoryController as ctrl',
+                        "size": 'lg'
+                    }
                 }
             },
-            detail: {
-                usCategory: {
-                    "templateUrl": "views/pop/usa/detail/usCategory/index.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/usa/detail/usCategory/index.ctl",
-                    "controller": 'usCategoryController as ctrl',
-                    "size": 'lg'
-                },
-                amazonCategory:{
-                    "templateUrl": "views/pop/usa/detail/amazonCategory/index.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/usa/detail/amazonCategory/index.ctl",
-                    "controller": 'amazonCategoryController as ctrl',
-                    "size": 'lg'
+            product: {
+                search: {
+                    customAttributes: {
+                        "templateUrl": "views/pop/usa/product/search/customAttribute/index.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/usa/product/search/customAttribute/index.ctl",
+                        "controller": 'usaCustomAttributeController as ctrl',
+                        "size": 'lg'
+                    }
                 }
             }
+
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -1558,7 +1571,7 @@ define([
             return openModal(popActions.product.loadAttribute, context);
         };
 
-        $scope.openEditGroup = function(context){
+        $scope.openEditGroup = function (context) {
             return openModal(popActions.group.editGroup, context);
         };
 
@@ -1570,15 +1583,19 @@ define([
         };
 
         $scope.openBatchApprove = function (context) {
-            return openModal(popActions.us.search.batchApprove, context);
+            return openModal(popActions.us.feed.search.batchApprove, context);
         };
 
         $scope.openUsCategory = function (context) {
-            return openModal(popActions.us.detail.usCategory, context);
+            return openModal(popActions.us.feed.detail.usCategory, context);
         };
 
         $scope.openAmazonCategory = function (context) {
-            return openModal(popActions.us.detail.amazonCategory, context);
+            return openModal(popActions.us.feed.detail.amazonCategory, context);
+        };
+
+        $scope.openCustomAttributes = function (context) {
+            return openModal(popActions.us.product.search.customAttributes, context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {

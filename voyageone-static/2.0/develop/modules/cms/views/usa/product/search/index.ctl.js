@@ -9,16 +9,22 @@ define([
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor() {
+        constructor(popups) {
+            let self = this;
 
+            self.popups = popups;
         }
 
         init(){
 
         }
 
-        test(){
-            alert('test');
+        popCustomAttributes(){
+            let self = this;
+
+            self.popups.openCustomAttributes().then(res => {
+
+            })
         }
 
     });

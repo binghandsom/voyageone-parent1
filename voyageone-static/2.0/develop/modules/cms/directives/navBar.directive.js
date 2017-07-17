@@ -26,7 +26,7 @@ define([
 
                 $domObj.on('mouseenter',function (event) {
 
-                    $domObj.animate({right:"10px"},1000,"linear",function () {
+                    $domObj.animate({right:"-7px"},1000,"linear",function () {
                         console.log('mouseenter');
                     });
 
