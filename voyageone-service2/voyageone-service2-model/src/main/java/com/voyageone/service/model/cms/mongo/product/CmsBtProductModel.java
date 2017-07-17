@@ -279,12 +279,4 @@ public class CmsBtProductModel extends ChannelPartitionModel implements Cloneabl
     public CmsBtProductModel clone() throws CloneNotSupportedException {
         return (CmsBtProductModel)super.clone();
     }
-
-    public List<String> getUsFreeTags() {
-        return usFreeTags;
-    }
-
-    public void setUsFreeTags(List<String> usFreeTags) {
-        this.usFreeTags = usFreeTags;
-    }
 }
