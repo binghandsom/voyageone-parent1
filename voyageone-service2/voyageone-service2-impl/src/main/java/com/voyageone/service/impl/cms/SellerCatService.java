@@ -480,8 +480,8 @@ public class SellerCatService extends BaseService {
             CmsBtSellerCatModel item = findNode(cmsBtSellerCats, cats[i]);
             if(item != null){
                 ret.add(item);
+                cmsBtSellerCats = item.getChildren();
             }
-            cmsBtSellerCats = item.getChildren();
         }
         return ret;
     }

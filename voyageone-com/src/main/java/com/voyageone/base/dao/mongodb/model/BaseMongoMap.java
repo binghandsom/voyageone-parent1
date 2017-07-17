@@ -73,9 +73,9 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
         }
     }
 
-    public void setAttribute(K key, List value) {
+    public void setFeedAttribute(K key, List value) {
         if (value == null) {
-            super.remove(key);
+            super.put(key, (V) "");
         } else {
             super.put(key, (V) value.get(0));
         }

@@ -1168,6 +1168,11 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         }
 
         private void doCreateUsaPlatform(CmsBtProductModel cmsProduct, CmsBtFeedInfoModel feed) {
+            Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = new HashMap<>();
+            if(!StringUtil.isEmpty(cmsProduct.getFeed().getCatPath())){
+                cmsProduct.getFeed().setCatPath(cmsProduct.getFeed().getCatPath().replaceAll(">","-"));
+                cmsProduct.getFeed().setCatId(feed.getCategoryCatId());
+            }
             for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
                 // add desmond 2016/07/05 start
                 // P0（主数据）等平台不用设置分平台共通属性(typeChannel表里面保存的是0)
@@ -1179,31 +1184,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 CmsBtProductModel_Platform_Cart platform = new CmsBtProductModel_Platform_Cart();
                 // cartId
                 platform.setCartId(Integer.parseInt(typeChannelBean.getValue()));
-                // 设定是否主商品
-                // 如果是聚美或者独立官网的话，那么就是一个Code对应一个Group
-                CmsBtProductGroupModel group = null;
-
-                group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), typeChannelBean.getValue());
-
-                if (group == null) {
-                    platform.setpIsMain(1);
-                    platform.setMainProductCode(feed.getCode());  // add desmond 2016/07/04
-                } else {
-                    platform.setpIsMain(0);
-                    platform.setMainProductCode(group.getMainProductCode());    // add desmond 2016/07/04
-                }
 
                 // 平台类目状态(新增时)
                 platform.setpCatStatus("0");  // add desmond 2016/07/05
-                // 商品状态
-                // cartID是928的场合 状态直接是approved james.li
-                if (platform.getCartId() == CartEnums.Cart.USJGJ.getValue()) {
-                    platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
-                } else {
-                    platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
-                }
-                // 平台属性状态(新增时)
-                platform.setpAttributeStatus("0");    // add desmond 2016/07/05
+
 
                 // 平台sku
                 List<BaseMongoMap<String, Object>> skuList = new ArrayList<>();
@@ -1218,22 +1202,25 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), isSale);
                     skuList.add(skuInfo);
                 }
-
+                platform.setpPriceMsrpSt(feed.getPriceClientMsrpMin());
+                platform.setpPriceMsrpEd(feed.getPriceClientMsrpMax());
+                platform.setpPriceSaleSt(feed.getPriceClientRetailMin());
+                platform.setpPriceSaleEd(feed.getPriceClientRetailMax());
                 BaseMongoMap<String, Object> fields = new BaseMongoMap<>();
                 platform.setFields(fields);
                 if(iCartId == CartEnums.Cart.SN.getValue()){
                     platform.setpCatId(feed.getCategoryCatId());
                     platform.setpCatPath(feed.getCategory());
-                    platform.getFields().setAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
-                    platform.getFields().setAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
-                    platform.getFields().setAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
-                    platform.getFields().setAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
-                    platform.getFields().setAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
-                    platform.getFields().setAttribute("freeShipping", feed.getAttribute().get("freeShipping"));
-                    platform.getFields().setAttribute("rewardEligible", feed.getAttribute().get("rewardEligible"));
-                    platform.getFields().setAttribute("discountEligible", feed.getAttribute().get("discountEligible"));
-                    platform.getFields().setAttribute("sneakerheadPlus", feed.getAttribute().get("sneakerheadPlus"));
-                    platform.getFields().setAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                    platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                    platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                    platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                    platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                    platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                    platform.getFields().setFeedAttribute("freeShipping", feed.getAttribute().get("freeShipping"));
+                    platform.getFields().setFeedAttribute("rewardEligible", feed.getAttribute().get("rewardEligible"));
+                    platform.getFields().setFeedAttribute("discountEligible", feed.getAttribute().get("discountEligible"));
+                    platform.getFields().setFeedAttribute("sneakerheadPlus", feed.getAttribute().get("sneakerheadPlus"));
+                    platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
                     platform.getFields().setAttribute("sneakerfoiko", false);
 
                     List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
@@ -1244,13 +1231,16 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         }
                     }
                     if(ListUtils.notNull(feed.getAttribute().get("categoriesTree"))){
-                        feed.getAttribute().get("categoriesTree").forEach(item->{
-                            Map categoryMode = JacksonUtil.jsonToMap(item);
-                            CmsBtProductModel_SellerCat sellerCat = getSellerCat(feed.getChannelId(), CartEnums.Cart.SN.getValue(), (String) categoryMode.get("catPath"));
-                            if(sellerCat != null) {
-                                sellerCats.add(sellerCat);
-                            }
-                        });
+                        try {
+                            List<Map<String, Object>> cats = JacksonUtil.jsonToMapList(feed.getAttribute().get("categoriesTree").get(0));
+                            cats.forEach(item->{
+                                CmsBtProductModel_SellerCat sellerCat = getSellerCat(feed.getChannelId(), CartEnums.Cart.SN.getValue(), (String) item.get("catPath"));
+                                if (sellerCat != null) {
+                                    sellerCats.add(sellerCat);
+                                }
+                            });
+                        }catch (Exception ignored){
+                        }
                     }
 
                     platform.setSellerCats(sellerCats);
@@ -1258,40 +1248,61 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }else if(iCartId == CartEnums.Cart.Xsneakers.getValue()){
                     platform.setpCatId(feed.getCategoryCatId());
                     platform.setpCatPath(feed.getCategory());
-                    platform.getFields().setAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
-                    platform.getFields().setAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
-                    platform.getFields().setAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
-                    platform.getFields().setAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
-                    platform.getFields().setAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
-                    platform.getFields().setAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                    platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                    platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                    platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                    platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                    platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                    platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
                 }else if(iCartId == CartEnums.Cart.SneakerRx.getValue()){
                     platform.setpCatId(feed.getCategoryCatId());
                     platform.setpCatPath(feed.getCategory());
-                    platform.getFields().setAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
-                    platform.getFields().setAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
-                    platform.getFields().setAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
-                    platform.getFields().setAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
-                    platform.getFields().setAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
-                    platform.getFields().setAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                    platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                    platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                    platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                    platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                    platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                    platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
                 }else if(iCartId == CartEnums.Cart.iKicks.getValue()){
                     platform.setpCatId(feed.getCategoryCatId());
                     platform.setpCatPath(feed.getCategory());
-                    platform.getFields().setAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
-                    platform.getFields().setAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
-                    platform.getFields().setAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
-                    platform.getFields().setAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
-                    platform.getFields().setAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
-                    platform.getFields().setAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                    platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                    platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                    platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                    platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                    platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                    platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
                 }else if(iCartId == CartEnums.Cart.Amazon.getValue()){
                     platform.setpCatPath(feed.getAttribute().get("amazonBrowseTree")==null?"":feed.getAttribute().get("amazonBrowseTree").get(0));
                     platform.getFields().setAttribute("sellerFulfilledPrime", true);
                 }
 
+                if(!StringUtil.isEmpty(platform.getpCatPath())){
+                    platform.setpCatStatus("1");
+                }else{
+                    platform.setpCatStatus("0");
+                }
                 platform.setSkus(skuList);
-                Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = new HashMap<>();
+
+                if(!feed.getApproveInfo().containsKey(iCartId)){
+                    platform.setLock("1");
+                    platform.setIsSale("0");
+                }else{
+                    platform.setLock("0");
+                    platform.setIsSale("1");
+                }
+                // 商品状态
+                if(ccAutoSyncCartList.contains(iCartId+"") && "1".equals(platform.getIsSale())){
+                    platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
+                    platform.setpStatus(CmsConstants.PlatformStatus.OnSale.toString());
+                }else{
+                    platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+                    platform.setpStatus(CmsConstants.ProductStatus.Pending.toString());
+                }
+
                 usPlatforms.put("P" + typeChannelBean.getValue(), platform);
-                cmsProduct.setUsPlatforms(usPlatforms);
             }
+            cmsProduct.setUsPlatforms(usPlatforms);
         }
 
 
@@ -1301,12 +1312,14 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             if(ListUtils.isNull(sellerCatModels)) return null;
             sellerCat.setcId(sellerCatModels.get(sellerCatModels.size() - 1).getCatId());
             sellerCat.setcName(sellerCatModels.get(sellerCatModels.size() - 1).getCatName());
-            sellerCat.setcIds(new ArrayList<>());
-            sellerCat.setcNames(new ArrayList<>());
+            List<String> cIds = new ArrayList<>(sellerCatModels.size());
+            List<String> cNames = new ArrayList<>(sellerCatModels.size());
             sellerCatModels.forEach(item -> {
-                sellerCat.getcIds().add(item.getCatId());
-                sellerCat.getcNames().add(item.getCatName());
+                cIds.add(item.getCatId());
+                cNames.add(item.getCatName());
             });
+            sellerCat.setcIds(cIds);
+            sellerCat.setcNames(cNames);
             return sellerCat;
         }
         private void checkProduct(CmsBtProductModel cmsProduct) {

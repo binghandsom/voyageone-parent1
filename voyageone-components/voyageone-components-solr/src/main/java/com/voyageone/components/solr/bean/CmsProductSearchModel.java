@@ -45,6 +45,8 @@ public class CmsProductSearchModel {
 
     private Map<String, CmsProductSearchPlatformModel> platform;
 
+    private String lastReceivedOn;
+
 
     public String getId() {
         return id;
@@ -245,5 +247,13 @@ public class CmsProductSearchModel {
 
     public void setSubCategories(List<String> subCategories) {
         this.subCategories = subCategories;
+    }
+
+    public String getLastReceivedOn() {
+        return lastReceivedOn;
+    }
+
+    public void setLastReceivedOn(String lastReceivedOn) {
+        this.lastReceivedOn = lastReceivedOn;
     }
 }

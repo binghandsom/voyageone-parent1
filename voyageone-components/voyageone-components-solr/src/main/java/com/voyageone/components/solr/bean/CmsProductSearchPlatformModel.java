@@ -32,6 +32,7 @@ public class CmsProductSearchPlatformModel {
     Double pPriceRetailSt;
     Double pPriceSaleSt;
     String lock;
+    String isSale;
 
     public String getpCatId() {
         return pCatId;
@@ -215,5 +216,13 @@ public class CmsProductSearchPlatformModel {
 
     public void setLock(String lock) {
         this.lock = lock;
+    }
+
+    public String getIsSale() {
+        return isSale;
+    }
+
+    public void setIsSale(String isSale) {
+        this.isSale = isSale;
     }
 }
