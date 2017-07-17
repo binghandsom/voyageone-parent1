@@ -3,7 +3,7 @@ package com.voyageone.web2.cms.views.pop.history;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
-import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtPriceLogFlatModel;
 import com.voyageone.web2.base.BaseViewService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -28,7 +28,7 @@ class CmsPriceLogService extends BaseViewService {
 
     byte[] exportExcel(String sku, String code, String cart, String channelId) {
 
-        List<CmsBtPriceLogModel> data = priceLogService.getList(sku, code, cart, channelId);
+        List<CmsBtPriceLogFlatModel> data = priceLogService.getList(sku, code, cart, channelId);
 
         try (Workbook workbook = new XSSFWorkbook();
              ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -64,13 +64,13 @@ class CmsPriceLogService extends BaseViewService {
             CellStyle dateCellStyle = workbook.createCellStyle();
             dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("m/d/yy h:mm"));
 
-            for (CmsBtPriceLogModel model : data) {
+            for (CmsBtPriceLogFlatModel model : data) {
 
                 row = sheet.createRow(++rowIndex);
 
                 cellIndex = 0;
-
-                row.createCell(cellIndex++).setCellValue(model.getId());
+                // id 列设置空
+                row.createCell(cellIndex++).setCellValue("");
                 row.createCell(cellIndex++).setCellValue(model.getChannelId());
                 row.createCell(cellIndex++).setCellValue(model.getProductId());
                 row.createCell(cellIndex++).setCellValue(model.getCartId());

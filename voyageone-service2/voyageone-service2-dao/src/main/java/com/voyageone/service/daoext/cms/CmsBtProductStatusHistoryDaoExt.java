@@ -1,6 +1,6 @@
 package com.voyageone.service.daoext.cms;
 
-import com.voyageone.service.model.cms.CmsBtProductStatusHistoryModel;
+import com.voyageone.service.model.cms.CmsBtProductStatusHistoryModel_Mysql;
 import com.voyageone.service.model.util.MapModel;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -16,9 +16,11 @@ import java.util.Map;
 @Repository
 public interface CmsBtProductStatusHistoryDaoExt {
 
-    void insertList(@Param("list") List<CmsBtProductStatusHistoryModel> list);
+    void insertList(@Param("list") List<CmsBtProductStatusHistoryModel_Mysql> list);
 
     List<MapModel> selectPage(Map<String, Object> param);
+
+    List<MapModel> selectPage4Transfer(Map<String, Object> param);
 
     long selectCount(Map<String, Object> param);
 }

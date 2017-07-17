@@ -12,7 +12,7 @@ import com.voyageone.base.dao.mysql.BaseModel;
 /**
  * 
  */
-public class CmsBtPriceLogModel extends BaseModel {
+public class CmsBtPriceLogModel_Mysql extends BaseModel {
     protected String channelId;
 
     protected Integer productId;

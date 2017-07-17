@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.voyageone.service.dao.cms.CmsBtPriceLogDao" >
-    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPriceLogModel" />
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtPriceLogModel_Mysql" />
     <sql id="Base_Column_List" >
         `id`, `channel_id`, `product_id`, `cart_id`, `code`, `sku`, `msrp_price`, `retail_price`, 
         `sale_price`, `client_msrp_price`, `client_retail_price`, `client_net_price`, `comment`, 
@@ -15,7 +15,7 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtPriceLogModel" >
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtPriceLogModel_Mysql" >
         update cms_bt_price_log
         <set >
             <if test="channelId != null" >
@@ -191,6 +191,132 @@
         </where>
     </select>
 
+    <select id="selectList4Transfer" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from cms_bt_price_log
+        <where >
+            <if test="startId != null" >
+                and `id` > #{startId,jdbcType=BIGINT}
+            </if>
+            <if test="endId != null" >
+                and `id` &lt;= #{endId,jdbcType=BIGINT}
+            </if>
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=INTEGER}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="msrpPrice != null" >
+                and `msrp_price` = #{msrpPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="salePrice != null" >
+                and `sale_price` = #{salePrice,jdbcType=DOUBLE}
+            </if>
+            <if test="clientMsrpPrice != null" >
+                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="clientRetailPrice != null" >
+                and `client_retail_price` = #{clientRetailPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="clientNetPrice != null" >
+                and `client_net_price` = #{clientNetPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by id asc limit #{pageRowCount}
+    </select>
+
+    <select id="selectList4TransferHistory" resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List" />
+        from cms_bt_price_log_history
+        <where >
+            <if test="startId != null" >
+                and `id` > #{startId,jdbcType=BIGINT}
+            </if>
+            <if test="endId != null" >
+                and `id` &lt;= #{endId,jdbcType=BIGINT}
+            </if>
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="productId != null" >
+                and `product_id` = #{productId,jdbcType=INTEGER}
+            </if>
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
+            </if>
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="sku != null" >
+                and `sku` = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="msrpPrice != null" >
+                and `msrp_price` = #{msrpPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="retailPrice != null" >
+                and `retail_price` = #{retailPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="salePrice != null" >
+                and `sale_price` = #{salePrice,jdbcType=DOUBLE}
+            </if>
+            <if test="clientMsrpPrice != null" >
+                and `client_msrp_price` = #{clientMsrpPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="clientRetailPrice != null" >
+                and `client_retail_price` = #{clientRetailPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="clientNetPrice != null" >
+                and `client_net_price` = #{clientNetPrice,jdbcType=DOUBLE}
+            </if>
+            <if test="comment != null" >
+                and `comment` = #{comment,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        order by id asc limit #{pageRowCount}
+    </select>
+
     <select id="selectCount" resultType="java.lang.Integer" >
         select count(*) from cms_bt_price_log
         <where >
@@ -245,7 +371,7 @@
         </where>
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtPriceLogModel" useGeneratedKeys="true" keyProperty="id" >
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtPriceLogModel_Mysql" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_bt_price_log
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
