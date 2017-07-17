@@ -9,7 +9,11 @@ define([
     cms.controller('usProductSearchController', class UsProductSearchController {
 
         constructor() {
-            console.log('us search');
+
+        }
+
+        init(){
+
         }
 
     });
