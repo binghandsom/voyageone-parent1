@@ -57,7 +57,7 @@
                                             <div class="col-xs-6 col-md-2" ng-repeat="item in ctrl.topFeedList">
                                                 <a href="javascript:void(0);" class="thumbnail pos-relative" style="height: 88px;padding: 0px"
                                                    ng-class="{'active':item.status=='Approved'}">
-                                                    <img class="thumb-sm-search pos-abt" style="top: 30%" src="{{item.image[0]}}">
+                                                    <img class="thumb-sm-search" src="{{item.image[0]}}">
                                                     <button type="button" class="btn btn-primary pos-absolute-right" ng-click="ctrl.copyAttr(item)">
                                                         <i class="fa fa-copy"></i>
                                                     </button>
@@ -517,9 +517,10 @@
                                                     <div class="tab-pane active">
                                                         <div class="row">
                                                             <div class="col-md-3" ng-repeat="image in ctrl.feed.image track by $index">
-                                                                <a href="javascript:void(0)" class="thumbnail clear-margin-bottom pos-relative" ng-class="active" style="height: 88px;padding: 0px">
-                                                                    <img style="max-height: 80px; top:30%" class="thumb-group pos-abt"
-                                                                         src="{{image}}" ng-click="ctrl.currentFeedImage = image">
+                                                                <a href="javascript:void(0)"
+                                                                   class="thumbnail clear-margin-bottom img-auto-fix" ng-click="ctrl.currentFeedImage = image"
+                                                                   ng-class="active" style="height: 88px;padding: 0px">
+                                                                    <img class="thumb-group" style="max-height: 80px;max-width: 45px" src="{{image}}" align="bottom">
                                                                 </a>
                                                             </div>
                                                             <div class="col-md-3 text-center m-t-md">
@@ -582,9 +583,10 @@
                                                     <div class="tab-pane active">
                                                         <div class="row">
                                                             <div class="col-md-3" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
-                                                                <a href="javascript:void(0)" class="thumbnail clear-margin-bottom pos-relative"
-                                                                   ng-class="active" style="height: 88px;padding: 0px">
-                                                                    <img style="max-height: 80px;top: 30%" class="thumb-group pos-abt" src="{{image}}" ng-click="ctrl.currentBoxImage = image">
+                                                                <a href="javascript:void(0)" class="thumbnail clear-margin-bottom img-auto-fix"
+                                                                   ng-click="ctrl.currentBoxImage = image"
+                                                                   ng-class="active" style="height: 80px">
+                                                                    <img style="max-height: 80px;max-width: 45px" class="thumb-group pos-abt" src="{{image}}">
                                                                 </a>
                                                             </div>
                                                             <div class="col-md-3 text-center m-t-md">
