@@ -501,7 +501,8 @@ define(function () {
                 "$valueChannelService": {
                     "root": "/cms/system/valueChannel/",
                     "addHsCodes": "addHsCode",
-                    "addEtkHsCode": "addEtkHsCode"
+                    "addEtkHsCode": "addEtkHsCode",
+                    "updateKaoLaNumiid":"updateKaoLaNumiid"
                 }
             },
             "pop": {
