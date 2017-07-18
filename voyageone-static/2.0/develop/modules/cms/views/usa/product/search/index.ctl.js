@@ -15,16 +15,24 @@ define([
             self.popups = popups;
         }
 
-        init(){
+        init() {
 
         }
 
-        popCustomAttributes(){
+        popCustomAttributes() {
             let self = this;
 
             self.popups.openCustomAttributes().then(res => {
 
             })
+        }
+
+        popBatchPrice() {
+            let self = this;
+
+            self.popups.openBatchPrice().then(res => {
+
+            });
         }
 
     });
