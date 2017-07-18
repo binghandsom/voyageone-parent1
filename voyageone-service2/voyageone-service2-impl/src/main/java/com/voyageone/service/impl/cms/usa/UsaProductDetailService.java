@@ -9,6 +9,7 @@ import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
+import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
@@ -18,7 +19,10 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
+import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +41,9 @@ public class UsaProductDetailService extends BaseService {
 
     @Autowired
     CommonSchemaService commonSchemaService;
+
+    @Autowired
+    PlatformCategoryService platformCategoryService;
 
 
     public Map<String, Object> getMastProductInfo(String channelId, Long prodId) {
@@ -115,6 +122,8 @@ public class UsaProductDetailService extends BaseService {
 
         result.put("productComm", productComm);
         result.put("mastData", mastData);
+        Map<String, Object> plarform = getProductPlatform(channelId, prodId, 1);
+        result.putAll(plarform);
         return result;
     }
 
@@ -126,7 +135,7 @@ public class UsaProductDetailService extends BaseService {
      * @param cartId    cartId
      * @return 产品平台信息
      */
-    public Map<String, Object> getProductPlatform(String channelId, Long prodId, int cartId, String language) {
+    public Map<String, Object> getProductPlatform(String channelId, Long prodId, int cartId) {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getUsPlatform(cartId);
         if (platformCart == null) {
@@ -136,8 +145,13 @@ public class UsaProductDetailService extends BaseService {
 
         if (platformCart.getFields() == null) platformCart.setFields(new BaseMongoMap<>());
 
+        CmsMtPlatformCategorySchemaModel platformCatSchemaModel = platformCategoryService.getPlatformCatSchema("1", cartId);
+
+        List<Field> listItemField = SchemaReader.readXmlForList(platformCatSchemaModel.getPropsItem());
+
+        FieldUtil.setFieldsValueFromMap(listItemField, platformCart.getFields());
         // added by morse.lu 2016/09/13 end
-        platformCart.put("schemaFields", getSchemaFields(platformCart.getFields(), platformCart.getpCatId(), channelId, cartId, prodId, language, null, platformCart.getpBrandId(), sxProductService.generateStyleCode(cmsBtProduct, cartId)));
+        platformCart.put("platformFields", listItemField);
 
         return platformCart;
     }
