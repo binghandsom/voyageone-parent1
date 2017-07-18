@@ -145,7 +145,7 @@
                                 <label class="col-sm-3 control-label query-title">status</label>
                                 <div class="col-sm-8 checkbox">
                                     <label ng-repeat="platform in ctrl.masterData.platformStatus">
-                                        <input type="checkbox" ng-model="ctrl.searchInfo.platformStatus[platform.status]">{{platform.display}}
+                                        <input type="checkbox" ng-disabled="!ctrl.searchInfo.cartId" ng-model="ctrl.searchInfo.platformStatus[platform.status]">{{platform.display}}
                                     </label>
                                 </div>
                             </div>
@@ -168,20 +168,26 @@
                                 <div class="col-sm-9 form-inline">
                                     <div class="col-sm-5 input-group">
                                         <input type="text" class="form-control" uib-datepicker-popup
-                                               ng-model="vm.searchInfo.createTimeStart" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePickerCt1" close-text="Close"/>
+                                               ng-model="ctrl.searchInfo.pPublishTimeFrom"
+                                               onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.pPublishTimeTo" is-open="datePickerCt1"
+                                               ng-disabled="!ctrl.searchInfo.cartId"
+                                               close-text="Close"/>
                                         <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default" ng-click="datePickerCt1 = !datePickerCt1"><i class="glyphicon glyphicon-calendar"></i></button>
-                                                      </span>
+                                            <button type="button" class="btn btn-default" ng-click="datePickerCt1 = !datePickerCt1"><i class="glyphicon glyphicon-calendar"></i></button>
+                                        </span>
                                     </div>
                                     &nbsp;~&nbsp;
                                     <div class="col-sm-5 input-group">
                                         <input type="text" class="form-control" uib-datepicker-popup
-                                               ng-model="vm.searchInfo.createTimeTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                               date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.createTimeStart" is-open="datePickerCt2" close-text="Close"/>
+                                               ng-model="ctrl.searchInfo.pPublishTimeTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))"
+                                               onpaste="return false" maxlength="10"
+                                               date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.pPublishTimeFrom" is-open="datePickerCt2"
+                                               ng-disabled="!ctrl.searchInfo.cartId"
+                                               close-text="Close"/>
                                         <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default" ng-click="datePickerCt2 = !datePickerCt2"><i class="glyphicon glyphicon-calendar"></i></button>
-                                                      </span>
+                                            <button type="button" class="btn btn-default" ng-click="datePickerCt2 = !datePickerCt2"><i class="glyphicon glyphicon-calendar"></i></button>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -190,13 +196,13 @@
                                 <lable class="col-sm-3 control-label query-title">Sale Price</lable>
                                 <div class="col-sm-9 form-inline">
                                     <div class="col-sm-5 input-group">
-                                        <input type="number" class="form-control" ng-model="ctrl.searchInfo.pSalePriceFrom">
+                                        <input type="number" class="form-control" ng-model="ctrl.searchInfo.pSalePriceFrom" ng-disabled="!ctrl.searchInfo.cartId">
                                     </div>
                                     <!--<div class="col-sm-1 text-center">-->
                                         &nbsp;~&nbsp;
                                     <!--</div>-->
                                     <div class="col-sm-5 input-group">
-                                        <input type="text" class="form-control" ng-model="ctrl.searchInfo.pSalePriceTo">
+                                        <input type="text" class="form-control" ng-model="ctrl.searchInfo.pSalePriceTo" ng-disabled="!ctrl.searchInfo.cartId">
                                     </div>
                                 </div>
                             </div>
@@ -256,7 +262,7 @@
                                     <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;height: 40px;">
                                         <td class="text-center" rowspan="2">
                                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
-                                                <input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox"
+                                                <input ng-model="ctrl.productSelList.selFlag[productInfo.prodId]" type="checkbox"
                                                        ng-controller="selectRowsCtrl"
                                                        ng-click="selectOne(productInfo.prodId, vm.productSelList)">
                                                 <span class="fa fa-check"></span>

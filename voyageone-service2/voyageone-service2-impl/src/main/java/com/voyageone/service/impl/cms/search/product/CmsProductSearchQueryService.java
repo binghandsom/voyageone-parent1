@@ -271,6 +271,19 @@ public class CmsProductSearchQueryService extends BaseService {
             if (searchValue.getpSalePriceTo() != null) {
                 criteria = criteria.and("P" + cartId + "_pPriceSaleEd").lessThanEqual(searchValue.getpSalePriceTo());
             }
+            // 平台pPublishTime范围查询
+            if (StringUtils.isNotEmpty(searchValue.getpPublishTimeFrom())) {
+                // 获取createdTime End
+                if (StringUtils.isNotEmpty(searchValue.getpPublishTimeTo())) {
+                    criteria = criteria.and("P" + cartId + "_pPublishTime").between(searchValue.getpPublishTimeFrom() + " 00.00.00", searchValue.getpPublishTimeTo() + " 23.59.59");
+                } else {
+                    criteria = criteria.and("P" + cartId + "_pPublishTime").greaterThanEqual(searchValue.getpPublishTimeFrom() + " 00.00.00");
+                }
+            } else {
+                if (StringUtils.isNotEmpty(searchValue.getpPublishTimeTo())) {
+                    criteria = criteria.and("P" + cartId + "_pPublishTime").lessThanEqual(searchValue.getpPublishTimeTo() + " 00.00.00");
+                }
+            }
         }
 
 

@@ -129,7 +129,8 @@ public class CmsSearchInfoBean2 implements Serializable {
     private Integer inventoryTo;
     private Double pSalePriceFrom;
     private Double pSalePriceTo;
-
+    private String pPublishTimeFrom;
+    private String pPublishTimeTo;
 
     public String getClientMsrpPriceChgFlg() {
         return clientMsrpPriceChgFlg;
@@ -750,5 +751,21 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     public void setpSalePriceTo(Double pSalePriceTo) {
         this.pSalePriceTo = pSalePriceTo;
+    }
+
+    public String getpPublishTimeFrom() {
+        return pPublishTimeFrom;
+    }
+
+    public void setpPublishTimeFrom(String pPublishTimeFrom) {
+        this.pPublishTimeFrom = pPublishTimeFrom;
+    }
+
+    public String getpPublishTimeTo() {
+        return pPublishTimeTo;
+    }
+
+    public void setpPublishTimeTo(String pPublishTimeTo) {
+        this.pPublishTimeTo = pPublishTimeTo;
     }
 }

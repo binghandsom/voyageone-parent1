@@ -16,7 +16,7 @@ define([
             self.advanceSearch = advanceSearch;
 
             self.pageOption = {curr: 1, total: 0, size: 10, fetch: self.search};
-            self.searchInfo = {};
+            self.searchInfo = {}; // 检索条件
             self.searchResult = {
                 productList: []
             };
