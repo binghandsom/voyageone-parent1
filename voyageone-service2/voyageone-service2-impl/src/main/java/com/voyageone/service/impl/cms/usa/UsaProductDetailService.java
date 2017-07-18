@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 /**
  * Created by james on 2017/7/18.
+ *
  */
 @Service
 public class UsaProductDetailService extends BaseService {
@@ -82,10 +83,8 @@ public class UsaProductDetailService extends BaseService {
         String sizeType = productComm.getFields().getSizeType();
         productComm.getFields().setSizeType(StringUtil.isEmpty(sizeType) ? "" : sizeType.trim());
 
-        if (productComm != null) {
-            FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, cmsBtProduct.getCommon().getFields());
-            productComm.put("schemaFields", cmsMtCommonFields);
-        }
+        FieldUtil.setFieldsValueFromMap(cmsMtCommonFields, cmsBtProduct.getCommon().getFields());
+        productComm.put("schemaFields", cmsMtCommonFields);
 
 
         Map<String, Object> mastData = new HashMap<>();

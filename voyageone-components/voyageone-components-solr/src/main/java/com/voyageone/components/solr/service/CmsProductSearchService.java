@@ -127,6 +127,7 @@ public class CmsProductSearchService extends BaseSearchService {
                 cmsProductSearchPlatformModel.setSaleYear(cmsBtProductModel.getSales().getCodeSumYear(cmsBtProductModel_platform_cart.getCartId()));
                 cmsProductSearchPlatformModel.setSaleAll(cmsBtProductModel.getSales().getCodeSumAll(cmsBtProductModel_platform_cart.getCartId()));
                 cmsProductSearchPlatformModel.setLock(cmsBtProductModel_platform_cart.getLock());
+                cmsProductSearchPlatformModel.setpPublishTime(cmsBtProductModel_platform_cart.getpPublishTime());
                 if(cmsBtProductModel_platform_cart.getSellerCats() != null) {
                     cmsProductSearchPlatformModel.setSellerCats(cmsBtProductModel_platform_cart.getSellerCats().stream().map(CmsBtProductModel_SellerCat::getcId).collect(Collectors.toList()));
                 }
@@ -148,6 +149,7 @@ public class CmsProductSearchService extends BaseSearchService {
                     cmsProductSearchPlatformModel.setIsSale(cmsBtProductModel_platform_cart.getIsSale());
                     cmsProductSearchPlatformModel.setpPriceSaleSt(cmsBtProductModel_platform_cart.getpPriceSaleSt());
                     cmsProductSearchPlatformModel.setpPriceSaleEd(cmsBtProductModel_platform_cart.getpPriceSaleEd());
+                    cmsProductSearchPlatformModel.setpPublishTime(cmsBtProductModel_platform_cart.getpPublishTime());
                     if (cmsBtProductModel_platform_cart.getSellerCats() != null) {
                         List<String> sellerCats = new ArrayList<String>();
                         cmsBtProductModel_platform_cart.getSellerCats().forEach(item -> {

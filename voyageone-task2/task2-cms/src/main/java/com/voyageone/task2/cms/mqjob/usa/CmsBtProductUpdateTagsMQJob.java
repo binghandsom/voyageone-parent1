@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 
 /**
  * Created by dell on 2017/7/18.
+ *
  */
 @Service
 @RabbitListener()
@@ -56,10 +57,6 @@ public class CmsBtProductUpdateTagsMQJob extends TBaseMQCmsSubService<CmsBtProdu
                     cmsBtProductDao.updateMulti(updObj, channelId);
                 }
             }
-
-
-
         }
-
     }
 }
