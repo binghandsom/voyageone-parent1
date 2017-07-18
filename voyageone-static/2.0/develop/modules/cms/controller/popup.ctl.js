@@ -700,11 +700,17 @@ define([
                         "controller": 'usaCustomAttributeController as ctrl',
                         "size": 'lg'
                     },
-                    batchPrice:{
+                    batchPrice: {
                         "templateUrl": "views/pop/usa/product/search/batchPrice/index.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/usa/product/search/batchPrice/index.ctl",
                         "controller": 'batchPriceController as ctrl',
                         "size": 'md'
+                    },
+                    freeTag: {
+                        "templateUrl": "views/pop/usa/product/search/freeTag/index.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/usa/product/search/freeTag/index.ctl",
+                        "controller": 'freeTagOfUsController as ctrl',
+                        "size": 'lg'
                     }
                 }
             }
@@ -1606,6 +1612,10 @@ define([
 
         $scope.openBatchPrice = function (context) {
             return openModal(popActions.us.product.search.batchPrice, context);
+        };
+
+        $scope.openUsFreeTag = function (context) {
+            return openModal(popActions.us.product.search.freeTag, context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {
