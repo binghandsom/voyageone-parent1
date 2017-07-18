@@ -32,21 +32,29 @@ import java.util.stream.Collectors;
 
 /**
  * Created by james on 2017/7/18.
- *
  */
 @Service
 public class UsaProductDetailService extends BaseService {
 
-    @Autowired
+    private final
     ProductService productService;
 
-    @Autowired
+    private final
     CommonSchemaService commonSchemaService;
 
-    @Autowired
+    private final
     PlatformCategoryService platformCategoryService;
 
+    @Autowired
+    public UsaProductDetailService(ProductService productService, CommonSchemaService commonSchemaService, PlatformCategoryService platformCategoryService) {
+        this.productService = productService;
+        this.commonSchemaService = commonSchemaService;
+        this.platformCategoryService = platformCategoryService;
+    }
 
+    /**
+     * 取得美国用产品编辑页
+     */
     public Map<String, Object> getMastProductInfo(String channelId, Long prodId) {
         Map<String, Object> result = new HashMap<>();
 
@@ -121,7 +129,7 @@ public class UsaProductDetailService extends BaseService {
 
         result.put("productComm", productComm);
         result.put("mastData", mastData);
-        Map<String, Object> plarform = getProductPlatform(channelId, prodId, 1);
+        Map<String, Object> plarform = getProductPlatform(channelId, prodId, CartEnums.Cart.SN.getValue());
         result.putAll(plarform);
         return result;
     }
@@ -134,7 +142,7 @@ public class UsaProductDetailService extends BaseService {
      * @param cartId    cartId
      * @return 产品平台信息
      */
-    public Map<String, Object> getProductPlatform(String channelId, Long prodId, int cartId) {
+    public Map<String, Object> getProductPlatform(String channelId, Long prodId, Integer cartId) {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getUsPlatform(cartId);
         if (platformCart == null) {
