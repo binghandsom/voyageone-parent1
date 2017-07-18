@@ -839,7 +839,8 @@ define(function () {
                 root:"/cms/us/advanceSearch",
                 init:"init",
                 search:"search",
-                getCustomColumns:"getCustomColumns"
+                getCustomColumns:"getCustomColumns",
+                saveCustomColumns:"saveCustomColumns"
             }
         }
     };

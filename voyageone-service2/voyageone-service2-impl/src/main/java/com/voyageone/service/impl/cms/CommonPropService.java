@@ -3,6 +3,7 @@ package com.voyageone.service.impl.cms;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.daoext.cms.CmsMtCommonPropDaoExt;
 import com.voyageone.service.impl.BaseService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +45,20 @@ public class CommonPropService extends BaseService {
     @VOTransactional
     public int saveUserCustColumn(int userId, String userName, String cfgName, String param1, String param2) {
         return cmsMtCommonPropDaoExt.updateUserCustColumns(userId, userName, cfgName, param1, param2);
+    }
+
+    /**
+     * 删除用户自定义列配置
+     *
+     * @param userId  用户ID
+     * @param cfgName 配置名称
+     */
+    public int deleteUserCustColumns(int userId, String cfgName) {
+        return cmsMtCommonPropDaoExt.deleteUserCustColumns(userId, cfgName);
+    }
+
+    public List<Map<String, Object>> getMultiCustColumnsByUserId(int userId, String cfgName){
+        return cmsMtCommonPropDaoExt.selectMultiUserCustColumns(userId, cfgName);
     }
 
 }

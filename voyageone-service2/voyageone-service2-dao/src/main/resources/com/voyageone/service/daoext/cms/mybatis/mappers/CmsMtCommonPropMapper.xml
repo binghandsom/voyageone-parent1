@@ -103,4 +103,20 @@
         AND cfg_name = #{cfgName}
     </update>
 
+    <delete id="delete_synship_ct_user_config_cust_cols" parameterType="HashMap">
+        DELETE FROM Synship.ct_user_config
+        WHERE
+        user_id=#{userId} AND cfg_name=#{cfgName}
+    </delete>
+
+    <select id="select_multi_synship_ct_user_config_cust_cols" parameterType="HashMap" resultType="HashMap">
+        select
+        cfg_val1,
+        cfg_val2
+        from Synship.ct_user_config
+        where
+        user_id = #{userId}
+        AND cfg_name = #{cfgName}
+    </select>
+
 </mapper>
