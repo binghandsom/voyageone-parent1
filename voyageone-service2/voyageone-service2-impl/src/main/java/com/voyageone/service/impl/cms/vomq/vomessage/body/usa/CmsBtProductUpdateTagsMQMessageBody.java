@@ -17,18 +17,25 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_USA_PRODUCT_UPDATE_TAGS)
 public class CmsBtProductUpdateTagsMQMessageBody extends BaseMQMessageBody implements IMQMessageSubBeanName {
 
+    //是否全量
+    boolean isSelAll;
+    //product code List
     List<String> prodCodeList;
+    //高级搜索查询条件
+    CmsSearchInfoBean2 searchValue;
 
     List<String> tagPathList;
 
-    //List<String> orgDispTagList;
+    List<String> orgDispTagList;
 
-    public List<String> getProdCodeList() {
-        return prodCodeList;
+    String type;
+
+    public List<String> getOrgDispTagList() {
+        return orgDispTagList;
     }
 
-    public void setProdCodeList(List<String> prodCodeList) {
-        this.prodCodeList = prodCodeList;
+    public void setOrgDispTagList(List<String> orgDispTagList) {
+        this.orgDispTagList = orgDispTagList;
     }
 
     public List<String> getTagPathList() {
@@ -39,14 +46,56 @@ public class CmsBtProductUpdateTagsMQMessageBody extends BaseMQMessageBody imple
         this.tagPathList = tagPathList;
     }
 
+    public CmsSearchInfoBean2 getSearchValue() {
+        return searchValue;
+    }
+
+    public void setSearchValue(CmsSearchInfoBean2 searchValue) {
+        this.searchValue = searchValue;
+    }
+
+    public List<String> getProdCodeList() {
+        return prodCodeList;
+    }
+
+    public void setProdCodeList(List<String> prodCodeList) {
+        this.prodCodeList = prodCodeList;
+    }
+
+    public boolean getIsSelAll() {
+        return isSelAll;
+    }
+
+    public void setIsSelAll(boolean isSelAll) {
+        this.isSelAll = isSelAll;
+    }
+
+    public boolean isSelAll() {
+        return isSelAll;
+    }
+
+    public void setSelAll(boolean selAll) {
+        isSelAll = selAll;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     @Override
     public void check() throws MQMessageRuleException {
         if (StringUtils.isEmpty(super.getChannelId())) {
             throw new MQMessageRuleException("高级搜索-批量设置自由标签MQ发送异常, 参数channelId为空.");
         }
-        if ( CollectionUtils.isEmpty(prodCodeList)) {
+        if (!isSelAll && CollectionUtils.isEmpty(prodCodeList)) {
             throw new MQMessageRuleException("高级搜索-批量设置自由标签MQ发送异常, 参数isSelAll为false并且prodCodeList为空.");
+        }
+        if (isSelAll && this.searchValue == null) {
+            throw new MQMessageRuleException("高级搜索-批量设置自由标签MQ发送异常, 参数isSelAll为true并且searchValue为空.");
         }
         if (StringUtils.isEmpty(getSender())) {
             throw new MQMessageRuleException("高级检索-批量设置自由标签MQ发送异常, 发送者为空.");

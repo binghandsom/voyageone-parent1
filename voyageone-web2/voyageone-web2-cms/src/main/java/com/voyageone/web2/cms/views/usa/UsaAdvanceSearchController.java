@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -236,11 +237,12 @@ public class UsaAdvanceSearchController extends CmsController {
         codeMap.put(cmsBtProductBean.getCommon().getFields().getCode(), cartIdMap);
         return codeMap;
     }
+
     //批量修改价格
     @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.UPDATEPRICE)
     public AjaxResponse updatePrice(@RequestBody Map params) {
         UserSessionBean user = getUser();
-
+        advSearchOtherService.updatePrice(params, user);
         // 返回用户信息
         return success(null);
     }

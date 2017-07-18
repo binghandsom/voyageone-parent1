@@ -31,6 +31,8 @@ public class CmsProductFreeTagsUpdateMQMessageBody extends BaseMQMessageBody  im
     List<String> tagPathList;
 
     List<String> orgDispTagList;
+    //usa为美国版的
+    String type;
 
     public List<String> getOrgDispTagList() {
         return orgDispTagList;
@@ -72,6 +74,21 @@ public class CmsProductFreeTagsUpdateMQMessageBody extends BaseMQMessageBody  im
         this.isSelAll = isSelAll;
     }
 
+    public boolean isSelAll() {
+        return isSelAll;
+    }
+
+    public void setSelAll(boolean selAll) {
+        isSelAll = selAll;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     @Override
     public void check() throws MQMessageRuleException {

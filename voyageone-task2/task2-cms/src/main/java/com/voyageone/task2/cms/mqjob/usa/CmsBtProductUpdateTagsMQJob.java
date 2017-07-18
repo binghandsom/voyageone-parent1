@@ -3,7 +3,9 @@ package com.voyageone.task2.cms.mqjob.usa;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProductFreeTagsUpdateMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdateTagsMQMessageBody;
+import com.voyageone.service.impl.cms.vomqjobservice.CmsProductFreeTagsUpdateService;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsSubService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,44 +21,18 @@ import java.util.stream.Collectors;
  */
 @Service
 @RabbitListener()
-public class CmsBtProductUpdateTagsMQJob extends TBaseMQCmsSubService<CmsBtProductUpdateTagsMQMessageBody> {
+public class CmsBtProductUpdateTagsMQJob extends TBaseMQCmsSubService<CmsProductFreeTagsUpdateMQMessageBody> {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
+    @Autowired
+    CmsProductFreeTagsUpdateService cmsProductFreeTagsUpdateService;
+
     @Override
-    public void onStartup(CmsBtProductUpdateTagsMQMessageBody messageBody) throws Exception {
+    public void onStartup(CmsProductFreeTagsUpdateMQMessageBody messageBody) throws Exception {
         if (messageBody != null){
-            String channelId = messageBody.getChannelId();
-            List<String> prodCodeList = messageBody.getProdCodeList();
-            List<String> tagPathList = messageBody.getTagPathList();
-            List<String> pathList = new ArrayList<>();
-            //将标签转换为list
-            if (tagPathList != null) {
-                for (String tagPath : tagPathList) {
-                    // 生成级联tag path列表
-                    String[] pathArr = org.apache.commons.lang3.StringUtils.split(tagPath, '-');
-                    for (int j = 0; j < pathArr.length; j++) {
-                        StringBuilder curTagPath = new StringBuilder("-");
-                        for (int i = 0; i <= j ; i ++) {
-                            curTagPath.append(pathArr[i]);
-                            curTagPath.append("-");
-                        }
-                        pathList.add(curTagPath.toString());
-                    }
-                }
-                // 过滤重复项目
-                pathList = pathList.stream().distinct().collect(Collectors.toList());
-            }
-            if (ListUtils.notNull(prodCodeList)){
-                for (String prodCode : prodCodeList) {
-                    JongoUpdate updObj = new JongoUpdate();
-                    updObj.setQuery("{\"common.fields.code\":#}");
-                    updObj.setQueryParameters(prodCode);
-                    updObj.setUpdate("{$set:{'pFreeTags':#}}");
-                    updObj.setUpdateParameters(pathList);
-                    cmsBtProductDao.updateMulti(updObj, channelId);
-                }
-            }
+            List<String> productCodeList =  cmsProductFreeTagsUpdateService.setProductFreeTags(messageBody);
+            super.count = productCodeList.size();
         }
     }
 }

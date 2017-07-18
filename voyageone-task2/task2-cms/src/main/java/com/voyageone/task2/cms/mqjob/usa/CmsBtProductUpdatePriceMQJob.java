@@ -31,7 +31,6 @@ import java.util.*;
 public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProductUpdatePriceMQMessageBody> {
 
 
-
     @Autowired
     ProductService productService;
 
@@ -43,75 +42,72 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
 
     @Override
     public void onStartup(CmsBtProductUpdatePriceMQMessageBody messageBody) throws Exception {
-        if (messageBody != null){
+        if (messageBody != null) {
             String sender = messageBody.getSender();
             String channelId = messageBody.getChannelId();
             Map<String, Object> params = messageBody.getParams();
             String changedPriceType = (String) params.get("changedPriceType");
             String basePriceType = (String) params.get("basePriceType");
             String optionType = (String) params.get("optionType");
-            Double value = Double.parseDouble((String)params.get("value"));
+            Double value = Double.parseDouble((String) params.get("value"));
             //"1":取整,"0":不取整
             String flag = (String) params.get("flag");
             List<String> productCodes = messageBody.getProductCodes();
-            if (ListUtils.notNull(productCodes)){
+            if (ListUtils.notNull(productCodes)) {
                 super.count = productCodes.size();
                 Integer cartId = messageBody.getCartId();
                 for (String productCode : productCodes) {
                     CmsBtProductModel cmsBtProductModel = productService.getProductByCode(messageBody.getChannelId(), productCode);
-                    if (cmsBtProductModel != null){
+                    if (cmsBtProductModel != null) {
                         Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
                         CmsBtProductModel_Platform_Cart platform = usPlatforms.get("P" + cartId);
                         String status = platform.getStatus();
-                        if (platform != null){
+                        if (platform != null) {
                             List<BaseMongoMap<String, Object>> skus = platform.getSkus();
-                            if (skus != null){
+                            if (skus != null) {
                                 for (BaseMongoMap<String, Object> sku : skus) {
                                     //获取到对应的skuCode
                                     String skuCode = (String) sku.get("skuCode");
                                     Double newPrice = null;
                                     Double basePrice = null;
-                                    if ("clientMsrpPrice".equals(basePriceType)||"clientRetailPrice".equals(basePriceType)){
+                                    if ("clientMsrpPrice".equals(basePriceType) || "clientRetailPrice".equals(basePriceType)) {
                                         basePrice = (Double) sku.get(basePriceType);
-                                        if ("*".equals(optionType)){
+                                        if ("*".equals(optionType)) {
                                             newPrice = basePrice * value;
                                         }
-                                        if ("/".equals(optionType)){
+                                        if ("/".equals(optionType)) {
                                             newPrice = basePrice / value;
                                         }
-                                        if ("+".equals(optionType)){
+                                        if ("+".equals(optionType)) {
                                             newPrice = basePrice + value;
                                         }
-                                        if ("-".equals(optionType)){
+                                        if ("-".equals(optionType)) {
                                             newPrice = basePrice - value;
                                         }
-                                    }else {
+                                    } else {
                                         //固定值类型
                                         newPrice = value;
                                     }
-                                    if (flag == "1"){
+                                    if (flag == "1") {
                                         //将价格取整
                                         Math.round(newPrice);
                                     }
                                     JongoUpdate jongoUpdate = new JongoUpdate();
-                                    jongoUpdate.setQuery("{\"usPlatforms.P"+ cartId +".skus.skuCode\":#}");
+                                    jongoUpdate.setQuery("{\"usPlatforms.P" + cartId + ".skus.skuCode\":#}");
                                     jongoUpdate.setQueryParameters(skuCode);
-                                    jongoUpdate.setUpdate("{$set:{\"usPlatforms.P"+ cartId +".skus.$."+ changedPriceType+"\":#}}");
+                                    jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + ".skus.$." + changedPriceType + "\":#}}");
                                     jongoUpdate.setUpdateParameters(newPrice);
                                     cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
-                                    if ("Approve".equals(status)){
-                                        platformProductUploadService.saveCmsBtUsWorkloadModel(channelId,cartId,productCode,null,0,sender);
+                                    if ("Approve".equals(status)) {
+                                        platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, sender);
                                     }
                                 }
                             }
                         }
                     }
-
-
-
                 }
             }
         }
     }
-    }
+}
 

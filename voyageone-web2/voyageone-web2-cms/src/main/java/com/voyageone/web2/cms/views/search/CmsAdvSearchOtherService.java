@@ -170,7 +170,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                 if (tagPathList != null && tagPathList.size() > 0) {
                     List<CmsBtTagBean> tagModelList = new ArrayList<>();
                     List<String> temp = new ArrayList<>();
-                    for(String tag: tagPathList){
+                    for (String tag : tagPathList) {
                         if (cachTag.containsKey(tag)) {
                             tagModelList.add(cachTag.get(tag));
                         } else {
@@ -180,7 +180,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                     if (temp.size() > 0) {
                         List<CmsBtTagBean> ts = tagService.getTagPathNameByTagPath(channelId, temp);
                         if (!ListUtils.isNull(ts)) {
-                            for(CmsBtTagBean cmsBtTagBean : ts){
+                            for (CmsBtTagBean cmsBtTagBean : ts) {
                                 cachTag.put(cmsBtTagBean.getTagPath(), cmsBtTagBean);
                                 tagModelList.add(cmsBtTagBean);
                             }
@@ -241,7 +241,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                             Map<String, String> map = new HashMap<>(1);
                             map.put("value", fldImgList.get(0).getName());
                             images1Arr.add(map);
-                        }else {
+                        } else {
                             fldImgList = prod.getCommonNotNull().getFieldsNotNull().getImages1();
                             if (fldImgList.size() > 0) {
                                 Map<String, String> map = new HashMap<>(1);
@@ -305,7 +305,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             if (tagPathList != null && tagPathList.size() > 0) {
                 List<CmsBtTagBean> tagModelList = new ArrayList<>();
                 List<String> temp = new ArrayList<>();
-                for(String tag: tagPathList){
+                for (String tag : tagPathList) {
                     if (cachTag.containsKey(tag)) {
                         tagModelList.add(cachTag.get(tag));
                     } else {
@@ -315,7 +315,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                 if (temp.size() > 0) {
                     List<CmsBtTagBean> ts = tagService.getTagPathNameByTagPath(channelId, temp);
                     if (!ListUtils.isNull(ts)) {
-                        for(CmsBtTagBean cmsBtTagBean : ts){
+                        for (CmsBtTagBean cmsBtTagBean : ts) {
                             cachTag.put(cmsBtTagBean.getTagPath(), cmsBtTagBean);
                             tagModelList.add(cmsBtTagBean);
                         }
@@ -516,27 +516,44 @@ public class CmsAdvSearchOtherService extends BaseViewService {
 
         return dataSumList;
     }
-    public String updatePrice(Map<String,Object> paraMap,UserSessionBean user) {
+
+    public String updatePrice(Map<String, Object> paraMap, UserSessionBean user) {
         CmsBtProductUpdatePriceMQMessageBody MqMap = new CmsBtProductUpdatePriceMQMessageBody();
-        if (paraMap != null){
+        if (paraMap != null) {
             String selAll = (String) paraMap.get("selAll");
             List<String> codeList = (List<String>) paraMap.get("codeList");
-            if ("true".equals(selAll)){
+            Integer cartId = (Integer) paraMap.get("cartId");
+            MqMap.setCartId(cartId);
+            HashMap<String, Object> params = new HashMap<>();
+
+            String changedPriceType = (String) paraMap.get("changedPriceType");
+            String basePriceType = (String) paraMap.get("basePriceType");
+            String optionType = (String) paraMap.get("optionType");
+            Double value = (Double) paraMap.get("value");
+            //Double value = Double.parseDouble((String) paraMap.get("value"));
+            //"1":取整,"0":不取整
+            String flag = (String) paraMap.get("flag");
+            params.put("changedPriceType", changedPriceType);
+            params.put("basePriceType", basePriceType);
+            params.put("optionType", optionType);
+            params.put("value", value);
+            params.put("flag", flag);
+            MqMap.setParams(params);
+            if ("true".equals(selAll)) {
                 //勾选了全部,需要通过检索条件,查询出所有信息
-                Map<String,Object> map = (Map) paraMap.get("queryMap");
+                Map<String, Object> map = (Map) paraMap.get("queryMap");
                 CmsSearchInfoBean2 queryParams = BeanUtils.toModel(map, CmsSearchInfoBean2.class);
                 CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId(), user.getUserId(), user.getUserName());
                 List<String> productCodeList = cmsProductCodeListBean.getProductCodeList();
                 MqMap.setProductCodes(productCodeList);
-            }else {
+            } else {
                 //未勾选全部
-
+                MqMap.setProductCodes(codeList);
             }
-
+            MqMap.setChannelId(user.getSelChannelId());
+            MqMap.setSender(user.getUserName());
+            cmsMqSenderService.sendMessage(MqMap);
         }
-
-
-
         return null;
     }
 }

@@ -122,9 +122,10 @@ define([
             let self = this;
 
             self.popups.openBatchPrice({
-                selAll:false,
+                selAll:"false",
                 codeList:["000009515"],
-                queryMap:{}
+                queryMap:{},
+                cartId:1
             }).then(res => {
 
             });

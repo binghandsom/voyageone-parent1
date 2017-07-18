@@ -99,8 +99,14 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
         }
 
         $info("productCnt="+prodCodeList.size());
-        //设置自由标签
-        productTagService.setProdFreeTag(messageMap.getChannelId(), tagPathList, prodCodeList, orgDispTagList, EnumProductOperationType.BatchSetFreeTag, messageMap.getSender());
+        if("usa".equals(messageMap.getType())){
+            //设置自由标签
+            productTagService.setProdUsFreeTag(messageMap.getChannelId(), tagPathList, prodCodeList, orgDispTagList, EnumProductOperationType.BatchSetFreeTag, messageMap.getSender());
+        }else{
+            //设置自由标签
+            productTagService.setProdFreeTag(messageMap.getChannelId(), tagPathList, prodCodeList, orgDispTagList, EnumProductOperationType.BatchSetFreeTag, messageMap.getSender());
+
+        }
 
         return prodCodeList;
     }

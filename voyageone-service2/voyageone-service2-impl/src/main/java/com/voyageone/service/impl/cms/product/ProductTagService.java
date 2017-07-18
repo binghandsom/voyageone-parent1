@@ -131,6 +131,56 @@ public class ProductTagService extends BaseService {
         productStatusHistoryService.insertList(channelId, prodCodeList, -1, operationType, msg, modifier);
     }
 
+    public void setProdUsFreeTag(String channelId, List<String> tagPathList, List<String> prodCodeList, List<String> orgDispTagList,
+                               EnumProductOperationType operationType, String modifier) {
+        if (prodCodeList == null || prodCodeList.isEmpty()) {
+            $warn("ProductTagService：setProdFreeTag 缺少参数");
+            throw new BusinessException("缺少参数!");
+        }
+
+        // 根据选择项目生成free tag列表
+        List<String> pathList = new ArrayList<>();
+        if (tagPathList != null) {
+            for (String tagPath : tagPathList) {
+                // 生成级联tag path列表
+                String[] pathArr = org.apache.commons.lang3.StringUtils.split(tagPath, '-');
+                for (int j = 0; j < pathArr.length; j++) {
+                    StringBuilder curTagPath = new StringBuilder("-");
+                    for (int i = 0; i <= j ; i ++) {
+                        curTagPath.append(pathArr[i]);
+                        curTagPath.append("-");
+                    }
+                    pathList.add(curTagPath.toString());
+                }
+            }
+            // 过滤重复项目
+            pathList = pathList.stream().distinct().collect(Collectors.toList());
+        }
+
+        JongoUpdate updObj = new JongoUpdate();
+        updObj.setQuery("{'common.fields.code':{$in:#}}");
+        updObj.setQueryParameters(prodCodeList);
+        if(!ListUtils.isNull(orgDispTagList)) {
+            updObj.setUpdate("{$pull:{'usFreeTags':{$nin:#}}}");
+            updObj.setUpdateParameters(orgDispTagList);
+            cmsBtProductDao.updateMulti(updObj, channelId);
+            updObj.setUpdate("{$addToSet:{'usFreeTags':{'$each':#}}}");
+            updObj.setUpdateParameters(pathList);
+        }else{
+            updObj.setUpdate("{$set:{'usFreeTags':#}}");
+            updObj.setUpdateParameters(pathList);
+        }
+        // 批量更新product表
+        WriteResult result = cmsBtProductDao.updateMulti(updObj, channelId);
+
+        $debug(String.format("ProductTagService：setProdFreeTag 操作结果-> %s", result.toString()));
+
+        List<CmsBtTagBean> tagBeanList = cmsBtTagDaoExt.selectTagPathNameByTagPath(channelId, tagPathList);
+        tagBeanList.stream().map(tagBean -> tagBean.getTagPathName()).collect(Collectors.toList());
+        String msg = "高级检索 批量设置自由标签 " ;
+        productStatusHistoryService.insertList(channelId, prodCodeList, -1, operationType, msg, modifier);
+    }
+
     /**
      * 批量删除商品的tag(根据指定的tag path)，同时删除关联的下级tag
      * 当不存在同级的tag时，也删除关联的上级tag
