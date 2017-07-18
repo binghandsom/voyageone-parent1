@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -90,38 +91,6 @@ public class UsaAdvanceSearchController extends CmsController {
         return success(resultMap);
     }
 
-
-    /**
-     * @api {post} /cms/search/advance/getCustColumnsInfo 1.6 取得自定义显示列设置
-     * @apiName getCustColumnsInfo
-     * @apiDescription 取得自定义显示列设置
-     * @apiGroup search
-     * @apiVersion 0.0.1
-     * @apiPermission 认证商户
-     * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
-     * @apiSuccess (系统级返回字段) {String} message 处理结果描述
-     * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
-     * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
-     * @apiSuccess (应用级返回字段) {Object[]} customProps 自定义显示列信息，没有数据时返回空数组
-     * @apiSuccess (应用级返回字段) {Object[]} commonProps 共同属性显示列信息，没有数据时返回空数组
-     * @apiSuccess (应用级返回字段) {String[]} custAttrList 用户保存的自定义显示列信息，没有数据时返回空数组
-     * @apiSuccess (应用级返回字段) {String[]} commList 用户保存的共同属性显示列信息，没有数据时返回空数组
-     * @apiSuccessExample 成功响应查询请求
-     * {
-     * "code":null, "message":null, "displayType":null, "redirectTo":null,
-     * "data":{
-     * "customProps": [ {"feed_prop_original":"a_b_c", "feed_prop_translation":"yourname" }...],
-     * "commonProps": [ {"propId":"a_b_c", "propName":"yourname" }...],
-     * "custAttrList": [ "a_b_c", "a_b_d", "a_b_e"...],
-     * "commList": [ "q_b_c", "q_b_d", "q_b_e"...]
-     * }
-     * }
-     * @apiExample 业务说明
-     * 取得自定义显示列设置
-     * @apiExample 使用表
-     * 使用cms_bt_feed_custom_prop表, cms_mt_common_prop表
-     * @apiSampleRequest off
-     */
     /**
      * 获取用户USA-CMS自定义列信息
      */
@@ -132,6 +101,17 @@ public class UsaAdvanceSearchController extends CmsController {
         Map<String, Object> colData = usaCustomColumnService.getCustomColumnsWithChecked(userInfo.getSelChannelId(), userInfo.getUserId(), getLang());
         // 返回用户信息
         return success(colData);
+    }
+
+    /**
+     * 保存用户勾选的店铺内分类
+     */
+    @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.SAVE_CUSTOM_COLUMNS)
+    public AjaxResponse saveCustomColumns(@RequestBody Map<String, Object> params) {
+        UserSessionBean userInfo = getUser();
+        usaCustomColumnService.saveUserCustomColumns(userInfo.getSelChannelId(), userInfo.getUserId(), userInfo.getUserName(), params);
+        // 更新CmsSession中用户自定义列
+        return success("");
     }
 
 

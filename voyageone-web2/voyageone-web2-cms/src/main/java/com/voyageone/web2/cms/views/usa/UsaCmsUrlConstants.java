@@ -47,6 +47,8 @@ public class UsaCmsUrlConstants {
 
         String GET_CUSTOM_COLUMNS = "getCustomColumns";
 
+        String SAVE_CUSTOM_COLUMNS = "saveCustomColumns";
+
         String SEARCH = "search";
     }
 
