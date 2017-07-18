@@ -41,11 +41,11 @@ public class UsaCmsUrlConstants {
      * USA CMS 高级检索
      */
     public interface  ADVANCE_SEARCH {
-        String ROOT = "/cms/usa/advanceSearch";
+        String ROOT = "/cms/us/advanceSearch";
 
         String INIT = "init";
 
-        String GET_CUSTOM_COLUMNS = "GET_CUSTOM_COLUMNS";
+        String GET_CUSTOM_COLUMNS = "getCustomColumns";
 
         String SEARCH = "search";
     }

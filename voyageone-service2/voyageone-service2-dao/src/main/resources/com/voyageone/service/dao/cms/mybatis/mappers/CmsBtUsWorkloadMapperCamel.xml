@@ -1,32 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.voyageone.service.dao.cms.CmsMtPropDao" >
-    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtPropModel" />
+<mapper namespace="com.voyageone.service.dao.cms.CmsBtUsWorkloadDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtUsWorkloadModel" />
     <sql id="Base_Column_List" >
-        `id`, `prop_id`, `prop_name`, `type`, `lang`, `created`, `creater`, `modified`, `modifier`
+        `id`, `channel_id`, `cart_id`, `code`, `publish_status`, `publish_time`, `created`, 
+        `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
         select 
         <include refid="Base_Column_List" />
-        from cms_mt_prop
+        from cms_bt_us_workload
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtPropModel" >
-        update cms_mt_prop
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsBtUsWorkloadModel" >
+        update cms_bt_us_workload
         <set >
-            <if test="propId != null" >
-                `prop_id` = #{propId,jdbcType=VARCHAR},
+            <if test="channelId != null" >
+                `channel_id` = #{channelId,jdbcType=VARCHAR},
             </if>
-            <if test="propName != null" >
-                `prop_name` = #{propName,jdbcType=VARCHAR},
+            <if test="cartId != null" >
+                `cart_id` = #{cartId,jdbcType=INTEGER},
             </if>
-            <if test="type != null" >
-                `type` = #{type,jdbcType=INTEGER},
+            <if test="code != null" >
+                `code` = #{code,jdbcType=VARCHAR},
             </if>
-            <if test="lang != null" >
-                `lang` = #{lang,jdbcType=VARCHAR},
+            <if test="publishStatus != null" >
+                `publish_status` = #{publishStatus,jdbcType=INTEGER},
+            </if>
+            <if test="publishTime != null" >
+                `publish_time` = #{publishTime,jdbcType=TIMESTAMP},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -48,26 +52,29 @@
     </update>
 
     <delete id="delete" parameterType="java.lang.Integer" >
-        delete from cms_mt_prop
+        delete from cms_bt_us_workload
         where `id` = #{id,jdbcType=INTEGER}
     </delete>
 
     <select id="selectOne" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
-        from cms_mt_prop
+        from cms_bt_us_workload
         <where >
-            <if test="propId != null" >
-                and `prop_id` = #{propId,jdbcType=VARCHAR}
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
-            <if test="propName != null" >
-                and `prop_name` = #{propName,jdbcType=VARCHAR}
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
-            <if test="type != null" >
-                and `type` = #{type,jdbcType=INTEGER}
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
             </if>
-            <if test="lang != null" >
-                and `lang` = #{lang,jdbcType=VARCHAR}
+            <if test="publishStatus != null" >
+                and `publish_status` = #{publishStatus,jdbcType=INTEGER}
+            </if>
+            <if test="publishTime != null" >
+                and `publish_time` = #{publishTime,jdbcType=TIMESTAMP}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -88,19 +95,22 @@
     <select id="selectList" resultMap="BaseResultMap" >
         select 
         <include refid="Base_Column_List" />
-        from cms_mt_prop
+        from cms_bt_us_workload
         <where >
-            <if test="propId != null" >
-                and `prop_id` = #{propId,jdbcType=VARCHAR}
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
-            <if test="propName != null" >
-                and `prop_name` = #{propName,jdbcType=VARCHAR}
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
-            <if test="type != null" >
-                and `type` = #{type,jdbcType=INTEGER}
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
             </if>
-            <if test="lang != null" >
-                and `lang` = #{lang,jdbcType=VARCHAR}
+            <if test="publishStatus != null" >
+                and `publish_status` = #{publishStatus,jdbcType=INTEGER}
+            </if>
+            <if test="publishTime != null" >
+                and `publish_time` = #{publishTime,jdbcType=TIMESTAMP}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -118,19 +128,22 @@
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer" >
-        select count(*) from cms_mt_prop
+        select count(*) from cms_bt_us_workload
         <where >
-            <if test="propId != null" >
-                and `prop_id` = #{propId,jdbcType=VARCHAR}
+            <if test="channelId != null" >
+                and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
-            <if test="propName != null" >
-                and `prop_name` = #{propName,jdbcType=VARCHAR}
+            <if test="cartId != null" >
+                and `cart_id` = #{cartId,jdbcType=INTEGER}
             </if>
-            <if test="type != null" >
-                and `type` = #{type,jdbcType=INTEGER}
+            <if test="code != null" >
+                and `code` = #{code,jdbcType=VARCHAR}
             </if>
-            <if test="lang != null" >
-                and `lang` = #{lang,jdbcType=VARCHAR}
+            <if test="publishStatus != null" >
+                and `publish_status` = #{publishStatus,jdbcType=INTEGER}
+            </if>
+            <if test="publishTime != null" >
+                and `publish_time` = #{publishTime,jdbcType=TIMESTAMP}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -147,20 +160,23 @@
         </where>
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtPropModel" useGeneratedKeys="true" keyProperty="id" >
-        insert into cms_mt_prop
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtUsWorkloadModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_bt_us_workload
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="propId != null" >
-                `prop_id`,
+            <if test="channelId != null" >
+                `channel_id`,
             </if>
-            <if test="propName != null" >
-                `prop_name`,
+            <if test="cartId != null" >
+                `cart_id`,
             </if>
-            <if test="type != null" >
-                `type`,
+            <if test="code != null" >
+                `code`,
             </if>
-            <if test="lang != null" >
-                `lang`,
+            <if test="publishStatus != null" >
+                `publish_status`,
+            </if>
+            <if test="publishTime != null" >
+                `publish_time`,
             </if>
             `created`,
             <if test="creater != null" >
@@ -175,17 +191,20 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="propId != null" >
-                #{propId,jdbcType=VARCHAR},
+            <if test="channelId != null" >
+                #{channelId,jdbcType=VARCHAR},
             </if>
-            <if test="propName != null" >
-                #{propName,jdbcType=VARCHAR},
+            <if test="cartId != null" >
+                #{cartId,jdbcType=INTEGER},
             </if>
-            <if test="type != null" >
-                #{type,jdbcType=INTEGER},
+            <if test="code != null" >
+                #{code,jdbcType=VARCHAR},
             </if>
-            <if test="lang != null" >
-                #{lang,jdbcType=VARCHAR},
+            <if test="publishStatus != null" >
+                #{publishStatus,jdbcType=INTEGER},
+            </if>
+            <if test="publishTime != null" >
+                #{publishTime,jdbcType=TIMESTAMP},
             </if>
             <if test="created == null" >
                 now(),
@@ -210,26 +229,5 @@
             </if>
         </trim>
     </insert>
-
-    <select id="selectByType" parameterType="java.lang.Integer" resultType="java.util.Map">
-        select
-        prop_id AS propId,
-        prop_name AS propName
-        from cms_mt_prop
-        WHERE type=#{type,jdbcType=INTEGER}
-        <!--where-->
-        <!--<if test="selType == 1" >-->
-            <!--AND (prop_id != 'code'-->
-            <!--AND prop_id != 'priceMsrpSt' AND prop_id != 'priceMsrpEd' AND prop_id != 'priceRetailSt' AND prop_id != 'priceRetailEd' AND prop_id != 'priceSaleSt' AND prop_id != 'priceSaleEd')-->
-        <!--</if>-->
-        <!--<if test="selType == 2" >-->
-            <!--AND (prop_id != 'code' AND prop_id != 'originalTitleCn'-->
-            <!--AND prop_id != 'priceMsrpSt' AND prop_id != 'priceMsrpEd' AND prop_id != 'priceRetailSt' AND prop_id != 'priceRetailEd' AND prop_id != 'priceSaleSt' AND prop_id != 'priceSaleEd')-->
-        <!--</if>-->
-        <!--<if test="selType == 3" >-->
-            <!--AND (prop_id != 'priceMsrpSt' AND prop_id != 'priceMsrpEd' AND prop_id != 'priceRetailSt' AND prop_id != 'priceRetailEd' AND prop_id != 'priceSaleSt' AND prop_id != 'priceSaleEd')-->
-        <!--</if>-->
-        <!--order by creater-->
-    </select>
 
 </mapper>

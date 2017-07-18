@@ -81,7 +81,13 @@ public class UsaAdvanceSearchController extends CmsController {
 //        usaCustomColumnService.getUserCustColumns(userInfo.getSelChannelId(), userInfo.getUserId(), cmsSession, getLang());
 //        Map<String, Object> resultMap = usaCustomColumnService.getMasterData(userInfo, cmsSession, getLang());
 //        resultMap.put("channelId", userInfo.getSelChannelId());
-        return success(null);
+
+        Map<String, Object> resultMap = new HashMap<>();
+        // 品牌列表
+        resultMap.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), getLang()));
+        // 平台
+        resultMap.put("platforms", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.SKU_CARTS_53, userInfo.getSelChannelId(), getLang()));
+        return success(resultMap);
     }
 
 
@@ -152,6 +158,7 @@ public class UsaAdvanceSearchController extends CmsController {
         CmsSessionBean cmsSession = getCmsSession();
         cmsSession.putAttribute("_adv_search_params", params);
 
+        params.setProductPageSize(10);
         int endIdx = params.getProductPageSize();
         // 从Solr中统计满足条件的Product总数和当前页商品CodeList
         CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), userInfo.getUserId(), userInfo.getUserName());
