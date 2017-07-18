@@ -835,15 +835,14 @@ define(function () {
                 list:"list",
                 approve:"approve"
             },
-            advanceSearch:{
-                root:"/cms/us/advanceSearch",
-                init:"init",
-                search:"search",
-                getCustomColumns:"getCustomColumns",
-                updatePrice:"updatePrice"
-                getCustomColumns:"getCustomColumns",
-                saveCustomColumns:"saveCustomColumns"
-            }
+        },
+        advanceSearch:{
+            root:"/cms/us/advanceSearch",
+            init:"init",
+            search:"search",
+            getCustomColumns:"getCustomColumns",
+            saveCustomColumns:"saveCustomColumns",
+            updatePrice:"updatePrice"
         }
     };
 });
