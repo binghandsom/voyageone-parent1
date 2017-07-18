@@ -122,7 +122,7 @@
                                 <label class="col-sm-3 control-label query-title">Platform</label>
                                 <div class="col-sm-8 checkbox">
                                     <label ng-repeat="platform in ctrl.masterData.platforms">
-                                        <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId">&nbsp;&nbsp;{{platform.name}}
+                                        <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;&nbsp;{{platform.name}}
                                     </label>
                                 </div>
                             </div>
@@ -146,7 +146,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <div class="col-sm-3 text-right">
-                                    <button class="btn btn-pop btn-vo" ng-click="openTagManagement(openFreeTag({'orgFlg':1,'tagTypeSel':'4','cartId':vm.searchInfo.cartId}), false)">
+                                    <button class="btn btn-pop btn-vo" ng-click="ctrl.popCategory()" ng-disabled="ctrl.canCategory()">
                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;Category
                                     </button>
                                 </div>

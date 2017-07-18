@@ -47,14 +47,13 @@ define([
                 let codeList = searchInfo.codeList.split("\n");
                 searchInfo.codeList = codeList;
             }
-            console.log(searchInfo.codeList);
+
             _.extend(searchInfo, self.pageOption);
-            // console.log(searchInfo);
+
             self.advanceSearch.search(searchInfo).then(res => {
                 if (res.data) {
                     self.searchResult.productList = res.data.productList;
                 }
-                console.log(self.searchResult.productList);
             });
         }
 
@@ -78,9 +77,41 @@ define([
         popUsFreeTag(){
             let self = this;
 
-            self.popups.openUsFreeTag().then(res => {
+            self.popups.openUsFreeTag({
+                orgFlg: 2,
+                tagTypeSel: '4',
+                cartId: 23,
+                productIds: null,
+                selAllFlg: 0,
+                searchInfo: self.searchInfoBefo
+            }).then(res => {
 
             })
+        }
+
+        /**
+         * @description 类目pop框
+         */
+        popCategory(){
+            let self = this;
+
+            if(Number(self.searchInfo.cartId) === 5 ){
+                //只有亚马逊显示类目
+                self.popups.openAmazonCategory({cartId:5}).then(res => {
+
+                });
+            }else{
+                //sneakerhead 显示店铺内分类
+                self.popups.openUsCategory({cartId:self.searchInfo.cartId,from:''}).then(res => {
+
+                });
+            }
+        }
+
+        canCategory(){
+            const arr = ['1','12','6','11','5'];
+
+            return arr.indexOf(this.searchInfo.cartId) < 0;
         }
 
     });
