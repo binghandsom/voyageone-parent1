@@ -448,7 +448,7 @@ public class UsaCustomColumnService extends BaseService {
      * @param language  语言
      */
     private List<TypeChannelBean> getUsaCartTypeBean(String channelId, String language) {
-        List<TypeChannelBean> cartBeanList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, language);
+        List<TypeChannelBean> cartBeanList = TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, language);
         if (cartBeanList == null) {
             return Collections.emptyList();
         }
