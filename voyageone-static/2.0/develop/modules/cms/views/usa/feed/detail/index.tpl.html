@@ -722,11 +722,15 @@
                                         </td>
                                         <td class="text-right">
                                             <input type="number" class="form-control text-right" ng-model="sku.priceClientMsrp"
-                                                   ng-disabled="ctrl.feed.approvePricing=='1'" ng-change="ctrl.setSkuProperty(sku,'priceClientMsrp','1')"/>
+                                                   ng-disabled="ctrl.feed.approvePricing=='1'"
+                                                   ng-blur="ctrl.setSkuProperty(sku,'priceClientMsrp','1')"
+                                                   ng-enter="ctrl.setSkuProperty(sku,'priceClientMsrp','1')"/>
                                         </td>
                                         <td class="text-right">
                                             <input type="number" class="form-control text-right" ng-model="sku.priceNet"
-                                                   ng-disabled="ctrl.feed.approvePricing=='1'" ng-change="ctrl.setSkuProperty(sku,'priceNet','1')"/>
+                                                   ng-disabled="ctrl.feed.approvePricing=='1'"
+                                                   ng-blur="ctrl.setSkuProperty(sku,'priceNet','1')"
+                                                   ng-enter="ctrl.setSkuProperty(sku,'priceNet','1')"/>
                                         </td>
                                         <td class="text-right" ng-if="ctrl.auth!=1">
                                             <input type="number" class="form-control text-right" ng-model="sku.priceMsrp" readonly/>
