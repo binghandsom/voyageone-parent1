@@ -284,6 +284,65 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("skuCnt", skuCnt == null ? 0 : skuCnt);
     }
 
+
+    public String getUrlKey() {
+        return getStringAttribute("urlKey");
+    }
+
+    public void setUrlKey(String urlKey) {
+        setAttribute("urlKey", urlKey );
+    }
+
+    public String getAbstract() {
+        return getStringAttribute("abstract");
+    }
+
+    public void setAbstract(String value) {
+        setAttribute("abstract", value );
+    }
+
+    public String getAccessory() {
+        return getStringAttribute("accessory");
+    }
+
+    public void setAccessory(String accessory) {
+        setAttribute("accessory", accessory );
+    }
+
+    public void setColorMap(String colorMap) {
+        setAttribute("colorMap", colorMap );
+    }
+
+    public String getColorMap() {
+        return getStringAttribute("colorMap");
+    }
+
+    public void setGoogleCategory(String googleCategory) {
+        setAttribute("googleCategory", googleCategory );
+    }
+
+    public String getGoogleCategory() {
+        return getStringAttribute("googleCategory");
+    }
+
+    public void setGoogleDepartment(String googleDepartment) {
+        setAttribute("googleDepartment", googleDepartment );
+    }
+
+    public String getGoogleDepartment() {
+        return getStringAttribute("googleDepartment");
+    }
+
+    public void setPriceGrabberCategory(String priceGrabberCategory) {
+        setAttribute("priceGrabberCategory", priceGrabberCategory );
+    }
+
+    public String getPriceGrabberCategory() {
+        return getStringAttribute("priceGrabberCategory");
+    }
+
+
+
     //商品图片
     public List<CmsBtProductModel_Field_Image> getImages(CmsBtProductConstants.FieldImageType imageType) {
         List<CmsBtProductModel_Field_Image> result = null;

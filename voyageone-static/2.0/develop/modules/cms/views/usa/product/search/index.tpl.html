@@ -76,18 +76,18 @@
                                     <div class="col-sm-5 input-group">
                                         <input type="text" class="form-control" uib-datepicker-popup
                                                ng-model="ctrl.searchInfo.lastReceivedOnFrom" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePicker1" close-text="Close"/>
+                                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePickerLr1" close-text="Close"/>
                                         <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                        <button type="button" class="btn btn-default" ng-click="datePickerLr1 = !datePickerLr1"><i class="glyphicon glyphicon-calendar"></i></button>
                                                       </span>
                                     </div>
                                     &nbsp;~&nbsp;
                                     <div class="col-sm-5 input-group">
                                         <input type="text" class="form-control" uib-datepicker-popup
                                                ng-model="ctrl.searchInfo.lastReceivedOnTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                               date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.createTimeStart" is-open="datePicker2" close-text="Close"/>
+                                               date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.createTimeStart" is-open="datePickerLr2" close-text="Close"/>
                                         <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                        <button type="button" class="btn btn-default" ng-click="datePickerLr2 = !datePickerLr2"><i class="glyphicon glyphicon-calendar"></i></button>
                                                       </span>
                                     </div>
                                 </div>
@@ -95,7 +95,10 @@
 
                             <div class="form-group">
                                 <div class="col-sm-3">
-                                    <select  class="form-control" chosen></select>
+                                    <select  class="form-control" chosen>
+                                        <option value="">Total Qty</option>
+                                        <option value="">LA Qty</option>
+                                    </select>
                                 </div>
                                 <div class="col-sm-9">
                                     <div class="col-sm-5">
@@ -122,7 +125,7 @@
                                 <label class="col-sm-3 control-label query-title">Platform</label>
                                 <div class="col-sm-8 checkbox">
                                     <label ng-repeat="platform in ctrl.masterData.platforms">
-                                        <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId">&nbsp;&nbsp;{{platform.name}}
+                                        <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;&nbsp;{{platform.name}}
                                     </label>
                                 </div>
                             </div>
@@ -146,7 +149,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <div class="col-sm-3 text-right">
-                                    <button class="btn btn-pop btn-vo" ng-click="openTagManagement(openFreeTag({'orgFlg':1,'tagTypeSel':'4','cartId':vm.searchInfo.cartId}), false)">
+                                    <button class="btn btn-pop btn-vo" ng-click="ctrl.popCategory()" ng-disabled="ctrl.canCategory()">
                                         <i class="fa fa-arrow-circle-right"></i>&nbsp;Category
                                     </button>
                                 </div>
@@ -161,18 +164,18 @@
                                     <div class="col-sm-5 input-group">
                                         <input type="text" class="form-control" uib-datepicker-popup
                                                ng-model="vm.searchInfo.createTimeStart" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePicker1" close-text="Close"/>
+                                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePickerCt1" close-text="Close"/>
                                         <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                        <button type="button" class="btn btn-default" ng-click="datePickerCt1 = !datePickerCt1"><i class="glyphicon glyphicon-calendar"></i></button>
                                                       </span>
                                     </div>
                                     &nbsp;~&nbsp;
                                     <div class="col-sm-5 input-group">
                                         <input type="text" class="form-control" uib-datepicker-popup
                                                ng-model="vm.searchInfo.createTimeTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                               date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.createTimeStart" is-open="datePicker2" close-text="Close"/>
+                                               date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.createTimeStart" is-open="datePickerCt2" close-text="Close"/>
                                         <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                        <button type="button" class="btn btn-default" ng-click="datePickerCt2 = !datePickerCt2"><i class="glyphicon glyphicon-calendar"></i></button>
                                                       </span>
                                     </div>
                                 </div>
@@ -209,21 +212,7 @@
 
     <div>
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-md-6 checkbox">
-                        <label>
-                            <input type="checkbox"><strong class="text-u-l">amazon</strong>
-                        </label>&nbsp;
-                        <label>
-                            <input type="checkbox"><strong class="text-u-l">google</strong>
-                        </label>&nbsp;
-                        <label>
-                            <input type="checkbox"><strong class="text-u-l">epay</strong>
-                        </label>&nbsp;
-                    </div>
-                </div>
-            </div>
+
             <div class="container-fluid m-t-xs m-b-xs">
                 <uib-tabset class="tab-container vo_nav-tabs">
                     <!--right-btn-->
@@ -273,7 +262,7 @@
                                                 <img image="{{productInfo.common.fields.images6 && productInfo.common.fields.images6[0].image6?productInfo.common.fields.images6[0].image6:productInfo.common.fields.images1[0].image1}}" alt="{{productInfo.common.fields.code}}" class="thumb-sm-search"/>
                                             </a>
                                         </td>
-                                        <td colspan="5" class="control-label text-left form-inline" style="height:27px; ">
+                                        <td colspan="6" class="control-label text-left form-inline" style="height:27px; ">
                                             <!--Todo 活动详情pop的数据取得-->
                                             <button ng-controller="showPopoverCtrl" popover-html="popoverPromotionDetail(productInfo.common.fields.code, productInfo)"
                                                     uib-popover-template="templateAction.promotionDetailPopover.templateUrl"
@@ -316,7 +305,7 @@
                                             <span class="label m-t-xs m-r-sm m-l-sm" style="font-size:12px;background-color:black;" ng-if="productInfo.lock == 1">&nbsp;锁定&nbsp;</span>
                                             <span class="text-right">
                                                     <span class="pull-right" style="margin-right:10px">{{'TXT_MATER_CATEGORY_WITH_COLON' | translate}}&nbsp;{{productInfo.common.catPath}}</span>
-                                                </span>
+                                            </span>
                                         </td>
                                     </tr>
                                     <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="height: 66px">

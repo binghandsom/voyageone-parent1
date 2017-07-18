@@ -8,7 +8,7 @@ package com.voyageone.web2.cms.views.usa;
  */
 public class UsaCmsUrlConstants {
 
-    interface COMMON {
+    public interface COMMON {
         String ROOT = "/cms/us/common";
 
         String GET_CHANNEL_CART = "getChannelCarts";
@@ -19,7 +19,7 @@ public class UsaCmsUrlConstants {
     /**
      * USA CMS Feed相关
      */
-    interface FEED {
+    public interface FEED {
         String ROOT = "/cms/us/feed";
 
         String DETAIL = "detail";
@@ -40,7 +40,7 @@ public class UsaCmsUrlConstants {
     /**
      * USA CMS 高级检索
      */
-    interface  ADVANCE_SEARCH {
+    public interface  ADVANCE_SEARCH {
         String ROOT = "/cms/us/advanceSearch";
 
         String INIT = "init";
@@ -50,5 +50,15 @@ public class UsaCmsUrlConstants {
         String SAVE_CUSTOM_COLUMNS = "saveCustomColumns";
 
         String SEARCH = "search";
+    }
+
+    /**
+     * USA CMS 高级检索
+     */
+    public interface  PRODUCT {
+        String ROOT = "/cms/usa/product";
+
+        String GET_PRODUCT_INFO = "getProductInfo";
+
     }
 }

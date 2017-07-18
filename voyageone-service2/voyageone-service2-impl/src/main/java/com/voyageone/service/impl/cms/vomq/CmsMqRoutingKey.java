@@ -146,6 +146,14 @@ public class CmsMqRoutingKey {
 
     // wms new item
     public static final String CMS_USA_PRODUCT_ADD_UPDATE = "VOCmsUsaProductAddUpdateMQJobQueue";
+    //CMS修改价格
+    public static final String CMS_USA_PRODUCT_UPDATE_PRICE = "VoCmsUsaProductUpdatePriceMQJobQueue";
+    //商品上下架
+    public static final String CMS_USA_PRODUCT_LIST_DELIST = "VoCmsUsaProductListDelistMQJobQueue";
+    //修改类目
+    public static final String CMS_USA_PRODUCT_UPDATE_CATEGORY = "VoCmsUsaProductUpdateCategoryMQJobQueue";
+    //修改标签
+    public static final String CMS_USA_PRODUCT_UPDATE_TAGS = "VoCmsUsaProductUpdateTagsMQJobQueue";
 
 
     // 未整理的业务内容
