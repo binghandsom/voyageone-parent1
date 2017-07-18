@@ -24,6 +24,7 @@ import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -356,18 +357,19 @@ public class FeedToCmsService extends BaseService {
                      * priceClientMsrp:美金专柜价
                      */
                     if (targetSku != null) {
-                        triggerPrice = !((targetSku.getPriceNet() == null || targetSku.getPriceNet() == 0)
-                                && (targetSku.getPriceClientRetail() == null || targetSku.getPriceClientRetail() == 0)
-                                && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0))
+                        if (!triggerPrice)
+                            triggerPrice = (targetSku.getPriceNet() != null && targetSku.getPriceNet() > 0 && !ObjectUtils.equals(targetSku.getPriceNet(), skuInfo.getPriceNet()))
+                                    || (targetSku.getPriceClientRetail() != null && targetSku.getPriceClientRetail() > 0 && !ObjectUtils.equals(targetSku.getPriceClientRetail(), skuInfo.getPriceClientRetail()))
+                                    || (targetSku.getPriceClientMsrp() != null && targetSku.getPriceClientMsrp() > 0 && !ObjectUtils.equals(targetSku.getPriceClientMsrp(), skuInfo.getPriceClientMsrp()))
                                 || (targetSku.getIsSale() != null && targetSku.getIsSale() != skuInfo.getIsSale());
 
                         // 同步价格
                         if (targetSku.getPriceNet() != null && targetSku.getPriceNet() != 0)
-                            skuInfo.setPriceNet(skuInfo.getPriceNet());
+                            skuInfo.setPriceNet(targetSku.getPriceNet());
                         if (targetSku.getPriceClientRetail() != null && targetSku.getPriceClientRetail() != 0)
-                            skuInfo.setPriceClientRetail(skuInfo.getPriceClientRetail());
+                            skuInfo.setPriceClientRetail(targetSku.getPriceClientRetail());
                         if (targetSku.getPriceClientMsrp() != null && targetSku.getPriceClientMsrp() != 0)
-                            skuInfo.setPriceClientMsrp(skuInfo.getPriceClientMsrp());
+                            skuInfo.setPriceClientMsrp(targetSku.getPriceClientMsrp());
 
                         // 同步库存
                         if (targetSku.getQty() != null) {
