@@ -12,7 +12,11 @@ public class CartEnums {
      */
     public enum Cart {
 
-        SN("1"),
+        SN("8"),
+
+        MSN("9"),
+
+        military("7"),
 
         Xsneakers("12"),
 
