@@ -362,16 +362,16 @@
                 </button>
                 <ul uib-dropdown-menu style="margin-left: 17px">
                     <li>
-                        <a href="javascript:void(0)" ng-click="ctrl.batchCategory()">Category</a>
+                        <a href="javascript:void(0)" ng-click="ctrl.batchCategory()"><i class="fa fa-minus"></i>&nbsp;Category</a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)">List</a>
+                        <a href="javascript:void(0)" ng-click="ctrl.batchList(1)"><i class="fa fa-minus"></i>&nbsp;List</a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)">Delist</a>
+                        <a href="javascript:void(0)" ng-click="ctrl.batchList(0)"><i class="fa fa-minus"></i>&nbsp;Delist</a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)">Platform Price</a>
+                        <a href="javascript:void(0)" ng-click="ctrl.popBatchPrice()"><i class="fa fa-minus"></i>&nbsp;Platform Price</a>
                     </li>
                 </ul>
             </div>

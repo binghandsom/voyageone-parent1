@@ -186,6 +186,14 @@ define([
             }
         }
 
+        batchList(){
+            var self = this;
+
+            self.popups.openUsList().then(res => {
+
+            });
+        }
+
     });
 
 });

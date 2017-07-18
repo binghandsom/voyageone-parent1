@@ -711,6 +711,12 @@ define([
                         "controllerUrl": "modules/cms/views/pop/usa/product/search/freeTag/index.ctl",
                         "controller": 'freeTagOfUsController as ctrl',
                         "size": 'lg'
+                    },
+                    list:{
+                        "templateUrl": "views/pop/usa/product/search/list/index.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/usa/product/search/list/index.ctl",
+                        "controller": 'batchPriceController as ctrl',
+                        "size": 'md'
                     }
                 }
             }
@@ -1616,6 +1622,10 @@ define([
 
         $scope.openUsFreeTag = function (context) {
             return openModal(popActions.us.product.search.freeTag, context);
+        };
+
+        $scope.openUsList = function (context) {
+            return openModal(popActions.us.product.search.list, context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {
