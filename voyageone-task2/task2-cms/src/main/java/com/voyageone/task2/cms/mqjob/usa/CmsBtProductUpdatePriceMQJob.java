@@ -7,6 +7,7 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsPlatformCategoryUpdateMQMessageBody;
@@ -37,9 +38,13 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
     @Autowired
     CmsBtProductDao cmsBtProductDao;
 
+    @Autowired
+    PlatformProductUploadService platformProductUploadService;
+
     @Override
     public void onStartup(CmsBtProductUpdatePriceMQMessageBody messageBody) throws Exception {
         if (messageBody != null){
+            String sender = messageBody.getSender();
             String channelId = messageBody.getChannelId();
             Map<String, Object> params = messageBody.getParams();
             String changedPriceType = (String) params.get("changedPriceType");
@@ -57,6 +62,7 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                     if (cmsBtProductModel != null){
                         Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
                         CmsBtProductModel_Platform_Cart platform = usPlatforms.get("P" + cartId);
+                        String status = platform.getStatus();
                         if (platform != null){
                             List<BaseMongoMap<String, Object>> skus = platform.getSkus();
                             if (skus != null){
@@ -93,10 +99,16 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                                     jongoUpdate.setUpdate("{$set:{\"usPlatforms.P"+ cartId +".skus.$."+ changedPriceType+"\":#}}");
                                     jongoUpdate.setUpdateParameters(newPrice);
                                     cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+                                    if ("Approve".equals(status)){
+                                        platformProductUploadService.saveCmsBtUsWorkloadModel(channelId,cartId,productCode,null,0,sender);
+                                    }
                                 }
                             }
                         }
                     }
+
+
+
                 }
             }
         }

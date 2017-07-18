@@ -1,7 +1,9 @@
 package com.voyageone.service.impl.cms.vomq.vomessage.body.usa;
 
+import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -10,6 +12,7 @@ import java.util.List;
 /**
  * Created by dell on 2017/7/18.
  */
+@VOMQQueue(value = CmsMqRoutingKey.CMS_USA_PRODUCT_LIST_DELIST)
 public class CmsBtProductUpdateListDelistStatusMQMessageBody extends BaseMQMessageBody {
     private Integer cartId;
     private String activeStatus;

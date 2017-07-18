@@ -2,8 +2,10 @@ package com.voyageone.service.impl.cms.vomq.vomessage.body.usa;
 
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
+import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
 /**
  * Created by dell on 2017/7/17.
  */
+@VOMQQueue(value = CmsMqRoutingKey.CMS_USA_PRODUCT_UPDATE_CATEGORY)
 public class CmsBtProductUpdateCategoryMQMessageBody extends BaseMQMessageBody {
 
     List<String> productCodes;
