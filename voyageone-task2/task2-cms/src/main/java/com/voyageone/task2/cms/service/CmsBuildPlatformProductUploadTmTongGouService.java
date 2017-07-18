@@ -1350,7 +1350,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 //                    // 直接删掉违禁词
 //                    valDescription = valDescription.replaceAll(notAllow, "");
 //                }
-                sxProductService.deleteErrorWord(valTitle, errorWord);
+                sxProductService.deleteErrorWord(valDescription, errorWord);
             }
         }
         // 店铺级标题禁用词 20161216 tom END
