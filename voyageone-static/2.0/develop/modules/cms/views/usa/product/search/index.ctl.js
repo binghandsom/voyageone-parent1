@@ -170,6 +170,21 @@ define([
             return arr.indexOf(this.searchInfo.cartId) < 0;
         }
 
+        batchCategory(){
+            let self = this;
+
+        }
+
+        getSelectedProduct(onlyAttr){
+            var self = this;
+
+            if(onlyAttr){
+                return _.pluck(self.productSelList.selList,onlyAttr);
+            }else{
+                return self.productSelList.selList;
+            }
+        }
+
     });
 
 });
