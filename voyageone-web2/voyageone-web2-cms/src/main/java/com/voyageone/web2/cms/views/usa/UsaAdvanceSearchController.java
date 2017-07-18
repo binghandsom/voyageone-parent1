@@ -237,7 +237,6 @@ public class UsaAdvanceSearchController extends CmsController {
         codeMap.put(cmsBtProductBean.getCommon().getFields().getCode(), cartIdMap);
         return codeMap;
     }
-
     //批量修改价格
     @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.UPDATEPRICE)
     public AjaxResponse updatePrice(@RequestBody Map params) {
