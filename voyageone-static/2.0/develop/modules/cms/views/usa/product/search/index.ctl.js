@@ -15,8 +15,8 @@ define([
             self.popups = popups;
             self.advanceSearch = advanceSearch;
 
-            self.pageOption = {curr: 1, total: 0, size: 10, fetch: self.search},
-                self.searchInfo = {};
+            self.pageOption = {curr: 1, total: 0, size: 10, fetch: self.search};
+            self.searchInfo = {};
             self.searchResult = {
                 productList: []
             };
@@ -26,6 +26,11 @@ define([
                 usPlatforms: [],
                 brandList: []
             };
+            self.customColumns = {
+                selCommonProps:[],
+                selPlatformAttributes:[],
+                selPlatformSales:[]
+            };
         }
 
         init() {
@@ -33,6 +38,7 @@ define([
             // 查询masterData,包括platforms、brandList
             this.advanceSearch.init().then(res => {
                 if (res.data) {
+                    // 美国平台、中国平台
                     let channelPlatforms = res.data.platforms;
                     self.masterData.platforms = _.filter(channelPlatforms, cartObj => {
                         let cartId = parseInt(cartObj.value);
@@ -42,7 +48,12 @@ define([
                         let cartId = parseInt(cartObj.value);
                         return cartId > 0 && cartId < 20;
                     });
+                    // 品牌列表
                     self.masterData.brandList = res.data.brandList;
+                    // 用户自定义列
+                    self.customColumns.selCommonProps = res.data.selCommonProps == null ? [] : res.data.selCommonProps;
+                    self.customColumns.selPlatformAttributes = res.data.selPlatformAttributes == null ? [] : res.data.selPlatformAttributes;
+                    self.customColumns.selPlatformSales = res.data.selPlatformSales == null ? [] : res.data.selPlatformSales;
                 }
             });
             this.search();
@@ -66,12 +77,18 @@ define([
             });
         }
 
+        clear() {
+            let self = this;
+            self.searchInfo = {};
+        }
+
         // 自定义列弹出
         popCustomAttributes() {
             let self = this;
-
             self.popups.openCustomAttributes().then(res => {
-
+                self.customColumns.selCommonProps = res.selCommonProps;
+                self.customColumns.selPlatformAttributes = res.selPlatformAttributes;
+                self.customColumns.selPlatformSales = res.selPlatformSales;
             })
         }
 

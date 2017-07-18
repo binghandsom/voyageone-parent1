@@ -263,6 +263,14 @@ public class CmsProductSearchQueryService extends BaseService {
                     criteria = criteria.and("P" + cartId + "_pNumIId").in(searchValue.getNumIIds());
                 }
             }
+
+            // 平台SalePrice价格范围查询
+            if (searchValue.getpSalePriceFrom() != null) {
+                criteria = criteria.and("P" + cartId + "_pPriceSaleSt").greaterThanEqual(searchValue.getpSalePriceFrom());
+            }
+            if (searchValue.getpSalePriceTo() != null) {
+                criteria = criteria.and("P" + cartId + "_pPriceSaleEd").lessThanEqual(searchValue.getpSalePriceTo());
+            }
         }
 
 
@@ -488,14 +496,21 @@ public class CmsProductSearchQueryService extends BaseService {
         if (StringUtils.isNotEmpty(searchValue.getLastReceivedOnFrom())) {
             // 获取createdTime End
             if (StringUtils.isNotEmpty(searchValue.getLastReceivedOnTo())) {
-                criteria = criteria.and("created").between(searchValue.getLastReceivedOnFrom() + " 00.00.00", searchValue.getLastReceivedOnTo() + " 23.59.59");
+                criteria = criteria.and("lastReceivedOn").between(searchValue.getLastReceivedOnFrom() + " 00.00.00", searchValue.getLastReceivedOnTo() + " 23.59.59");
             } else {
-                criteria = criteria.and("created").greaterThanEqual(searchValue.getLastReceivedOnFrom() + " 00.00.00");
+                criteria = criteria.and("lastReceivedOn").greaterThanEqual(searchValue.getLastReceivedOnFrom() + " 00.00.00");
             }
         } else {
             if (StringUtils.isNotEmpty(searchValue.getLastReceivedOnTo())) {
-                criteria = criteria.and("created").lessThanEqual(searchValue.getLastReceivedOnTo() + " 00.00.00");
+                criteria = criteria.and("lastReceivedOn").lessThanEqual(searchValue.getLastReceivedOnTo() + " 00.00.00");
             }
+        }
+        // inventory范围查询条件
+        if (searchValue.getInventoryFrom() != null) {
+            criteria = criteria.and("quantity").greaterThanEqual(searchValue.getInventoryFrom());
+        }
+        if (searchValue.getInventoryTo() != null) {
+            criteria = criteria.and("quantity").lessThanEqual(searchValue.getInventoryTo());
         }
 
 

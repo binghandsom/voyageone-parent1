@@ -125,6 +125,10 @@ public class CmsSearchInfoBean2 implements Serializable {
     private List<String> usFreeTags;
     private String lastReceivedOnFrom;
     private String lastReceivedOnTo;
+    private Integer inventoryFrom;
+    private Integer inventoryTo;
+    private Double pSalePriceFrom;
+    private Double pSalePriceTo;
 
 
     public String getClientMsrpPriceChgFlg() {
@@ -714,5 +718,37 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     public void setLastReceivedOnTo(String lastReceivedOnTo) {
         this.lastReceivedOnTo = lastReceivedOnTo;
+    }
+
+    public Integer getInventoryFrom() {
+        return inventoryFrom;
+    }
+
+    public void setInventoryFrom(Integer inventoryFrom) {
+        this.inventoryFrom = inventoryFrom;
+    }
+
+    public Integer getInventoryTo() {
+        return inventoryTo;
+    }
+
+    public void setInventoryTo(Integer inventoryTo) {
+        this.inventoryTo = inventoryTo;
+    }
+
+    public Double getpSalePriceFrom() {
+        return pSalePriceFrom;
+    }
+
+    public void setpSalePriceFrom(Double pSalePriceFrom) {
+        this.pSalePriceFrom = pSalePriceFrom;
+    }
+
+    public Double getpSalePriceTo() {
+        return pSalePriceTo;
+    }
+
+    public void setpSalePriceTo(Double pSalePriceTo) {
+        this.pSalePriceTo = pSalePriceTo;
     }
 }
