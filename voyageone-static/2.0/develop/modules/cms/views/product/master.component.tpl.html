@@ -187,7 +187,7 @@
                                                 <strong class="main" ng-if="image.isMain == true">
                                                     <span class="label label-danger">&nbsp;M&nbsp;</span>
                                                 </strong>
-                                                <img class="thumb-group"
+                                                <img class="thumb-group" ng-if="image.imageName != null || image.imageName != ''"
                                                      ng-src="http://image.voyageone.com.cn/is/image/sneakerhead/{{image.imageName}}"
                                                      title="{{image.productCode}}">
                                             </a>
@@ -292,7 +292,8 @@
                                                             </ul>
                                                         </div>
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image1}" style="height: 88px">
-                                                            <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image1)}}">
+                                                            <img style="max-height: 80px" class="thumb-group"  ng-if="image.image1 != null || image.image1 != ''"
+                                                                 ng-src="{{$root.imageUrl.replace('%s', image.image1)}}">
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image1,0,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
                                                     </div>
@@ -324,7 +325,8 @@
                                                             </ul>
                                                         </div>
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image6}" style="height: 88px">
-                                                            <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image6)}}">
+                                                            <img style="max-height: 80px" class="thumb-group"  ng-if="image.image6 || image.image6 != ''"
+                                                                 ng-src="{{$root.imageUrl.replace('%s', image.image6)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images6',image.image6,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image6,0,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
@@ -358,7 +360,8 @@
                                                             </ul>
                                                         </div>
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image7}" style="height: 88px">
-                                                            <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image7)}}">
+                                                            <img style="max-height: 80px" class="thumb-group"  ng-if="image.image7 || image.image7 != ''"
+                                                                 ng-src="{{$root.imageUrl.replace('%s', image.image7)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images7',image.image7,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image7,0,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
@@ -394,7 +397,8 @@
                                                             </ul>
                                                         </div>
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image2}" style="height: 88px">
-                                                            <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image2)}}">
+                                                            <img style="max-height: 80px" class="thumb-group"  ng-if="image.image2 || image.image2 != ''"
+                                                                 ng-src="{{$root.imageUrl.replace('%s', image.image2)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images2',image.image2,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image2,0,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
@@ -429,7 +433,8 @@
                                                             </ul>
                                                         </div>
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image3}" style="height: 88px">
-                                                            <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image3)}}">
+                                                            <img style="max-height: 80px" class="thumb-group"  ng-if="image.image3 || image.image3 != ''"
+                                                                 ng-src="{{$root.imageUrl.replace('%s', image.image3)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images3',image.image3,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image3,0,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
@@ -465,7 +470,8 @@
                                                             </ul>
                                                         </div>
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image4}" style="height: 88px">
-                                                            <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image4)}}">
+                                                            <img style="max-height: 80px" class="thumb-group"  ng-if="image.image4 || image.image4 != ''"
+                                                                 ng-src="{{$root.imageUrl.replace('%s', image.image4)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images4',image.image4,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image4,1,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
@@ -500,7 +506,8 @@
                                                             </ul>
                                                         </div>
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image5}" style="height: 88px">
-                                                            <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image5)}}">
+                                                            <img style="max-height: 80px" class="thumb-group"  ng-if="image.image5 || image.image5 != ''"
+                                                                 ng-src="{{$root.imageUrl.replace('%s', image.image5)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images5',image.image5,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image5,1,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
@@ -535,7 +542,8 @@
                                                             </ul>
                                                         </div>
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image8}" style="height: 88px">
-                                                            <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image8)}}">
+                                                            <img style="max-height: 80px" class="thumb-group"  ng-if="image.image8 || image.image8 != ''"
+                                                                 ng-src="{{$root.imageUrl.replace('%s', image.image8)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images8',image.image8,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image8,0,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
@@ -570,7 +578,8 @@
                                                             </ul>
                                                         </div>
                                                         <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image9}" style="height: 88px">
-                                                            <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image9)}}">
+                                                            <img style="max-height: 80px" class="thumb-group"  ng-if="image.image9 || image.image9 != ''"
+                                                                 ng-src="{{$root.imageUrl.replace('%s', image.image9)}}">
                                                             <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images9',image.image9,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                             <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image9,0,$event)"><i class="fa fa-cloud-download "></i></button>
                                                         </a>
