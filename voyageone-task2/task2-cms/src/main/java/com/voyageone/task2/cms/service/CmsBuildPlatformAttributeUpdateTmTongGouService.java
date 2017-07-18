@@ -47,6 +47,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -310,11 +311,13 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
                 logger.error(errorMsg);
                 throw new BusinessException(errorMsg);
             }
+            // 处理标题或描述中不合理的字符
+            String errorWord = getConditionPropValue(sxData, "updateErrorWord", shop);
 
             // tmall.item.update.simpleschema.get (官网同购编辑商品的get接口)
             TbItemSchema tbItemSchema = tbSimpleItemService.getSimpleItem(shop, Long.parseLong(numIId));
 
-            BaseMongoMap<String, String> productInfoMap = getProductInfoMap(mainProductPlatformCart, mainProduct, sxData, shop);
+            BaseMongoMap<String, String> productInfoMap = getProductInfoMap(mainProductPlatformCart, mainProduct, sxData, shop, errorWord);
             // 构造Field列表
             List<InputField> itemFieldList = new ArrayList<>();
             productInfoMap.entrySet().forEach(p -> {
@@ -402,7 +405,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
 
 
     private BaseMongoMap<String, String> getProductInfoMap(CmsBtProductModel_Platform_Cart mainProductPlatformCart,
-                                                           CmsBtProductModel mainProduct, SxData sxData, ShopBean shop) {
+                                                           CmsBtProductModel mainProduct, SxData sxData, ShopBean shop, String errorWord) {
 
         // 表达式解析子
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
@@ -414,33 +417,26 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         Map<String, Object> paramExtends = new HashMap<>();
 
         // 店铺级标题禁用词 20161216 tom START
-        // 先临时这样处理
-        String notAllowList = getConditionPropValue(sxData, "notAllowTitleList", shop);
+        String valTitle = getTitleForTongGou(mainProduct, sxData, errorWord);
 
         // 标题(必填)
         // 商品标题支持英文到中文，韩文到中文的自动翻译，可以在extends字段里面进行设置是否需要翻译
         // 注意：使用测试账号的APPKEY测试时，标题应包含中文"测试请不要拍"
-        String valTitle = "";
-        if (mainProductPlatformCart != null && mainProductPlatformCart.getFields() != null
-                && !StringUtils.isEmpty(mainProductPlatformCart.getFields().getStringAttribute("title"))) {
-            // 画面上输入的platform的fields中的标题 (格式：<value>测试请不要拍 title</value>)
-            valTitle = mainProductPlatformCart.getFields().getStringAttribute("title");
-        } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn"))) {
-            // common中文长标题
-            valTitle = mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn");
-        } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("productNameEn"))) {
-            // common英文长标题
-            valTitle = mainProduct.getCommon().getFields().getStringAttribute("productNameEn");
-        }
+        // 店铺级标题禁用词 20161216 tom END
+        // 官网同购是会自动把超长的字符截掉的， 为了提示运营， 报个错吧 20170509 tom START
+        if (!StringUtils.isEmpty(valTitle)
+                && ChannelConfigEnums.Channel.Coty.equals(shop.getOrder_channel_id()) ) {
+            int titleLength = 0;
 
-        if (!StringUtils.isEmpty(notAllowList)) {
-            if (!StringUtils.isEmpty(valTitle)) {
-                String[] splitWord = notAllowList.split(",");
-                for (String notAllow : splitWord) {
-                    // 直接删掉违禁词
-                    valTitle = valTitle.replaceAll(notAllow, "");
-                }
+            try {
+                titleLength = valTitle.getBytes("GB2312").length;
+            } catch (UnsupportedEncodingException ignored) {
             }
+
+            if (titleLength > 60) {
+                throw new BusinessException(String.format("标题超长:%s", valTitle));
+            }
+
         }
         // 店铺级标题禁用词 20161216 tom END
         productInfoMap.put(PlatformWorkloadAttribute.TITLE.getValue(), valTitle);
@@ -487,13 +483,14 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         // modified by morse.lu 2016/12/23 end
         // 店铺级标题禁用词 20161216 tom START
         // 先临时这样处理
-        if (!StringUtils.isEmpty(notAllowList)) {
+        if (!StringUtils.isEmpty(errorWord)) {
             if (!StringUtils.isEmpty(valDescription)) {
-                String[] splitWord = notAllowList.split(",");
-                for (String notAllow : splitWord) {
-                    // 直接删掉违禁词
-                    valDescription = valDescription.replaceAll(notAllow, "");
-                }
+//                String[] splitWord = notAllowList.split(",");
+//                for (String notAllow : splitWord) {
+//                    // 直接删掉违禁词
+//                    valDescription = valDescription.replaceAll(notAllow, "");
+//                }
+                sxProductService.deleteErrorWord(valTitle, errorWord);
             }
         }
         // 店铺级标题禁用词 20161216 tom END
@@ -655,5 +652,41 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         }
 
         return result;
+    }
+
+    public String getTitleForTongGou(CmsBtProductModel mainProduct, SxData sxData, String errorWord) {
+        // 天猫国际官网同购平台（或USJOI天猫国际官网同购平台）
+        CmsBtProductModel_Platform_Cart mainProductPlatformCart = mainProduct.getPlatform(sxData.getCartId());
+        // 标题(必填)
+        // 商品标题支持英文到中文，韩文到中文的自动翻译，可以在extends字段里面进行设置是否需要翻译
+        // 注意：使用测试账号的APPKEY测试时，标题应包含中文"测试请不要拍"
+        String valTitle = "";
+        if (mainProductPlatformCart != null && mainProductPlatformCart.getFields() != null
+                && !StringUtils.isEmpty(mainProductPlatformCart.getFields().getStringAttribute("title"))) {
+            // 画面上输入的platform的fields中的标题 (格式：<value>测试请不要拍 title</value>)
+            valTitle = mainProductPlatformCart.getFields().getStringAttribute("title");
+        } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn"))) {
+            // common中文长标题
+            valTitle = mainProduct.getCommon().getFields().getStringAttribute("originalTitleCn");
+        } else if (!StringUtils.isEmpty(mainProduct.getCommon().getFields().getStringAttribute("productNameEn"))) {
+            // common英文长标题
+            valTitle = mainProduct.getCommon().getFields().getStringAttribute("productNameEn");
+        }
+//        productInfoMap.put("title", "测试请不要拍 " + valTitle);
+
+        // 店铺级标题禁用词 20161216 tom START
+//        // 先临时这样处理
+//        String notAllowList = getConditionPropValue(sxData, "notAllowTitleList", shopProp);
+        if (!StringUtils.isEmpty(errorWord)) {
+            if (!StringUtils.isEmpty(valTitle)) {
+//                String[] splitWord = notAllowList.split(",");
+//                for (String notAllow : splitWord) {
+//                    // 直接删掉违禁词
+//                    valTitle = valTitle.replaceAll(notAllow, "");
+//                }
+                valTitle = sxProductService.deleteErrorWord(valTitle, errorWord);
+            }
+        }
+        return valTitle;
     }
 }
