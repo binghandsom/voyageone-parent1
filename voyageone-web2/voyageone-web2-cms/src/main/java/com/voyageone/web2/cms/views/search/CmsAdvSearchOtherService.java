@@ -517,20 +517,25 @@ public class CmsAdvSearchOtherService extends BaseViewService {
         return dataSumList;
     }
     public String updatePrice(Map<String,Object> paraMap,UserSessionBean user) {
+        CmsBtProductUpdatePriceMQMessageBody MqMap = new CmsBtProductUpdatePriceMQMessageBody();
         if (paraMap != null){
             String selAll = (String) paraMap.get("selAll");
+            List<String> codeList = (List<String>) paraMap.get("codeList");
             if ("true".equals(selAll)){
                 //勾选了全部,需要通过检索条件,查询出所有信息
                 Map<String,Object> map = (Map) paraMap.get("queryMap");
                 CmsSearchInfoBean2 queryParams = BeanUtils.toModel(map, CmsSearchInfoBean2.class);
                 CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId(), user.getUserId(), user.getUserName());
-
                 List<String> productCodeList = cmsProductCodeListBean.getProductCodeList();
+                MqMap.setProductCodes(productCodeList);
+            }else {
+                //未勾选全部
+
             }
 
         }
 
-        CmsBtProductUpdatePriceMQMessageBody MqMap = new CmsBtProductUpdatePriceMQMessageBody();
+
 
         return null;
     }
