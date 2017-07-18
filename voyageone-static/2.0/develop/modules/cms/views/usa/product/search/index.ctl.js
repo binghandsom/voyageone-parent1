@@ -3,38 +3,47 @@
  * @author piao
  */
 define([
-    'cms',
-    'modules/cms/directives/navBar.directive'
-], function (cms) {
+           'cms',
+           'modules/cms/directives/navBar.directive'
+       ], function (cms) {
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor(popups,advanceSearch) {
+        constructor(popups, advanceSearch) {
             let self = this;
 
             self.popups = popups;
             self.advanceSearch = advanceSearch;
 
             self.pageOption = {curr: 1, total: 0, size: 10, fetch: self.search},
-            self.searchInfo = {};
+                self.searchInfo = {};
             self.searchResult = {
-                productList:[]
+                productList: []
             };
 
             self.masterData = {
-                platforms:[],
-                brandList:[]
+                platforms: [],
+                usPlatforms: [],
+                brandList: []
             };
         }
 
-        init(){
+        init() {
             let self = this;
             // 查询masterData,包括platforms、brandList
             this.advanceSearch.init().then(res => {
-               if (res.data) {
-                    self.masterData.platforms = res.data.platforms;
+                if (res.data) {
+                    let channelPlatforms = res.data.platforms;
+                    self.masterData.platforms = _.filter(channelPlatforms, cartObj => {
+                        let cartId = parseInt(cartObj.value);
+                        return cartId >= 20 && cartId < 928;
+                    });
+                    self.masterData.usPlatforms = _.filter(channelPlatforms, cartObj => {
+                        let cartId = parseInt(cartObj.value);
+                        return cartId > 0 && cartId < 20;
+                    });
                     self.masterData.brandList = res.data.brandList;
-               }
+                }
             });
             this.search();
         }
@@ -58,7 +67,7 @@ define([
         }
 
         // 自定义列弹出
-        popCustomAttributes(){
+        popCustomAttributes() {
             let self = this;
 
             self.popups.openCustomAttributes().then(res => {
@@ -74,17 +83,17 @@ define([
             });
         }
 
-        popUsFreeTag(){
+        popUsFreeTag() {
             let self = this;
 
             self.popups.openUsFreeTag({
-                orgFlg: 2,
-                tagTypeSel: '4',
-                cartId: 23,
-                productIds: null,
-                selAllFlg: 0,
-                searchInfo: self.searchInfoBefo
-            }).then(res => {
+                                          orgFlg: 2,
+                                          tagTypeSel: '4',
+                                          cartId: 23,
+                                          productIds: null,
+                                          selAllFlg: 0,
+                                          searchInfo: self.searchInfoBefo
+                                      }).then(res => {
 
             })
         }
@@ -92,24 +101,24 @@ define([
         /**
          * @description 类目pop框
          */
-        popCategory(){
+        popCategory() {
             let self = this;
 
-            if(Number(self.searchInfo.cartId) === 5 ){
+            if (Number(self.searchInfo.cartId) === 5) {
                 //只有亚马逊显示类目
-                self.popups.openAmazonCategory({cartId:5}).then(res => {
+                self.popups.openAmazonCategory({cartId: 5}).then(res => {
 
                 });
-            }else{
+            } else {
                 //sneakerhead 显示店铺内分类
-                self.popups.openUsCategory({cartId:self.searchInfo.cartId,from:''}).then(res => {
+                self.popups.openUsCategory({cartId: self.searchInfo.cartId, from: ''}).then(res => {
 
                 });
             }
         }
 
-        canCategory(){
-            const arr = ['1','12','6','11','5'];
+        canCategory() {
+            const arr = ['1', '12', '6', '11', '5'];
 
             return arr.indexOf(this.searchInfo.cartId) < 0;
         }

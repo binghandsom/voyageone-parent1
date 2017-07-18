@@ -124,9 +124,12 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label query-title">Platform</label>
                                 <div class="col-sm-8 checkbox">
-                                    <label ng-repeat="platform in ctrl.masterData.platforms">
+                                    <div ng-repeat="platform in ctrl.masterData.usPlatforms">
                                         <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;&nbsp;{{platform.name}}
-                                    </label>
+                                    </div>
+                                    <div ng-repeat="platform in ctrl.masterData.platforms">
+                                        <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;&nbsp;{{platform.add_name2}}
+                                    </div>
                                 </div>
                             </div>
                             <div class="form-horizontal">
