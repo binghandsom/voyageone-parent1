@@ -328,13 +328,10 @@ public class UsaCustomColumnService extends BaseService {
         // 取得已选择Common Attributes
         colMap2 = commonPropService.getCustColumnsByUserId(userId, "usa_cms_prod_cust_col_common_attributes");
         if (colMap2 == null || colMap2.isEmpty()) {
-            rsMap.put("custAttrList", new String[]{});
-            rsMap.put("commList", new String[]{});
+            rsMap.put("selCommonProps", new String[]{});
         } else {
-            String custAttrStr = StringUtils.trimToEmpty((String) colMap2.get("cfg_val1"));
-            String commStr = StringUtils.trimToEmpty((String) colMap2.get("cfg_val2"));
-            rsMap.put("custAttrList", custAttrStr.split(","));
-            rsMap.put("commList", commStr.split(","));
+            String custAttrStr = StringUtils.trimToEmpty((String) colMap2.get("cfg_val2"));
+            rsMap.put("selCommonProps", custAttrStr.split(","));
         }
 
         // Platform  Sales
@@ -342,13 +339,13 @@ public class UsaCustomColumnService extends BaseService {
         // 获取已勾选Platform Sales
         colMap2 = commonPropService.getCustColumnsByUserId(userId, "usa_cms_prod_cust_col_platform_sales");
         if (colMap2 == null || colMap2.isEmpty()) {
-            rsMap.put("platformSales", new ArrayList<Map<String, String>>());
+            rsMap.put("selPlatformSales", new ArrayList<Map<String, String>>());
         } else {
             for (Map.Entry<String, Object> entry : colMap2.entrySet()) {
                 colMap2.put(entry.getKey(), JacksonUtil.jsonToMap((String) entry.getValue()));
             }
 
-            rsMap.put("selfPlatformSales", colMap2);
+            rsMap.put("selPlatformSales", colMap2);
         }
         return rsMap;
     }
@@ -453,17 +450,11 @@ public class UsaCustomColumnService extends BaseService {
         List<Map<String, String>> platformsSales = new ArrayList<>();
         for (TypeChannelBean cartObj : cartList) {
             int cartId = NumberUtils.toInt(cartObj.getValue(), -1);
-            if ((cartId == 1 && CartType.FEED.getShortName().equals(cartObj.getAdd_name2())) || cartId == -1) {
-                continue;
-            }
-            String cartName = cartObj.getName();
-            if (cartId == 0) {
-                cartName = "";
-            }
+            if (cartId <= 0 || cartId >=20) continue;
 
             Map<String, String> cartSaleMap = new HashMap<>();
             cartSaleMap.put("cartId", cartObj.getValue());
-            cartSaleMap.replace("cartName", cartName);
+            cartSaleMap.put("cartName", cartObj.getName());
             platformsSales.add(cartSaleMap);
         }
         return platformsSales;

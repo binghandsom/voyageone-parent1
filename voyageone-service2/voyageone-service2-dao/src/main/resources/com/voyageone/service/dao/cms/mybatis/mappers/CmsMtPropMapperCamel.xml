@@ -211,16 +211,12 @@
         </trim>
     </insert>
 
-    <select id="selectByType" parameterType="HashMap" resultType="java.util.Map">
+    <select id="selectByType" parameterType="java.lang.Integer" resultType="java.util.Map">
         select
         prop_id AS propId,
         prop_name AS propName
         from cms_mt_prop
-        <where>
-            <if test="type!=null">
-                AND type = #{type,jdbcType=INTEGER}
-            </if>
-        </where>
+        WHERE type=#{type,jdbcType=INTEGER}
         <!--where-->
         <!--<if test="selType == 1" >-->
             <!--AND (prop_id != 'code'-->
