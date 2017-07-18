@@ -67,6 +67,14 @@ define([
             })
         }
 
+        popBatchPrice() {
+            let self = this;
+
+            self.popups.openBatchPrice().then(res => {
+
+            });
+        }
+
     });
 
 });
