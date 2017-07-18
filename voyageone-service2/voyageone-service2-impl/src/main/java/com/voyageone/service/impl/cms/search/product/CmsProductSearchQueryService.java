@@ -479,6 +479,25 @@ public class CmsProductSearchQueryService extends BaseService {
                     .and("P27.pNumIId").in(Arrays.asList("", null));
         }
 
+        // 获取USA free tag查询条件
+        if (searchValue.getUsFreeTags() != null && searchValue.getUsFreeTags().size() > 0) {
+            criteria = criteria.and("usFreeTags").in(searchValue.getUsFreeTags());
+        }
+
+        // lastReceivedOn查询条件
+        if (StringUtils.isNotEmpty(searchValue.getLastReceivedOnFrom())) {
+            // 获取createdTime End
+            if (StringUtils.isNotEmpty(searchValue.getLastReceivedOnTo())) {
+                criteria = criteria.and("created").between(searchValue.getLastReceivedOnFrom() + " 00.00.00", searchValue.getLastReceivedOnTo() + " 23.59.59");
+            } else {
+                criteria = criteria.and("created").greaterThanEqual(searchValue.getLastReceivedOnFrom() + " 00.00.00");
+            }
+        } else {
+            if (StringUtils.isNotEmpty(searchValue.getLastReceivedOnTo())) {
+                criteria = criteria.and("created").lessThanEqual(searchValue.getLastReceivedOnTo() + " 00.00.00");
+            }
+        }
+
 
         SimpleQueryBean query = new SimpleQueryBean(criteria);
 

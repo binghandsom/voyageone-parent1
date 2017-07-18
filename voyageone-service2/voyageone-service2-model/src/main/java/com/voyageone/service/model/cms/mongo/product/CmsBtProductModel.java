@@ -264,6 +264,14 @@ public class CmsBtProductModel extends ChannelPartitionModel implements Cloneabl
         this.freeTags = freeTags;
     }
 
+    public List<String> getUsFreeTags() {
+        return usFreeTags;
+    }
+
+    public void setUsFreeTags(List<String> usFreeTags) {
+        this.usFreeTags = usFreeTags;
+    }
+
     /**
      * 取得本商品销售平台列表
      * 注意: 此方法为逻辑取得，不表示CmsBtProductModel含有"cartIdList"这样一个字段
@@ -278,13 +286,5 @@ public class CmsBtProductModel extends ChannelPartitionModel implements Cloneabl
     @Override
     public CmsBtProductModel clone() throws CloneNotSupportedException {
         return (CmsBtProductModel)super.clone();
-    }
-
-    public List<String> getUsFreeTags() {
-        return usFreeTags;
-    }
-
-    public void setUsFreeTags(List<String> usFreeTags) {
-        this.usFreeTags = usFreeTags;
     }
 }

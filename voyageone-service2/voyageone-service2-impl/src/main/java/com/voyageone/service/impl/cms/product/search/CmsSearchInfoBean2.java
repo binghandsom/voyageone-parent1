@@ -119,6 +119,14 @@ public class CmsSearchInfoBean2 implements Serializable {
     // 客户建议售价状态
     private String clientMsrpPriceChgFlg;
 
+    // =============================================================================================
+    // ===============================USA CMS 新增查询条件============================================
+    // =============================================================================================
+    private List<String> usFreeTags;
+    private String lastReceivedOnFrom;
+    private String lastReceivedOnTo;
+
+
     public String getClientMsrpPriceChgFlg() {
         return clientMsrpPriceChgFlg;
     }
@@ -682,5 +690,29 @@ public class CmsSearchInfoBean2 implements Serializable {
 
     public void setpCatPathType(Integer pCatPathType) {
         this.pCatPathType = pCatPathType;
+    }
+
+    public List<String> getUsFreeTags() {
+        return usFreeTags;
+    }
+
+    public void setUsFreeTags(List<String> usFreeTags) {
+        this.usFreeTags = usFreeTags;
+    }
+
+    public String getLastReceivedOnFrom() {
+        return lastReceivedOnFrom;
+    }
+
+    public void setLastReceivedOnFrom(String lastReceivedOnFrom) {
+        this.lastReceivedOnFrom = lastReceivedOnFrom;
+    }
+
+    public String getLastReceivedOnTo() {
+        return lastReceivedOnTo;
+    }
+
+    public void setLastReceivedOnTo(String lastReceivedOnTo) {
+        this.lastReceivedOnTo = lastReceivedOnTo;
     }
 }

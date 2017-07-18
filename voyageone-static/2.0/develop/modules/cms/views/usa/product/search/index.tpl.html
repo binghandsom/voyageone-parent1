@@ -21,9 +21,7 @@
                                 <label class="col-sm-3 control-label query-title text-wrap">SKU/Barcode/Code/Model</label>
                                 <div class="col-sm-8">
                                     <textarea class="form-control inherited no-resize" rows="3" ng-model="vm.searchInfo.codeList" ></textarea>
-                                    <div class="text-warnings" style="padding-left:0px">
-                                        <i class="icon fa fa-bell-o"></i>&nbsp;多项查询,精确查询，包括:款号Model(多项换行分割),产品Code(多项换行分割),产品Sku(多项换行分割)
-                                    </div>
+
                                 </div>
                             </div>
                             <div class="form-horizontal">
@@ -355,24 +353,40 @@
         </div>
     </div>
 
-    <sticky top-fix="-100" style="position: absolute; top: 380px; right: 47px;" drag>
-        <nav class="bs-docs-sidebar">
-            <h3 drag-handle>导航栏</h3>
-            <ul class="nav bs-docs-sidenav">
-                <li>
-                    <a href="javascript:void(0)" ng-click="ctrl.pageAnchor('common',1000)">Price</a>
-                </li>
-                <li ng-if="ctrl.vm.platform.schemaFields.item">
-                    <a href="javascript:void(0)" ng-click="ctrl.pageAnchor('item',1000)">Tag</a>
-                </li>
-                <li ng-if="ctrl.vm.platform.schemaFields.product">
-                    <a href="javascript:void(0)" ng-click="ctrl.pageAnchor('product',1000)">SneakerHead</a>
-                </li>
-                <li>
-                    <a href="javascript:void(0)" ng-click="ctrl.pageAnchor('sku',1000)">Amazon</a>
-                </li>
-            </ul>
-        </nav>
-    </sticky>
+    <nav-bar>
+        <div class="list-group">
+            <button type="button" class="list-group-item text-left" style="width: 100%" ng-click="ctrl.popCustomAttributes()">
+                <i class="fa fa-arrow-circle-right"></i>&nbsp;Custom Columns
+            </button>
+            <button type="button" class="list-group-item text-left" style="width: 100%">
+                <i class="fa fa-arrow-circle-right"></i>&nbsp;Price
+            </button>
+            <button type="button" class="list-group-item text-left" style="width: 100%">
+                <i class="fa fa-arrow-circle-right"></i>&nbsp;tag
+            </button>
+            <button type="button" class="list-group-item text-left" style="width: 100%">
+                <i class="fa fa-arrow-circle-right"></i>&nbsp;SneakerHead
+            </button>
+            <div uib-dropdown>
+                <button type="button" class="list-group-item text-left"  style="width: 100%" uib-dropdown-toggle>
+                    <i class="fa fa-arrow-circle-right"></i>&nbsp;Amazon<span class="caret"></span>
+                </button>
+                <ul uib-dropdown-menu style="margin-left: 17px">
+                    <li>
+                        <a href="javascript:void(0)" ng-click="exportFile(2)">Group级导出</a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" ng-click="exportFile(1)">Code级导出</a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" ng-click="exportFile(3)">SKU级导出</a>
+                    </li>
+                    <li>
+                        <a href="javascript:void(0)" ng-click="exportFile(5)">报备文件导出</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav-bar>
 
 </div>

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtPropDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtPropModel" />
+    <sql id="Base_Column_List" >
+        `id`, `prop_id`, `prop_name`, `type`, `lang`, `created`, `creater`, `modified`, `modifier`
+    </sql>
+
+    <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_prop
+        where `id` = #{id,jdbcType=INTEGER}
+    </select>
+
+    <update id="update" parameterType="com.voyageone.service.model.cms.CmsMtPropModel" >
+        update cms_mt_prop
+        <set >
+            <if test="propId != null" >
+                `prop_id` = #{propId,jdbcType=VARCHAR},
+            </if>
+            <if test="propName != null" >
+                `prop_name` = #{propName,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null" >
+                `type` = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="lang != null" >
+                `lang` = #{lang,jdbcType=VARCHAR},
+            </if>
+            <if test="created != null" >
+                `created` = #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                `creater` = #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified != null" >
+                `modified` = #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modified == null" >
+                `modified` = now(),
+            </if>
+            <if test="modifier != null" >
+                `modifier` = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where `id` = #{id,jdbcType=INTEGER}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer" >
+        delete from cms_mt_prop
+        where `id` = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <select id="selectOne" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_prop
+        <where >
+            <if test="propId != null" >
+                and `prop_id` = #{propId,jdbcType=VARCHAR}
+            </if>
+            <if test="propName != null" >
+                and `prop_name` = #{propName,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null" >
+                and `type` = #{type,jdbcType=INTEGER}
+            </if>
+            <if test="lang != null" >
+                and `lang` = #{lang,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectList" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from cms_mt_prop
+        <where >
+            <if test="propId != null" >
+                and `prop_id` = #{propId,jdbcType=VARCHAR}
+            </if>
+            <if test="propName != null" >
+                and `prop_name` = #{propName,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null" >
+                and `type` = #{type,jdbcType=INTEGER}
+            </if>
+            <if test="lang != null" >
+                and `lang` = #{lang,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" >
+        select count(*) from cms_mt_prop
+        <where >
+            <if test="propId != null" >
+                and `prop_id` = #{propId,jdbcType=VARCHAR}
+            </if>
+            <if test="propName != null" >
+                and `prop_name` = #{propName,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null" >
+                and `type` = #{type,jdbcType=INTEGER}
+            </if>
+            <if test="lang != null" >
+                and `lang` = #{lang,jdbcType=VARCHAR}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtPropModel" useGeneratedKeys="true" keyProperty="id" >
+        insert into cms_mt_prop
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="propId != null" >
+                `prop_id`,
+            </if>
+            <if test="propName != null" >
+                `prop_name`,
+            </if>
+            <if test="type != null" >
+                `type`,
+            </if>
+            <if test="lang != null" >
+                `lang`,
+            </if>
+            `created`,
+            <if test="creater != null" >
+                `creater`,
+            </if>
+            `modified`,
+            <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="propId != null" >
+                #{propId,jdbcType=VARCHAR},
+            </if>
+            <if test="propName != null" >
+                #{propName,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null" >
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="lang != null" >
+                #{lang,jdbcType=VARCHAR},
+            </if>
+            <if test="created == null" >
+                now(),
+            </if>
+            <if test="created != null" >
+                #{created,jdbcType=TIMESTAMP},
+            </if>
+            <if test="creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+            <if test="modified == null" >
+                now(),
+            </if>
+            <if test="modified != null" >
+                #{modified,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifier != null" >
+                #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="selectByType" parameterType="HashMap" resultType="java.util.Map">
+        select
+        prop_id AS propId,
+        prop_name AS propName
+        from cms_mt_prop
+        <where>
+            <if test="type!=null">
+                AND type = #{type,jdbcType=INTEGER}
+            </if>
+        </where>
+        <!--where-->
+        <!--<if test="selType == 1" >-->
+            <!--AND (prop_id != 'code'-->
+            <!--AND prop_id != 'priceMsrpSt' AND prop_id != 'priceMsrpEd' AND prop_id != 'priceRetailSt' AND prop_id != 'priceRetailEd' AND prop_id != 'priceSaleSt' AND prop_id != 'priceSaleEd')-->
+        <!--</if>-->
+        <!--<if test="selType == 2" >-->
+            <!--AND (prop_id != 'code' AND prop_id != 'originalTitleCn'-->
+            <!--AND prop_id != 'priceMsrpSt' AND prop_id != 'priceMsrpEd' AND prop_id != 'priceRetailSt' AND prop_id != 'priceRetailEd' AND prop_id != 'priceSaleSt' AND prop_id != 'priceSaleEd')-->
+        <!--</if>-->
+        <!--<if test="selType == 3" >-->
+            <!--AND (prop_id != 'priceMsrpSt' AND prop_id != 'priceMsrpEd' AND prop_id != 'priceRetailSt' AND prop_id != 'priceRetailEd' AND prop_id != 'priceSaleSt' AND prop_id != 'priceSaleEd')-->
+        <!--</if>-->
+        <!--order by creater-->
+    </select>
+
+</mapper>

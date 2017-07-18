@@ -3,17 +3,28 @@
  * @author piao
  */
 define([
-    'cms'
+    'cms',
+    'modules/cms/directives/navBar.directive'
 ], function (cms) {
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor() {
+        constructor(popups) {
+            let self = this;
 
+            self.popups = popups;
         }
 
         init(){
 
+        }
+
+        popCustomAttributes(){
+            let self = this;
+
+            self.popups.openCustomAttributes().then(res => {
+
+            })
         }
 
     });
