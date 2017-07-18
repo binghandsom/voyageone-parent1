@@ -484,7 +484,7 @@ vpagination button.btn-default {
     box-shadow: 2px 2px 2px #ededed;
     border-radius: 6px;
     position: fixed;
-    top: 50%;
+    top: 40%;
     right: -10px;
     z-index: 999;
 }
