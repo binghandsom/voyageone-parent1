@@ -23,15 +23,12 @@ import com.voyageone.web2.cms.views.search.CmsAdvSearchCustColumnService;
 import com.voyageone.web2.cms.views.search.CmsAdvSearchOtherService;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -78,12 +75,9 @@ public class UsaAdvanceSearchController extends CmsController {
     @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.INIT)
     public AjaxResponse init() throws IOException {
         UserSessionBean userInfo = getUser();
-        CmsSessionBean cmsSession = getCmsSession();
-//        usaCustomColumnService.getUserCustColumns(userInfo.getSelChannelId(), userInfo.getUserId(), cmsSession, getLang());
-//        Map<String, Object> resultMap = usaCustomColumnService.getMasterData(userInfo, cmsSession, getLang());
-//        resultMap.put("channelId", userInfo.getSelChannelId());
-
         Map<String, Object> resultMap = new HashMap<>();
+        // 用户已勾选自定义列
+        resultMap.putAll(usaCustomColumnService.getUserCustomColumns(userInfo.getSelChannelId(), userInfo.getUserId(), getLang()));
         // 品牌列表
         resultMap.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), getLang()));
         // 平台
@@ -110,8 +104,8 @@ public class UsaAdvanceSearchController extends CmsController {
     public AjaxResponse saveCustomColumns(@RequestBody Map<String, Object> params) {
         UserSessionBean userInfo = getUser();
         usaCustomColumnService.saveUserCustomColumns(userInfo.getSelChannelId(), userInfo.getUserId(), userInfo.getUserName(), params);
-        // 更新CmsSession中用户自定义列
-        return success("");
+        // 返回用户最新勾选的自定义列
+        return success(usaCustomColumnService.getUserCustomColumns(userInfo.getSelChannelId(), userInfo.getUserId(), getLang()));
     }
 
 

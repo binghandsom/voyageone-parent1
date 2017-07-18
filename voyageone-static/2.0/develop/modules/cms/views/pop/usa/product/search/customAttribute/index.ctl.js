@@ -25,7 +25,6 @@ define([
             let self = this;
             this.advanceSearch.getCustomColumns().then(res => {
                if (res.data) {
-                   console.log(res.data);
                    self.commonProps = res.data.commonProps == null ? [] : res.data.commonProps;
                    self.selCommonProps = res.data.selCommonProps == null ? [] : res.data.selCommonProps;
                    self.platformAttributes = res.data.platformAttributes == null ? [] : res.data.platformAttributes;
@@ -95,7 +94,7 @@ define([
                 selPlatformSales:selPlatformSales
             };
             self.advanceSearch.saveCustomColumns(params).then(res => {
-                self.$modalInstance.close();
+                self.$modalInstance.close(res.data);
                 self.notify.success("save success");
             });
         }

@@ -94,21 +94,22 @@
                             </div>
 
                             <div class="form-group">
-                                <div class="col-sm-3">
-                                    <select  class="form-control" chosen>
-                                        <option value="">Total Qty</option>
-                                        <option value="">LA Qty</option>
-                                    </select>
-                                </div>
+                                <!--<div class="col-sm-3">-->
+                                    <!--<select  class="form-control" chosen>-->
+                                        <!--<option value="">Total Qty</option>-->
+                                        <!--<option value="">LA Qty</option>-->
+                                    <!--</select>-->
+                                <!--</div>-->
                                 <div class="col-sm-9">
+                                    <label class="col-sm-3 control-label query-title">Total Qty</label>
                                     <div class="col-sm-5">
-                                        <input type="text" class="form-control">
+                                        <input type="number" min="1" max="ctrl.searchInfo.inventoryTo" class="form-control" ng-model="ctrl.searchInfo.inventoryFrom">
                                     </div>
                                     <div class="col-sm-1 text-center">
                                         ~
                                     </div>
                                     <div class="col-sm-5">
-                                        <input type="text" class="form-control">
+                                        <input type="number" max="ctrl.searchInfo.inventoryFrom" class="form-control" ng-model="ctrl.searchInfo.inventoryTo">
                                     </div>
                                 </div>
                             </div>
@@ -195,13 +196,13 @@
                                 <lable class="col-sm-3 control-label query-title">Sale Price</lable>
                                 <div class="col-sm-9 form-inline">
                                     <div class="col-sm-5 input-group">
-                                        <input type="text" class="form-control">
+                                        <input type="number" class="form-control" ng-model="ctrl.searchInfo.pSalePriceFrom">
                                     </div>
                                     <!--<div class="col-sm-1 text-center">-->
                                         &nbsp;~&nbsp;
                                     <!--</div>-->
                                     <div class="col-sm-5 input-group">
-                                        <input type="text" class="form-control">
+                                        <input type="text" class="form-control" ng-model="ctrl.searchInfo.pSalePriceTo">
                                     </div>
                                 </div>
                             </div>
@@ -215,7 +216,7 @@
         </uib-accordion-group>
     </uib-accordion>
     <div class="form-group text-center">
-        <button class="btn btn-default ng-binding" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;Clear</button>
+        <button class="btn btn-default ng-binding" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;Clear</button>
         <button class="btn btn-vo ng-binding" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;Search</button>
     </div>
 
