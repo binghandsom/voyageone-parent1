@@ -84,6 +84,7 @@ define([
             self.advanceSearch.search(searchInfo).then(res => {
                 if (res.data) {
                     self.searchResult.productList = res.data.productList;
+                    self.pageOption.total = res.data.productListTotal;
                 }
             });
         }
