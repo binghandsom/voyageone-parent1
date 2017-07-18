@@ -33,6 +33,7 @@ public class CmsProductSearchPlatformModel {
     Double pPriceSaleSt;
     String lock;
     String isSale;
+    String pPublishTime;
 
     public String getpCatId() {
         return pCatId;
@@ -224,5 +225,13 @@ public class CmsProductSearchPlatformModel {
 
     public void setIsSale(String isSale) {
         this.isSale = isSale;
+    }
+
+    public String getpPublishTime() {
+        return pPublishTime;
+    }
+
+    public void setpPublishTime(String pPublishTime) {
+        this.pPublishTime = pPublishTime;
     }
 }
