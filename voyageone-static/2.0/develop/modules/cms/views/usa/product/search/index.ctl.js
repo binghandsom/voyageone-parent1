@@ -24,7 +24,12 @@ define([
             self.masterData = {
                 platforms: [],
                 usPlatforms: [],
-                brandList: []
+                brandList: [],
+                platformStatus:[
+                    {status:'Pending',display:'Pending'},
+                    {status:'OnSale', display:'List'},
+                    {status:'InStock', display:'Delist'}
+                ]
             };
             self.customColumns = {
                 selCommonProps:[],
@@ -67,8 +72,14 @@ define([
                 let codeList = searchInfo.codeList.split("\n");
                 searchInfo.codeList = codeList;
             }
+            // 处理平台状态
+            let platformStatusObj = _.pick(searchInfo.platformStatus, function (value, key, object) {
+                return value;
+            });
+            searchInfo.platformStatus = _.keys(platformStatusObj);
 
             _.extend(searchInfo, self.pageOption);
+
 
             self.advanceSearch.search(searchInfo).then(res => {
                 if (res.data) {

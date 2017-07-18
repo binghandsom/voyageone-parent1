@@ -178,7 +178,7 @@ public class CmsProductSearchQueryService extends BaseService {
         int cartId = searchValue.getCartId();
 
         // 只有选中具体的某个平台的时候,和platform相关的检索才有效
-        if (cartId > 1) {
+        if (cartId > 0) {
             // 设置platform检索条件
             // 获取platform/lock
             if (StringUtils.isNotEmpty(searchValue.getpLockFlg())) {
