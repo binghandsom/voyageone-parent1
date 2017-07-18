@@ -132,7 +132,6 @@ public class UsaAdvanceSearchController extends CmsController {
         CmsSessionBean cmsSession = getCmsSession();
         cmsSession.putAttribute("_adv_search_params", params);
 
-        params.setProductPageSize(10);
         int endIdx = params.getProductPageSize();
         // 从Solr中统计满足条件的Product总数和当前页商品CodeList
         CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), userInfo.getUserId(), userInfo.getUserName());

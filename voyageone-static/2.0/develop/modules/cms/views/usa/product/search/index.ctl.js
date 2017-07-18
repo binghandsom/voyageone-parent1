@@ -15,7 +15,9 @@ define([
             self.popups = popups;
             self.advanceSearch = advanceSearch;
 
-            self.pageOption = {curr: 1, total: 0, size: 10, fetch: self.search};
+            self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
+                self.search();
+            }};
             self.searchInfo = {}; // 检索条件
             self.searchResult = {
                 productList: []
@@ -67,19 +69,24 @@ define([
         search() {
             let self = this;
             let searchInfo = angular.copy(self.searchInfo);
+            if (!searchInfo) {
+                searchInfo = {};
+            }
             // codeList 换行符分割
             if (searchInfo.codeList) {
                 let codeList = searchInfo.codeList.split("\n");
                 searchInfo.codeList = codeList;
             }
             // 处理平台状态
-            let platformStatusObj = _.pick(searchInfo.platformStatus, function (value, key, object) {
-                return value;
-            });
-            searchInfo.platformStatus = _.keys(platformStatusObj);
+            if (searchInfo.platformStatus) {
+                let platformStatusObj = _.pick(searchInfo.platformStatus, function (value, key, object) {
+                    return value;
+                });
+                searchInfo.platformStatus = _.keys(platformStatusObj);
+            }
 
-            _.extend(searchInfo, self.pageOption);
-
+            // 分页参数处理
+            _.extend(searchInfo, {productPageNum:self.pageOption.curr, productPageSize:self.pageOption.size});
 
             self.advanceSearch.search(searchInfo).then(res => {
                 if (res.data) {
@@ -135,6 +142,7 @@ define([
          */
         popCategory() {
             let self = this;
+            console.log(self.searchInfo.cartId);
 
             if (Number(self.searchInfo.cartId) === 5) {
                 //只有亚马逊显示类目
