@@ -23,7 +23,29 @@ public class CmsMtCommonSchemaDao extends BaseMongoDao<CmsMtCommonSchemaModel> {
      */
     public CmsMtCommonSchemaModel selectComSchema() {
 
-        JSONObject comSchmeaJson = mongoTemplate.findOne(collectionName);
+
+        JSONObject comSchmeaJson = mongoTemplate.findOne("{\"type\":\"cn\"}",collectionName);
+
+        CmsMtCommonSchemaModel comSchemaModel = null;
+
+        if (comSchmeaJson != null) {
+
+            comSchemaModel = new CmsMtCommonSchemaModel();
+
+            List<Map<String, Object>> fieldList = (List<Map<String, Object>>) comSchmeaJson.get("fields");
+
+            List<Field> fields = SchemaJsonReader.readJsonForList(fieldList);
+
+            comSchemaModel.setFields(fields);
+        }
+
+        return comSchemaModel;
+    }
+
+    public CmsMtCommonSchemaModel selectUsComSchema() {
+
+
+        JSONObject comSchmeaJson = mongoTemplate.findOne("{\"type\":\"en\"}",collectionName);
 
         CmsMtCommonSchemaModel comSchemaModel = null;
 

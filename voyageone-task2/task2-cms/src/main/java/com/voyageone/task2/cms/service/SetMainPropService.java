@@ -1171,6 +1171,15 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
         private void doCreateUsaPlatform(CmsBtProductModel cmsProduct, CmsBtFeedInfoModel feed) {
             Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = new HashMap<>();
+
+            cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("colorMap", feed.getAttribute().get("colorMap"));
+            cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("urlkey", feed.getAttribute().get("urlkey"));
+            cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("abstract", feed.getAttribute().get("abstract"));
+            cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("accessory", feed.getAttribute().get("accessory"));
+            cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("googleCategory", feed.getAttribute().get("googleCategory"));
+            cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("googleDepartment", feed.getAttribute().get("googleDepartment"));
+            cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("priceGrabberCategory", feed.getAttribute().get("priceGrabberCategory"));
+
             feed.setCategory(feed.getCategory().replaceAll("-",">").replaceAll("－","-"));
             if(!StringUtil.isEmpty(cmsProduct.getFeed().getCatPath())){
                 cmsProduct.getFeed().setCatPath(cmsProduct.getFeed().getCatPath().replaceAll(">","-"));

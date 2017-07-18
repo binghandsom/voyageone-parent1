@@ -148,6 +148,26 @@ public class CmsBtProductModel extends ChannelPartitionModel implements Cloneabl
         return platform;
     }
 
+    public CmsBtProductModel_Platform_Cart getUsPlatform(Integer cartId) {
+        if (usPlatforms == null) {
+            return null;
+        }
+        CmsBtProductModel_Platform_Cart platform = usPlatforms.get(PLATFORM_CART_PRE + cartId);
+        if (platform != null && platform.getSkus() != null) {
+            platform.getSkus().forEach(sku -> {
+                Object isSale = sku.get(CmsBtProductConstants.Platform_SKU_COM.isSale.name());
+                if (isSale != null) {
+                    if (isSale.toString().equalsIgnoreCase("true") || isSale.toString().equalsIgnoreCase("1")) {
+                        sku.setAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), true);
+                    } else {
+                        sku.setAttribute(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), false);
+                    }
+                }
+            });
+        }
+        return platform;
+    }
+
     /**
      * 根据平台Id设置对应的平台数据信息
      *

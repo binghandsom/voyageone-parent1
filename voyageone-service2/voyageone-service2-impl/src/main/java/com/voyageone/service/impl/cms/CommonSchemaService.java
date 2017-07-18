@@ -48,6 +48,23 @@ public class CommonSchemaService extends BaseService {
         return comSchemaModel;
     }
 
+    public CmsMtCommonSchemaModel getComUsSchemaModel() {
+
+        CmsMtCommonSchemaModel comSchemaModel = cmsMtCommonSchemaDao.selectUsComSchema();
+
+        if (comSchemaModel == null) {
+
+            //common schema 不存在时异常处理.
+            String errMsg = "共通schema（cms_mt_common_schema）的信息不存在！";
+
+            $error(errMsg);
+
+            throw new BusinessException(errMsg);
+        }
+
+        return comSchemaModel;
+    }
+
     public List<Map<String,Object>> getCommonFields(){
         List<Field> cmsMtCommonFields = getComSchemaModel().getFields();
         List<Map<String,Object>> commonFieldList = new ArrayList<>();
