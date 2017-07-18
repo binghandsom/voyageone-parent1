@@ -834,6 +834,12 @@ define(function () {
                 setPrice:"setPrice",
                 list:"list",
                 approve:"approve"
+            },
+            advanceSearch:{
+                root:"/cms/us/advanceSearch",
+                init:"init",
+                search:"search",
+                getCustomColumns:"getCustomColumns"
             }
         }
     };

@@ -475,3 +475,16 @@ vpagination button.btn-default {
 #contextmenu > ul li:hover ul {
     display: block
 }
+
+/** nav-bar */
+.nav-bar{
+    min-width: 200px;
+    background-color: #fff;
+    border: 1px solid #ededed;
+    box-shadow: 2px 2px 2px #ededed;
+    border-radius: 6px;
+    position: fixed;
+    top: 50%;
+    right: -10px;
+    z-index: 999;
+}

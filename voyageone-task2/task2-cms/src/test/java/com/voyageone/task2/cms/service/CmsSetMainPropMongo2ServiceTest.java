@@ -6,6 +6,10 @@ import com.voyageone.category.match.MatchResult;
 import com.voyageone.category.match.Searcher;
 import com.voyageone.category.match.Tokenizer;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.components.solr.bean.SolrUpdateBean;
+import com.voyageone.components.solr.service.CmsProductSearchService;
+import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +19,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,6 +31,11 @@ public class CmsSetMainPropMongo2ServiceTest {
 
     @Autowired
     CmsSetMainPropMongo2Service cmsSetMainPropMongo2Service;
+    @Autowired
+    ProductService productService;
+
+    @Autowired
+    CmsProductSearchService cmsProductSearchService;
 
     @Autowired
     private Searcher searcher;
@@ -33,7 +43,11 @@ public class CmsSetMainPropMongo2ServiceTest {
 
     @Test
     public void onStartup() throws Exception {
-        getMainCatInfo("Women's Sleepwear & Robes","pajama-sets","womens","Body Frosting Womens Cotton 2PC Pajama Set Tan S","Body Frosting");
+        TaskControlBean taskControlBean = new TaskControlBean();
+        taskControlBean.setCfg_name("order_channel_id");
+        taskControlBean.setCfg_val1("001");
+        cmsSetMainPropMongo2Service.onStartup(Collections.singletonList(taskControlBean));
+//        getMainCatInfo("Women's Sleepwear & Robes","pajama-sets","womens","Body Frosting Womens Cotton 2PC Pajama Set Tan S","Body Frosting");
 
     }
     public MatchResult getMainCatInfo(String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand) {
@@ -67,11 +81,13 @@ public class CmsSetMainPropMongo2ServiceTest {
     }
     @Test
     public void test(){
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode("001", "68220-gem");
+        if (cmsBtProductModel != null) {
+            SolrUpdateBean update = cmsProductSearchService.createSolrBeanForNew(cmsBtProductModel, null);
 
-        List<String> categoryWhite = Arrays.asList("鞋靴","服饰");
-        if (!ListUtils.isNull(categoryWhite)) {
-            if (categoryWhite.stream().noneMatch(cat -> "服饰>服饰配件>手提包袋>手包".indexOf(cat) == 0)) {
-                throw new BusinessException("主类目属于黑名单不能导入CMS：" );
+            if (update != null) {
+                String response = cmsProductSearchService.saveBean(update);
+                System.out.println(response);
             }
         }
     }

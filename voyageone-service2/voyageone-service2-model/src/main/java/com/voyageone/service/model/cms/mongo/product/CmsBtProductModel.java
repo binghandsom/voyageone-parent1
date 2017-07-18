@@ -48,6 +48,8 @@ public class CmsBtProductModel extends ChannelPartitionModel implements Cloneabl
     private List<String> tags = new ArrayList<>();
     //品牌方标签
     private List<String> freeTags = new ArrayList<>();
+    //美国用的自由标签
+    private List<String> usFreeTags = new ArrayList<>();
 
     public CmsBtProductModel() {
     }
@@ -260,6 +262,14 @@ public class CmsBtProductModel extends ChannelPartitionModel implements Cloneabl
 
     public void setFreeTags(List<String> freeTags) {
         this.freeTags = freeTags;
+    }
+
+    public List<String> getUsFreeTags() {
+        return usFreeTags;
+    }
+
+    public void setUsFreeTags(List<String> usFreeTags) {
+        this.usFreeTags = usFreeTags;
     }
 
     /**

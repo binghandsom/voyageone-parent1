@@ -390,7 +390,7 @@ public class ProductCheckService extends BaseService {
                         cartInfo.setpPublishError("");
                         cartInfo.setpPublishMessage("");
                         cartInfo.setpReallyStatus("");
-                        cartInfo.setpStatus(null);
+                        cartInfo.setpStatus("");
                     }
                 }
                 // 平台上新过,但是numberIId不为空

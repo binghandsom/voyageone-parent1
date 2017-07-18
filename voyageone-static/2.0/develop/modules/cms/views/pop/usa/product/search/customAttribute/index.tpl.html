@@ -1,0 +1,120 @@
+<div class="vo_modal"  ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-codepen"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}</h5>
+    </div>
+    <div class="modal-body">
+        <div class="row m-l-md m-r-md">
+            <div class="col-sm-3">
+                <h4 class="m-l-xss text-vo">
+                    <!--<label class="checkbox-inline c-checkbox m-t-sm" style="margin-left: 0px;">
+                        <input type="checkbox" ng-model="cus.all_commonData" ng-change="chkSelStatus(1)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
+                    </label>-->
+                    Common Attributes
+                </h4>
+                <h4 class="m-l-xss">
+                    <div class="row">
+                        <div class="col-lg-10">
+                            <div class="input-group">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-default" disabled><span class="fa fa-filter"></span></button>
+                                </div>
+                                <input type="text" class="form-control" ng-model="commonName">
+                            </div>
+                            <!-- /.input-group -->
+                        </div>
+                    </div>
+                </h4>
+                <div class="column_overflow column_overflow_2">
+                    <div ng-repeat="commonProp in ctrl.commonProps | filter:{propName:commonName}" class="m-t-xs">
+                        <!--<div ng-if="commonData.propId != 'skuCnt'">-->
+                        <label class="checkbox-inline c-checkbox">
+                            <input type="checkbox" name="commonAttrSels" value="{{commonProp.propId}}" ng-model="commonProp.isChk" ng-change="chkItemStatus(1)">
+                            <span class="fa fa-check"></span>&nbsp;{{commonProp.propName}}</label>
+                        <!--</div>-->
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <h4 class="m-l-xss text-vo">
+                    <!--<label class="checkbox-inline c-checkbox m-t-sm" style="margin-left: 0px;">
+                        <input type="checkbox" ng-model="cus.all_customData" ng-change="chkSelStatus(2)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
+                    </label>-->
+                    Platform  Attributes
+                </h4>
+                <h4 class="m-l-xss">
+                    <div class="row">
+                        <div class="col-lg-10">
+                            <div class="input-group">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-default" disabled><span class="fa fa-filter"></span></button>
+                                </div>
+                                <input type="text" class="form-control" ng-model="feedTranslation">
+                            </div>
+                            <!-- /.input-group -->
+                        </div>
+                    </div>
+                </h4>
+                <div class="column_overflow column_overflow_2">
+                    <div ng-repeat="platformAttr in ctrl.platformAttributes | filter:{feed_prop_translation:feedTranslation}" class="m-t-xs">
+                        <label class="checkbox-inline c-checkbox">
+                            <input type="checkbox" name="custAttrSels" value="{{platformAttr.value}}" ng-model="platformAttr.isChk" ng-change="chkItemStatus(2)">
+                            <span class="fa fa-check"></span>&nbsp;{{platformAttr.name}}</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <h4 class="m-l-xss text-vo">
+                    <!--<label class="checkbox-inline c-checkbox m-t-sm" style="margin-left: 0px;">
+                        <input type="checkbox" ng-model="cus.all_salesType" ng-change="chkSelStatus(3)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
+                    </label>-->
+                    Platform  Sales
+                </h4>
+                <h4 class="m-l-xss">
+                    <div class="row">
+                        <div class="col-lg-10">
+                            <div class="input-group">
+                                <div class="input-group-btn">
+                                    <button type="button" class="btn btn-default" disabled><span class="fa fa-filter"></span></button>
+                                </div>
+                                <input type="text" class="form-control" ng-model="salesTypeName">
+                            </div>
+                            <!-- /.input-group -->
+                        </div>
+                    </div>
+                </h4>
+                <div class="column_overflow column_overflow_2">
+                    <div ng-repeat="platformSale in ctrl.platformSales | filter:{name:salesTypeName}" class="m-t-xs">
+                        <label class="checkbox-inline c-checkbox">
+                            <input type="checkbox" name="salesTypeSels" value="{{platformSale.value}}" ng-model="salesType.isChk" ng-change="chkItemStatus(3)">
+                            <span class="fa fa-check"></span>&nbsp;{{platformSale.cartName}}</label>
+                        <div class="col-sm-9 form-inline">
+                            <div class="col-sm-5 input-group">
+                                <input type="text" class="form-control" uib-datepicker-popup
+                                       ng-model="ctrl.searchInfo.lastReceivedOnFrom" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                       date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePicker1" close-text="Close"/>
+                                <span class="input-group-btn">
+                                                        <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                      </span>
+                            </div>
+                            &nbsp;~&nbsp;
+                            <div class="col-sm-5 input-group">
+                                <input type="text" class="form-control" uib-datepicker-popup
+                                       ng-model="ctrl.searchInfo.lastReceivedOnTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                       date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.createTimeStart" is-open="datePicker2" close-text="Close"/>
+                                <span class="input-group-btn">
+                                                        <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                      </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i> 确认</button>
+    </div>
+</div>

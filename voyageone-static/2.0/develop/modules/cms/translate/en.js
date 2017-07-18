@@ -593,7 +593,7 @@ define(function () {
         "BTN_IMPORT_FILE": "导入",
         "BTN_UPLOAD_FILE": "上传",
         "BTN_REUPLOAD_FILE": "重传",
-        "BTN_CUSTOMIZE_COLUMNS": "自定义列设置",
+        "BTN_CUSTOMIZE_COLUMNS": "Custom Columns Select",
         "BTN_GET_TASK": "获取任务",
         "BTN_COMPLETE": "完成",
         "BTN_SET": "设定",

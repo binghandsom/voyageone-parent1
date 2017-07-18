@@ -80,6 +80,8 @@ public class CmsProductSearchService extends BaseSearchService {
 
         cmsProductSearchModel.setFreeTags(cmsBtProductModel.getFreeTags());
 
+        cmsProductSearchModel.setUsFreeTags(cmsBtProductModel.getUsFreeTags());
+
         cmsProductSearchModel.setTags(cmsBtProductModel.getTags());
 
         cmsProductSearchModel.setProductType(field.getProductType());
@@ -106,6 +108,8 @@ public class CmsProductSearchService extends BaseSearchService {
 
         cmsProductSearchModel.setLock(cmsBtProductModel.getLock());
 
+        cmsProductSearchModel.setLastReceivedOn(cmsBtProductModel.getCommonNotNull().getFieldsNotNull().getLastReceivedOn());
+
         if(cmsBtProductModel.getFeed() != null && cmsBtProductModel.getFeed().getSubCategories() != null) {
             cmsProductSearchModel.setSubCategories(cmsBtProductModel.getFeed().getSubCategories());
         }
@@ -129,6 +133,33 @@ public class CmsProductSearchService extends BaseSearchService {
                 cmsProductSearchModel.getPlatform().put(s, cmsProductSearchPlatformModel);
             }
         });
+
+        if(cmsBtProductModel.getUsPlatforms() != null) {
+            cmsBtProductModel.getUsPlatforms().forEach((s, cmsBtProductModel_platform_cart) -> {
+                if(cmsBtProductModel_platform_cart.getCartId()>0) {
+                    CmsProductSearchPlatformModel cmsProductSearchPlatformModel = new CmsProductSearchPlatformModel();
+                    BeanUtils.copy(cmsBtProductModel_platform_cart, cmsProductSearchPlatformModel);
+                    cmsProductSearchPlatformModel.setpStatus(cmsBtProductModel_platform_cart.getpStatus() == null ? null : cmsBtProductModel_platform_cart.getpStatus().name());
+                    cmsProductSearchPlatformModel.setSale7(cmsBtProductModel.getSales().getCodeSum7(cmsBtProductModel_platform_cart.getCartId()));
+                    cmsProductSearchPlatformModel.setSale30(cmsBtProductModel.getSales().getCodeSum30(cmsBtProductModel_platform_cart.getCartId()));
+                    cmsProductSearchPlatformModel.setSaleYear(cmsBtProductModel.getSales().getCodeSumYear(cmsBtProductModel_platform_cart.getCartId()));
+                    cmsProductSearchPlatformModel.setSaleAll(cmsBtProductModel.getSales().getCodeSumAll(cmsBtProductModel_platform_cart.getCartId()));
+                    cmsProductSearchPlatformModel.setLock(cmsBtProductModel_platform_cart.getLock());
+                    cmsProductSearchPlatformModel.setIsSale(cmsBtProductModel_platform_cart.getIsSale());
+                    cmsProductSearchPlatformModel.setpPriceSaleSt(cmsBtProductModel_platform_cart.getpPriceSaleSt());
+                    cmsProductSearchPlatformModel.setpPriceSaleEd(cmsBtProductModel_platform_cart.getpPriceSaleEd());
+                    if (cmsBtProductModel_platform_cart.getSellerCats() != null) {
+                        List<String> sellerCats = new ArrayList<String>();
+                        cmsBtProductModel_platform_cart.getSellerCats().forEach(item -> {
+                            sellerCats.addAll(item.getcIds());
+                        });
+                        cmsProductSearchPlatformModel.setSellerCats(sellerCats.stream().distinct().collect(Collectors.toList()));
+                    }
+                    cmsProductSearchModel.getPlatform().put(s, cmsProductSearchPlatformModel);
+                }
+            });
+        }
+
         // cart=0 的保存全部的销量信息
         CmsProductSearchPlatformModel cmsProductSearchPlatformModel = new CmsProductSearchPlatformModel();
         cmsProductSearchPlatformModel.setSale7( cmsBtProductModel.getSales().getCodeSum7(0));

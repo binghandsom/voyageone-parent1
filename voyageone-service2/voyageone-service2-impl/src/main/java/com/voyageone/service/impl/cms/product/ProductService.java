@@ -1182,6 +1182,10 @@ public class ProductService extends BaseService {
             updateMap.put("platforms", cmsProduct.getPlatforms());
         }
 
+        if (cmsProduct.getUsPlatforms() != null) {
+            updateMap.put("usPlatforms", cmsProduct.getUsPlatforms());
+        }
+
         /**
          * feed
          */

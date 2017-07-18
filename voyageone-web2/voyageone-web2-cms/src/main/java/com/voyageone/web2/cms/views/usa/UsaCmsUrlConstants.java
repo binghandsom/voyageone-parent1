@@ -36,4 +36,17 @@ public class UsaCmsUrlConstants {
 
         String UPDATEONE = "updateOne";
     }
+
+    /**
+     * USA CMS 高级检索
+     */
+    interface  ADVANCE_SEARCH {
+        String ROOT = "/cms/us/advanceSearch";
+
+        String INIT = "init";
+
+        String GET_CUSTOM_COLUMNS = "getCustomColumns";
+
+        String SEARCH = "search";
+    }
 }
