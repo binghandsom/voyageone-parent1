@@ -10,7 +10,7 @@
             <uib-tabset class="tab-container vo_nav-tabs" style="background-color: #EEEDED;">
 
                 <uib-tab>
-                    <tab-heading><i class="fa fa-search-plus text-default"></i>&nbsp;{{'TXT_COMMON_SEARCH'|translate}}</tab-heading>
+                    <tab-heading><i class="fa fa-search-plus text-default"></i>&nbsp;Query Terms</tab-heading>
 
                     <div class="tab-title">
                         <h3 class="text-md">Common Attribute</h3>
@@ -51,7 +51,7 @@
                                                 ng-options="brand.value as brand.name for brand in ctrl.masterData.brandList">
                                             <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
                                         </select>
-                                        <span class="input-group-addon cur-p" ng-click="dismiss('brandList')">重置</span>
+                                        <span class="input-group-addon cur-p" ng-click="dismiss('brandList')">reset</span>
                                     </div>
                                 </div>
                             </div>
@@ -241,8 +241,11 @@
                                 <thead>
                                 <tr style="background:#e67e22;color: #fff">
                                     <th class="checkbox text-center">
-                                        <label>
-                                            <input type="checkbox">
+                                        <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
+                                            <input type="checkbox" ng-click="selectAll(ctrl.productSelList)"
+                                                   ng-checked="isAllSelected(ctrl.productSelList)"
+                                                   ng-disabled="!ctrl.searchResult.productList.length">
+                                            <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                         </label>
                                     </th>
                                     <th class="text-center">IMG</th>
@@ -263,7 +266,7 @@
                                             <label class="checkbox-inline c-checkbox" style="padding-top:4px">
                                                 <input ng-model="ctrl.productSelList.selFlag[productInfo.prodId]" type="checkbox"
                                                        ng-controller="selectRowsCtrl"
-                                                       ng-click="selectOne(productInfo.prodId, vm.productSelList)">
+                                                       ng-click="selectOne(productInfo.prodId, ctrl.productSelList)">
                                                 <span class="fa fa-check"></span>
                                             </label>
                                         </td>
