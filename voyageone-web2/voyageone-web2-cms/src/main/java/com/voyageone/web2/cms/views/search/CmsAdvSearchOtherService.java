@@ -8,13 +8,19 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
+import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdatePriceMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
@@ -23,6 +29,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Ima
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +100,10 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     private CmsChannelTagService cmsChannelTagService;
     @Autowired
     private TagService tagService;
+    @Autowired
+    private CmsMqSenderService cmsMqSenderService;
+    @Autowired
+    private CmsProductSearchQueryService cmsProductSearchQueryService;
 
     /**
      * 取得当前主商品所在组的其他信息：所有商品的价格变动信息，子商品图片
@@ -504,5 +515,23 @@ public class CmsAdvSearchOtherService extends BaseViewService {
         }
 
         return dataSumList;
+    }
+    public String updatePrice(Map<String,Object> paraMap,UserSessionBean user) {
+        if (paraMap != null){
+            String selAll = (String) paraMap.get("selAll");
+            if ("true".equals(selAll)){
+                //勾选了全部,需要通过检索条件,查询出所有信息
+                Map<String,Object> map = (Map) paraMap.get("queryMap");
+                CmsSearchInfoBean2 queryParams = BeanUtils.toModel(map, CmsSearchInfoBean2.class);
+                CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId(), user.getUserId(), user.getUserName());
+
+                List<String> productCodeList = cmsProductCodeListBean.getProductCodeList();
+            }
+
+        }
+
+        CmsBtProductUpdatePriceMQMessageBody MqMap = new CmsBtProductUpdatePriceMQMessageBody();
+
+        return null;
     }
 }

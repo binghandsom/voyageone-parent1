@@ -91,11 +91,14 @@ define([
                 self.customColumns.selPlatformSales = res.selPlatformSales;
             })
         }
-
         popBatchPrice() {
             let self = this;
 
-            self.popups.openBatchPrice().then(res => {
+            self.popups.openBatchPrice({
+                selAll:false,
+                codeList:["000009515"],
+                queryMap:{}
+            }).then(res => {
 
             });
         }

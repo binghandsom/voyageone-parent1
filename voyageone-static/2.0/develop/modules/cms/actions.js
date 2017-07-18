@@ -840,6 +840,8 @@ define(function () {
                 init:"init",
                 search:"search",
                 getCustomColumns:"getCustomColumns",
+                updatePrice:"updatePrice"
+                getCustomColumns:"getCustomColumns",
                 saveCustomColumns:"saveCustomColumns"
             }
         }

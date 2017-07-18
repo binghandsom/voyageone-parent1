@@ -8,29 +8,30 @@
        <div class="container-fluid">
            <div class="row">
                <div class="col-md-3">
-                   <select class="form-control">
-                       <option value="">Sale Price</option>
-                       <option value="">Msrp</option>
+                   <select class="form-control" ng-model="ctrl.paraMap.changedPriceType">
+                       <option value="clientRetailPrice">Sale Price</option>
+                       <option value="clientMsrpPrice">Msrp</option>
                    </select>
                </div>
                <div class="col-md-1 text-center">=</div>
                <div class="col-md-3">
-                   <select class="form-control">
-                       <option value="">Sale Price</option>
-                       <option value="">Msrp</option>
-                       <option value="">Fixed value</option>
+                   <select class="form-control" ng-model="ctrl.paraMap.basePriceType">
+                       <option value="clientRetailPrice">Sale Price</option>
+                       <option value="clientMsrpPrice">Msrp</option>
+                       <option value="fixedValue">Fixed value</option>
                    </select>
                </div>
                <div class="col-md-2">
-                   <select class="form-control">
-                       <option value="">+</option>
-                       <option value="">-</option>
-                       <option value="">*</option>
-                       <option value="">/</option>
+                   <select class="form-control" ng-model="ctrl.paraMap.optionType" >
+                       <option value="*" ng-if="ctrl.paraMap.basePriceType != 'fixedValue'">*</option>
+                       <option value="/" ng-if="ctrl.paraMap.basePriceType != 'fixedValue'">/</option>
+                       <option value="+" ng-if="ctrl.paraMap.basePriceType != 'fixedValue'">+</option>
+                       <option value="-" ng-if="ctrl.paraMap.basePriceType != 'fixedValue'">-</option>
+                       <option value="=">=</option>
                    </select>
                </div>
                <div class="col-md-3">
-                   <input type="text" class="form-control">
+                   <input type="text" class="form-control" ng-model="ctrl.paraMap.value">
                </div>
            </div>
            <div class="row">
@@ -40,10 +41,10 @@
                
                <div class="row checkbox">
                    <label style="margin-left: 17px;">
-                       <input type="checkbox">&nbsp;Decimal rounding up
+                       <input type="radio" ng-model="ctrl.paraMap.flag" value="1">&nbsp;Decimal rounding up
                    </label>&emsp;
                    <label>
-                       <input type="checkbox">&nbsp;No special calculation
+                       <input type="radio" ng-model="ctrl.paraMap.flag" value="0">&nbsp;No special calculation
                    </label>
                </div>
            </div>
@@ -55,7 +56,8 @@
        </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo" ng-click="ctrl.confirmPrice()"><i class="glyphicon glyphicon-floppy-disk"></i> 确认</button>
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> CANCLE</button>
+        <button class="btn btn-vo" ng-click="ctrl.updatePrice('1')"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE</button>
+        <button class="btn btn-vo" ng-click="ctrl.updatePrice('0')"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE&CONTINUE</button>
     </div>
 </div>

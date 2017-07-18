@@ -52,7 +52,7 @@ public class CmsBtProductUpdateTagsMQJob extends TBaseMQCmsSubService<CmsBtProdu
                     JongoUpdate updObj = new JongoUpdate();
                     updObj.setQuery("{\"common.fields.code\":#}");
                     updObj.setQueryParameters(prodCode);
-                    updObj.setUpdate("{$set:{'freeTags':#}}");
+                    updObj.setUpdate("{$set:{'pFreeTags':#}}");
                     updObj.setUpdateParameters(pathList);
                     cmsBtProductDao.updateMulti(updObj, channelId);
                 }

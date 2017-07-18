@@ -50,6 +50,10 @@ public class UsaCmsUrlConstants {
         String SAVE_CUSTOM_COLUMNS = "saveCustomColumns";
 
         String SEARCH = "search";
+
+        String UPDATEPRICE = "updatePrice";
+
+
     }
 
     /**
