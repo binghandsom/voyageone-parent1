@@ -252,19 +252,19 @@ public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService 
         List<Field> productFieldsList = new ArrayList<>();
 
         // 商品名称（最大64位字符）
-        addInputField(productFieldsList, "name", "商品名称", "", false, "64", "默认中文长描述");
+        addInputField(productFieldsList, "name", "商品名称", "", false, null, "64", "byte", "默认中文长描述");
 
         // 副标题（最大200位字符）
-        addInputField(productFieldsList, "subTitle", "副标题", "", true, "200", "副标题将用于商品详情页商品名称后的卖点描述");
+        addInputField(productFieldsList, "subTitle", "副标题", "", true, null, "200", "byte", "副标题将用于商品详情页商品名称后的卖点描述");
 
         // 短标题（最大48位字符）
-        addInputField(productFieldsList, "shortTitle", "短标题", "", true, "48", "短标题将用于移动端和web端首页商品标题、web端活动页商品标题");
+        addInputField(productFieldsList, "shortTitle", "短标题", "", true, null, "48", "byte", "短标题将用于移动端和web端首页商品标题、web端活动页商品标题");
 
         // 十字描述（最大8-24位字符）
-        addInputField(productFieldsList, "tenWordsDesc", "十字描述", "", true, "24", "最少8个字符， 最大24个字符，用于web端首页活动页商品标题后的卖点描述");
+        addInputField(productFieldsList, "tenWordsDesc", "十字描述", "", true, "8", "24", "byte", "最少8个字符， 最大24个字符，只允许输入汉字、字母、数字、中文逗号、中文引号、中文顿号，用于web端首页活动页商品标题后的卖点描述");
 
         // 商品货号（最大50位字符）
-        addInputField(productFieldsList, "itemNO", "商品货号", "", false, "50", "默认用code");
+        addInputField(productFieldsList, "itemNO", "商品货号", "", false, null, "50", "character", "默认用code");
 
         // 原产国id
         Country[] countries = koalaCommonService.countriesGet(shopBean);
@@ -278,15 +278,16 @@ public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService 
         addSingleCheckField(productFieldsList, "originalCountryCodeId", "原产国id", "", true, optionList);
 
         // 商品毛重
-        addInputField(productFieldsList, "grossWeight", "商品毛重（单位kg）", "", false, null, "默认master详情的重量(kg)，如果没值，此项必填，商品的毛重不能随意填写，将会推送至海关报关，如果和实际重量差别很大，会导致清关失败");
+        addInputField(productFieldsList, "grossWeight", "商品毛重（单位kg）", "", false, null, null, "character", "默认master详情的重量(kg)，如果没值，此项必填，商品的毛重不能随意填写，将会推送至海关报关，如果和实际重量差别很大，会导致清关失败");
 
         // 商品外键id
-        addInputField(productFieldsList, "ItemOuterId", "商品外键id", "", false, null, "默认用model");
+        addInputField(productFieldsList, "ItemOuterId", "商品外键id", "", false, null, null, "character", "默认用model");
 
         // 根据考拉平台上新时用到一些平台相关的输入项目转换成XML文件
         String schemaCommonXmlContent = null;
         if (productFieldsList.size() > 0) {
             schemaCommonXmlContent = SchemaWriter.writeRuleXmlString(productFieldsList);
+            $debug("KlCommonXml:" + schemaCommonXmlContent);
             schemaCommonModel.setPropsProduct(schemaCommonXmlContent);
         }
 
@@ -358,11 +359,13 @@ public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService 
      * @param fieldName String  filed名称
      * @param defaultValue String 默认值
      * @param isRequired boolean  是否必须输入
+     * @param minLength String  输入最小字符数
      * @param maxLength String  可输入最大字符数
+     * @param unit String  可选"byte"或"character"， 配置成character只按长度，不按字节check
      * @return 空
      */
     private void addInputField(List<Field> productFieldsList, String fieldId, String fieldName, String defaultValue,
-                               boolean isRequired, String maxLength, String tipRuleString) {
+                               boolean isRequired, String minLength, String maxLength, String unit, String tipRuleString) {
         // 输入框Field
         InputField inputField = new InputField();
 
@@ -396,8 +399,9 @@ public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService 
         MinLengthRule minLengthRule = new MinLengthRule();
         minLengthRule.setName("minLengthRule");
         minLengthRule.setValue(isRequired ? "1" : "0");  // 必须输入时，最小值设为"1"
+        if (!StringUtils.isEmpty(minLength)) minLengthRule.setValue(minLength);
         minLengthRule.setExProperty("include");
-        minLengthRule.setUnit("character");  // 可选"byte"或"character"，这里固定成"character"
+        minLengthRule.setUnit(unit);
         rulesList.add(minLengthRule);
 
         // maxLengthRule
@@ -406,7 +410,7 @@ public class CmsBuildPaltformCategorySchemaKLMqService extends BaseMQCmsService 
             maxLengthRule.setName("maxLengthRule");
             maxLengthRule.setValue(maxLength);
             maxLengthRule.setExProperty("include");
-            maxLengthRule.setUnit("character");  // 可选"byte"或"character"，这里固定成"character"
+            maxLengthRule.setUnit(unit);
             rulesList.add(maxLengthRule);
         }
 
