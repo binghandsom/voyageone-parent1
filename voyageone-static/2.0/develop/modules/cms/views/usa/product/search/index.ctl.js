@@ -75,6 +75,14 @@ define([
             });
         }
 
+        popUsFreeTag(){
+            let self = this;
+
+            self.popups.openUsFreeTag().then(res => {
+
+            })
+        }
+
     });
 
 });
