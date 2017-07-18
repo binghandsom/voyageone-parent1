@@ -76,18 +76,18 @@
                                     <div class="col-sm-5 input-group">
                                         <input type="text" class="form-control" uib-datepicker-popup
                                                ng-model="ctrl.searchInfo.lastReceivedOnFrom" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePicker1" close-text="Close"/>
+                                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePickerLr1" close-text="Close"/>
                                         <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                        <button type="button" class="btn btn-default" ng-click="datePickerLr1 = !datePickerLr1"><i class="glyphicon glyphicon-calendar"></i></button>
                                                       </span>
                                     </div>
                                     &nbsp;~&nbsp;
                                     <div class="col-sm-5 input-group">
                                         <input type="text" class="form-control" uib-datepicker-popup
                                                ng-model="ctrl.searchInfo.lastReceivedOnTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                               date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.createTimeStart" is-open="datePicker2" close-text="Close"/>
+                                               date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.createTimeStart" is-open="datePickerLr2" close-text="Close"/>
                                         <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                        <button type="button" class="btn btn-default" ng-click="datePickerLr2 = !datePickerLr2"><i class="glyphicon glyphicon-calendar"></i></button>
                                                       </span>
                                     </div>
                                 </div>
@@ -95,7 +95,10 @@
 
                             <div class="form-group">
                                 <div class="col-sm-3">
-                                    <select  class="form-control" chosen></select>
+                                    <select  class="form-control" chosen>
+                                        <option value="">Total Qty</option>
+                                        <option value="">LA Qty</option>
+                                    </select>
                                 </div>
                                 <div class="col-sm-9">
                                     <div class="col-sm-5">
@@ -161,18 +164,18 @@
                                     <div class="col-sm-5 input-group">
                                         <input type="text" class="form-control" uib-datepicker-popup
                                                ng-model="vm.searchInfo.createTimeStart" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePicker1" close-text="Close"/>
+                                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePickerCt1" close-text="Close"/>
                                         <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                        <button type="button" class="btn btn-default" ng-click="datePickerCt1 = !datePickerCt1"><i class="glyphicon glyphicon-calendar"></i></button>
                                                       </span>
                                     </div>
                                     &nbsp;~&nbsp;
                                     <div class="col-sm-5 input-group">
                                         <input type="text" class="form-control" uib-datepicker-popup
                                                ng-model="vm.searchInfo.createTimeTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                               date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.createTimeStart" is-open="datePicker2" close-text="Close"/>
+                                               date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.createTimeStart" is-open="datePickerCt2" close-text="Close"/>
                                         <span class="input-group-btn">
-                                                        <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                        <button type="button" class="btn btn-default" ng-click="datePickerCt2 = !datePickerCt2"><i class="glyphicon glyphicon-calendar"></i></button>
                                                       </span>
                                     </div>
                                 </div>
