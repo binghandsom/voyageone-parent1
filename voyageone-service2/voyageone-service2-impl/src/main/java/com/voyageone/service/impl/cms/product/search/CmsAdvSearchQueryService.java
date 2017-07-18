@@ -294,7 +294,7 @@ public class CmsAdvSearchQueryService extends BaseService {
             }
             // 获取店铺内分类查询条件
             if (searchValue.getCidValue() !=  null && searchValue.getCidValue().size() > 0) {
-                if(1 == searchValue.getShopCatType()) {
+                if(Objects.equals(1,searchValue.getShopCatType())) {
                     queryObject.addQuery("{'platforms.P#.sellerCats.cId':{$in:#}}");
                 }else{
                     queryObject.addQuery("{'platforms.P#.sellerCats.cId':{$nin:#}}");
