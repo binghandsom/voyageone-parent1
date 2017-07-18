@@ -3,16 +3,17 @@
  * @author piao
  */
 define([
-           'cms',
-           'modules/cms/directives/navBar.directive'
-       ], function (cms) {
+    'cms',
+    'modules/cms/directives/navBar.directive'
+], function (cms) {
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor(popups, advanceSearch) {
+        constructor(popups, advanceSearch,selectRowsFactory) {
             let self = this;
 
             self.popups = popups;
+            self.srInstance = new selectRowsFactory();
             self.advanceSearch = advanceSearch;
 
             self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
@@ -22,7 +23,7 @@ define([
             self.searchResult = {
                 productList: []
             };
-
+            self.productSelList =  {selList: []};
             self.masterData = {
                 platforms: [],
                 usPlatforms: [],
@@ -92,6 +93,12 @@ define([
                 if (res.data) {
                     self.searchResult.productList = res.data.productList;
                     self.pageOption.total = res.data.productListTotal;
+
+                    self.searchResult.productList.forEach(productInfo => {
+                        self.srInstance.currPageRows({"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
+                    });
+
+                    self.productSelList = self.srInstance.selectRowsInfo;
                 }
             });
         }
@@ -110,6 +117,7 @@ define([
                 self.customColumns.selPlatformSales = res.selPlatformSales;
             })
         }
+
         popBatchPrice() {
             let self = this;
 
@@ -126,13 +134,13 @@ define([
             let self = this;
 
             self.popups.openUsFreeTag({
-                                          orgFlg: 2,
-                                          tagTypeSel: '4',
-                                          cartId: 23,
-                                          productIds: null,
-                                          selAllFlg: 0,
-                                          searchInfo: self.searchInfoBefo
-                                      }).then(res => {
+                orgFlg: 2,
+                tagTypeSel: '4',
+                cartId: 23,
+                productIds: null,
+                selAllFlg: 0,
+                searchInfo: self.searchInfoBefo
+            }).then(res => {
 
             })
         }
@@ -142,7 +150,6 @@ define([
          */
         popCategory() {
             let self = this;
-            console.log(self.searchInfo.cartId);
 
             if (Number(self.searchInfo.cartId) === 5) {
                 //只有亚马逊显示类目
