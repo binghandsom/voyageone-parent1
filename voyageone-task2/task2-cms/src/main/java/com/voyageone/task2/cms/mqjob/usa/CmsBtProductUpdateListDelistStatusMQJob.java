@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.mqjob.usa;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdateListDelistStatusMQMessageBody;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -24,6 +25,8 @@ import java.util.Map;
 public class CmsBtProductUpdateListDelistStatusMQJob extends TBaseMQCmsService<CmsBtProductUpdateListDelistStatusMQMessageBody> {
     @Autowired
     ProductService productService;
+    @Autowired
+    PlatformProductUploadService platformProductUploadService;
 
     @Autowired
     CmsBtProductDao cmsBtProductDao;
@@ -58,6 +61,7 @@ public class CmsBtProductUpdateListDelistStatusMQJob extends TBaseMQCmsService<C
                                 jongoUpdate.setUpdateParameters("InStock");
                             }
                             cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+                            platformProductUploadService.saveCmsBtUsWorkloadModel(channelId,cartId,productCode,null,0,messageBody.getSender());
                         }
                     }
                 }
