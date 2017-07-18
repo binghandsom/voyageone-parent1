@@ -19,6 +19,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
+import com.voyageone.service.dao.cms.CmsBtTmScItemDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.CmsProperty;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
@@ -32,6 +33,7 @@ import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
+import com.voyageone.service.model.cms.CmsBtTmScItemModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
@@ -107,6 +109,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
     private SxProductService sxProductService;
     @Autowired
     protected VoApiDefaultClient voApiClient;
+    @Autowired
+    private CmsBtTmScItemDao cmsBtTmScItemDao;
 
     public List<CmsBtOperationLogModel_Msg> export(AdvSearchExportMQMessageBody messageBody) throws Exception {
         $debug("高级检索 文件下载任务 param=" + JacksonUtil.bean2Json(messageBody));
@@ -413,6 +417,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
                 if (prop.get("name").indexOf("是否销售") > -0) continue;
+                if (prop.get("name").indexOf("sku货品编码") > -0) continue;
                 if (prop.get("name").indexOf("SkuNo") > -0) continue;
                 if (prop.get("name").indexOf("SpuNo") > -0) continue;
                 if (prop.get("name").indexOf("jdSkuId") > -0) continue;
@@ -449,6 +454,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
                 if (prop.get("name").indexOf("是否销售") > -0) continue;
+                if (prop.get("name").indexOf("sku货品编码") > -0) continue;
                 if (prop.get("name").indexOf("SkuNo") > -0) continue;
                 if (prop.get("name").indexOf("SpuNo") > -0) continue;
                 if (prop.get("name").indexOf("jdSkuId") > -0) continue;
@@ -511,6 +517,9 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
         if (platformDataList != null) {
             for (Map<String, String> prop : platformDataList) {
+                if (prop.get("name").indexOf("可售库存") > -0) continue;
+                if (prop.get("name").indexOf("是否销售") > -0) continue;
+                if (prop.get("name").indexOf("sku货品编码") > -0) continue;
                 if (prop.get("name").indexOf("SkuNo") > -0) continue;
                 if (prop.get("name").indexOf("SpuNo") > -0) continue;
                 if (prop.get("name").indexOf("jdSkuId") > -0) continue;
@@ -548,6 +557,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
             for (Map<String, String> prop : platformDataList) {
                 if (prop.get("name").indexOf("可售库存") > -0) continue;
                 if (prop.get("name").indexOf("是否销售") > -0) continue;
+                if (prop.get("name").indexOf("sku货品编码") > -0) continue;
                 if (prop.get("name").indexOf("SkuNo") > -0) continue;
                 if (prop.get("name").indexOf("SpuNo") > -0) continue;
                 if (prop.get("name").indexOf("jdSkuId") > -0) continue;
@@ -934,6 +944,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
 
                     if ("isSale".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                     if ("jmSkuNo".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
+                    if ("scCode".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                     if ("jmSpuNo".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                     if ("jdSkuId".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
 
@@ -1114,6 +1125,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                     }
                     if ("qty".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                     if ("isSale".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
+                    if ("scCode".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                     if ("jmSkuNo".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                     if ("jmSpuNo".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
                     if ("jdSkuId".equals(key.substring(key.lastIndexOf(".") + 1))) continue;
@@ -1364,6 +1376,18 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             FileUtils.cell(row, index++, unlock).setCellValue(pSku.getStringAttribute("jmSkuNo"));
                         } else if ("jmSpuNo".equals(attrName) && pSku.getStringAttribute("jmSpuNo") != null) {
                             FileUtils.cell(row, index++, unlock).setCellValue(pSku.getStringAttribute("jmSpuNo"));
+                        } else if ("scCode".equals(key.substring(key.lastIndexOf(".") + 1))){
+
+                            Map<String, Object> searchParam = new HashMap<>();
+                            searchParam.put("channelId", item.getChannelId());
+                            searchParam.put("cartId", Integer.valueOf(_cartId));
+                            searchParam.put("sku", pSku.getStringAttribute("skuCode"));
+                            CmsBtTmScItemModel cmsBtTmScItemModel = cmsBtTmScItemDao.selectOne(searchParam);
+                            if(cmsBtTmScItemModel != null){
+                                FileUtils.cell(row, index++, unlock).setCellValue( cmsBtTmScItemModel.getScCode());
+                            }else{
+                                FileUtils.cell(row, index++, unlock).setCellValue("");
+                            }
                         } else {
                             index = contructPlatCell(key, row, index, unlock, _cartId, _platform, key.substring(key.lastIndexOf(".") + 1));
                         }
