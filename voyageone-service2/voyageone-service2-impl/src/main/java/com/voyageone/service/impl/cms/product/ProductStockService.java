@@ -21,6 +21,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -69,16 +70,7 @@ public class ProductStockService extends BaseService {
                     stockBean.setSku(stockBean.getSku().toLowerCase());
                 }
 
-                CmsBtProductModel productModel = null;
-                if (productModelMap.containsKey(stockBean.getItemCode())) {
-                    productModel = productModelMap.get(stockBean.getItemCode());
-                } else {
-                    // 根据产品Code获取产品
-                    productModel = productService.getProductByCode(channelId, stockBean.getItemCode());
-                    if (productModel != null) {
-                        productModelMap.put(stockBean.getItemCode(), productModel);
-                    }
-                }
+                CmsBtProductModel productModel = productService.getProductByCode(channelId, stockBean.getItemCode());
                 if (productModel != null) {
                     $info(String.format("channelId=%s cartId=%d code=%s sku=%s qty=%d", channelId, cartId==null?0:cartId, stockBean.getItemCode(), stockBean.getSku(), stockBean.getQty()));
                     HashMap<String, Object> updateMap = new HashMap<>();
@@ -129,6 +121,7 @@ public class ProductStockService extends BaseService {
                         CmsBtProductModel_Platform_Cart platform = null;
                         if (cartId != null && cartId != 0
                                 && CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase((platform = productModel.getPlatform(cartId)).getStatus())
+                                && stockBean.getItemCode().equalsIgnoreCase(platform.getMainProductCode())
                                 && quantity == 0) {
                             // 从cms_mt_channel_config查询AUTO_SWITCH_MASTER_PRODUCT设置，如果config_value1为1则自动切换平台主商品
                             CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBean(channelId, CmsConstants.ChannelConfig.AUTO_SWITCH_MASTER_PRODUCT, String.valueOf(cartId));
@@ -176,30 +169,26 @@ public class ProductStockService extends BaseService {
 
                                     // 当前平台原来的主商品Code
                                     String oldMastCode = platform.getMainProductCode();
-                                    if (!newMastCode.equalsIgnoreCase(oldMastCode)) {
-                                        platform.setpIsMain(0);// 把product表中对应的平台的pIsMain设0
-                                        platform.setMainProductCode(newMastCode);
-                                        productPlatformService.updateProductPlatformWithSx(channelId, productModel.getProdId(), platform, modifier, "切换主商品", false);
+                                    platform.setpIsMain(0);// 把product表中对应的平台的pIsMain设0
+                                    platform.setMainProductCode(newMastCode);
+                                    productPlatformService.updateProductPlatformWithSx(channelId, productModel.getProdId(), platform, modifier, "切换主商品", false);
+                                    String comment = "WMS->CMS推送平台库存 主商品发生变化 主商品：" + newMastCode;
+                                    productStatusHistoryService.insert(channelId, stockBean.getItemCode(), platform.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, comment, modifier);
+                                    $info(String.format("(Code=%s, CartId=%d切换主商品(原%s->新%s))", stockBean.getItemCode(), cartId, oldMastCode, newMastCode));
 
-                                        String comment = "WMS->CMS推送平台库存 主商品发生变化 主商品：" + newMastCode;
-                                        productStatusHistoryService.insert(channelId, stockBean.getItemCode(), platform.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, comment, modifier);
-                                    }
 
-                                    if (!newMastCode.equalsIgnoreCase(newPlatFormCart.getMainProductCode())) {
-                                        newPlatFormCart.setpIsMain(1);//把productCode的所对应的product表中对应的平台的pIsMain设1
-                                        newPlatFormCart.setMainProductCode(newMastCode);
-                                        productPlatformService.updateProductPlatformWithSx(channelId, newMastProduct.getProdId(), newPlatFormCart, modifier, "切换主商品", false);
+                                    newPlatFormCart.setpIsMain(1);//把productCode的所对应的product表中对应的平台的pIsMain设1
+                                    newPlatFormCart.setMainProductCode(newMastCode);
+                                    productPlatformService.updateProductPlatformWithSx(channelId, newMastProduct.getProdId(), newPlatFormCart, modifier, "切换主商品", false);
+                                    String newComment = "WMS->CMS推送平台库存 设置为主商品 主商品：" + newMastCode;
+                                    productStatusHistoryService.insert(channelId, newMastCode, newPlatFormCart.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, newComment, modifier);
+                                    $info(String.format("(Code=%s, CartId=%d设置新主商品(原%s->新%s))", newMastCode, cartId, oldMastCode, newMastCode));
 
-                                        String newComment = "WMS->CMS推送平台库存 设置为主商品 主商品：" + newMastCode;
-                                        productStatusHistoryService.insert(channelId, newMastCode, newPlatFormCart.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, newComment, modifier);
-                                    }
-
-                                    if (!newMastCode.equalsIgnoreCase(cmsBtProductGroup.getMainProductCode())) {
-                                        cmsBtProductGroup.setMainProductCode(newMastCode);//把group表中的mainProduct替换成productCode
-                                        cmsBtProductGroup.setModifier(modifier);
-                                        cmsBtProductGroup.setModified(DateTimeUtil.getNowTimeStamp());
-                                        productGroupService.update(cmsBtProductGroup);
-                                    }
+                                    cmsBtProductGroup.setMainProductCode(newMastCode);//把group表中的mainProduct替换成productCode
+                                    cmsBtProductGroup.setModifier(modifier);
+                                    cmsBtProductGroup.setModified(DateTimeUtil.getNowTimeStamp());
+                                    productGroupService.update(cmsBtProductGroup);
+                                    $info(String.format("(Code=%s, CartId=%d切换主商品时更新Group主商品Code(原%s->新%s))", stockBean.getItemCode(), cartId, oldMastCode, newMastCode));
 
                                     // 新主商品Code已经处理过了
                                     codes.remove(newMastCode);
@@ -211,13 +200,11 @@ public class ProductStockService extends BaseService {
                                             pform.setMainProductCode(newMastCode);
                                             productPlatformService.updateProductPlatformWithSx(channelId, product.getProdId(), pform, modifier, "切换主商品", false);
 
-                                            if (code.equalsIgnoreCase(oldMastCode)) {
-                                                String comment = "WMS->CMS推送平台库存 取消主商品 主商品：" + oldMastCode;
-                                                productStatusHistoryService.insert(channelId, code, pform.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, comment, modifier);
-                                            } else {
-                                                String comment = "WMS->CMS推送平台库存 主商品发生变化 主商品：" + code;
-                                                productStatusHistoryService.insert(channelId, code, pform.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, comment, modifier);
-                                            }
+                                            comment = "WMS->CMS推送平台库存 切换同Group对应平台主商品：" + newMastCode;
+                                            productStatusHistoryService.insert(channelId, code, pform.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, comment, modifier);
+
+                                            $info(String.format("(Code=%s, CartId=%d切换同Group商品对应平台主商品(原%s->新%s))",
+                                                    code, cartId, StringUtils.isBlank(pform.getMainProductCode()) ? " " : platform.getMainProductCode(), newMastCode));
                                         }
                                     }
                                 }
