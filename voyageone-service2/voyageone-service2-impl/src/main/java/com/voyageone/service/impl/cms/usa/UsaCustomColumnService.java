@@ -211,8 +211,8 @@ public class UsaCustomColumnService extends BaseService {
         List<String> selPlatformAttributes = (List<String>) params.get("selPlatformAttributes");
         List<Map<String, Object>> selPlatformSales = (List<Map<String, Object>>) params.get("selPlatformSales");
         // 保存用户自定义列 --->>> usa_cms_cust_col_common_attr
+        commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_common_attr");
         if (CollectionUtils.isNotEmpty(selCommonProps)) {
-            commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_common_attr");
             int size = selCommonProps.size();
             StringBuffer sb = new StringBuffer();
             for (int i = 0; i < size; i++) {
@@ -224,8 +224,8 @@ public class UsaCustomColumnService extends BaseService {
             commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_common_attr", "", sb.toString());
         }
         // 保存用户自定义列 --->>> usa_cms_cust_col_platform_attr
+        commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_platform_attr");
         if (CollectionUtils.isNotEmpty(selPlatformAttributes)) {
-            commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_platform_attr");
             int size = selPlatformAttributes.size();
             StringBuffer sb = new StringBuffer();
             for (int i = 0; i < size; i++) {
@@ -237,9 +237,8 @@ public class UsaCustomColumnService extends BaseService {
             commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_platform_attr", "", sb.toString());
         }
         // 保存用户自定义列 --->>> usa_cms_cust_col_platform_sale
+        commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_platform_sale");
         if (CollectionUtils.isNotEmpty(selPlatformSales)) {
-            commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_platform_sale");
-
             for (Map<String, Object> cartMap : selPlatformSales) {
                 String cartId = (String) cartMap.get("cartId");
                 String beginTime = (String) cartMap.get("beginTime");
