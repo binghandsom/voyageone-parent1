@@ -7,23 +7,23 @@
  */
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.service.model.cms.CmsBtProductStatusHistoryModel;
+import com.voyageone.service.model.cms.CmsBtProductStatusHistoryModel_Mysql;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
-@Repository
+@Repository("cmsBtProductStatusHistoryDaoMysql")
 public interface CmsBtProductStatusHistoryDao {
-    List<CmsBtProductStatusHistoryModel> selectList(Object map);
+    List<CmsBtProductStatusHistoryModel_Mysql> selectList(Object map);
 
-    CmsBtProductStatusHistoryModel selectOne(Object map);
+    CmsBtProductStatusHistoryModel_Mysql selectOne(Object map);
 
     int selectCount(Object map);
 
-    CmsBtProductStatusHistoryModel select(Integer id);
+    CmsBtProductStatusHistoryModel_Mysql select(Integer id);
 
-    int insert(CmsBtProductStatusHistoryModel record);
+    int insert(CmsBtProductStatusHistoryModel_Mysql record);
 
-    int update(CmsBtProductStatusHistoryModel record);
+    int update(CmsBtProductStatusHistoryModel_Mysql record);
 
     int delete(Integer id);
 }

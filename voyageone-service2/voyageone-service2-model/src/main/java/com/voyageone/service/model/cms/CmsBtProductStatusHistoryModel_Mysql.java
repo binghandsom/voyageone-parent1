@@ -12,7 +12,8 @@ import com.voyageone.base.dao.mysql.BaseModel;
 /**
  * cms_bt_product_status_history ||产品状态历史表
  */
-public class CmsBtProductStatusHistoryModel extends BaseModel {
+
+public class CmsBtProductStatusHistoryModel_Mysql extends BaseModel {
     protected String channelId;
 
     /**

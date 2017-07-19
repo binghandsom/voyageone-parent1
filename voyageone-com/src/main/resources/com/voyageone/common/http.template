@@ -1,0 +1,3 @@
+<h3 style="font-size: 1.17em;font-weight: bold">HTTP status %s %s</h3>
+<p>
+<pre>%s</pre>

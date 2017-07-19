@@ -95,6 +95,10 @@ public class FeedInfoService extends BaseService {
         return cmsBtFeedInfoDao.selectProductBySku(channelId, sku);
     }
 
+    public List<CmsBtFeedInfoModel> getProductListBySku(String channelId, List<String> skus) {
+        return cmsBtFeedInfoDao.selectProductBySku(channelId, skus);
+    }
+
     public List<CmsBtFeedInfoModel> getProductListBySku(String channelId, String sku) {
         return cmsBtFeedInfoDao.selectProductListBySku(channelId, sku);
     }

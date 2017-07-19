@@ -1,13 +1,11 @@
 package com.voyageone.web2.cms.views.system.setting;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.impl.cms.CmsMtEtkHsCodeService;
-import com.voyageone.service.model.cms.CmsBtTaskTejiabaoModel;
+import com.voyageone.service.impl.cms.product.ProductPlatformService;
 import com.voyageone.service.model.cms.CmsMtEtkHsCodeModel;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +27,8 @@ public class ValueChannelController  extends BaseController {
     private ValueChannelService valueChannelService;
     @Autowired
     private CmsMtEtkHsCodeService cmsMtEtkHsCodeService;
-
+    @Autowired
+    private ProductPlatformService productPlatformService;
     @RequestMapping("addHsCode")
     public AjaxResponse addHsCode(@RequestBody Map params) {
         String hsCodes = params.get("hsCodes").toString();
@@ -69,6 +68,22 @@ public class ValueChannelController  extends BaseController {
                 old.setModified(new Date());
                 cmsMtEtkHsCodeService.updateEdcHsCodeByHsCode(old);
             }
+        }
+        return success(true);
+    }
+    @RequestMapping("updateKaoLaNumiid")
+    public AjaxResponse updateKaoLaNumiid(@RequestBody Map params) {
+        String hsCodes = params.get("hsCodes").toString();
+        String[] hsCodeList = hsCodes.split("\n");
+        for (int i = 0; i < hsCodeList.length; i++) {
+            String  temp[] = hsCodeList[i].split("\t");
+            if(temp.length != 2){
+                throw new BusinessException("格式不正确");
+            }
+            String mainProductCode = temp[0];
+            String numIId = temp[1];
+            //获取到了这两个参数,现在需要将其更新到mongodb数据库
+            productPlatformService.updateProductPlatformByMainProductCode(getUser().getSelChannelId(),getUser().getUserName(),mainProductCode,numIId);
         }
         return success(true);
     }

@@ -28,7 +28,8 @@
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[0] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in vm.picInfo.picList[0] | limitTo: 10" class="thumbnail" ng-if="image != ''"
+                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
                                               ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
@@ -43,8 +44,11 @@
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[5] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+
+                                        <div ng-repeat="image in vm.picInfo.picList[5] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
+
                                         </div>
                                     </div>
                                 </div>
@@ -58,7 +62,8 @@
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[6] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in vm.picInfo.picList[6] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
@@ -73,7 +78,8 @@
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[1] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in vm.picInfo.picList[1] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
@@ -88,7 +94,8 @@
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[2] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in vm.picInfo.picList[2] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
@@ -103,7 +110,8 @@
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[3] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in vm.picInfo.picList[3] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
@@ -118,7 +126,8 @@
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[4] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in vm.picInfo.picList[4] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
@@ -133,7 +142,8 @@
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[7] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in vm.picInfo.picList[7] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
@@ -148,7 +158,8 @@
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[8] | limitTo: 10" class="thumbnail" ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in vm.picInfo.picList[8] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>

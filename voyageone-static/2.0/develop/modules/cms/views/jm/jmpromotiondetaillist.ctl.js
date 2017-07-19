@@ -184,13 +184,13 @@ define([
                 $scope.vm.cmsBtJmPromotionImportTaskList = res.data;
             }, function (res) {
             })
-        }
+        };
         $scope.searchExport = function () {
             cmsBtJmPromotionExportTaskService.getByPromotionId($routeParams.parentId).then(function (res) {
                 $scope.vm.cmsBtJmPromotionExportTaskList = res.data;
             }, function (res) {
             })
-        }
+        };
         $scope.addExport = function (templateType) {
             var model = {templateType: templateType, cmsBtJmPromotionId: $scope.vm.promotionId};
             cmsBtJmPromotionExportTaskService.addExport(model).then(function (res) {
@@ -198,18 +198,18 @@ define([
             }, function (res) {
 
             });
-        }
+        };
         $scope.downloadImportExcel = function (id) {
             ///cms/CmsBtJmPromotionExportTask/index/downloadExcel
             ExportExcel("/cms/CmsBtJmPromotionImportTask/index/downloadExcel", angular.toJson({id: id}));
-        }
+        };
         $scope.downloadImportErrorExcel = function (id) {
             ExportExcel("/cms/CmsBtJmPromotionImportTask/index/downloadImportErrorExcel", angular.toJson({id: id}));
-        }
+        };
         $scope.downloadExportExcel = function (id) {
             ///cms/CmsBtJmPromotionExportTask/index/downloadExcel
             ExportExcel("/cms/CmsBtJmPromotionExportTask/index/downloadExcel", angular.toJson({id: id}));
-        }
+        };
 
 
         function ExportExcel(action, source)//导出excel方法

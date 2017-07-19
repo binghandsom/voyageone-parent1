@@ -218,6 +218,8 @@ public interface CmsUrlConstants {
 
                 String TMALL_PROMOTION_EXPORT = "tmallPromotionExport";
                 String UpdatePromotionProductTag="updatePromotionProductTag";
+
+                String UpdatePromotionListProductTag = "updatePromotionListProductTag";
             }
         }
 

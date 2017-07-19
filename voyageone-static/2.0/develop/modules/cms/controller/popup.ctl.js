@@ -351,6 +351,11 @@ define([
                 "controllerUrl": "modules/cms/views/pop/promotion/setSkuPrice.ctl",
                 "controller": 'setSkuPriceCtl as ctrl',
                 "size": "lg"
+            },
+            "tagModify": {
+                "templateUrl": "views/pop/promotion/detail/tagmodify.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/promotion/detail/tagmodify.ctl",
+                "controller": 'TagModifyCtl'
             }
         },
         "jumei": {
@@ -1355,7 +1360,10 @@ define([
             return openModal(popActions.jumei.jmPromotionDetail.priceModify, context);
         };
 
-
+        // 修改非聚美活动商品tag
+        $scope.openTagModify = function (context) {
+            return openModal(popActions.promotion.tagModify, context);
+        };
         //聚美一览中，price
         $scope.openJMTagModify = function (context) {
             return openModal(popActions.jumei.jmPromotionDetail.tagModify, context);

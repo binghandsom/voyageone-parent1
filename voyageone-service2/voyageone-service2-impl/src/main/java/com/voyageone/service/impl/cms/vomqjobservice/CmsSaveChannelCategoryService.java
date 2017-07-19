@@ -13,16 +13,18 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.daoext.cms.CmsBtSxCnProductSellercatDaoExt;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductStatusHistoryService;
 import com.voyageone.service.impl.cms.sx.PlatformWorkloadAttribute;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.CmsBtSxCnProductSellercatModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,16 +41,20 @@ import java.util.*;
 @Service
 public class CmsSaveChannelCategoryService extends VOAbsLoggable {
 
+    private final CmsBtProductDao cmsBtProductDao;
+    private final ProductService productService;
+    private final SxProductService sxProductService;
+    private final ProductStatusHistoryService productStatusHistoryService;
+    private final ProductGroupService productGroupService;
+
     @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-    @Autowired
-    private ProductService productService;
-    @Autowired
-    private SxProductService sxProductService;
-    @Autowired
-    private ProductStatusHistoryService productStatusHistoryService;
-    @Autowired
-    private CmsBtSxCnProductSellercatDaoExt cnProductSellercatDao;
+    public CmsSaveChannelCategoryService(CmsBtProductDao cmsBtProductDao, ProductService productService, SxProductService sxProductService, ProductStatusHistoryService productStatusHistoryService, ProductGroupService productGroupService) {
+        this.cmsBtProductDao = cmsBtProductDao;
+        this.productService = productService;
+        this.sxProductService = sxProductService;
+        this.productStatusHistoryService = productStatusHistoryService;
+        this.productGroupService = productGroupService;
+    }
 
     /**
      * 返回值由void改为Map，存放因“产品数据不完整”跳过的产品code和对于的错误提示信息
@@ -78,6 +84,8 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
         if (sellerCats == null || sellerCats.isEmpty()) {
             $info("sellerCats为空，可能是删除所有分类 params=" + messageMap.toString());
         }
+
+
         //channelId
         String channelId = (String) messageMap.get("channelId");
         //modifier
@@ -88,14 +96,16 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             orgDispList = new ArrayList<>(0);
         }
 
+        codeList = findOtheCodes(channelId, codeList, cartId);
+
         JongoQuery queryObject = new JongoQuery();
         queryObject.setQuery("{'common.fields.code':{$in:#}}");
         queryObject.setParameters(codeList);
         queryObject.setProjection("{'common.fields.code':1,'platforms.P" + cartId + "':1,'_id':0}");
 
         List<CmsBtProductModel> prodList = productService.getList(channelId, queryObject);
-        if (prodList == null && prodList.size() == 0) {
-            throw new BusinessException(String.format("查询不到产品,params=%s"), JacksonUtil.bean2Json(messageMap));
+        if (ListUtils.isNull(prodList)){
+            throw new BusinessException("查询不到产品,params=%s", JacksonUtil.bean2Json(messageMap));
         }
 
         // 被变更的分类类目ID
@@ -190,7 +200,9 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
 
         //取得approved的code插入
         $debug("批量设置店铺内分类 开始记入SxWorkLoad表");
-        sxProductService.insertPlatformWorkload(channelId, cartId, PlatformWorkloadAttribute.SELLER_CIDS, approvedCodeList, userName);
+        if(ListUtils.notNull(approvedCodeList)) {
+            sxProductService.insertPlatformWorkload(channelId, cartId, PlatformWorkloadAttribute.SELLER_CIDS, approvedCodeList, userName);
+        }
 
         // 记录商品修改历史
         TypeChannelBean cartObj = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, Integer.toString(cartId), "cn");
@@ -240,5 +252,21 @@ public class CmsSaveChannelCategoryService extends VOAbsLoggable {
             }
         }
         return false;
+    }
+
+    private List<String> findOtheCodes(String channelId, List<String> codes, Integer cartId){
+        List<CmsBtProductGroupModel> productGroups = productGroupService.selectGroupByCodesAndCart(channelId, codes, cartId);
+        if(ListUtils.notNull(productGroups)){
+            productGroups.forEach(group->{
+                if(ListUtils.notNull(group.getProductCodes())){
+                    group.getProductCodes().forEach(code->{
+                        if(!codes.contains(code)){
+                            codes.add(code);
+                        }
+                    });
+                }
+            });
+        }
+        return codes;
     }
 }

@@ -1,10 +1,24 @@
 package com.voyageone.service.impl.cms.product;
 
+import com.overstock.mp.mpc.externalclient.PaymentResourceClientImpl;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +34,8 @@ public class CmsProductCodeChangeGroupService {
     private ProductGroupService productGroupService;
     @Autowired
     private ProductPlatformService productPlatformService;
+    @Autowired
+    private ProductService productService;
 
     /**
      * 移动Code-从一个Group到另外一个Group
@@ -56,6 +72,25 @@ public class CmsProductCodeChangeGroupService {
 
         // 处理源Group
         saveSourceGroup(channelId, cartId, code, sourceGroupModel, modifier);
+
+        CmsBtProductModel mainProductModel = productService.getProductByCode(channelId, destGroupModel.getMainProductCode());
+
+        // 覆盖店铺内分类
+        CmsBtProductModel_Platform_Cart mainPlatform = mainProductModel.getPlatform(cartId);
+
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("common.fields.code", code);
+
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put(String.format("platforms.P%d.sellerCats", cartId), mainPlatform.getSellerCats() == null ? new ArrayList<>() : mainPlatform.getSellerCats());
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        productService.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+
     }
 
     /**

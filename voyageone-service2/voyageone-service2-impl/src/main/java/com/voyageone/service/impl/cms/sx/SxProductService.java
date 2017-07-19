@@ -533,6 +533,42 @@ public class SxProductService extends BaseService {
     }
 
     /**
+     * 回写ims_bt_product表
+     *
+     */
+    public void updateImsBtProduct(String channelId, String orgChannelId, int cartId, List<String> codes, String numIId, boolean isSku, String modifier) {
+        // s:sku级别, p:product级别
+        String updateType = isSku ? "s" : "p";
+
+        // voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的
+        for (String code : codes) {
+            ImsBtProductModel imsBtProductModel = imsBtProductDao.selectImsBtProductByChannelCartCode(
+                    channelId,
+                    cartId,
+                    code,
+                    orgChannelId);
+            if (imsBtProductModel == null) {
+                // 没找到就插入
+                imsBtProductModel = new ImsBtProductModel();
+                imsBtProductModel.setChannelId(channelId);
+                imsBtProductModel.setCartId(cartId);
+                imsBtProductModel.setCode(code);
+                imsBtProductModel.setNumIid(numIId);
+                imsBtProductModel.setQuantityUpdateType(updateType);
+                imsBtProductModel.setOrgChannelId(orgChannelId);
+
+                imsBtProductDao.insertImsBtProduct(imsBtProductModel, modifier);
+            } else {
+                // 找到了, 更新
+                imsBtProductModel.setNumIid(numIId);
+                imsBtProductModel.setQuantityUpdateType(updateType);
+
+                imsBtProductDao.updateImsBtProductBySeq(imsBtProductModel, modifier);
+            }
+        }
+    }
+
+    /**
      * 上传图片到天猫(或聚美)图片空间
      *
      * @param channelId   渠道id
@@ -543,12 +579,6 @@ public class SxProductService extends BaseService {
      * @param user        更新者
      */
     public Map<String, String> uploadImage(String channelId, int cartId, String groupId, ShopBean shopBean, Set<String> imageUrlSet, String user) throws Exception {
-        KoalaConfig koalaConfig = null;
-        if (CartEnums.Cart.KL.getValue() == cartId) {
-            koalaConfig = Shops.getShopKoala(channelId, String.valueOf(cartId));
-        }
-
-
         // Map<srcUrl, destUrl>
         Map<String, String> retUrls = new HashMap<>();
 
@@ -600,6 +630,7 @@ public class SxProductService extends BaseService {
                             }
                             // 20170227 增加上传图片到京东图片空间 charis END
                         } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.NTES.getId())) {
+                            KoalaConfig koalaConfig = Shops.getShopKoala(channelId, String.valueOf(cartId));
                             String[] picture = uploadImageByUrl_KL(srcUrl, koalaConfig, groupId);
                             if (picture != null && picture.length > 0) {
                                 destUrl = picture[0];
@@ -657,6 +688,7 @@ public class SxProductService extends BaseService {
                         }
                         // 20170227 增加上传图片到京东图片空间 charis END
                     } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.NTES.getId())) {
+                        KoalaConfig koalaConfig = Shops.getShopKoala(channelId, String.valueOf(cartId));
                         String[] picture = uploadImageByUrl_KL(srcUrl, koalaConfig, groupId);
                         if (picture != null && picture.length > 0) {
                             destUrl = picture[0];
@@ -1725,8 +1757,12 @@ public class SxProductService extends BaseService {
 
             // WMS2.0切换 20170526 charis STA
             // 库存取得逻辑变为直接用cms的库存
-            Map<String, Integer> skuLogicQtyMap = getSaleQuantity(sxData.getMainProduct().getPlatform(sxData.getCartId()).getSkus());
-
+//            Map<String, Integer> skuLogicQtyMap = getSaleQuantity(sxData.getMainProduct().getPlatform(sxData.getCartId()).getSkus());
+            List<BaseMongoMap<String, Object>> platformSkus = new ArrayList<>();
+            sxData.getProductList().stream()
+                    .map(product -> product.getPlatform(sxData.getCartId()).getSkus())
+                    .forEach(listSku-> platformSkus.addAll(listSku));
+            Map<String, Integer> skuLogicQtyMap = getSaleQuantity(platformSkus);
             // 上新对象code
 //            List<String> listSxCode = null;
 //            if (ListUtils.notNull(sxData.getProductList())) {
@@ -6035,11 +6071,11 @@ public class SxProductService extends BaseService {
 
         // 20170418 tom CMSDOC-592 START
         // 先用Liking的匠心界做试点， 运行一段时间后没发现什么后遗症的话， 再推广到所有店铺
-        if (ChannelConfigEnums.Channel.USJGJ.getId().equals(shopBean.getOrder_channel_id())
-                && CartEnums.Cart.JGJ.getId().equals(shopBean.getCart_id())
-                ) {
+//        if (ChannelConfigEnums.Channel.USJGJ.getId().equals(shopBean.getOrder_channel_id())
+//                && CartEnums.Cart.JGJ.getId().equals(shopBean.getCart_id())
+//                ) {
             // s7开头的图片就不用一直保存在京东图片空间里了
-            if (picUrl.startsWith("http://s7d5.scene7.com/")) {
+//            if (picUrl.startsWith("http://s7d5.scene7.com/")) {
                 // 删除图片
                 try {
                     jdImgzoneService.deletePictures(shopBean, imageUrl[1]);
@@ -6048,9 +6084,9 @@ public class SxProductService extends BaseService {
                 }
 
                 // 图片id无需保存（只需要保存图片地址， 下次可能还能用到）
-                imageUrl[1] = "";
-            }
-        }
+//                imageUrl[1] = "";
+//            }
+//        }
         // 20170418 tom CMSDOC-592 END
 
         return imageUrl;

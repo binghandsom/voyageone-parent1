@@ -185,10 +185,10 @@ public class PlatformSchemaService extends BaseService {
                             if (productIds != null && productIds.length > 0) {
                                 // 从天猫上拉一下这个商品的属性
                                 String pId = productIds[0]; // 348593092
-                                StringBuffer failCause = null;
+                                StringBuffer failCause = new StringBuffer("");
                                 String schema = tbProductService.getProductUpdateSchema(Long.parseLong(pId), shopBean, failCause);
 
-                                if (!StringUtils.isEmpty(schema)) {
+                                if (!StringUtils.isEmpty(schema) && failCause.length() == 0) {
                                     schemaProduct = schema;
                                 }
                             }

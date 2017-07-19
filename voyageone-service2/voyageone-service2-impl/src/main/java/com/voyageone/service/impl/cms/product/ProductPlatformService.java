@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.product;
 
+import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
@@ -13,6 +14,7 @@ import com.voyageone.components.jd.service.JdProductService;
 import com.voyageone.components.tmall.service.TbProductService;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceService;
@@ -61,6 +63,9 @@ public class ProductPlatformService extends BaseService {
 
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private CmsBtProductGroupDao cmsBtProductGroupDao;
 
     /**
      * 更新平台产品信息,并且不做上新也不触发价格变更
@@ -200,6 +205,7 @@ public class ProductPlatformService extends BaseService {
      * @param blnSmartSx
      * @return
      */
+    /*xu*/
     public String updateProductPlatform(String channelId, Long prodId, CmsBtProductModel_Platform_Cart platformModel
             , String modifier, Boolean isModifiedChk, EnumProductOperationType opeType, String comment
             , boolean blnSmartSx, Integer isSx) {
@@ -261,6 +267,47 @@ public class ProductPlatformService extends BaseService {
         productStatusHistoryService.insert(channelId, oldProduct.getCommon().getFields().getCode(), platformModel.getStatus(), platformModel.getCartId(), opeType, comment, modifier);
 
         return platformModel.getModified();
+    }
+
+    /**
+     *
+     * @param channelId
+     * @param modifier
+     * @param mainProductCode
+     * @param numIId
+     * @return
+     */
+    public boolean updateProductPlatformByMainProductCode(String channelId,String modifier,String mainProductCode,String numIId ) {
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        BulkUpdateModel model = new BulkUpdateModel();
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("platforms.P34.mainProductCode", mainProductCode);
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("platforms.P34.pNumIId",numIId);
+        updateMap.put("platforms.P34.pReallyStatus","OnSale");
+        model.setQueryMap(queryMap);
+        model.setUpdateMap(updateMap);
+        bulkList.add(model);
+        try {
+            BulkWriteResult $set = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        //操作group
+        HashMap<String, Object> paraMap = new HashMap<>();
+        paraMap.put("cartId",34);
+        paraMap.put("mainProductCode",mainProductCode);
+        HashMap<String, Object> rsMap = new HashMap<>();
+        rsMap.put("numIId",numIId);
+        try {
+            cmsBtProductGroupDao.update(channelId,paraMap,rsMap);
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
 
@@ -375,4 +422,6 @@ public class ProductPlatformService extends BaseService {
         }
         return  platformModel;
     }
+
+
 }

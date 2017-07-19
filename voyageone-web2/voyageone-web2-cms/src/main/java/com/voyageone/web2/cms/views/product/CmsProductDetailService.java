@@ -634,6 +634,7 @@ public class CmsProductDetailService extends BaseViewService {
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         // 取得该商品的所在group的其他商品的图片
         CmsBtProductGroupModel cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(), 0);
+        cmsBtProductGroup.setProductCodes(cmsBtProductGroup.getProductCodes().stream().distinct().collect(Collectors.toList()));
         List<Map<String, Object>> images = new ArrayList<>();
         final CmsBtProductGroupModel finalCmsBtProductGroup = cmsBtProductGroup;
         cmsBtProductGroup.getProductCodes().forEach(s1 -> {
@@ -1336,9 +1337,14 @@ public class CmsProductDetailService extends BaseViewService {
         storeStockDetailRequest.setItemCode(code);
         /*调用wms接口,获取库存详情*/
         GetStoreStockDetailResponse stockDetail = voApiClient.execute(storeStockDetailRequest);
+        Map<String, String> sizeMap;
+        try {
+            sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(),
+                    productInfo.getCommon().getFields().getProductType(), productInfo.getCommon().getFields().getSizeType());
+        }catch (BusinessException e){
+            sizeMap = new HashMap<>();
+        }
 
-        Map<String, String> sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(),
-                productInfo.getCommon().getFields().getProductType(), productInfo.getCommon().getFields().getSizeType());
         /*----------------------by xu 调用新的获取库存信息的接口---------------------------*/
         GetStoreStockDetailRequest2 getStoreStockDetailRequest2 = new GetStoreStockDetailRequest2();
         getStoreStockDetailRequest2.setChannelId(productInfo.getChannelId());

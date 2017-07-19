@@ -41,18 +41,15 @@ import com.voyageone.service.impl.cms.promotion.PromotionTejiabaoService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.*;
-import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.ims.ImsBtProductModel;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -193,10 +190,10 @@ public class PlatformPriceService extends VOAbsLoggable {
         publishPlatFormPrice(channelId, chg, newProduct, cartId, userName, true, false);
 
         // 记录价格变更履历/同步价格范围
-        List<CmsBtPriceLogModel> logModelList = new ArrayList<>(1);
+        List<CmsBtPriceLogFlatModel> logModelList = new ArrayList<>(1);
         for (BaseMongoMap skuObj : newProduct.getPlatform(cartId).getSkus()) {
             String skuCode = skuObj.getStringAttribute("skuCode");
-            CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
+            CmsBtPriceLogFlatModel cmsBtPriceLogModel = new CmsBtPriceLogFlatModel();
             cmsBtPriceLogModel.setChannelId(channelId);
             cmsBtPriceLogModel.setProductId(newProduct.getProdId().intValue());
             cmsBtPriceLogModel.setCode(prodCode);
@@ -216,9 +213,10 @@ public class PlatformPriceService extends VOAbsLoggable {
                 cmsBtPriceLogModel.setClientNetPrice(comSku.getClientNetPrice());
             }
             cmsBtPriceLogModel.setComment(comment);
-            cmsBtPriceLogModel.setCreated(new Date());
+            Date sysTs = new Date();
+            cmsBtPriceLogModel.setCreated(sysTs);
             cmsBtPriceLogModel.setCreater(userName);
-            cmsBtPriceLogModel.setModified(new Date());
+            cmsBtPriceLogModel.setModified(sysTs);
             cmsBtPriceLogModel.setModifier(userName);
             logModelList.add(cmsBtPriceLogModel);
         }
@@ -713,10 +711,10 @@ public class PlatformPriceService extends VOAbsLoggable {
                 $debug("CmsRefreshRetailPriceTask 保存计算结果 " + rs.toString());
 
                 // 记录价格变更履历/同步价格范围
-                List<CmsBtPriceLogModel> logModelList = new ArrayList<>(1);
+                List<CmsBtPriceLogFlatModel> logModelList = new ArrayList<>(1);
                 for (BaseMongoMap skuObj : prodObj.getPlatform(cartId).getSkus()) {
                     String skuCode = skuObj.getStringAttribute("skuCode");
-                    CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
+                    CmsBtPriceLogFlatModel cmsBtPriceLogModel = new CmsBtPriceLogFlatModel();
                     cmsBtPriceLogModel.setChannelId(channelId);
                     cmsBtPriceLogModel.setProductId(prodObj.getProdId().intValue());
                     cmsBtPriceLogModel.setCode(prodCode);
@@ -736,9 +734,10 @@ public class PlatformPriceService extends VOAbsLoggable {
                         cmsBtPriceLogModel.setClientNetPrice(comSku.getClientNetPrice());
                     }
                     cmsBtPriceLogModel.setComment("高级检索-重新计算指导售价");
-                    cmsBtPriceLogModel.setCreated(new Date());
+                    Timestamp sysTs = new Timestamp(System.currentTimeMillis());
+                    cmsBtPriceLogModel.setCreated(sysTs);
                     cmsBtPriceLogModel.setCreater(userName);
-                    cmsBtPriceLogModel.setModified(new Date());
+                    cmsBtPriceLogModel.setModified(sysTs);
                     cmsBtPriceLogModel.setModifier(userName);
                     logModelList.add(cmsBtPriceLogModel);
                 }
@@ -796,7 +795,7 @@ public class PlatformPriceService extends VOAbsLoggable {
             skuUpdType = 0;
         }
 
-        List<CmsBtPriceLogModel> priceLogList = new ArrayList<>();
+        List<CmsBtPriceLogFlatModel> priceLogList = new ArrayList<>();
         BulkJongoUpdateList bulkList = new BulkJongoUpdateList(1000, cmsBtProductDao, channelId);
         List<CmsBtOperationLogModel_Msg> errorInfos = new ArrayList<>();
 
@@ -962,7 +961,7 @@ public class PlatformPriceService extends VOAbsLoggable {
                         priceService.priceCheck(skuObj, autoSyncPriceMsrpConfig, mandatoryBreakThresholdConfig);
                     }
 
-                    CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
+                    CmsBtPriceLogFlatModel cmsBtPriceLogModel = new CmsBtPriceLogFlatModel();
                     cmsBtPriceLogModel.setChannelId(channelId);
                     cmsBtPriceLogModel.setProductId(prodObj.getProdId().intValue());
                     cmsBtPriceLogModel.setCode(prodCode);
@@ -982,9 +981,10 @@ public class PlatformPriceService extends VOAbsLoggable {
                         cmsBtPriceLogModel.setClientNetPrice(comSku.getClientNetPrice());
                     }
                     cmsBtPriceLogModel.setComment("高级检索 设置最终售价");
-                    cmsBtPriceLogModel.setCreated(new Date());
+                    Timestamp sysTs = new Timestamp(System.currentTimeMillis());
+                    cmsBtPriceLogModel.setCreated(sysTs);
                     cmsBtPriceLogModel.setCreater(userName);
-                    cmsBtPriceLogModel.setModified(new Date());
+                    cmsBtPriceLogModel.setModified(sysTs);
                     cmsBtPriceLogModel.setModifier(userName);
                     priceLogList.add(cmsBtPriceLogModel);
                 }

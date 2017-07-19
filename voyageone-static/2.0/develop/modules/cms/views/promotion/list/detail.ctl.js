@@ -3,11 +3,13 @@
  */
 
 define([
+    'cms',
     'modules/cms/controller/popup.ctl',
     'underscore'
 ], function () {
 
-    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory,cookieService,cActions) {
+    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams,
+                              $location, alert, $translate, confirm, cRoutes, selectRowsFactory,cookieService,cActions,popups) {
         $scope.promotionOld={};
         $scope.datePicker = [];
         $scope.vm = {
@@ -273,6 +275,36 @@ define([
             })
         };
 
+        // 批量修改tag
+        $scope.openTagModifyWin = function () {
+            var codeSelList = angular.copy($scope.vm.codeSelList);
+            var selectProductList = [];
+            if (codeSelList.selAllFlag) {
+                selectProductList = angular.copy($scope.vm.codeList);
+            } else {
+                var selectCodeSelList = [];
+                for (var i = 0; i < codeSelList.selList.length; i++) {
+                    selectCodeSelList.push(codeSelList.selList[i].data);
+                }
+                selectProductList = selectCodeSelList;
+            }
+
+            if (_.size(selectProductList) == 0 && !$scope.vm._selall) {
+                alert("请选择修改价格的商品!");
+                return;
+            }
+
+            popups.openTagModify({
+               search: $scope.search,
+               tagList: $scope.vm.tagList,
+               promotionId: $routeParams.promotionId,
+               isBegin: $scope.vm.isBegin,
+               selectProductList: selectProductList,
+               key : $scope.vm.searchKey,
+               selAll : $scope.vm._selall
+            })
+        };
+
 
 
         //function selAllFlag(objectList,id){
@@ -340,6 +372,6 @@ define([
         }
 
     };
-    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory', 'cookieService','cActions'];
+    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory', 'cookieService','cActions','popups'];
     return detailController;
 });

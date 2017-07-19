@@ -14,6 +14,7 @@ define([
         $scope.hsCodeInfo="";
         $scope.addHsCode = addHsCode;
         $scope.addEtkHsCode = addEtkHsCode;
+        $scope.updateKaoLaNumiid = updateKaoLaNumiid;
         function addHsCode(typeId,typeName){
             confirm("是否添加"+typeName+"?").then(function(){
                 $valueChannelService.addHsCodes({"typeId":typeId,"hsCodes":$scope.hsCodeInfo}).then(function(){
@@ -30,6 +31,16 @@ define([
                 })
             });
         }
+
+        function updateKaoLaNumiid(typeName){
+            confirm("是否添加"+typeName+"?").then(function(){
+                $valueChannelService.updateKaoLaNumiid({"hsCodes":$scope.hsCodeInfo}).then(function(){
+                    notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    $scope.hsCodeInfo = "";
+                })
+            });
+        }
+
     }
 
     valueChannelController.$inject = ['$scope', "$valueChannelService",  '$translate', 'confirm','notify'];

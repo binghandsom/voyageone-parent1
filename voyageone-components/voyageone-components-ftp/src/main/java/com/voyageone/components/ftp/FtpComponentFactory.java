@@ -15,6 +15,19 @@ import com.voyageone.components.ftp.service.SftpComponent;
  */
 public class FtpComponentFactory {
 
+    public static BaseFtpComponent get(FtpConstants.FtpConnectEnum connectEnum) {
+        switch (connectEnum) {
+            case IS:
+            case VO_IMAGE_CMS:
+                return getSFtpComponent(connectEnum);
+            case SCENE7_FTP:
+            case FEED_CHANNEL_FTP:
+                return getFtpComponent(connectEnum);
+            default:
+                throw new UnSupportedFtpConnectEnumException(connectEnum);
+        }
+    }
+
     /**
      * getFtpComponent
      *
@@ -43,7 +56,7 @@ public class FtpComponentFactory {
      * @param channelId   String
      * @return BaseFtpComponent
      */
-    public static BaseFtpComponent getFtpComponent(FtpConstants.FtpTypeEnum typeEnum, FtpConstants.FtpConnectEnum connectEnum, String channelId) {
+    private static BaseFtpComponent getFtpComponent(FtpConstants.FtpTypeEnum typeEnum, FtpConstants.FtpConnectEnum connectEnum, String channelId) {
         FtpConnectBean connectBean = createConnectBean(connectEnum, channelId);
         switch (typeEnum) {
             case FTP:
@@ -71,10 +84,10 @@ public class FtpComponentFactory {
                     throw new RuntimeException("channelId not found.");
                 }
                 return FtpConnectDef.getFeedChannelFtpBean(channelId);
+            case IS:
+                return FtpConnectDef.getImageServerMidFtpBean();
             default:
                 throw new RuntimeException(String.format("FtpBeanEnum not found[%s].", connectEnum));
         }
     }
-
-
 }

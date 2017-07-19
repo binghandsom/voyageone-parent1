@@ -1,7 +1,7 @@
 package com.voyageone.service.daoext.cms;
 
 import com.voyageone.service.dao.ServiceBaseDao;
-import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.CmsBtPriceLogModel_Mysql;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +16,7 @@ import java.util.Map;
 @Repository
 public class CmsBtPriceLogDaoExt extends ServiceBaseDao {
 
-    public List<CmsBtPriceLogModel> selectPriceLogByCode(Map<String, Object> param) {
+    public List<CmsBtPriceLogModel_Mysql> selectPriceLogByCode(Map<String, Object> param) {
         return selectList("select_cms_bt_price_log_by_code", param);
     }
 
@@ -24,25 +24,25 @@ public class CmsBtPriceLogDaoExt extends ServiceBaseDao {
         return selectOne("select_cms_bt_price_log_by_code_cnt", param);
     }
 
-    public int insertCmsBtPriceLogList(List<CmsBtPriceLogModel> paramList) {
-        Map<String, List<CmsBtPriceLogModel>> insertDataMap = new HashMap<>();
+    public int insertCmsBtPriceLogList(List<CmsBtPriceLogModel_Mysql> paramList) {
+        Map<String, List<CmsBtPriceLogModel_Mysql>> insertDataMap = new HashMap<>();
         insertDataMap.put("list", paramList);
         return insert("insert_cms_bt_price_log_list", insertDataMap);
     }
 
-    public CmsBtPriceLogModel selectLastOneBySkuOnCart(String sku, Integer cartId, String channelId) {
-        CmsBtPriceLogModel model = selectOne("selectLastOneBySkuOnCart", parameters("sku", sku, "channel_id", channelId, "cart_id", cartId));
+    public CmsBtPriceLogModel_Mysql selectLastOneBySkuOnCart(String sku, Integer cartId, String channelId) {
+        CmsBtPriceLogModel_Mysql model = selectOne("selectLastOneBySkuOnCart", parameters("sku", sku, "channel_id", channelId, "cart_id", cartId));
         if (model == null) {
             model = selectOne("selectLastOneBySkuOnCardFromHistory", parameters("sku", sku, "channel_id", channelId, "cart_id", cartId));
         }
         return model;
     }
 
-    public List<CmsBtPriceLogModel> selectListBySkuOnCart(String sku, String code, String cartId, String channelId) {
+    public List<CmsBtPriceLogModel_Mysql> selectListBySkuOnCart(String sku, String code, String cartId, String channelId) {
         return selectPageBySkuOnCart(sku, code, cartId, channelId, null, null);
     }
 
-    public List<CmsBtPriceLogModel> selectPageBySkuOnCart(String sku, String code, String cartId, String channelId, Integer offset, Integer limit) {
+    public List<CmsBtPriceLogModel_Mysql> selectPageBySkuOnCart(String sku, String code, String cartId, String channelId, Integer offset, Integer limit) {
 
         if (StringUtils.isEmpty(sku))
             sku = null;

@@ -106,7 +106,7 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      */
     public BulkWriteResult bulkUpdateWithMap(String channelId, List<BulkUpdateModel> bulkList, String modifier, String key) {
         return bulkUpdateWithMap(channelId, bulkList, modifier, key, false);
-    }
+}
 
     @Override
     public WriteResult update(BaseMongoModel model) {

@@ -12,14 +12,9 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CmsBtBrandBlockService;
 import com.voyageone.service.impl.cms.CmsMtChannelValuesService;
@@ -29,6 +24,7 @@ import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,6 +33,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -86,10 +83,10 @@ public class FeedToCmsService extends BaseService {
     /**
      * 更新code信息如果不code不存在会新建
      *
-     * @param products 产品列表
+     * @param productList 产品列表
      */
     @VOTransactional
-    public Map<String, List<CmsBtFeedInfoModel>> updateProduct(String channelId, List<CmsBtFeedInfoModel> products,
+    public Map<String, List<CmsBtFeedInfoModel>> updateProduct(String channelId, List<CmsBtFeedInfoModel> productList,
                                                                String modifier) {
 
 
@@ -108,147 +105,154 @@ public class FeedToCmsService extends BaseService {
         if (cmsChannelConfigs != null) {
             isSetCategory = "1".equalsIgnoreCase(cmsChannelConfigs.getConfigValue1());
         }
-        for (CmsBtFeedInfoModel product : products) {
-            product.setCode(product.getCode().replaceAll("\"", "-"));
-            boolean insertLog = false;
-            try {
-
-                product.setModified(DateTimeUtil.getNow());
-                product.setModifier(modifier);
-                product.setUpdFlg(0);
-
-                String category = product.getCategory();
-                if (!chkCategoryPathValid(category)) {
-                    throw new BusinessException("category 不合法：" + category);
-                }
-
-                // 判断是否追加一个新的类目
-                if (!existCategory.contains(category)) {
-                    feedCategoryTreeService.addCategory(channelId, category, modifier);
-                    existCategory.add(category);
-                }
-
-                CmsBtFeedInfoModel befproduct = feedInfoService.getProductByCode(channelId, product.getCode());
-                if (befproduct != null) {
-                    product.set_id(befproduct.get_id());
-                    // 如果已经人为设置过主类目的场合 把这个主类目保存起来不用重新计算主类目了
-                    product.setCatConf(befproduct.getCatConf());
-                    if("1".equals(product.getCatConf())){
-                        product.setMainCategoryCn(befproduct.getMainCategoryCn());
-                        product.setMainCategoryEn(befproduct.getMainCategoryEn());
-                    }
-                    //把之前的sku（新的product中没有的sku）保存到新的product的sku中
-                    for (CmsBtFeedInfoModel_Sku skuModel : befproduct.getSkus()) {
-                        if (!product.getSkus().contains(skuModel)) {
-                            // Vms系统以新的sku为准
-                            product.getSkus().add(skuModel);
-                            insertLog = true;
-                        } else {
-                            // 改条数据已经需要跟新主数据了 后面价格也不需要比了
-                            if (!insertLog) {
-                                CmsBtFeedInfoModel_Sku item = product.getSkus().get(product.getSkus().indexOf(skuModel));
-                                if (item.getPriceClientMsrp().compareTo(skuModel.getPriceClientMsrp()) != 0
-                                        || item.getPriceClientRetail().compareTo(skuModel.getPriceClientRetail()) != 0
-                                        || item.getPriceMsrp().compareTo(skuModel.getPriceMsrp()) != 0
-                                        || item.getPriceNet().compareTo(skuModel.getPriceNet()) != 0
-                                        || item.getPriceCurrent().compareTo(skuModel.getPriceCurrent()) != 0
-                                        || (!item.getMainVid().equals(skuModel.getMainVid()))) {
-                                    insertLog = true;
-                                }
-                            }
-                            // 重量变化的情况下，重新导入
-                            if (!insertLog) {
-                                CmsBtFeedInfoModel_Sku item = product.getSkus().get(product.getSkus().indexOf(skuModel));
-                                String newWeight = item.getWeightOrg();
-                                String oldWeight = skuModel.getWeightOrg();
-                                if (StringUtils.isEmpty(newWeight) && !StringUtils.isEmpty(oldWeight)) {
-                                    insertLog = true;
-                                } else if (!StringUtils.isEmpty(newWeight) && !newWeight.equals(oldWeight)) {
-                                    insertLog = true;
-                                }
-                            }
-                        }
-                    }
-                    product.setCreated(befproduct.getCreated());
-                    product.setCreater(befproduct.getCreater());
-//                    product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
-                    //feed增加状态属性(New(9), Waiting For Import(0),Finish Import(1),Error(2), Not Import(3))，9,3 ,0->不变, 2, 1->0
-                    if (befproduct.getUpdFlg() == 2 || befproduct.getUpdFlg() == 1 || befproduct.getUpdFlg() == 0) {
-                        if (insertLog || compare(befproduct, product)) {
-                            product.setUpdFlg(0);
-                        }
-                    } else {
-                        product.setUpdFlg(9);
-                    }
-                } else {
-                    //如果是新的产品,如config已配置直接导入
-                    //flag 1导入
-                    CmsChannelConfigBean isImportFeedTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SET_FEED_IMPORT_FLG);
-                    if (isImportFeedTypeConfig != null && "1".equals(isImportFeedTypeConfig.getConfigValue1())) {
-                        product.setCreater(modifier);
-                        product.setCreated(DateTimeUtil.getNow());
-                        product.setModifier(modifier);
-                        product.setModified(DateTimeUtil.getNowTimeStamp());
-                        product.setUpdFlg(0);
-                    } else {
-                        product.setCreater(modifier);
-                        product.setCreated(DateTimeUtil.getNow());
-                        product.setModifier(modifier);
-                        product.setModified(DateTimeUtil.getNowTimeStamp());
-                        product.setUpdFlg(9);
-                    }
-                }
-                // code 库存计算
-                Integer qty = 0;
-                for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
-                    if (sku.getQty() != null) qty += sku.getQty();
-                    weightConvert(sku);
-//                    if (isUsJoi) priceConvert(sku);
-                }
-                product.setQty(qty);
-
-                product.setCatId(MD5.getMD5(product.getCategory()));
-
-                //计算主类目
-                if (isSetCategory && StringUtil.isEmpty(product.getMainCategoryEn())) {
-                    try {
-                        setMainCategory(product);
-                    }catch (Exception e){
-                        $error(e.getMessage());
-                    }
-                }
-
-                // 产品数据合法性检查
-                checkProduct(product);
-
-                // 计算人民币价格
+        for (CmsBtFeedInfoModel productItem : productList) {
+            if(StringUtil.isEmpty(productItem.getCode())){
+                $error("code为空"+ JacksonUtil.bean2Json(productItem));
+                continue;
+            }
+            List<CmsBtFeedInfoModel> products = getRelatedProducts(channelId, productItem);
+            for (CmsBtFeedInfoModel product : products) {
+                product.setCode(product.getCode().replaceAll("\"", "-"));
+                boolean insertLog = false;
                 try {
-                    priceService.setFeedPrice(product);
-                } catch (Exception e) {
+
+                    product.setModified(DateTimeUtil.getNow());
+                    product.setModifier(modifier);
+                    product.setUpdFlg(0);
+
+                    String category = product.getCategory();
+                    if (!chkCategoryPathValid(category)) {
+                        throw new BusinessException("category 不合法：" + category);
+                    }
+
+                    // 判断是否追加一个新的类目
+                    if (!existCategory.contains(category)) {
+                        feedCategoryTreeService.addCategory(channelId, category, modifier);
+                        existCategory.add(category);
+                    }
+
+                    CmsBtFeedInfoModel befproduct = feedInfoService.getProductByCode(channelId, product.getCode());
+                    if (befproduct != null) {
+                        product.set_id(befproduct.get_id());
+                        // 如果已经人为设置过主类目的场合 把这个主类目保存起来不用重新计算主类目了
+                        product.setCatConf(befproduct.getCatConf());
+                        if ("1".equals(product.getCatConf())) {
+                            product.setMainCategoryCn(befproduct.getMainCategoryCn());
+                            product.setMainCategoryEn(befproduct.getMainCategoryEn());
+                        }
+                        //把之前的sku（新的product中没有的sku）保存到新的product的sku中
+                        for (CmsBtFeedInfoModel_Sku skuModel : befproduct.getSkus()) {
+                            if (!product.getSkus().contains(skuModel)) {
+                                // Vms系统以新的sku为准
+                                product.getSkus().add(skuModel);
+                                insertLog = true;
+                            } else {
+                                // 改条数据已经需要跟新主数据了 后面价格也不需要比了
+                                if (!insertLog) {
+                                    CmsBtFeedInfoModel_Sku item = product.getSkus().get(product.getSkus().indexOf(skuModel));
+                                    if (item.getPriceClientMsrp().compareTo(skuModel.getPriceClientMsrp()) != 0
+                                            || item.getPriceClientRetail().compareTo(skuModel.getPriceClientRetail()) != 0
+                                            || item.getPriceMsrp().compareTo(skuModel.getPriceMsrp()) != 0
+                                            || item.getPriceNet().compareTo(skuModel.getPriceNet()) != 0
+                                            || item.getPriceCurrent().compareTo(skuModel.getPriceCurrent()) != 0
+                                            || (!item.getMainVid().equals(skuModel.getMainVid()))) {
+                                        insertLog = true;
+                                    }
+                                }
+                                // 重量变化的情况下，重新导入
+                                if (!insertLog) {
+                                    CmsBtFeedInfoModel_Sku item = product.getSkus().get(product.getSkus().indexOf(skuModel));
+                                    String newWeight = item.getWeightOrg();
+                                    String oldWeight = skuModel.getWeightOrg();
+                                    if (StringUtils.isEmpty(newWeight) && !StringUtils.isEmpty(oldWeight)) {
+                                        insertLog = true;
+                                    } else if (!StringUtils.isEmpty(newWeight) && !newWeight.equals(oldWeight)) {
+                                        insertLog = true;
+                                    }
+                                }
+                            }
+                        }
+                        product.setCreated(befproduct.getCreated());
+                        product.setCreater(befproduct.getCreater());
+//                    product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
+                        //feed增加状态属性(New(9), Waiting For Import(0),Finish Import(1),Error(2), Not Import(3))，9,3 ,0->不变, 2, 1->0
+                        if (befproduct.getUpdFlg() == 2 || befproduct.getUpdFlg() == 1 || befproduct.getUpdFlg() == 0) {
+                            if (insertLog || compare(befproduct, product)) {
+                                product.setUpdFlg(0);
+                            }
+                        } else {
+                            product.setUpdFlg(9);
+                        }
+                    } else {
+                        //如果是新的产品,如config已配置直接导入
+                        //flag 1导入
+                        CmsChannelConfigBean isImportFeedTypeConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.AUTO_SET_FEED_IMPORT_FLG);
+                        if (isImportFeedTypeConfig != null && "1".equals(isImportFeedTypeConfig.getConfigValue1())) {
+                            product.setCreater(modifier);
+                            product.setCreated(DateTimeUtil.getNow());
+                            product.setModifier(modifier);
+                            product.setModified(DateTimeUtil.getNowTimeStamp());
+                            product.setUpdFlg(0);
+                        } else {
+                            product.setCreater(modifier);
+                            product.setCreated(DateTimeUtil.getNow());
+                            product.setModifier(modifier);
+                            product.setModified(DateTimeUtil.getNowTimeStamp());
+                            product.setUpdFlg(9);
+                        }
+                    }
+                    // code 库存计算
+                    Integer qty = 0;
+                    for (CmsBtFeedInfoModel_Sku sku : product.getSkus()) {
+                        if (sku.getQty() != null) qty += sku.getQty();
+                        weightConvert(sku);
+//                    if (isUsJoi) priceConvert(sku);
+                    }
+                    product.setQty(qty);
+
+                    product.setCatId(MD5.getMD5(product.getCategory()));
+
+                    //计算主类目
+                    if (isSetCategory && StringUtil.isEmpty(product.getMainCategoryEn())) {
+                        try {
+                            setMainCategory(product);
+                        } catch (Exception e) {
+                            $error(e.getMessage());
+                        }
+                    }
+
+                    // 产品数据合法性检查
+                    checkProduct(product);
+
+                    // 计算人民币价格
+                    try {
+                        priceService.setFeedPrice(product);
+                    } catch (Exception e) {
 //                    $error(e);
+                    }
+
+                    feedInfoService.updateFeedInfo(product);
+
+                    brandList.add(product.getBrand());
+                    sizeTypeList.add(product.getSizeType());
+                    productTypeList.add(product.getProductType());
+
+                    Map<String, List<String>> attributeMtData;
+                    if (attributeMtDatas.get(category) == null) {
+                        attributeMtData = new HashMap<>();
+                        attributeMtDatas.put(category, attributeMtData);
+                    } else {
+                        attributeMtData = attributeMtDatas.get(category);
+                    }
+                    attributeMtDataMake(attributeMtData, product);
+                    succeedProduct.add(product);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+                    $error(e.getMessage(), e);
+                    product.setUpdMessage(e.getMessage());
+                    failProduct.add(product);
                 }
-
-                feedInfoService.updateFeedInfo(product);
-
-                brandList.add(product.getBrand());
-                sizeTypeList.add(product.getSizeType());
-                productTypeList.add(product.getProductType());
-
-                Map<String, List<String>> attributeMtData;
-                if (attributeMtDatas.get(category) == null) {
-                    attributeMtData = new HashMap<>();
-                    attributeMtDatas.put(category, attributeMtData);
-                } else {
-                    attributeMtData = attributeMtDatas.get(category);
-                }
-                attributeMtDataMake(attributeMtData, product);
-                succeedProduct.add(product);
-            } catch (Exception e) {
-                e.printStackTrace();
-                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
-                $error(e.getMessage(), e);
-                product.setUpdMessage(e.getMessage());
-                failProduct.add(product);
             }
         }
 
@@ -273,7 +277,48 @@ public class FeedToCmsService extends BaseService {
     }
 
     /**
+     * 因为品牌放推送的feed数据会发生 code发生了变化 sku没有变化的情况 所以要根据sku找出之前已经导入cms的涉及到的code 把sku的信息同步一下
+     * @param channelId
+     * @param product
+     * @return
+     */
+    public List<CmsBtFeedInfoModel> getRelatedProducts(String channelId, CmsBtFeedInfoModel product) {
+        if(!channelId.equals("028")) return Collections.singletonList(product);
+        List<String> skus = product.getSkus().stream().map(CmsBtFeedInfoModel_Sku::getSku).collect(Collectors.toList());
+        List<CmsBtFeedInfoModel> feeds = feedInfoService.getProductListBySku(channelId, skus);
+        if (ListUtils.isNull(feeds) || (feeds.size() == 1 && feeds.get(0).getCode().equals(product.getCode()))) {
+            return Collections.singletonList(product);
+        } else {
+            List<CmsBtFeedInfoModel> relatedProducts = new ArrayList<>(feeds.size());
+            for (CmsBtFeedInfoModel feed : feeds) {
+                if (feed.getUpdFlg() != 2) {
+                    for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
+                        String skuCode = sku.getSku();
+                        CmsBtFeedInfoModel_Sku cmsBtFeedInfoSku = product.getSkus().stream().filter(item -> item.getSku().equals(skuCode)).findFirst().orElse(null);
+                        if (cmsBtFeedInfoSku != null) {
+                            Collections.replaceAll(feed.getSkus(), sku, JacksonUtil.json2Bean(JacksonUtil.bean2Json(cmsBtFeedInfoSku), CmsBtFeedInfoModel_Sku.class));
+                            skus.remove(sku.getSku());
+                        }
+                    }
+                    relatedProducts.add(feed);
+                }
+            }
+            product.setSkus(product.getSkus()
+                    .stream()
+                    .filter(sku -> skus.contains(sku.getSku()))
+                    .collect(Collectors.toList()));
+
+            if (ListUtils.notNull(product.getSkus())) {
+                relatedProducts.add(product);
+            }
+            $info("code有变化sku没有变 涉及到的code= " + relatedProducts.stream().map(CmsBtFeedInfoModel::getCode).collect(joining(",")));
+            return relatedProducts;
+        }
+    }
+
+    /**
      * VMS的sku的库存和价格改变时，更新cms系统中的信息
+     *
      * @param channelId
      * @param skuList
      * @param modifier
@@ -312,17 +357,19 @@ public class FeedToCmsService extends BaseService {
                      * priceClientMsrp:美金专柜价
                      */
                     if (targetSku != null) {
-                        triggerPrice = !((targetSku.getPriceNet() == null || targetSku.getPriceNet() == 0)
-                                && (targetSku.getPriceClientRetail() == null || targetSku.getPriceClientRetail() == 0)
-                                && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0));
+                        if (!triggerPrice)
+                            triggerPrice = (targetSku.getPriceNet() != null && targetSku.getPriceNet() > 0 && !ObjectUtils.equals(targetSku.getPriceNet(), skuInfo.getPriceNet()))
+                                    || (targetSku.getPriceClientRetail() != null && targetSku.getPriceClientRetail() > 0 && !ObjectUtils.equals(targetSku.getPriceClientRetail(), skuInfo.getPriceClientRetail()))
+                                    || (targetSku.getPriceClientMsrp() != null && targetSku.getPriceClientMsrp() > 0 && !ObjectUtils.equals(targetSku.getPriceClientMsrp(), skuInfo.getPriceClientMsrp()))
+                                || (targetSku.getIsSale() != null && targetSku.getIsSale() != skuInfo.getIsSale());
 
                         // 同步价格
                         if (targetSku.getPriceNet() != null && targetSku.getPriceNet() != 0)
-                            skuInfo.setPriceNet(skuInfo.getPriceNet());
+                            skuInfo.setPriceNet(targetSku.getPriceNet());
                         if (targetSku.getPriceClientRetail() != null && targetSku.getPriceClientRetail() != 0)
-                            skuInfo.setPriceClientRetail(skuInfo.getPriceClientRetail());
+                            skuInfo.setPriceClientRetail(targetSku.getPriceClientRetail());
                         if (targetSku.getPriceClientMsrp() != null && targetSku.getPriceClientMsrp() != 0)
-                            skuInfo.setPriceClientMsrp(skuInfo.getPriceClientMsrp());
+                            skuInfo.setPriceClientMsrp(targetSku.getPriceClientMsrp());
 
                         // 同步库存
                         if (targetSku.getQty() != null) {
@@ -349,6 +396,8 @@ public class FeedToCmsService extends BaseService {
                     // 计算人民币价格
                     if (triggerPrice) {
                         priceService.setFeedPrice(orgFeedInfo);
+                        if (orgFeedInfo.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Succeed)
+                            orgFeedInfo.setUpdFlg(0);
                     }
 
                     // 原feed数据导入成功或者导入失败,则自动重新导入一次
@@ -363,15 +412,15 @@ public class FeedToCmsService extends BaseService {
                     _successMsg.setMsg("修改feed信息完毕");
                     success.add(_successMsg);
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                CmsBtOperationLogModel_Msg _failedMsg = new CmsBtOperationLogModel_Msg();
-                _failedMsg.setSkuCode(orgFeedInfo.getCode());
-                _failedMsg.setMsg(e.getMessage());
-                failed.add(_failedMsg);
-            }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    CmsBtOperationLogModel_Msg _failedMsg = new CmsBtOperationLogModel_Msg();
+                    _failedMsg.setSkuCode(orgFeedInfo.getCode());
+                    _failedMsg.setMsg(e.getMessage());
+                    failed.add(_failedMsg);
+                }
 
-        });
+            });
 
             Map<String, List<CmsBtOperationLogModel_Msg>> response = new HashMap<>();
             response.put("success", success);
@@ -402,7 +451,9 @@ public class FeedToCmsService extends BaseService {
     }
 
     public Boolean checkProduct(CmsBtFeedInfoModel product) {
-        if (!product.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
+        if (!product.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())
+//                && !product.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.KitBag.getId())
+                && !product.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.REAL_MADRID.getId())) {
             if (product.getImage() == null || product.getImage().size() == 0) {
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
                 product.setUpdMessage("没有图片");
