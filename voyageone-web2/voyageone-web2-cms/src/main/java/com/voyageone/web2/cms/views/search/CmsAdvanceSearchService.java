@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.search;
 
 import com.google.gson.Gson;
+
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
@@ -43,12 +44,14 @@ import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -155,7 +158,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
                 promotionMap.put(cartBean.getValue(), promotionService.getPromotions4AdvSearch(userInfo.getSelChannelId(), param));
             }
 
-            shelvesMap.put(cartBean.getValue(),cmsBtShelvesService.selectByChannelIdCart(userInfo.getSelChannelId(), Integer.parseInt(cartBean.getValue())));
+            shelvesMap.put(cartBean.getValue(), cmsBtShelvesService.selectByChannelIdCart(userInfo.getSelChannelId(), Integer.parseInt(cartBean.getValue())));
 
             // 是否是使用价格公式
             CmsChannelConfigBean priceCalculatorConfig = CmsChannelConfigs.getConfigBeanWithDefault(userInfo.getSelChannelId(), CmsConstants.ChannelConfig.PRICE_CALCULATOR, cartBean.getValue());
@@ -280,10 +283,10 @@ public class CmsAdvanceSearchService extends BaseViewService {
         return productService.countByQuery(queryObject.getQuery(), queryObject.getParameters(), userInfo.getSelChannelId());
     }
 
-    public List<String> getProductCodeList(String channelId, Map<String,Object> searchInfo) {
+    public List<String> getProductCodeList(String channelId, Map<String, Object> searchInfo) {
         CmsSearchInfoBean2 cmsSearchInfoBean2 = new CmsSearchInfoBean2();
-        if(searchInfo == null) throw new BusinessException("检索条件不能为null");
-        cmsSearchInfoBean2 = JacksonUtil.json2Bean(JacksonUtil.bean2Json(searchInfo),CmsSearchInfoBean2.class);
+        if (searchInfo == null) throw new BusinessException("检索条件不能为null");
+        cmsSearchInfoBean2 = JacksonUtil.json2Bean(JacksonUtil.bean2Json(searchInfo), CmsSearchInfoBean2.class);
         return getProductCodeList(channelId, cmsSearchInfoBean2);
     }
 
@@ -312,9 +315,9 @@ public class CmsAdvanceSearchService extends BaseViewService {
     /**
      * 获取当前查询的product id列表（查询条件从session而来）
      */
-    public List<Long> getProductIdList(String channelId, Map<String,Object> searchInfo) {
+    public List<Long> getProductIdList(String channelId, Map<String, Object> searchInfo) {
         CmsSearchInfoBean2 searchValue = new CmsSearchInfoBean2();
-        BeanUtils.copyProperties(searchInfo,searchValue);
+        BeanUtils.copyProperties(searchInfo, searchValue);
         if (searchValue == null) {
             $warn("高级检索 getProductIdList session中的查询条件为空");
             return new ArrayList<>(0);
@@ -357,6 +360,31 @@ public class CmsAdvanceSearchService extends BaseViewService {
             plusStr = "";
         }
         queryObject.setProjectionExt(CmsAdvSearchQueryService.searchItems.concat(plusStr).split(";"));
+        queryObject.setSort(advSearchQueryService.getSortValue(searchValue));
+
+        List<CmsBtProductBean> prodInfoList = productService.getBeanList(userInfo.getSelChannelId(), queryObject);
+        if (prodInfoList == null || prodInfoList.isEmpty()) {
+            $warn("CmsAdvanceSearchService.getProductInfoList 检索无结果 param list=" + prodCodeList.toString());
+            return new ArrayList<>(0);
+        }
+        return prodInfoList;
+    }
+
+    /**
+     * 重载getProductInfoList方法,根据高级检索某一页的CodeList获取真实的产品信息
+     */
+    public List<CmsBtProductBean> getProductInfoList(List<String> prodCodeList, CmsSearchInfoBean2 searchValue, UserSessionBean userInfo) {
+
+        if (prodCodeList == null || prodCodeList.isEmpty()) {
+            $warn("CmsAdvanceSearchService.getProductInfoList prodCodeList为空");
+            return Collections.emptyList();
+        }
+        // 最后再获取本页实际产品信息
+        JongoQuery queryObject = new JongoQuery();
+        queryObject.setQuery("{'common.fields.code':{$in:#}}");
+        queryObject.setParameters(prodCodeList);
+
+        queryObject.setProjectionExt(CmsAdvSearchQueryService.searchItems.split(";"));
         queryObject.setSort(advSearchQueryService.getSortValue(searchValue));
 
         List<CmsBtProductBean> prodInfoList = productService.getBeanList(userInfo.getSelChannelId(), queryObject);
@@ -443,10 +471,6 @@ public class CmsAdvanceSearchService extends BaseViewService {
 
     /**
      * 设置产品自由标签，同时添加该tag的所有上级tag，当在高级检索列表也单商品修改free tag时不走MQ方式了
-     * @param channelId
-     * @param params
-     * @param modifier
-     * @param cmsSession
      */
     public void setProdFreeTag(String channelId, Map<String, Object> params, String modifier, CmsSessionBean cmsSession) {
         List<String> tagPathList = (List<String>) params.get("tagPathList");
@@ -472,7 +496,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             List<String> prodCodeList;
             if (isSelAll == 1) {
                 CmsSearchInfoBean2 searchValue = new CmsSearchInfoBean2();
-                BeanUtils.copyProperties((Map<String, Object>) params.get("searchInfo"),searchValue);
+                BeanUtils.copyProperties((Map<String, Object>) params.get("searchInfo"), searchValue);
                 cmsProductFreeTagsUpdateService.sendMessage(channelId, searchValue, tagPathList, orgDispTagList, modifier);
             } else {
                 prodCodeList = (List<String>) params.get("prodIdList");
@@ -540,7 +564,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
             advSearchExportMQMessageBody.setSearchValue(searchValue);
             advSearchExportMQMessageBody.setChannelIdMap(channelIdMap);
             advSearchExportMQMessageBody.setSender(userInfo.getUserName());
-            advSearchExportMQMessageBody.setInventoryDetails(searchValue.get("inventoryDetails") == null?false: (Boolean) searchValue.get("inventoryDetails"));
+            advSearchExportMQMessageBody.setInventoryDetails(searchValue.get("inventoryDetails") == null ? false : (Boolean) searchValue.get("inventoryDetails"));
 
             Gson gson = new Gson();
             String strAdvSearchExportMQMessageBody = gson.toJson(advSearchExportMQMessageBody);
