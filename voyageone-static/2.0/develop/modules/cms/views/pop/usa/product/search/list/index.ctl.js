@@ -14,10 +14,11 @@ define([
             this.confirm = confirm;
             this.$modalInstance = $modalInstance;
             this.context = context;
+            this.usPlatformName = "";
             //设置修改参数
             self.paraMap = {
                 //在当前时间之后多少天执行操作,默认为0;
-                days:"",
+                days:0,
                 //"list":上架,"deList":下架
                 activeStatus: "",
                 //平台id,默认为0
@@ -26,6 +27,7 @@ define([
                 queryMap: {},
                 codeList: {}
             };
+            self.usPlatformName = self.context.usPlatformName;
             //亚马逊平台的日期默认设置为45
             if(self.context.cartId == 5){
                 self.paraMap.days = 45;
@@ -41,12 +43,15 @@ define([
             self.paraMap.activeStatus = self.context.activeStatus;
             self.paraMap.cartId = self.context.cartId + "";
             self.paraMap.days += "";
+            if(self.paraMap.codeList.length == 0){
+                self.alert("please choose at least one!!!");
+                self.$modalInstance.close({success: value});
+                return;
+            }
             self.advanceSearch.listOrDelist(self.paraMap).then((res) => {
                 //"1",需要清除勾选状态,"0"不需要清除勾选状态
                 self.$modalInstance.close({success: value});
             });
-
-
         }
 
     })

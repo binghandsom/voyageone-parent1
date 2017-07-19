@@ -247,7 +247,7 @@ define([
         }
 
         //进行上下架操作
-        batchList(cartId,activeStatus){
+        batchList(cartId,activeStatus,usPlatformName){
             let self = this;
 
             self.popups.openUsList({
@@ -256,7 +256,8 @@ define([
                 queryMap:self.handleQueryParams(),
                 cartId:cartId? cartId :0,
                 //操作状态1为上架,0为下架
-                activeStatus:activeStatus
+                activeStatus:activeStatus,
+                usPlatformName:usPlatformName
             }).then(res => {
 
             });

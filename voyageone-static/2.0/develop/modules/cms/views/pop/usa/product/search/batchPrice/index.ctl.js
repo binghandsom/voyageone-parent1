@@ -8,8 +8,9 @@ define([
 
     cms.controller('batchPriceController', class BatchPriceController {
 
-        constructor(confirm, advanceSearch, $modalInstance, context) {
+        constructor(confirm, advanceSearch, $modalInstance, context,alert) {
             let self = this;
+            this.alert = alert;
             this.advanceSearch = advanceSearch;
             this.confirm = confirm;
             this.$modalInstance = $modalInstance;
@@ -45,12 +46,21 @@ define([
             self.paraMap.codeList = self.context.codeList;
             self.paraMap.cartId = self.context.cartId + "";
             self.paraMap.value += "";
-            self.advanceSearch.updatePrice(self.paraMap).then((res) => {
-                //"1",需要清除勾选状态,"0"不需要清除勾选状态
+            if(self.paraMap.codeList.length == 0){
+                self.alert("please choose at least one!!!");
                 self.$modalInstance.close({success: value});
-            });
-
-
+                return;
+            }
+            if(self.paraMap.changedPriceType == ""||self.paraMap.basePriceType == "" ||self.paraMap.optionType == "" || self.paraMap.value == ""){
+                self.alert("some value is empty!!!");
+                self.$modalInstance.close({success: value});
+                return;
+            }else {
+                self.advanceSearch.updatePrice(self.paraMap).then((res) => {
+                    //"1",需要清除勾选状态,"0"不需要清除勾选状态
+                    self.$modalInstance.close({success: value});
+                });
+            }
         }
 
     })

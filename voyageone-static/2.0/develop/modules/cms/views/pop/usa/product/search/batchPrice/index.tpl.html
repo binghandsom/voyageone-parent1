@@ -1,37 +1,39 @@
 <div class="vo_modal"  ng-init="initialize()">
+    <form role="form" class="form-horizontal" name="feedForm" novalidate>
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
         <h5 class="modal-title"><i class="fa fa-pencil"></i>&nbsp;Update Price</h5>
     </div>
     <div class="modal-body">
+
        <div class="container-fluid">
            <div class="row">
                <div class="col-md-3">
-                   <select class="form-control" ng-model="ctrl.paraMap.changedPriceType">
+                   <select class="form-control" ng-model="ctrl.paraMap.changedPriceType" required>
                        <option value="clientRetailPrice">Sale Price</option>
                        <option value="clientMsrpPrice">Msrp</option>
                    </select>
                </div>
                <div class="col-md-1 text-center">=</div>
                <div class="col-md-3">
-                   <select class="form-control" ng-model="ctrl.paraMap.basePriceType">
+                   <select class="form-control" ng-model="ctrl.paraMap.basePriceType" required>
                        <option value="clientRetailPrice">Sale Price</option>
                        <option value="clientMsrpPrice">Msrp</option>
                        <option value="fixedValue">Fixed value</option>
                    </select>
                </div>
                <div class="col-md-2">
-                   <select class="form-control" ng-model="ctrl.paraMap.optionType" >
+                   <select class="form-control" ng-model="ctrl.paraMap.optionType" required>
                        <option value="*" ng-if="ctrl.paraMap.basePriceType != 'fixedValue'">*</option>
                        <option value="/" ng-if="ctrl.paraMap.basePriceType != 'fixedValue'">/</option>
                        <option value="+" ng-if="ctrl.paraMap.basePriceType != 'fixedValue'">+</option>
                        <option value="-" ng-if="ctrl.paraMap.basePriceType != 'fixedValue'">-</option>
-                       <option value="=">=</option>
+                       <option value="=" ng-if="ctrl.paraMap.basePriceType == 'fixedValue'">=</option>
                    </select>
                </div>
                <div class="col-md-3">
-                   <input type="number" class="form-control" ng-model="ctrl.paraMap.value">
+                   <input type="number" class="form-control" ng-model="ctrl.paraMap.value" required>
                </div>
            </div>
            <div class="row">
@@ -57,7 +59,8 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> CANCLE</button>
-        <button class="btn btn-vo" ng-click="ctrl.updatePrice('1')"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE</button>
-        <button class="btn btn-vo" ng-click="ctrl.updatePrice('0')"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE&CONTINUE</button>
+        <button class="btn btn-vo" ng-click="ctrl.updatePrice('1')"  ng-disabled="feedForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE</button>
+        <button class="btn btn-vo" ng-click="ctrl.updatePrice('0')"  ng-disabled="feedForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE&CONTINUE</button>
     </div>
+    </form>
 </div>

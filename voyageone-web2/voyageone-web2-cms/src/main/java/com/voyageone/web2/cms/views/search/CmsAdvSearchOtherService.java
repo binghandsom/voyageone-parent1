@@ -545,7 +545,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             params.put("value", value);
             params.put("flag", flag);
             mqMap.setParams(params);
-            if ("selAll".equals(selAll)) {
+            if ("true".equals(selAll)) {
                 //勾选了全部,需要通过检索条件,查询出所有信息
                 Map<String, Object> map = (Map) paraMap.get("queryMap");
                 CmsSearchInfoBean2 queryParams = BeanUtils.toModel(map, CmsSearchInfoBean2.class);
@@ -598,7 +598,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             //Integer days = (Integer) paraMap.get("days");
             Integer days =Integer.parseInt((String) paraMap.get("days"));
             mqMap.setDays(days);
-            if ("selAll".equals(selAll)) {
+            if ("true".equals(selAll)) {
                 //勾选了全部,需要通过检索条件,查询出所有信息
                 Map<String, Object> map = (Map) paraMap.get("queryMap");
                 CmsSearchInfoBean2 queryParams = BeanUtils.toModel(map, CmsSearchInfoBean2.class);
