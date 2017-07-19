@@ -6,14 +6,27 @@ define([
     'cms'
 ],function (cms) {
 
-    cms.service('detailDataService',class DetailDataService{
-        constructor(){
-
+    class DetailDataService{
+        constructor($usProductDetailService,$q){
+            this.$usProductDetailService = $usProductDetailService;
+            this.$q = $q;
         }
 
-        test(){
-            console.log('a');
+        getProductInfo(upEntity){
+            let self = this,
+                defer = self.$q.defer();
+
+            self.$usProductDetailService.getProductInfo(upEntity).then(res =>{
+                defer.resolve(res);
+            },res => {
+                defer.reject(res);
+            });
+
+            return defer.promise;
         }
-    });
+
+    }
+
+    cms.service('detailDataService',DetailDataService);
 
 });
