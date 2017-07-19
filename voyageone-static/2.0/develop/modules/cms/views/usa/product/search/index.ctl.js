@@ -69,6 +69,24 @@ define([
 
         search() {
             let self = this;
+            let searchInfo = self.handleQueryParams();
+            self.advanceSearch.search(searchInfo).then(res => {
+                if (res.data) {
+                    self.searchResult.productList = res.data.productList;
+                    self.pageOption.total = res.data.productListTotal;
+
+                    self.searchResult.productList.forEach(productInfo => {
+                        self.srInstance.currPageRows({"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
+                    });
+
+                    self.productSelList = self.srInstance.selectRowsInfo;
+                }
+            });
+        }
+
+        // 处理请求参数
+        handleQueryParams() {
+            let self = this;
             let searchInfo = angular.copy(self.searchInfo);
             if (!searchInfo) {
                 searchInfo = {};
@@ -88,19 +106,7 @@ define([
 
             // 分页参数处理
             _.extend(searchInfo, {productPageNum:self.pageOption.curr, productPageSize:self.pageOption.size});
-
-            self.advanceSearch.search(searchInfo).then(res => {
-                if (res.data) {
-                    self.searchResult.productList = res.data.productList;
-                    self.pageOption.total = res.data.productListTotal;
-
-                    self.searchResult.productList.forEach(productInfo => {
-                        self.srInstance.currPageRows({"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
-                    });
-
-                    self.productSelList = self.srInstance.selectRowsInfo;
-                }
-            });
+            return searchInfo;
         }
 
         clear() {
