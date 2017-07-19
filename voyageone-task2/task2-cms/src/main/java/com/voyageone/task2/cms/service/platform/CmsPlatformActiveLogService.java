@@ -326,6 +326,7 @@ public class CmsPlatformActiveLogService extends BaseService {
      */
     private String failedComment(CmsBtProductModel prodObj, Integer cartId, String prodCode, String channelId) {
         String failedComment = null;
+        if(cartId == CartEnums.Cart.KL.getValue()) return null;
         if (prodObj == null) {
             $warn("CmsPlatformActiveLogService 找不到商品code cartId=%d", cartId);
             failedComment = "商品不存在";

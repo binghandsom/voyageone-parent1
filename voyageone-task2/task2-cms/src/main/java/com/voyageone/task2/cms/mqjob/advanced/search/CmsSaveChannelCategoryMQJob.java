@@ -4,9 +4,7 @@ import com.voyageone.components.rabbitmq.annotation.VOSubRabbitListener;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.SaveChannelCategoryMQMessageBody;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsSaveChannelCategoryService;
 import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
-import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsSubService;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +26,7 @@ public class CmsSaveChannelCategoryMQJob extends TBaseMQCmsSubService<SaveChanne
     @Override
     public void onStartup(SaveChannelCategoryMQMessageBody messageBody) throws Exception {
 
-        List<String> codeList = (List) messageBody.getParams().get("productIds");
+        List codeList = (List) messageBody.getParams().get("productIds");
         super.count = codeList.size();
         List<CmsBtOperationLogModel_Msg> failList = saveChannelCategoryService.onStartup(messageBody.getParams());
         if (failList.size() > 0) {

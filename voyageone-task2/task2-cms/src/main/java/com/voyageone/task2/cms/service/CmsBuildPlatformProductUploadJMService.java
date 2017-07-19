@@ -310,7 +310,12 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
             // WMS2.0切换 20170526 charis STA
             // 库存取得逻辑变为直接用cms的库存
-            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(jmCart.getSkus());
+            List<BaseMongoMap<String, Object>> platformSkus = new ArrayList<>();
+            sxData.getProductList().stream()
+                    .map(p -> p.getPlatform(CART_ID).getSkus())
+                    .forEach(listSku-> platformSkus.addAll(listSku));
+
+            Map<String, Integer> skuLogicQtyMap = sxProductService.getSaleQuantity(platformSkus);
 //            // 上新对象skus
 //            List<String> skus = jmCart.getSkus().stream().map(w -> w.getStringAttribute("skuCode")).collect(Collectors.toList());
 //            Map<String, Integer> skuLogicQtyMap = new HashMap<>();

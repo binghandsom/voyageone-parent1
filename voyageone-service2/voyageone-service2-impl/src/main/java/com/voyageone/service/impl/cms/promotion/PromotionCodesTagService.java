@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms.promotion;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.TagTreeNode;
+import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdateListPromotionProductTagParameter;
 import com.voyageone.service.bean.cms.businessmodel.PromotionProduct.UpdatePromotionProductTagParameter;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodesDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodesTagDao;
@@ -87,6 +88,46 @@ public class PromotionCodesTagService extends BaseService {
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, codesModel.getProductCode());
         productService.updateCmsBtProductTags(channelId, cmsBtProductModel, promotionModel.getRefTagId(), tagList, userName);
     }
+
+    @VOTransactional
+    public void deletePromotionProductTag(UpdatePromotionProductTagParameter parameter, String channelId, String userName) {
+        List<TagTreeNode> tagList = parameter.getTagList().stream().map(m -> {
+            TagTreeNode tagTreeNode = new TagTreeNode();
+            tagTreeNode.setId(m.getTagId());
+            tagTreeNode.setName(m.getTagName());
+            tagTreeNode.setChecked(m.getChecked());
+            return tagTreeNode;
+        }).collect(Collectors.toList());
+
+        for (TagTreeNode tag : tagList) {
+            // 逐一删除cms_bt_promotion_codes_tag数据
+            cmsBtPromotionCodesTagDaoExt.deleteByTagIdPromotionCodesId(parameter.getId(), tag.getId());
+        }
+        // 删除对应的MongoDB 中cms_bt_product_cxx中的tags
+        CmsBtPromotionCodesModel codesModel = cmsBtPromotionCodesDao.select(parameter.getId());
+        CmsBtPromotionModel promotionModel = cmsBtPromotionDao.select(codesModel.getPromotionId());
+        productService.deleteCmsBtProductTags(channelId, codesModel.getProductCode(), promotionModel.getRefTagId(), tagList, userName);
+    }
+
+    @VOTransactional
+    public void updatePromotionListProductTag(UpdateListPromotionProductTagParameter parameter, String channelId, String userName) {
+
+        if (parameter.getListPromotionProductId() == null || parameter.getListPromotionProductId().size() == 0) {
+            return;
+        }
+        UpdatePromotionProductTagParameter parameterProductTag = new UpdatePromotionProductTagParameter();
+        parameterProductTag.setTagList(parameter.getTagList());
+
+        parameter.getListPromotionProductId().forEach(id -> {
+            parameterProductTag.setId(id);
+            if (parameter.getActionType() == 0) {
+                updatePromotionProductTag(parameterProductTag, channelId, userName);
+            } else {
+                deletePromotionProductTag(parameterProductTag, channelId, userName);
+            }
+        });
+    }
+
 
     public CmsBtPromotionCodesTagModel get(int promotionCodesId, int tagId) {
         Map<String, Object> map = new HashedMap();

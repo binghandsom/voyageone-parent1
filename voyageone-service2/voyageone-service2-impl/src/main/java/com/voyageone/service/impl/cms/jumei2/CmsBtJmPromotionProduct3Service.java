@@ -394,6 +394,13 @@ public class CmsBtJmPromotionProduct3Service {
         return 1;
     }
 
+    // 删除单个商品tag
+    @VOTransactional
+    public int deletePromotionProductTag(UpdatePromotionProductTagParameter parameter, String channelId, String userName) {
+        cmsBtJmPromotionTagProductService.deletePromotionProductTag(parameter, channelId, userName);
+        return 1;
+    }
+
     //批量修改商品tag
     @VOTransactional
     public int updatePromotionListProductTag(UpdateListPromotionProductTagParameter parameter, String channelId, String userName) {
@@ -405,7 +412,11 @@ public class CmsBtJmPromotionProduct3Service {
 
         parameter.getListPromotionProductId().forEach(id -> {
             parameterProductTag.setId(id);
-            updatePromotionProductTag(parameterProductTag, channelId, userName);
+            if (parameter.getActionType() == 0) {
+                updatePromotionProductTag(parameterProductTag, channelId, userName);
+            } else {
+                deletePromotionProductTag(parameterProductTag, channelId, userName);
+            }
         });
         return 1;
     }

@@ -269,6 +269,7 @@ define(function () {
                     "getPromotionSkuList": "getPromotionSkuList",
                     "saveSkuPromotionPrices": "saveSkuPromotionPrices",
                     "updatePromotionProductTag": "updatePromotionProductTag",
+                    "updatePromotionListProductTag":"updatePromotionListProductTag",
                     "addPromotionByGroup": "addPromotionByGroup"
                 }
             },
@@ -501,7 +502,8 @@ define(function () {
                 "$valueChannelService": {
                     "root": "/cms/system/valueChannel/",
                     "addHsCodes": "addHsCode",
-                    "addEtkHsCode": "addEtkHsCode"
+                    "addEtkHsCode": "addEtkHsCode",
+                    "updateKaoLaNumiid":"updateKaoLaNumiid"
                 }
             },
             "pop": {

@@ -23,6 +23,7 @@ public class FtpConstants {
         /**
          * nexcess ftp
          */
+        @Deprecated
         NEXCESS_FTP,
 
         /**
@@ -34,6 +35,10 @@ public class FtpConstants {
          * feed channel ftp
          */
         FEED_CHANNEL_FTP,
-    }
 
+        /**
+         * Image Server (Middle Ware)
+         */
+        IS,
+    }
 }

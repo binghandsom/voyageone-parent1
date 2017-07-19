@@ -5,7 +5,6 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.CmsChannelConfigs;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
@@ -37,9 +36,11 @@ import java.util.concurrent.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Name.image_server_bulk_path;
+
 /**
  * CMS 批量上传图片文件到Scene Server Ftp Service
- *    replace com.voyageone.task2.cms.service.monitor.ImageUploadService
+ * replace com.voyageone.task2.cms.service.monitor.ImageUploadService
  *
  * @author chuanyu.liang on 2016/07/18.
  * @version 2.1.0
@@ -313,13 +314,15 @@ public class CmsBulkUploadImageToS7Service extends BaseCronTaskService {
      */
     private Map<String, Boolean> ftpUpload(int threadCount, String channelId, String tempDir, String errorDir) throws InterruptedException {
         // FtpBean初期化
-        $info(String.format("start upload file to S7 tempDir=%s errorDir=%s channelId=%s", tempDir, errorDir, channelId));
+        $info("Prepare upload to image server (mid) ftp, tempDir %s, errorDir %s, channelId %s",
+                tempDir, errorDir, channelId);
 
-        String uploadPath = ChannelConfigs.getVal1(channelId, ChannelConfigEnums.Name.scene7_image_folder);
+        String uploadPath = ChannelConfigs.getVal1(channelId, image_server_bulk_path);
+
         if (StringUtils.isEmpty(uploadPath)) {
-            String err = String.format("uploadPath未配置 channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表", channelId);
-            $error(err);
-            throw new RuntimeException(err);
+            MissingImageServerFtpFolderException exception = new MissingImageServerFtpFolderException(channelId);
+            $error(exception);
+            throw exception;
         }
 
         Map<String, Boolean> uploadResultMap = new ConcurrentHashMap<>();
@@ -328,7 +331,8 @@ public class CmsBulkUploadImageToS7Service extends BaseCronTaskService {
         List<File> fileList = new ArrayList<>();
         filterImgFile(new File(tempDir), fileList);
 
-        $info(String.format("start upload file to S7 fileCount=%s tempDir=%s errorDir=%s channelId=%s", fileList.size(), tempDir, errorDir, channelId));
+        $info("Distribute upload task, fileCount %s, tempDir %s, errorDir %s, channelId%s", fileList.size(),
+                tempDir, errorDir, channelId);
 
         // 线程List
         List<Runnable> threads = new ArrayList<>();
@@ -339,8 +343,9 @@ public class CmsBulkUploadImageToS7Service extends BaseCronTaskService {
             if (subFileLists == null || subFileLists.isEmpty()) {
                 continue;
             }
-            threads.add(() -> uploadFileToS7(subFileLists, uploadResultMap, tempDir, errorDir, finalUploadPath, channelId));
+            threads.add(() -> uploadFiles(subFileLists, uploadResultMap, tempDir, errorDir, finalUploadPath, channelId));
         }
+
         // check threads
         if (!threads.isEmpty()) {
             ExecutorService pool = Executors.newFixedThreadPool(threads.size());
@@ -350,7 +355,8 @@ public class CmsBulkUploadImageToS7Service extends BaseCronTaskService {
             pool.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
         }
 
-        $info(String.format("finish upload file to S7 tempDir=%s errorDir=%s channelId=%s", tempDir, errorDir, channelId));
+        $info("Finish upload to image server (mid) ftp, tempDir %s, errorDir %s, channelId %s",
+                tempDir, errorDir, channelId);
         return uploadResultMap;
     }
 
@@ -380,22 +386,27 @@ public class CmsBulkUploadImageToS7Service extends BaseCronTaskService {
     /**
      * 上传图片到指定目录，并返回上传结果集
      */
-    private void uploadFileToS7(List<File> fileList, Map<String, Boolean> uploadResultMap, String tempDir, String errorDir, String uploadPath, String channelId) {
-        BaseFtpComponent ftpComponent = FtpComponentFactory.getFtpComponent(FtpConstants.FtpConnectEnum.SCENE7_FTP);
+    private void uploadFiles(List<File> fileList, Map<String, Boolean> uploadResultMap, String tempDir,
+                             String errorDir, String uploadPath, String channelId) {
+
+        BaseFtpComponent ftpComponent = FtpComponentFactory.get(FtpConstants.FtpConnectEnum.IS);
+
         try {
             //建立连接
             ftpComponent.openConnect();
             ftpComponent.enterLocalPassiveMode();
 
             for (File imgFile : fileList) {
+
                 String uploadFileName = channelId + "-ftp-" + imgFile.getName();
                 FtpFileBean ftpFileBean = new FtpFileBean(imgFile.getParent(), imgFile.getName(), uploadPath, uploadFileName);
+
                 try {
                     ftpComponent.uploadFile(ftpFileBean);
                     uploadResultMap.put(uploadFileName, true);
-                    $info(String.format("upload %s to S7 success tempDir=%s", uploadFileName, tempDir));
+                    $info("upload %s success tempDir=%s", uploadFileName, tempDir);
                 } catch (Exception e) {
-                    $error(String.format("upload %s to S7 success tempDir=%s", uploadFileName, tempDir), e);
+                    $error(String.format("upload %s success tempDir=%s", uploadFileName, tempDir), e);
                     uploadResultMap.put(uploadFileName, false);
                     try {
                         FileUtils.copyFileToDirectory(imgFile, new File(errorDir), true);
@@ -548,6 +559,12 @@ public class CmsBulkUploadImageToS7Service extends BaseCronTaskService {
         FileUploadBean(String filePath, String channelId) {
             this.filePath = filePath;
             this.channelId = channelId;
+        }
+    }
+
+    private class MissingImageServerFtpFolderException extends RuntimeException {
+        MissingImageServerFtpFolderException(String channelId) {
+            super("没有为渠道 "+ channelId +" 在 tm_order_channel_config 表中配置 image_server_bulk_path 配置项");
         }
     }
 }

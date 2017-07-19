@@ -436,8 +436,11 @@ public class ChannelConfigEnums {
         /**
          * 产品信息检索路径
          */
-        searchsku_path
-
+        searchsku_path,
+        /**
+         * 图片上传到图片服务 FTP 中间服务器的目录
+         */
+        image_server_bulk_path
     }
 
     /**

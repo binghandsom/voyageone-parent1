@@ -141,6 +141,33 @@ define([
         vm.productUrl = carts.valueOf(+$scope.cartInfo.value).pUrl;
 
     };
+    SpKlController.prototype.openOffLinePop = function (type) {
+        var self = this,
+            $translate = self.$translate,
+            vm = self.vm;
+
+        if (vm.mastData == null)
+            return;
+
+        if (vm.status != 'Approved') {
+            self.alert("商品未完成平台上新，无法操作平台下线。");
+            return;
+        }
+
+        if (vm.mastData.isMain && type != 'group') {
+            self.alert("当前商品为主商品，无法单品下线。如果想下线整个商品，请点击【全group下线】按钮");
+            return;
+        }
+
+        self.popups.openProductOffLine({
+            cartId: self.$scope.cartInfo.value,
+            productCode: vm.mastData.productCode,
+            type: type
+        }).then(function () {
+            self.notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+            self.getPlatformData();
+        });
+    };
 
 
     /**

@@ -95,6 +95,9 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             {"platforms.P%s.skus.jmSkuNo", "SkuNo"},
             {"platforms.P%s.skus.jmSpuNo", "SpuNo"},
     };
+    private static final String[][] platformItemsTM = {
+            {"platforms.P%s.skus.scCode", "sku货品编码"},
+    };
     @Autowired
     private ProductService productService;
     @Autowired
@@ -445,6 +448,14 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                     keySumMap.put("name", cartObj.getName() + platformItemsJd[0][1]);
                     keySumMap.put("value", String.format(platformItemsJd[0][0], cartId));
                     dataSumList.add(keySumMap);
+                }
+                if (PlatFormEnums.PlatForm.TM.getId().equals(shopProp.getPlatform_id())) {
+                    for (String[] platformItem : platformItemsTM) {
+                        Map<String, String> keySumMap = new HashMap<>();
+                        keySumMap.put("name", cartObj.getName() + platformItem[1]);
+                        keySumMap.put("value", String.format(platformItem[0], cartId));
+                        dataSumList.add(keySumMap);
+                    }
                 }
             }
         }

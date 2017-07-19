@@ -92,4 +92,13 @@ public class CmsSetMainPropMongo2ServiceTest {
         }
     }
 
+    @Test
+    public void testOnStartup () throws Exception {
+        TaskControlBean t = new TaskControlBean();
+        t.setTask_id("2");
+        t.setCfg_name("order_channel_id");
+        t.setCfg_val1("001");
+        cmsSetMainPropMongo2Service.onStartup(Collections.singletonList(t));
+    }
+
 }

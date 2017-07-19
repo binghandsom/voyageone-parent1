@@ -7,14 +7,16 @@ import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.views.product.CmsProductDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,9 +58,9 @@ public class CmsImageSettingController extends CmsController {
         Map<String, Object> response;
 
         if (cartId != null && cartId != 0) {
-            response = cmsImageSettingService.uploadPlatformImage(file, productId, imageType, getUser(), ImgUtils.getImageExtend(file.getOriginalFilename()), cartId);
+            response = cmsImageSettingService.uploadPlatformImage(file, productId, imageType, getUser(), cartId);
         } else {
-            response = cmsImageSettingService.uploadImage(file, productId, imageType, getUser(), ImgUtils.getImageExtend(file.getOriginalFilename()));
+            response = cmsImageSettingService.uploadImage(file, productId, imageType, getUser());
         }
 
         if (response == null) {

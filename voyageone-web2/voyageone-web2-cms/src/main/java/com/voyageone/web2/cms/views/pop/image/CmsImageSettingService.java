@@ -2,12 +2,12 @@ package com.voyageone.web2.cms.views.pop.image;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.HttpScene7;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.ftp.FtpComponentFactory;
 import com.voyageone.components.ftp.FtpConstants;
@@ -58,19 +58,11 @@ public class CmsImageSettingService extends BaseViewService {
     @Autowired
     private CmsProductPlatformDetailService cmsProductPlatformDetailService;
 
-    public Map<String, Object> uploadImage(MultipartFile file, Long productId, String imageType, UserSessionBean user, String imageExtend) throws Exception {
+    public Map<String, Object> uploadImage(MultipartFile file, Long productId, String imageType, UserSessionBean user) throws Exception {
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, Object> response;
 
         String orderChannelId = user.getSelChannelId();
-
-        //FTP服务器保存目录设定
-        String uploadPath = ChannelConfigs.getVal1(user.getSelChannelId(), ChannelConfigEnums.Name.scene7_image_folder);
-        if (StringUtils.isEmpty(uploadPath)) {
-            String err = String.format("channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表", orderChannelId);
-            $error(orderChannelId);
-            throw new BusinessException(err);
-        }
 
         CmsBtProductModel cmsBtProductModel = productService.getProductById(user.getSelChannelId(), productId);
 
@@ -79,7 +71,7 @@ public class CmsImageSettingService extends BaseViewService {
 
 
         // 上传图片到Ftp
-        HttpScene7.uploadImageFile(uploadPath, imageName + imageExtend, file.getInputStream());
+        ImageServer.uploadImage(orderChannelId, imageName, file.getInputStream());
 
         // 插入图片表
         CmsBtImagesModel newModel = new CmsBtImagesModel();
@@ -104,27 +96,18 @@ public class CmsImageSettingService extends BaseViewService {
     }
 
     public Map<String, Object> uploadPlatformImage(MultipartFile file, Long productId, String imageType,
-                                                   UserSessionBean user, String imageExtend, Integer cartId) throws IOException {
+                                                   UserSessionBean user, Integer cartId) throws IOException {
         Map<String, Object> response = new HashMap<>();
 
         String orderChannelId = user.getSelChannelId();
-
-        //FTP服务器保存目录设定
-        String uploadPath = ChannelConfigs.getVal1(user.getSelChannelId(), ChannelConfigEnums.Name.scene7_image_folder);
-        if (StringUtils.isEmpty(uploadPath)) {
-            String err = String.format("channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表", orderChannelId);
-            $error(orderChannelId);
-            throw new BusinessException(err);
-        }
 
         CmsBtProductModel cmsBtProductModel = productService.getProductById(user.getSelChannelId(), productId);
 
         // 获取图片名字
         String imageName = getImageName(cmsBtProductModel, imageType, user, cartId);
 
-
         // 上传图片到Ftp
-        HttpScene7.uploadImageFile(uploadPath, imageName + imageExtend, file.getInputStream());
+        ImageServer.uploadImage(orderChannelId, imageName, file.getInputStream());
 
         // 插入图片表
         CmsBtImagesModel newModel = new CmsBtImagesModel();

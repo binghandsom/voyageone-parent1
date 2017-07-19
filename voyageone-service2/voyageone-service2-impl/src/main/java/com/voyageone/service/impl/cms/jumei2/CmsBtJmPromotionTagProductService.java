@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -85,6 +87,58 @@ public class CmsBtJmPromotionTagProductService {
         CmsBtJmPromotionModel promotionModel = cmsBtJmPromotionDao.select(codesModel.getCmsBtJmPromotionId());
         CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, codesModel.getProductCode());
         productService.updateCmsBtProductTags(channelId, cmsBtProductModel, promotionModel.getRefTagId(), tagList, userName);
+    }
+
+    @VOTransactional
+    public void deletePromotionProductTag(UpdatePromotionProductTagParameter parameter, String channelId, String userName) {
+
+        List<TagTreeNode> tagList = parameter.getTagList().stream().map(m -> {
+            TagTreeNode tagTreeNode = new TagTreeNode();
+            tagTreeNode.setId(m.getTagId());
+            tagTreeNode.setName(m.getTagName());
+            tagTreeNode.setChecked(m.getChecked());
+            return tagTreeNode;
+        }).collect(Collectors.toList());
+
+
+        CmsBtJmPromotionProductModel codesModel = cmsBtJmPromotionProductDao.select(parameter.getId());
+        String promotionTag = codesModel.getPromotionTag();
+        List<String> tags = new ArrayList<>();
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(promotionTag)) {
+            tags = new ArrayList<>(Arrays.asList(promotionTag.split("\\|")));
+        }
+        for (TagTreeNode tag : tagList) {
+
+            // 逐一删除cms_bt_jm_promotion_tag_product数据
+            daoExt.deleteByTagIdJmPromotionProductId(parameter.getId(), tag.getId());
+            // 更新cms_bt_jm_promotion_product, promotion_tag以|拼接多个tag
+            if (tags.contains(tag.getName())) {
+                tags.remove(tag.getName());
+                // 重新设置promotionTag
+                StringBuffer sb = new StringBuffer();
+                int tagCount = tags.size();
+                if (tagCount > 0) {
+                    for (int i = 0; i < tagCount; i++) {
+                        sb.append(tags.get(i));
+                        if (i != tagCount - 1) {
+                            sb.append("|");
+                        }
+                    }
+
+                }
+                CmsBtJmPromotionProductModel updateModel = new CmsBtJmPromotionProductModel();
+                updateModel.setId(codesModel.getId());
+                updateModel.setPromotionTag(sb.toString());
+                updateModel.setModified(new Date());
+                updateModel.setModifier(userName);
+                cmsBtJmPromotionProductDao.update(updateModel);
+
+            }
+        }
+        // 删除对应的MongoDB 中cms_bt_product_cxx中的tags
+
+        CmsBtJmPromotionModel promotionModel = cmsBtJmPromotionDao.select(codesModel.getCmsBtJmPromotionId());
+        productService.deleteCmsBtProductTags(channelId, codesModel.getProductCode(), promotionModel.getRefTagId(), tagList, userName);
     }
 
     public  String getPromotionTag(List<TagTreeNode> tagList,String oldPromotionTag) {

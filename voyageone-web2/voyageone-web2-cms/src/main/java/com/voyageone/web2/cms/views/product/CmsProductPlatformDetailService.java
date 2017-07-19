@@ -413,6 +413,7 @@ public class CmsProductPlatformDetailService extends BaseViewService {
         if (cmsBtProductGroup == null) {
             cmsBtProductGroup = productGroupService.selectProductGroupByCode(channelId, cmsBtProduct.getCommon().getFields().getCode(), 0);
         }
+        cmsBtProductGroup.setProductCodes(cmsBtProductGroup.getProductCodes().stream().distinct().collect(Collectors.toList()));
         List<Map<String, Object>> images = new ArrayList<>();
         final CmsBtProductGroupModel finalCmsBtProductGroup = cmsBtProductGroup;
         cmsBtProductGroup.getProductCodes().forEach(s1 -> {

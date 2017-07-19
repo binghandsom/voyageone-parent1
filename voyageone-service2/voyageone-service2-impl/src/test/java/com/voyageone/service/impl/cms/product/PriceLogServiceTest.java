@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms.product;
 
-import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtPriceLogFlatModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class PriceLogServiceTest {
 
         String skuOrCode = "ESH98014-BJ";
 
-        List<CmsBtPriceLogModel> logModelList = priceLogService.getPage(null, skuOrCode, "010", "23", 0, 10);
+        List<CmsBtPriceLogFlatModel> logModelList = priceLogService.getPage(null, skuOrCode, "010", "23", 0, 10);
 
         int count = priceLogService.getCount(null, skuOrCode, "010", "23");
 

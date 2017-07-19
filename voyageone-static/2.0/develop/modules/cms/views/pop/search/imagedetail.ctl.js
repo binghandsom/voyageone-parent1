@@ -31,7 +31,10 @@ define([
                 //框架foreach无法改变值，所以用js源生循环
                 for (var i = 0, length = picList.length; i < length; i++) {
                     for (var j = 0, length2 = picList[i].length; j < length2; j++) {
-                        picList[i][j] = $rootScope.imageUrl.replace("%s", picList[i][j]);
+                        if(picList[i][j]) {
+                            console.log(picList[i][j])
+                            picList[i][j] = $rootScope.imageUrl.replace("%s", picList[i][j]);
+                        }
                     }
                 }
             }

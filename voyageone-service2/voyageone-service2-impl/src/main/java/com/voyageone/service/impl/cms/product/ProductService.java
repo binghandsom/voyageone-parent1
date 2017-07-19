@@ -1488,6 +1488,36 @@ public class ProductService extends BaseService {
         }
     }
 
+    // 删除mongo product  tag
+    public void deleteCmsBtProductTags(String channelId, String code, int refTagId, List<TagTreeNode> tagList, String modifier) {
+        CmsBtProductModel productModel = this.getProductByCode(channelId, code);
+        List<String> tags = null;
+        if (productModel == null || CollectionUtils.isEmpty(tags = productModel.getTags()) || CollectionUtils.isEmpty(tagList)) {
+            return;
+        }
+
+        for (TagTreeNode tagNode : tagList) {
+            String tag = String.format("-%s-%s-", refTagId, tagNode.getId());
+            if (tags.contains(tag)) {
+                tags.remove(String.format("-%s-%s-", refTagId, tagNode.getId()));
+            }
+        }
+
+        int cnt = 0;
+        //去掉重复项目
+        List<String> newTag = tags.stream().distinct().collect(Collectors.toList());
+        //如果只存在单个父级
+        for (String tag : newTag)
+            if (tag.split("-")[1].equals(String.valueOf(refTagId))) {
+                cnt++;
+            }
+        if (cnt == 1) {
+            newTag.remove(String.format("-%s-", refTagId));
+        }
+        //3.更新
+        updateTags(channelId, productModel.getProdId(), newTag, modifier);
+    }
+
     public Long getProductIdByCode(String code, String channelId) {
         Criteria criteria = new Criteria("common.fields.code").is(code);
         JongoQuery queryObj = new JongoQuery();

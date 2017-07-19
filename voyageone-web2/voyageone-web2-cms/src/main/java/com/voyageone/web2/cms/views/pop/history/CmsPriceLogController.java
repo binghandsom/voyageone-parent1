@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views.pop.history;
 
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
-import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtPriceLogFlatModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.POP.PRICE_LOG;
@@ -40,7 +40,7 @@ public class CmsPriceLogController extends CmsController {
 
         String channelId = getUser().getSelChannelId();
 
-        List<CmsBtPriceLogModel> data = priceLogService.getPage(sku, params.getCode(), params.getCart(), channelId, params.getOffset(), params.getLimit());
+        List<CmsBtPriceLogFlatModel> data = priceLogService.getPage(sku, params.getCode(), params.getCart(), channelId, params.getOffset(), params.getLimit());
 
         int count = priceLogService.getCount(sku, params.getCode(), params.getCart(), channelId);
 

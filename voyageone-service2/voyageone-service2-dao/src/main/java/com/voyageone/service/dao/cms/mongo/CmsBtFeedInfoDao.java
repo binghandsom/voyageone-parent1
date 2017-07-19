@@ -32,6 +32,12 @@ public class CmsBtFeedInfoDao extends BaseMongoChannelDao<CmsBtFeedInfoModel> {
         return selectOneWithQuery(query, channelId);
     }
 
+    public List<CmsBtFeedInfoModel> selectProductBySku(String channelId, List<String> skus) {
+        JongoQuery query = new JongoQuery();
+        query.setQuery(new Criteria("skus.sku").in(skus));
+        return select(query, channelId);
+    }
+
     public List<CmsBtFeedInfoModel> selectProductListBySku(String channelId, String sku) {
         String query = "{\"skus.sku\":\"" + sku + "\"}";
         return select(query, channelId);

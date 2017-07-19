@@ -239,7 +239,7 @@ public class CmsBuildPlatformAttributeUpdateJmService extends BaseCronTaskServic
             //是否为智能上新
             boolean blnIsSmartSx = sxProductService.isSmartSx(shop.getOrder_channel_id(), Integer.parseInt(shop.getCart_id()));
 
-            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId);
+            sxData = sxProductService.getSxProductDataByGroupId(channelId, groupId, true);
             if (sxData == null) {
                 String errorMsg = String.format("(SxData)信息失败！[sxData=null][workloadId:%s][groupId:%s]:", workloadModel.getId(), workloadModel.getGroupId());
                 $error(errorMsg);

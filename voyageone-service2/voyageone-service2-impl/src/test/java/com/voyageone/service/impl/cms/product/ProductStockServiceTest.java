@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.product;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.stock.CartChangedStockBean;
 
 import org.junit.Test;
@@ -26,22 +27,18 @@ public class ProductStockServiceTest {
     public void updateProductStock() throws Exception {
 
 
-        List<CartChangedStockBean> stockBeans = new ArrayList<>();
-        CartChangedStockBean stockBean1 = new CartChangedStockBean();
-        stockBean1.setChannelId("001");
-        stockBean1.setCartId(0);
-        stockBean1.setItemCode("a0c3jk3");
-        stockBean1.setSku("a0c3jk3-l");
-        stockBean1.setQty(3);
-        stockBeans.add(stockBean1);
+//        List<CartChangedStockBean> stockBeans = new ArrayList<>();
+//        CartChangedStockBean stockBean1 = new CartChangedStockBean();
+//        stockBean1.setChannelId("001");
+//        stockBean1.setCartId(26);
+//        stockBean1.setItemCode("t501003");
+//        stockBean1.setSku("t501003-onesize");
+//        stockBean1.setQty(0);
+//        stockBeans.add(stockBean1);
 
-        CartChangedStockBean stockBean2 = new CartChangedStockBean();
-        stockBean2.setChannelId("018");
-        stockBean2.setCartId(23);
-        stockBean2.setItemCode("14009927");
-        stockBean2.setSku("14009927");
-        stockBean2.setQty(3);
-        stockBeans.add(stockBean2);
+        String json = "{\"cartChangedStocks\":[{\"channelId\":\"001\",\"cartId\":23,\"sku\":\"1280734-025-l\",\"itemCode\":\"1280734-025\",\"qty\":0},{\"channelId\":\"001\",\"cartId\":23,\"sku\":\"1280734-025-m\",\"itemCode\":\"1280734-025\",\"qty\":0},{\"channelId\":\"001\",\"cartId\":23,\"sku\":\"1280734-025-s\",\"itemCode\":\"1280734-025\",\"qty\":0}]}";
+        List<CartChangedStockBean> stockBeans = JacksonUtil.jsonToBeanList(json,CartChangedStockBean.class);
+
         productStockService.updateProductStock(stockBeans, "test");
     }
 
