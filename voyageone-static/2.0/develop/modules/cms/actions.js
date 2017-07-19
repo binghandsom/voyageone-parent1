@@ -99,8 +99,8 @@ define(function () {
                     "doExport": "export",
                     "exportSearch": "exportSearch",
                     "download": "download",
-                    "updateMainCategory":"updateMainCategory",
-                    "batchUpdateMainCategory":"batchUpdateMainCategory"
+                    "updateMainCategory": "updateMainCategory",
+                    "batchUpdateMainCategory": "batchUpdateMainCategory"
                 }
             },
             "group": {
@@ -169,7 +169,7 @@ define(function () {
                     upperLowerFrame: "upperLowerFrame",
                     lockPlatForm: "lockPlatForm",
                     updateGroupPlatform: "updateGroupPlatform",
-                    updateOriginalTitleCn:"updateOriginalTitleCn"
+                    updateOriginalTitleCn: "updateOriginalTitleCn"
                 },
                 "productHistoryLogService": {
                     "root": "/cms/product/history/",
@@ -243,8 +243,8 @@ define(function () {
                     "updatePromotion": "updatePromotion",
                     "delPromotion": "delPromotion",
                     "exportPromotion": "exportPromotion",
-                    "getPromotionExportTask":"getPromotionExportTask",
-                    "downloadPromotionExport":"downloadPromotionExport",
+                    "getPromotionExportTask": "getPromotionExportTask",
+                    "downloadPromotionExport": "downloadPromotionExport",
                     getPage: "getPage",
                     getCount: "getCount",
                     getEditModel: "getEditModel",
@@ -823,32 +823,36 @@ define(function () {
                 deleteTask: "deleteTask"
             },
             commonService: {
-                "root":"/cms/us/common",
-                "getChannelCarts":"getChannelCarts",
-                "getFeedInfo":"getFeedInfo"
+                "root": "/cms/us/common",
+                "getChannelCarts": "getChannelCarts",
+                "getFeedInfo": "getFeedInfo"
             },
-            itemDetailService:{
-                root:'/cms/us/feed',
-                detail:"detail",
-                update:"update",
-                getTopModel:"getTopModel",
-                updateOne:"updateOne",
-                setPrice:"setPrice",
-                list:"list",
-                approve:"approve"
+            itemDetailService: {
+                root: '/cms/us/feed',
+                detail: "detail",
+                update: "update",
+                getTopModel: "getTopModel",
+                updateOne: "updateOne",
+                setPrice: "setPrice",
+                list: "list",
+                approve: "approve"
             },
-            advanceSearch:{
-                root:"/cms/us/advanceSearch",
-                init:"init",
-                search:"search",
-                getCustomColumns:"getCustomColumns",
-                saveCustomColumns:"saveCustomColumns",
-                updatePrice:"updatePrice",
-                listOrDelist:"listOrDelist"
+            advanceSearch: {
+                root: "/cms/us/advanceSearch",
+                init: "init",
+                search: "search",
+                getCustomColumns: "getCustomColumns",
+                saveCustomColumns: "saveCustomColumns",
+                updatePrice: "updatePrice",
+                listOrDelist: "listOrDelist"
             },
             usTagService: {
-                root:"/cms/us/tag",
-                init:"init"
+                root: "/cms/us/tag",
+                init: "init"
+            },
+            $usProductDetailService: {
+                root: '/cms/usa/product',
+                getProductInfo: 'getProductInfo'
             }
         }
     };
