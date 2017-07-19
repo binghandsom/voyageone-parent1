@@ -64,10 +64,12 @@ public class CmsProductSearchQueryService extends BaseService {
         return result;
     }
 
-    public CmsProductCodeListBean getProductCodeList(CmsSearchInfoBean2 searchValue, String channelId, int userId, String userName) {
+    public CmsProductCodeListBean getProductCodeList(CmsSearchInfoBean2 searchValue, String channelId, Integer userId, String userName) {
         CmsProductCodeListBean result = new CmsProductCodeListBean();
         SimpleQueryBean queryBean = getSearchQuery(searchValue, channelId);
-        cmsBtSearchItemService.analysisSearchItems(userId, userName, channelId, searchValue, null);
+        if(userId != null) {
+            cmsBtSearchItemService.analysisSearchItems(userId, userName, channelId, searchValue, null);
+        }
 
         if ($isDebugEnabled()) {
             $debug(String.format("获取当前查询的product列表 ChannelId=%s, %s", channelId, queryBean.toString()));

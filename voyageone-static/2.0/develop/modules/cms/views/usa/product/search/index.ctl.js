@@ -76,6 +76,8 @@ define([
         search() {
             let self = this;
             let searchInfo = self.handleQueryParams();
+
+            self.srInstance.clearCurrPageRows();
             self.advanceSearch.search(searchInfo).then(res => {
                 if (res.data) {
                     self.searchResult.productList = res.data.productList;
@@ -227,11 +229,13 @@ define([
         batchCategory(){
             let self = this;
 
+            console.log(self.getSelectedProduct());
+
         }
 
         /**
-         * 获取选中产品
-         * @param onlyAttr 按照属性名抽出数组
+         * 获取选中产品 getSelectedProduct('code')
+         * @param  id  or code
          * @returns {Array}
          */
         getSelectedProduct(onlyAttr){
@@ -244,10 +248,23 @@ define([
             }
         }
 
-        batchList(){
+        clearSelList(){
+            this.srInstance.clearSelectedList();
+        }
+
+        //进行上下架操作
+        batchList(cartId,activeStatus,usPlatformName){
             let self = this;
 
-            self.popups.openUsList().then(res => {
+            self.popups.openUsList({
+                selAll:self._selall,
+                codeList:self.getSelectedProduct('code'),
+                queryMap:self.handleQueryParams(),
+                cartId:cartId? cartId :0,
+                //操作状态1为上架,0为下架
+                activeStatus:activeStatus,
+                usPlatformName:usPlatformName
+            }).then(res => {
 
             });
         }

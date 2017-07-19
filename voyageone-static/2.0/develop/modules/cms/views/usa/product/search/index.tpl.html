@@ -93,24 +93,19 @@
                             </div>
 
                             <div class="form-group">
-                                <!--<div class="col-sm-3">-->
-                                    <!--<select  class="form-control" chosen>-->
-                                        <!--<option value="">Total Qty</option>-->
-                                        <!--<option value="">LA Qty</option>-->
-                                    <!--</select>-->
-                                <!--</div>-->
-                                <div class="col-sm-9">
-                                    <label class="col-sm-3 control-label query-title">Total Qty</label>
-                                    <div class="col-sm-5">
+
+                                <label class="col-sm-3 control-label query-title">Total Qty</label>
+                                <div class="col-sm-9 form-inline">
+                                    <div class="col-sm-5 input-group">
                                         <input type="number" min="1" max="ctrl.searchInfo.inventoryTo" class="form-control" ng-model="ctrl.searchInfo.inventoryFrom">
                                     </div>
-                                    <div class="col-sm-1 text-center">
-                                        ~
-                                    </div>
-                                    <div class="col-sm-5">
+                                        &nbsp;~&nbsp;
+                                    <div class="col-sm-5 input-group">
                                         <input type="number" max="ctrl.searchInfo.inventoryFrom" class="form-control" ng-model="ctrl.searchInfo.inventoryTo">
                                     </div>
                                 </div>
+
+
                             </div>
                         </div>
                     </div>
@@ -131,12 +126,10 @@
                             </div>
 
                             <div class="form-group">
-                                <div class="col-md-8 col-lg-offset-3">
-                                    <div class="col-sm-8 checkbox">
-                                        <label ng-repeat="platform in ctrl.masterData.platforms" style="min-width: 60px;">
-                                            <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;&nbsp;{{platform.add_name2}}
-                                        </label>
-                                    </div>
+                                <div class="col-md-8 col-lg-offset-3 checkbox">
+                                    <label ng-repeat="platform in ctrl.masterData.platforms" style="min-width: 60px;">
+                                        <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;&nbsp;{{platform.add_name2}}
+                                    </label>
                                 </div>
                             </div>
 
@@ -144,7 +137,7 @@
                                 <label class="col-sm-3 control-label query-title">status</label>
                                 <div class="col-sm-8 checkbox">
                                     <label ng-repeat="platform in ctrl.masterData.platformStatus">
-                                        <input type="checkbox" ng-disabled="!ctrl.searchInfo.cartId" ng-model="ctrl.searchInfo.platformStatus[platform.status]">{{platform.display}}
+                                        <input type="checkbox" ng-disabled="!ctrl.searchInfo.cartId" ng-model="ctrl.searchInfo.platformStatus[platform.status]">{{platform.display}}&emsp;
                                     </label>
                                 </div>
                             </div>
@@ -240,7 +233,7 @@
                             <table class="vo_table vo_models dropdown_table_bk font-bold" style="min-width:100%;">
                                 <thead>
                                 <tr style="background:#e67e22;color: #fff">
-                                    <th class="checkbox text-center">
+                                    <th class="checkbox text-center white-space-noWrap">
                                         <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                                             <input type="checkbox" ng-click="selectAll(ctrl.productSelList)"
                                                    ng-checked="isAllSelected(ctrl.productSelList)"
@@ -248,20 +241,20 @@
                                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                         </label>
                                     </th>
-                                    <th class="text-center">IMG</th>
-                                    <th class="text-left">Code</th>
-                                    <th class="text-left">Name</th>
-                                    <th class="text-left">ProductType</th>
-                                    <th class="text-left">Brand</th>
-                                    <th class="text-center">Total Qty</th>
-                                    <th class="text-center">Last Received</th>
-                                    <th class="text-center" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selCommonProps">
+                                    <th class="text-center td-width-100 white-space-noWrap">IMG</th>
+                                    <th class="text-left td-width-100 white-space-noWrap">Code</th>
+                                    <th class="text-left td-width-150 white-space-noWrap">Name</th>
+                                    <th class="text-left td-width-100 white-space-noWrap">ProductType</th>
+                                    <th class="text-left td-width-100 white-space-noWrap">Brand</th>
+                                    <th class="text-center td-width-100 white-space-noWrap">Total Qty</th>
+                                    <th class="text-center td-width-100 white-space-noWrap">Last Received</th>
+                                    <th class="text-center td-width-150 white-space-noWrap" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selCommonProps">
                                         {{prop.propName}}
                                         <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.propId)">
                                             <i class="fa fa-{{ctrl.getArrowName(prop.propId)}}"></i>
                                         </button>
                                     </th>
-                                    <th class="text-center" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes">
+                                    <th class="text-center td-width-150 white-space-noWrap" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes">
                                         {{prop.name}}
                                         <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.value)">
                                             <i class="fa fa-{{ctrl.getArrowName(prop.value)}}"></i>
@@ -316,7 +309,7 @@
                                                             ng-controller="showPopoverCtrl" popover-html="showInfo(productInfo.freeTags)"
                                                             popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
                                                     <button type="button" class="btn btn-pop btn-default" ng-disabled="vm.masterData.freetagList.length == 0"
-                                                            ng-click="$parent.addProductFreeTag(productInfo)">
+                                                            ng-click="ctrl.addProductFreeTag(productInfo)">
                                                         <i class="fa fa-cog"></i>&nbsp;{{'TXT_CUS_TAGS_SETTING' | translate}}
                                                     </button>
                                                 </span>
@@ -328,14 +321,14 @@
                                         </td>
                                     </tr>
                                     <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="height: 66px">
-                                        <td>
+                                        <td class="text-left">
                                             <a href="#/product/usa/detail/{{productInfo.prodId}}" target="_blank" >{{productInfo.common.fields.code}}</a>
                                         </td>
-                                        <td>{{productInfo.common.fields.productNameEn}}</td>
-                                        <td>{{productInfo.common.fields.productType}}</td>
-                                        <td>{{productInfo.common.fields.brand}}</td>
-                                        <td>{{productInfo.common.fields.quantity}}</td>
-                                        <td>{{productInfo.common.fields.translateTime}}</td>
+                                        <td class="text-left">{{productInfo.common.fields.productNameEn}}</td>
+                                        <td class="text-left">{{productInfo.common.fields.productType}}</td>
+                                        <td class="text-left">{{productInfo.common.fields.brand}}</td>
+                                        <td class="text-left">{{productInfo.common.fields.quantity}}</td>
+                                        <td class="text-center">{{productInfo.common.fields.translateTime}}</td>
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selCommonProps">{{ctrl.getProductValue(productInfo,prop)}}</td>
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes">{{ctrl.getProductValue(productInfo,prop)}}</td>
 
@@ -377,10 +370,10 @@
                         <a href="javascript:void(0)" ng-click="ctrl.batchCategory()"><i class="fa fa-minus"></i>&nbsp;Category</a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" ng-click="ctrl.batchList(1)"><i class="fa fa-minus"></i>&nbsp;List</a>
+                        <a href="javascript:void(0)" ng-click="ctrl.batchList(platform.value,'list',platform.name)"><i class="fa fa-minus"></i>&nbsp;List</a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" ng-click="ctrl.batchList(0)"><i class="fa fa-minus"></i>&nbsp;Delist</a>
+                        <a href="javascript:void(0)" ng-click="ctrl.batchList(platform.value,'deList',platform.name)"><i class="fa fa-minus"></i>&nbsp;Delist</a>
                     </li>
                     <li>
                         <a href="javascript:void(0)" ng-click="ctrl.popBatchPrice(platform.value)"><i class="fa fa-minus"></i>&nbsp;Platform Price</a>

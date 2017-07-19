@@ -1,0 +1,711 @@
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="panel panel-vo">
+        <div class="panel-heading">
+            <h4 class="panel-title"><i class="fa fa-star"></i>&nbsp;Products</h4>
+        </div>
+        <div class="panel-body">
+            <div class="container-fluid">
+                <form role="form" class="form-horizontal" name="feedForm" novalidate>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Sneakerhead</label>
+                                        <label class="col-md-6" style="padding-top:4px">
+                                            <strong class="text-u-l"></strong>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_reqfield">Code</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="code" ng-model="ctrl.feed.code" required readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.code"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_reqfield">Model</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="model" ng-model="ctrl.feed.model" required>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-default" ng-click="ctrl.getTopModel(5)">
+                                                <i ng-class="{'fa-angle-double-down':!ctrl.isShowModal,'fa-angle-double-up':ctrl.isShowModal}" class="fa" style="font-size: 16px;"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.model"></vo-message>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-group" ng-if="ctrl.isShowModal">
+                                    <div class="row">
+                                        <div class="col-md-8 col-md-offset-4" ng-if="ctrl.topFeedList.length > 0">
+                                            <div class="col-xs-6 col-md-2" ng-repeat="item in ctrl.topFeedList">
+                                                <a href="javascript:void(0);" class="thumbnail pos-relative" style="height: 88px;padding: 0px"
+                                                   ng-class="{'active':item.status=='Approved'}">
+                                                    <img class="thumb-sm-search" src="{{item.image[0]}}">
+                                                    <button type="button" class="btn btn-primary pos-absolute-right" ng-click="ctrl.copyAttr(item)">
+                                                        <i class="fa fa-copy"></i>
+                                                    </button>
+                                                </a>
+                                                <span class="text-wrap"><strong>{{item.code}}</strong></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-md-offset-4" ng-if="ctrl.topFeedList.length == 0">
+                                            <div class="alert alert-danger" role="alert">
+                                                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                                <span class="sr-only">Warning:</span>
+                                                no query data
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_reqfield">
+                                            <button type="button" class="btn btn-info btn-pop"
+                                                    ng-click="ctrl.popUsCategory({cartId:1,from:ctrl.feed.category})">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;SN Primary Category
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.category}}"
+                                                   name="category" ng-model="ctrl.feed.category"  required readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.category"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory({cartId:1,froms:ctrl.feed.categoriesTree,muiti:true})">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;SN Other Category
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <select name="categories" chosen multiple width="'100%'"
+                                                    ng-options="cat as cat.catPath for cat in ctrl.feed.categoriesTree"
+                                                    ng-model="ctrl.feed.categoriesTree"></select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_reqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.popCategory({cartId:5},'amazonBrowseTree')">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Amazon Browse Tree
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="amazonBrowseTree" ng-model="ctrl.feed.amazonBrowseTree" required readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.amazonBrowseTree"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:17,from:ctrl.feed.googleCategory},'googleCategory')">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Google Category
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.googleCategory}}"
+                                                   name="googleCategory" ng-model="ctrl.feed.googleCategory" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:18,from:ctrl.feed.googleDepartment},'googleDepartment')">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Google DepartMent
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.googleDepartment}}"
+                                                   name="googleDepartment" ng-model="ctrl.feed.googleDepartment" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:19,from:ctrl.feed.priceGrabberCategory},'priceGrabberCategory')">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;PriceGrabber Category
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.priceGrabberCategory}}"
+                                                   name="priceGrabberCategory" ng-model="ctrl.feed.priceGrabberCategory" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_reqfield">Name</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="name" ng-model="ctrl.feed.name" ng-change="ctrl.generateUrlKey()" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.name"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_reqfield">Brand</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control" name="brand" chosen search-contain="true"
+                                                    ng-options="brand.value as brand.name for brand in ctrl.brandList"
+                                                    ng-model="ctrl.feed.brand" required>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.brand"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_reqfield">Product Type</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control" name="productType" chosen search-contain="true"
+                                                    ng-options="productType.value as productType.name for productType in ctrl.productTypeList"
+                                                    ng-model="ctrl.feed.productType" ng-change="ctrl.setSkuProperty(null,null,'1')" required>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.productType"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_reqfield">Size Type</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control" name="sizeType"  chosen search-contain="true"
+                                                    ng-options="sizeType.value as sizeType.name for sizeType in ctrl.sizeTypeList"
+                                                    ng-model="ctrl.feed.sizeType" required>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.sizeType"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_reqfield">Material</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control" name="material"  chosen search-contain="true"
+                                                    ng-options="material.value as material.name for material in ctrl.materialList"
+                                                    ng-model="ctrl.feed.material" required>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.material"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Made in</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control" name="origin"  chosen search-contain="true"
+                                                    ng-options="origin.value as origin.name for origin in ctrl.originList"
+                                                    ng-model="ctrl.feed.origin">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Color Map</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control" name="origin" chosen search-contain="true"
+                                                    ng-options="color.value as color.name for color in ctrl.colorMap"
+                                                    ng-model="ctrl.feed.colorMap">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Color</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.color">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Usage</label>
+                                        <div class="col-md-6">
+                                            <textarea class="form-control no-resize" ng-model="ctrl.feed.usageEn"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Short Description</label>
+                                        <div class="col-md-6">
+                                            <textarea class="form-control no-resize" ng-model="ctrl.feed.shortDescription"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Long Description</label>
+                                        <div class="col-md-6">
+                                            <textarea class="form-control no-resize" ng-model="ctrl.feed.longDescription"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Order Limit Count</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.orderlimitcount">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">URL Key</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.urlkey" ng-disabled="ctrl.feed.urlkey">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Abstract</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.abstract">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Accessory</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.accessory">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Phone Order Only</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.phoneOrderOnly">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Title</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.seoTitle">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Description</label>
+                                        <div class="col-md-6">
+                                            <textarea class="form-control" ng-model="ctrl.feed.seoDescription"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Keywords</label>
+                                        <div class="col-md-6">
+                                            <textarea class="form-control" ng-model="ctrl.feed.seoKeywords"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--特殊属性 Begin-->
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Free Shipping</label>
+                                        <div class="col-md-1">
+                                            <div class="onoffswitch" style="margin: 0px auto;">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isFreeShipping"
+                                                       ng-true-value="'1'" ng-false-value="'0'"
+                                                       ng-model="ctrl.feed.freeShipping">
+                                                <label class="onoffswitch-label" for="isFreeShipping">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Reward Eligible</label>
+                                        <div class="col-md-1">
+                                            <div class="onoffswitch" style="margin: 0px auto;">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isRewardEligible"
+                                                       ng-true-value="'1'" ng-false-value="'0'"
+                                                       ng-model="ctrl.feed.rewardEligible">
+                                                <label class="onoffswitch-label" for="isRewardEligible">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Discount Eligible</label>
+                                        <div class="col-md-1">
+                                            <div class="onoffswitch" style="margin: 0px auto;">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isDiscountEligible"
+                                                       ng-true-value="'1'" ng-false-value="'0'"
+                                                       ng-model="ctrl.feed.discountEligible">
+                                                <label class="onoffswitch-label" for="isDiscountEligible">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Sneakerhead+</label>
+                                        <div class="col-md-1">
+                                            <div class="onoffswitch" style="margin: 0px auto;">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isSneakerhead"
+                                                       ng-true-value="'1'" ng-false-value="'0'"
+                                                       ng-model="ctrl.feed.sneakerheadPlus">
+                                                <label class="onoffswitch-label" for="isSneakerhead">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is New Arrival</label>
+                                        <div class="col-md-1">
+                                            <div class="onoffswitch" style="margin: 0px auto;">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isNewArrival"
+                                                       ng-true-value="'1'" ng-false-value="'0'"
+                                                       ng-model="ctrl.feed.newArrival">
+                                                <label class="onoffswitch-label" for="isNewArrival">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Taxable</label>
+                                        <div class="col-md-1">
+                                            <div class="onoffswitch" style="margin: 0px auto;">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isTaxable"
+                                                       ng-true-value="'1'" ng-false-value="'0'"
+                                                       ng-model="ctrl.feed.taxable">
+                                                <label class="onoffswitch-label" for="isTaxable">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--特殊属性 End-->
+
+                                <div class="form-group" ng-if="ctrl.feed.status!='New'">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Approve Pricing ?</label>
+                                        <div class="col-md-1">
+                                            <div class="onoffswitch" style="margin: 0px auto;">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="approvePricing"
+                                                       ng-true-value="'1'" ng-false-value="'0'"
+                                                       ng-model="ctrl.feed.approvePricing">
+                                                <label class="onoffswitch-label" for="approvePricing">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="col no-padder bg-light vo_prodDetailPanel">
+
+                                <uib-tabset class="tab-container vo_nav-tabs">
+                                    <uib-tab>
+                                        <tab-heading>Item</tab-heading>
+                                        <div id="vo_fixProdPanel">
+                                            <!-- product photos -->
+                                            <div class="vo_prodGallery">
+                                                <div class="imageContainer">
+                                                    <div class="imageWrapper">
+                                                        <img  class="imageWrapper" style="cursor: pointer;max-width: 200px; max-height: 170px;"
+                                                              src="{{ctrl.currentFeedImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentFeedImage)">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="wrapper-sm m-t-xs">
+                                                <div>
+                                                    <div class="tab-pane active">
+                                                        <div class="row">
+                                                            <div class="col-md-3" ng-repeat="image in ctrl.feed.image track by $index">
+                                                                <a href="javascript:void(0)"
+                                                                   class="thumbnail clear-margin-bottom img-auto-fix" ng-click="ctrl.currentFeedImage = image"
+                                                                   ng-class="active" style="height: 88px;padding: 0px">
+                                                                    <img class="thumb-group" style="max-height: 80px;max-width: 45px" src="{{image}}" align="bottom">
+                                                                </a>
+                                                            </div>
+                                                            <div class="col-md-3 text-center m-t-md">
+                                                                <button type="button" class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.addImage()"><i class="glyphicon glyphicon-plus"></i></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="wrapper-sm m-t-xs">
+
+                                                <div class="row">
+                                                    <div class="col-md-12 form-horizontal">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-md-6 query-title">&nbsp;&nbsp;Image Count</label>
+                                                                <div class="col-md-6">
+                                                                    <input type="text" class="form-control" ng-model="ctrl.feed.imageNum" ng-enter="ctrl.initImage(ctrl.feed.imageNum)">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <ul class="list-group">
+                                                    <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.image track by $index">
+                                                        <div class="row">
+                                                            <div class="col-md-10">
+                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-change="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <button type="button" class="btn btn-default" ng-click="ctrl.deleteImage($index)"><i class="fa fa-trash"></i></button>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+                                        </div>
+                                    </uib-tab>
+                                    <uib-tab>
+                                        <tab-heading>Box</tab-heading>
+                                        <div id="vo_fixProdPanel_">
+                                            <!-- product photos -->
+                                            <div class="vo_prodGallery">
+                                                <div class="imageContainer">
+                                                    <div class="imageWrapper">
+                                                        <img  class="imageWrapper"  style="cursor: pointer;max-width: 200px; max-height: 170px;"
+                                                              ng-src="{{ctrl.currentBoxImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentBoxImage)">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="wrapper-sm m-t-xs">
+                                                <div>
+                                                    <div class="tab-pane active">
+                                                        <div class="row">
+                                                            <div class="col-md-3" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
+                                                                <a href="javascript:void(0)" class="thumbnail clear-margin-bottom img-auto-fix"
+                                                                   ng-click="ctrl.currentBoxImage = image"
+                                                                   ng-class="active" style="height: 80px">
+                                                                    <img style="max-height: 80px;max-width: 45px" class="thumb-group pos-abt" src="{{image}}">
+                                                                </a>
+                                                            </div>
+                                                            <div class="col-md-3 text-center m-t-md">
+                                                                <button type="button" ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.addBoxImage()"><i class="glyphicon glyphicon-plus"></i></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="wrapper-sm m-t-xs">
+
+                                                <div class="row">
+                                                    <div class="col-md-12 form-horizontal">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-md-6 query-title">&nbsp;&nbsp;Image Count</label>
+                                                                <div class="col-md-6">
+                                                                    <input type="text" class="form-control" ng-model="ctrl.feed.boxImageNum" ng-keyup="ctrl.initBoxImage(ctrl.feed.boxImageNum)">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <ul class="list-group">
+                                                    <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
+                                                        <div class="row">
+                                                            <div class="col-md-10">
+                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-change="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <button type="button" class="btn btn-default" ng-click="ctrl.deleteBoxImage($index)"><i class="fa fa-trash"></i></button>
+                                                            </div>
+                                                        </div>
+
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+                                        </div>
+                                    </uib-tab>
+                                </uib-tabset>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="skuItem">
+                        <div class="skuItem-head">
+                            <h4>Skus</h4>
+                        </div>
+                        <div class="skuItem-body">
+                            <div class="table-responsive box box-body">
+                                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                                    <thead>
+                                        <th class="text-left">Size</th>
+                                        <th class="text-left">Sku</th>
+                                        <th class="text-left">Upc</th>
+                                        <th class="text-center">platformQty</th>
+                                        <th class="text-center">Weight</th>
+                                        <th class="text-center">Weitch Unit</th>
+                                        <th class="text-right">Msrp($)</th>
+                                        <th class="text-right">price($)</th>
+                                        <th class="text-right">price($)</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-left">Size</td>
+                                            <td class="text-left">Sku</td>
+                                            <td class="text-left">Upc</td>
+                                            <td class="text-center">platformQty</td>
+                                            <td class="text-center">Weight</td>
+                                            <td class="text-center">Weitch Unit</td>
+                                            <td class="text-right">Msrp($)</td>
+                                            <td class="text-right">price($)</td>
+                                            <td class="text-right">price($)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-------------------------------- 导航栏 --------------------------------->
+    <!--1、New只有Save Button-->
+    <!--2、Pending有Save和Submit Button-->
+    <!--3、Ready有Save和Approve Button-->
+    <sticky top-fix="-100" style="position: absolute; top: 380px; right: 47px;" drag ng-if="ctrl.feed.status != 'Approved' && ctrl.feed.feedAuth <= ctrl.auth">
+        <nav class="bs-docs-sidebar" style="opacity: 1">
+            <h3 drag-handle>导航栏</h3>
+            <ul class="nav bs-docs-sidenav">
+                <li class="text-center" style="margin: 7px">
+                    <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
+                            ng-disabled="feedForm.$invalid" ng-click="ctrl.save('0')">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Save
+                    </button>
+                </li>
+                <li class="text-center" style="margin: 7px">
+                    <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
+                            ng-disabled="feedForm.$invalid"
+                            ng-if="ctrl.feed.status != 'Ready'" ng-click="ctrl.save('1')">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Submit
+                    </button>
+                </li>
+                <li class="text-center" style="margin: 7px">
+                    <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
+                            ng-disabled="feedForm.$invalid"
+                            ng-if="ctrl.auth==3 && ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Approve
+                    </button>
+                </li>
+            </ul>
+        </nav>
+    </sticky>
+</div>

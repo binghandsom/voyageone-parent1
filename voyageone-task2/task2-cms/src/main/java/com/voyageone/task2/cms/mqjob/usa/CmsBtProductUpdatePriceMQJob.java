@@ -60,7 +60,7 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                     CmsBtProductModel cmsBtProductModel = productService.getProductByCode(messageBody.getChannelId(), productCode);
                     if (cmsBtProductModel != null) {
                         Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
-                        if (cartId > 0){
+                        if (cartId > 0) {
                             CmsBtProductModel_Platform_Cart platform = usPlatforms.get("P" + cartId);
                             String status = platform.getStatus();
                             if (platform != null) {
@@ -105,9 +105,9 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                                     }
                                 }
                             }
-                        }else {
+                        } else {
                             //cartId=0,修改所有平台的价格
-                            usPlatforms.forEach((cartId1,platform)->{
+                            usPlatforms.forEach((cartId1, platform) -> {
                                 Integer cartId2 = Integer.parseInt(cartId1);
                                 String status = platform.getStatus();
                                 if (platform != null) {
