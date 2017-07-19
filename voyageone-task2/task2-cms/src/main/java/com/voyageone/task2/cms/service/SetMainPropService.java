@@ -92,6 +92,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.voyageone.common.configs.Enums.CartEnums.Cart.SN;
+
 /**
  * feed->master导入服务
  *
@@ -1220,73 +1222,80 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 platform.setpPriceSaleEd(feed.getPriceClientRetailMax());
                 BaseMongoMap<String, Object> fields = new BaseMongoMap<>();
                 platform.setFields(fields);
-                if(iCartId == CartEnums.Cart.SN.getValue()){
-                    platform.setpCatId(feed.getCategoryCatId());
-                    platform.setpCatPath(feed.getCategory());
-                    platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
-                    platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
-                    platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
-                    platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
-                    platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
-                    platform.getFields().setFeedAttribute("freeShipping", feed.getAttribute().get("freeShipping"));
-                    platform.getFields().setFeedAttribute("rewardEligible", feed.getAttribute().get("rewardEligible"));
-                    platform.getFields().setFeedAttribute("discountEligible", feed.getAttribute().get("discountEligible"));
-                    platform.getFields().setFeedAttribute("sneakerheadPlus", feed.getAttribute().get("sneakerheadPlus"));
-                    platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
-                    platform.getFields().setAttribute("sneakerfoiko", false);
+                switch (CartEnums.Cart.getValueByID(iCartId+"")){
+                    case SN:
+                    case MSN:
+                    case military:
+                        platform.setpCatId(feed.getCategoryCatId());
+                        platform.setpCatPath(feed.getCategory());
+                        platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                        platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                        platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                        platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                        platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                        platform.getFields().setFeedAttribute("freeShipping", feed.getAttribute().get("freeShipping"));
+                        platform.getFields().setFeedAttribute("rewardEligible", feed.getAttribute().get("rewardEligible"));
+                        platform.getFields().setFeedAttribute("discountEligible", feed.getAttribute().get("discountEligible"));
+                        platform.getFields().setFeedAttribute("sneakerheadPlus", feed.getAttribute().get("sneakerheadPlus"));
+                        platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                        platform.getFields().setAttribute("sneakerfoiko", false);
 
-                    List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
-                    if(!StringUtil.isEmpty(feed.getCategory())) {
-                        CmsBtProductModel_SellerCat sellerCat = getSellerCat(feed.getChannelId(), CartEnums.Cart.SN.getValue(), feed.getCategory());
-                        if(sellerCat != null) {
-                            sellerCats.add(sellerCat);
+                        List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
+                        if(!StringUtil.isEmpty(feed.getCategory())) {
+                            CmsBtProductModel_SellerCat sellerCat = getSellerCat(feed.getChannelId(), SN.getValue(), feed.getCategory());
+                            if(sellerCat != null) {
+                                sellerCats.add(sellerCat);
+                            }
                         }
-                    }
-                    if(ListUtils.notNull(feed.getAttribute().get("categoriesTree"))){
-                        try {
-                            List<Map<String, Object>> cats = JacksonUtil.jsonToMapList(feed.getAttribute().get("categoriesTree").get(0));
-                            cats.forEach(item->{
-                                CmsBtProductModel_SellerCat sellerCat = getSellerCat(feed.getChannelId(), CartEnums.Cart.SN.getValue(), (String) item.get("catPath"));
-                                if (sellerCat != null) {
-                                    sellerCats.add(sellerCat);
-                                }
-                            });
-                        }catch (Exception ignored){
+                        if(ListUtils.notNull(feed.getAttribute().get("categoriesTree"))){
+                            try {
+                                List<Map<String, Object>> cats = JacksonUtil.jsonToMapList(feed.getAttribute().get("categoriesTree").get(0));
+                                cats.forEach(item->{
+                                    CmsBtProductModel_SellerCat sellerCat = getSellerCat(feed.getChannelId(), SN.getValue(), (String) item.get("catPath"));
+                                    if (sellerCat != null) {
+                                        sellerCats.add(sellerCat);
+                                    }
+                                });
+                            }catch (Exception ignored){
+                            }
                         }
-                    }
 
-                    platform.setSellerCats(sellerCats);
-
-                }else if(iCartId == CartEnums.Cart.Xsneakers.getValue()){
-                    platform.setpCatId(feed.getCategoryCatId());
-                    platform.setpCatPath(feed.getCategory());
-                    platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
-                    platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
-                    platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
-                    platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
-                    platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
-                    platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
-                }else if(iCartId == CartEnums.Cart.SneakerRx.getValue()){
-                    platform.setpCatId(feed.getCategoryCatId());
-                    platform.setpCatPath(feed.getCategory());
-                    platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
-                    platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
-                    platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
-                    platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
-                    platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
-                    platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
-                }else if(iCartId == CartEnums.Cart.iKicks.getValue()){
-                    platform.setpCatId(feed.getCategoryCatId());
-                    platform.setpCatPath(feed.getCategory());
-                    platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
-                    platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
-                    platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
-                    platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
-                    platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
-                    platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
-                }else if(iCartId == CartEnums.Cart.Amazon.getValue()){
-                    platform.setpCatPath(feed.getAttribute().get("amazonBrowseTree")==null?"":feed.getAttribute().get("amazonBrowseTree").get(0));
-                    platform.getFields().setAttribute("sellerFulfilledPrime", true);
+                        platform.setSellerCats(sellerCats);
+                        break;
+                    case Xsneakers:
+                        platform.setpCatId(feed.getCategoryCatId());
+                        platform.setpCatPath(feed.getCategory());
+                        platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                        platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                        platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                        platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                        platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                        platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                        break;
+                    case SneakerRx:
+                        platform.setpCatId(feed.getCategoryCatId());
+                        platform.setpCatPath(feed.getCategory());
+                        platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                        platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                        platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                        platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                        platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                        platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                        break;
+                    case iKicks:
+                        platform.setpCatId(feed.getCategoryCatId());
+                        platform.setpCatPath(feed.getCategory());
+                        platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                        platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                        platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                        platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                        platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                        platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                        break;
+                    case Amazon:
+                        platform.setpCatPath(feed.getAttribute().get("amazonBrowseTree")==null?"":feed.getAttribute().get("amazonBrowseTree").get(0));
+                        platform.getFields().setAttribute("sellerFulfilledPrime", true);
+                        break;
                 }
 
                 if(!StringUtil.isEmpty(platform.getpCatPath())){

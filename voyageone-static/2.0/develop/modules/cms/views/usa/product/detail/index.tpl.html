@@ -1,10 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<div class="wrapper-md" ng-init="ctrl.initialize()">
+    <div class="panel-group">
+        <div class="panel panel-default">
+            <div class="panel-heading panel-detail-head">&nbsp;<i class="fa fa-sitemap"></i>&emsp;产品详情</div>
+        </div>
+    </div>
 
-</body>
-</html>
+    <div>
+        <uib-tabset class="tab-container vo_nav-tabs">
+            <!---------------------------------------------------master 产品详情页面---------------------------------------------->
+            <uib-tab active="ctrl.master">
+                <tab-heading>Master产品详情</tab-heading>
+                <master-schema product-info="ctrl.product"></master-schema>
+            </uib-tab>
+            <!---------------------------------------------------sku 价格一览页面---------------------------------------------->
+            <uib-tab active="ctrl.price">
+                <tab-heading>价格一览详情</tab-heading>
+                <price-schema product-info="ctrl.product"></price-schema>
+            </uib-tab>
+            <!---------------------------------------------------SKU 属性 页面------------------------------------------------>
+            <uib-tab active="ctrl.sku">
+                <tab-heading>{{'TXT_PRODUCT_SKU_DETAIL'|translate}}</tab-heading>
+                <sku-schema product-info="ctrl.product"></sku-schema>
+            </uib-tab>
+            <!---------------------------------------------------SKU 库存 页面------------------------------------------------>
+            <uib-tab active="ctrl.inventory">
+                <tab-heading>SKU 库存</tab-heading>
+                <inventory-schema product-info="ctrl.product"></inventory-schema>
+            </uib-tab>
+            <!---------------------------------------------------feed 产品详情页面------------------------------------------------>
+            <uib-tab active="ctrl.feed">
+                <tab-heading>Feed详情</tab-heading>
+                <feed-schema product-info="ctrl.product"></feed-schema>
+            </uib-tab>
+            <!---------------------------------------------------平台产品详情页面(不包含独立官网)---------------------------------->
+            <uib-tab ng-repeat="platformType in ctrl.platformTypes"
+                     ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
+                <tab-heading>{{platformType.name}}详情</tab-heading>
+
+                <div ng-if="platformType.value == 20 || platformType.value == 23">
+                    <tm-sub-page product-info="ctrl.product" cart-info="platformType"></tm-sub-page>
+                </div>
+
+                <div ng-if="platformType.value == 24 || platformType.value == 26 || platformType.value == 28 || platformType.value == 29">
+                    <jd-sub-page product-info="ctrl.product" cart-info="platformType"></jd-sub-page>
+                </div>
+
+                <div ng-if="platformType.value == 27">
+                    <jm-sub-page product-info="ctrl.product" cart-info="platformType"></jm-sub-page>
+                </div>
+
+                <div ng-if="platformType.value == 30 || platformType.value == 31">
+                    <gt-sub-page product-info="ctrl.product" cart-info="platformType"></gt-sub-page>
+                </div>
+
+                <div ng-if="platformType.value == 25 || platformType.value == 32">
+                    <dg-sub-page product-info="ctrl.product" cart-info="platformType"></dg-sub-page>
+                </div>
+
+                <div ng-if="platformType.value == 33">
+                    <fx-sub-page product-info="ctrl.product" cart-info="platformType"></fx-sub-page>
+                </div>
+
+                <div ng-if="platformType.value == 928">
+                    <lg-sub-page product-info="ctrl.product" cart-info="platformType"></lg-sub-page>
+                </div>
+
+                <div ng-if="platformType.value == 34">
+                    <kl-sub-page product-info="ctrl.product" cart-info="platformType"></kl-sub-page>
+                </div>
+
+            </uib-tab>
+
+        </uib-tabset>
+    </div>
+
+</div>

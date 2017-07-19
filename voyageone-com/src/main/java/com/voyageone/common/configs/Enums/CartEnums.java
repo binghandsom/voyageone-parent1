@@ -20,14 +20,13 @@ public class CartEnums {
 
         Xsneakers("12"),
 
-        iKicks("3"),
+        iKicks("11"),
 
         eBay("10"),
 
         Amazon("5"),
 
         SneakerRx("6"),
-
 
         /**
          * 天猫
@@ -133,6 +132,22 @@ public class CartEnums {
         {
             switch(id)
             {
+                case "8":
+                    return SN;
+                case "9":
+                    return MSN;
+                case "7":
+                    return military;
+                case "12":
+                    return Xsneakers;
+                case "11":
+                    return iKicks;
+                case "10":
+                    return eBay;
+                case "5":
+                    return Amazon;
+                case "6":
+                    return SneakerRx;
                 case "20":
                     return TM;
                 case "21":
@@ -174,7 +189,7 @@ public class CartEnums {
         public String getId() {
             return id;
         }
-        public int getValue()
+        public Integer getValue()
         {
             return  Integer.parseInt(id);
         }
