@@ -30,7 +30,10 @@ define([
 
             self.detailDataService.getProductInfo({prodId:self.$scope.productInfo.productId}).then(res => {
 
-                console.log(res)
+                self.mastData = res.data.mastData;
+                self.platform = res.data.platform;
+                self.productComm = res.data.productComm;
+
             });
         }
 
