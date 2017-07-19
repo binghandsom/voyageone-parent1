@@ -240,7 +240,7 @@
                             <table class="vo_table vo_models dropdown_table_bk font-bold" style="min-width:100%;">
                                 <thead>
                                 <tr style="background:#e67e22;color: #fff">
-                                    <th class="checkbox text-center">
+                                    <th class="checkbox text-center white-space-noWrap">
                                         <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                                             <input type="checkbox" ng-click="selectAll(ctrl.productSelList)"
                                                    ng-checked="isAllSelected(ctrl.productSelList)"
@@ -248,20 +248,20 @@
                                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                         </label>
                                     </th>
-                                    <th class="text-center">IMG</th>
-                                    <th class="text-left">Code</th>
-                                    <th class="text-left">Name</th>
-                                    <th class="text-left">ProductType</th>
-                                    <th class="text-left">Brand</th>
-                                    <th class="text-center">Total Qty</th>
-                                    <th class="text-center">Last Received</th>
-                                    <th class="text-center" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selCommonProps">
+                                    <th class="text-center td-width-100 white-space-noWrap">IMG</th>
+                                    <th class="text-left td-width-100 white-space-noWrap">Code</th>
+                                    <th class="text-left td-width-150 white-space-noWrap">Name</th>
+                                    <th class="text-left td-width-100 white-space-noWrap">ProductType</th>
+                                    <th class="text-left td-width-100 white-space-noWrap">Brand</th>
+                                    <th class="text-center td-width-100 white-space-noWrap">Total Qty</th>
+                                    <th class="text-center td-width-100 white-space-noWrap">Last Received</th>
+                                    <th class="text-center td-width-150 white-space-noWrap" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selCommonProps">
                                         {{prop.propName}}
                                         <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.propId)">
                                             <i class="fa fa-{{ctrl.getArrowName(prop.propId)}}"></i>
                                         </button>
                                     </th>
-                                    <th class="text-center" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes">
+                                    <th class="text-center td-width-150 white-space-noWrap" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes">
                                         {{prop.name}}
                                         <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.value)">
                                             <i class="fa fa-{{ctrl.getArrowName(prop.value)}}"></i>
@@ -316,7 +316,7 @@
                                                             ng-controller="showPopoverCtrl" popover-html="showInfo(productInfo.freeTags)"
                                                             popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
                                                     <button type="button" class="btn btn-pop btn-default" ng-disabled="vm.masterData.freetagList.length == 0"
-                                                            ng-click="$parent.addProductFreeTag(productInfo)">
+                                                            ng-click="ctrl.addProductFreeTag(productInfo)">
                                                         <i class="fa fa-cog"></i>&nbsp;{{'TXT_CUS_TAGS_SETTING' | translate}}
                                                     </button>
                                                 </span>
@@ -328,14 +328,14 @@
                                         </td>
                                     </tr>
                                     <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="height: 66px">
-                                        <td>
+                                        <td class="text-left">
                                             <a href="#/product/usa/detail/{{productInfo.prodId}}" target="_blank" >{{productInfo.common.fields.code}}</a>
                                         </td>
-                                        <td>{{productInfo.common.fields.productNameEn}}</td>
-                                        <td>{{productInfo.common.fields.productType}}</td>
-                                        <td>{{productInfo.common.fields.brand}}</td>
-                                        <td>{{productInfo.common.fields.quantity}}</td>
-                                        <td>{{productInfo.common.fields.translateTime}}</td>
+                                        <td class="text-left">{{productInfo.common.fields.productNameEn}}</td>
+                                        <td class="text-left">{{productInfo.common.fields.productType}}</td>
+                                        <td class="text-left">{{productInfo.common.fields.brand}}</td>
+                                        <td class="text-left">{{productInfo.common.fields.quantity}}</td>
+                                        <td class="text-center">{{productInfo.common.fields.translateTime}}</td>
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selCommonProps">{{ctrl.getProductValue(productInfo,prop)}}</td>
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes">{{ctrl.getProductValue(productInfo,prop)}}</td>
 
