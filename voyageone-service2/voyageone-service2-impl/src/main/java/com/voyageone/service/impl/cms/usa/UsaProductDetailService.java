@@ -221,6 +221,34 @@ public class UsaProductDetailService extends BaseService {
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
     }
 
+    // 更新自由标签
+    public void updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier) {
+        /**保存类型*/
+
+        if (platform.get("platformFields") != null) {
+            List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) platform.get("platformFields"));
+
+            platform.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
+            platform.remove("platformFields");
+        }
+        CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
+
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+
+        platformModel.setModified(DateTimeUtil.getNowTimeStamp());
+        updateMap.put("platforms.P" + platformModel.getCartId(), platformModel);
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+    }
+
     private List<Field> buildMasterFields(List<Map<String, Object>> masterFieldsList) {
 
         List<Field> masterFields = SchemaJsonReader.readJsonForList(masterFieldsList);
