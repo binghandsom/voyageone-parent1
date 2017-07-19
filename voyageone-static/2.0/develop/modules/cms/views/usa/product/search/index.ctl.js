@@ -176,8 +176,13 @@ define([
 
         }
 
+        /**
+         * 获取选中产品
+         * @param onlyAttr 按照属性名抽出数组
+         * @returns {Array}
+         */
         getSelectedProduct(onlyAttr){
-            var self = this;
+            let self = this;
 
             if(onlyAttr){
                 return _.pluck(self.productSelList.selList,onlyAttr);
@@ -187,7 +192,7 @@ define([
         }
 
         batchList(){
-            var self = this;
+            let self = this;
 
             self.popups.openUsList().then(res => {
 
