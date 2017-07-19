@@ -77,8 +77,8 @@ public class UsaAdvanceSearchController extends CmsController {
     public AjaxResponse init() throws IOException {
         UserSessionBean userInfo = getUser();
         Map<String, Object> resultMap = new HashMap<>();
-        // 用户已勾选自定义列
-        resultMap.putAll(usaCustomColumnService.getUserCustomColumns(userInfo.getSelChannelId(), userInfo.getUserId(), getLang()));
+        // 获取自定义列 和 用户勾选的自定义列
+        resultMap.putAll(usaCustomColumnService.getCustomColumnsWithChecked(userInfo.getSelChannelId(), userInfo.getUserId(), getLang()));
         // 品牌列表
         resultMap.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), getLang()));
         // 平台

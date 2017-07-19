@@ -76,7 +76,7 @@ public class UsaCustomColumnService extends BaseService {
     }
 
     /**
-     * 显示用户自定义列,并去人当前用户已勾选的自定义列
+     * 显示用户自定义列,并获取当前用户已勾选的自定义列
      *
      * @param channelId 渠道ID
      * @param userId    用户ID
@@ -88,13 +88,13 @@ public class UsaCustomColumnService extends BaseService {
         // 用户勾选的自定义列
         rsMap.putAll(this.getUserCustomColumns(channelId, userId, language));
 
-        // 获取所有Platform Attributes
-        rsMap.put("platformAttributes", this.getPlatformAttributesCustColumns(channelId, language, null));
-
         // 取得所有Common Attributes
         List<Map<String, String>> commonProps = propService.getPropByType(0);
         commonProps.sort((o1, o2) -> o1.get("propId").toString().compareTo(o2.get("propId").toString()));
         rsMap.put("commonProps", commonProps);
+
+        // 获取所有Platform Attributes
+        rsMap.put("platformAttributes", this.getPlatformAttributesCustColumns(channelId, language, null));
 
         // Platform  Sales
         rsMap.put("platformSales", this.getPlatformSalesCustColumns(channelId, language));
