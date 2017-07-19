@@ -17,6 +17,15 @@ public class CmsBtProductUpdateListDelistStatusMQMessageBody extends BaseMQMessa
     private Integer cartId;
     private String activeStatus;
     private List<String> productCodes;
+    private Integer days;
+
+    public Integer getDays() {
+        return days;
+    }
+
+    public void setDays(Integer days) {
+        this.days = days;
+    }
 
     public Integer getCartId() {
         return cartId;

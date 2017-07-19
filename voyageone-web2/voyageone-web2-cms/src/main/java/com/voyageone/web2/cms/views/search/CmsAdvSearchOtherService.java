@@ -17,9 +17,11 @@ import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdateListDelistStatusMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdatePriceMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.enums.CartType;
@@ -36,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Edward
@@ -104,6 +107,8 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     private CmsMqSenderService cmsMqSenderService;
     @Autowired
     private CmsProductSearchQueryService cmsProductSearchQueryService;
+    @Autowired
+    private CmsAdvSearchQueryService advSearchQueryService;
 
     /**
      * 取得当前主商品所在组的其他信息：所有商品的价格变动信息，子商品图片
@@ -518,19 +523,20 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     }
 
     public String updatePrice(Map<String, Object> paraMap, UserSessionBean user) {
-        CmsBtProductUpdatePriceMQMessageBody MqMap = new CmsBtProductUpdatePriceMQMessageBody();
+        CmsBtProductUpdatePriceMQMessageBody mqMap = new CmsBtProductUpdatePriceMQMessageBody();
         if (paraMap != null) {
             String selAll = (String) paraMap.get("selAll");
             List<String> codeList = (List<String>) paraMap.get("codeList");
-            Integer cartId = (Integer) paraMap.get("cartId");
-            MqMap.setCartId(cartId);
+            //Integer cartId = (Integer) paraMap.get("cartId");
+            Integer cartId =Integer.parseInt((String) paraMap.get("cartId"));
+            mqMap.setCartId(cartId);
             HashMap<String, Object> params = new HashMap<>();
 
             String changedPriceType = (String) paraMap.get("changedPriceType");
             String basePriceType = (String) paraMap.get("basePriceType");
             String optionType = (String) paraMap.get("optionType");
-            Double value = (Double) paraMap.get("value");
-            //Double value = Double.parseDouble((String) paraMap.get("value"));
+           // Double value = (Double) paraMap.get("value");
+            Double value =Double.parseDouble((String)paraMap.get("value"));
             //"1":取整,"0":不取整
             String flag = (String) paraMap.get("flag");
             params.put("changedPriceType", changedPriceType);
@@ -538,23 +544,93 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             params.put("optionType", optionType);
             params.put("value", value);
             params.put("flag", flag);
-            MqMap.setParams(params);
-            if ("true".equals(selAll)) {
+            mqMap.setParams(params);
+            if ("selAll".equals(selAll)) {
                 //勾选了全部,需要通过检索条件,查询出所有信息
                 Map<String, Object> map = (Map) paraMap.get("queryMap");
                 CmsSearchInfoBean2 queryParams = BeanUtils.toModel(map, CmsSearchInfoBean2.class);
-                queryParams.setProductPageNum(null);
-                queryParams.setProductPageSize(null);
-                CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId(), user.getUserId(), user.getUserName());
-                List<String> productCodeList = cmsProductCodeListBean.getProductCodeList();
-                MqMap.setProductCodes(productCodeList);
+                CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId());
+                long productListTotal = cmsProductCodeListBean.getTotalCount();
+                //要根据查询出来的总页数设置分页
+                long pageNumber = 0;
+                if (productListTotal % 100 == 0) {
+                    //整除
+                    pageNumber = productListTotal / 100;
+                } else {
+                    //不整除
+                    pageNumber = (productListTotal / 100) + 1;
+                }
+
+                for (int i = 0; i < pageNumber; i++) {
+                    queryParams.setProductPageSize(100);
+                    queryParams.setProductPageNum(i);
+                    CmsProductCodeListBean cmsProductCodeListBean1 = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId());
+                    List<String> productCodeList = cmsProductCodeListBean1.getProductCodeList();
+                    mqMap.setProductCodes(productCodeList);
+                    mqMap.setChannelId(user.getSelChannelId());
+                    mqMap.setSender(user.getUserName());
+                    cmsMqSenderService.sendMessage(mqMap);
+                }
             } else {
                 //未勾选全部
-                MqMap.setProductCodes(codeList);
+                mqMap.setProductCodes(codeList);
+                mqMap.setChannelId(user.getSelChannelId());
+                mqMap.setSender(user.getUserName());
+                cmsMqSenderService.sendMessage(mqMap);
+
             }
-            MqMap.setChannelId(user.getSelChannelId());
-            MqMap.setSender(user.getUserName());
-            cmsMqSenderService.sendMessage(MqMap);
+        }
+        return null;
+    }
+
+    //批量进行上下架操作
+    public String listOrDelist(Map<String, Object> paraMap, UserSessionBean user) {
+        CmsBtProductUpdateListDelistStatusMQMessageBody mqMap = new CmsBtProductUpdateListDelistStatusMQMessageBody();
+        if (paraMap != null) {
+            //boolean selAll = (boolean) paraMap.get("selAll");
+            String selAll = (String) paraMap.get("selAll");
+            List<String> codeList = (List<String>) paraMap.get("codeList");
+            //Integer cartId = (Integer) paraMap.get("cartId");
+            Integer cartId =Integer.parseInt((String) paraMap.get("cartId"));
+            mqMap.setCartId(cartId);
+            String activeStatus = (String) paraMap.get("activeStatus");
+            mqMap.setActiveStatus(activeStatus);
+            //Integer days = (Integer) paraMap.get("days");
+            Integer days =Integer.parseInt((String) paraMap.get("days"));
+            mqMap.setDays(days);
+            if ("selAll".equals(selAll)) {
+                //勾选了全部,需要通过检索条件,查询出所有信息
+                Map<String, Object> map = (Map) paraMap.get("queryMap");
+                CmsSearchInfoBean2 queryParams = BeanUtils.toModel(map, CmsSearchInfoBean2.class);
+                CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId());
+                long productListTotal = cmsProductCodeListBean.getTotalCount();
+                //要根据查询出来的总页数设置分页
+                long pageNumber = 0;
+                if (productListTotal % 100 == 0) {
+                    //整除
+                    pageNumber = productListTotal / 100;
+                } else {
+                    //不整除
+                    pageNumber = (productListTotal / 100) + 1;
+                }
+
+                for (int i = 0; i < pageNumber; i++) {
+                    queryParams.setProductPageSize(100);
+                    queryParams.setProductPageNum(i);
+                    CmsProductCodeListBean cmsProductCodeListBean1 = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId());
+                    List<String> productCodeList = cmsProductCodeListBean1.getProductCodeList();
+                    mqMap.setProductCodes(productCodeList);
+                    mqMap.setChannelId(user.getSelChannelId());
+                    mqMap.setSender(user.getUserName());
+                    cmsMqSenderService.sendMessage(mqMap);
+                }
+            } else {
+                //未勾选全部
+                mqMap.setProductCodes(codeList);
+                mqMap.setChannelId(user.getSelChannelId());
+                mqMap.setSender(user.getUserName());
+                cmsMqSenderService.sendMessage(mqMap);
+            }
         }
         return null;
     }

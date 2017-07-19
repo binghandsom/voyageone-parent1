@@ -246,10 +246,18 @@ define([
             }
         }
 
-        batchList(){
+        //进行上下架操作
+        batchList(cartId,activeStatus){
             let self = this;
 
-            self.popups.openUsList().then(res => {
+            self.popups.openUsList({
+                selAll:self._selall,
+                codeList:self.getSelectedProduct('code'),
+                queryMap:self.handleQueryParams(),
+                cartId:cartId? cartId :0,
+                //操作状态1为上架,0为下架
+                activeStatus:activeStatus
+            }).then(res => {
 
             });
         }

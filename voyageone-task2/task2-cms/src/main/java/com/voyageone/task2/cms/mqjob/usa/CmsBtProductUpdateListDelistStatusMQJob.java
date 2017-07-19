@@ -13,9 +13,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by dell on 2017/7/18.
@@ -30,38 +28,52 @@ public class CmsBtProductUpdateListDelistStatusMQJob extends TBaseMQCmsService<C
 
     @Autowired
     CmsBtProductDao cmsBtProductDao;
+
     @Override
     public void onStartup(CmsBtProductUpdateListDelistStatusMQMessageBody messageBody) throws Exception {
-        if (messageBody != null){
+        if (messageBody != null) {
             Integer cartId = messageBody.getCartId();
             String channelId = messageBody.getChannelId();
             String activeStatus = messageBody.getActiveStatus();
             List<String> productCodes = messageBody.getProductCodes();
-            if (ListUtils.notNull(productCodes)){
+            Integer days = messageBody.getDays();
+            if (ListUtils.notNull(productCodes)) {
                 for (String productCode : productCodes) {
                     //获取到商品对象
                     CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, productCode);
                     Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
-                    if (usPlatforms!= null){
+                    if (usPlatforms != null) {
                         CmsBtProductModel_Platform_Cart usPlatform = usPlatforms.get("P" + cartId);
                         String status = usPlatform.getStatus();
                         //status为Approve状态才可以进行上下架
-                        if ("Approve".equals(status)){
+                        if ("Approve".equals(status)) {
 
                             JongoUpdate jongoUpdate = new JongoUpdate();
                             jongoUpdate.setQuery("{\"common.fields.code\":#}");
                             jongoUpdate.setQueryParameters(productCode);
-                            jongoUpdate.setUpdate("{$set:{\"usPlatforms.P"+ cartId +".pStatus\":#}}");
-                            if ("list".equals(activeStatus)){
+                            jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + ".pStatus\":#}}");
+                            if ("list".equals(activeStatus)) {
                                 //上架操作
                                 jongoUpdate.setUpdateParameters("OnSale");
                             }
-                            if ("deList".equals(activeStatus)){
+                            if ("deList".equals(activeStatus)) {
                                 //下架操作
                                 jongoUpdate.setUpdateParameters("InStock");
                             }
                             cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
-                            platformProductUploadService.saveCmsBtUsWorkloadModel(channelId,cartId,productCode,null,0,messageBody.getSender());
+
+                            //设置滞后发布日期
+                            if (days != 0){
+                                Date date = new Date();
+                                Calendar calendar = new GregorianCalendar();
+                                calendar.setTime(date);
+                                calendar.add(calendar.DATE, days);
+                                date = calendar.getTime();
+                                platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, date, 0, messageBody.getSender());
+                            }else {
+                                platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, messageBody.getSender());
+                            }
+
                         }
                     }
                 }

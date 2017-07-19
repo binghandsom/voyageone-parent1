@@ -245,4 +245,12 @@ public class UsaAdvanceSearchController extends CmsController {
         // 返回用户信息
         return success(null);
     }
+    //批量进行上下架操作
+    @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.LISTORDELIST)
+    public AjaxResponse listOrDelist(@RequestBody Map params) {
+        UserSessionBean user = getUser();
+        advSearchOtherService.listOrDelist(params, user);
+        // 返回用户信息
+        return success(null);
+    }
 }

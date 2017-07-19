@@ -26,10 +26,10 @@ define([
                 //是否取整"1":是,"0":否,默认为取整
                 flag: "1",
                 //默认不全选,"1"为全选,"0"为不全选
-                selAll: "0",
+                selAll:"",
                 queryMap: {},
                 codeList: {},
-                cartId: 0
+                cartId: ""
             };
         }
 
@@ -40,10 +40,11 @@ define([
             if (self.paraMap.basePriceType == "fixedValue") {
                 self.paraMap.optionType = "=";
             }
-            self.paraMap.selAll = self.context.selAll;
+            self.paraMap.selAll = self.context.selAll + "";
             self.paraMap.queryMap = self.context.queryMap;
             self.paraMap.codeList = self.context.codeList;
-            self.paraMap.cartId = self.context.cartId;
+            self.paraMap.cartId = self.context.cartId + "";
+            self.paraMap.value += "";
             self.advanceSearch.updatePrice(self.paraMap).then((res) => {
                 //"1",需要清除勾选状态,"0"不需要清除勾选状态
                 self.$modalInstance.close({success: value});

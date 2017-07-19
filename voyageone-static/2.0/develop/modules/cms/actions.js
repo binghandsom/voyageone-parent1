@@ -841,7 +841,8 @@ define(function () {
                 search:"search",
                 getCustomColumns:"getCustomColumns",
                 saveCustomColumns:"saveCustomColumns",
-                updatePrice:"updatePrice"
+                updatePrice:"updatePrice",
+                listOrDelist:"listOrDelist"
             },
             usTagService: {
                 root:"/cms/us/tag",

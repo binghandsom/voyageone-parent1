@@ -16,15 +16,15 @@
                    <label>Days Old Before Sharing</label>
                </div>
                <div class="col-md-2">
-                   <input type="text" class="form-control">
+                   <input type="number" class="form-control" ng-model="ctrl.paraMap.days">
                </div>
            </div>
        </div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> CANCLE</button>
-        <button class="btn btn-vo" ng-click="ctrl.updatePrice('1')"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE</button>
-        <button class="btn btn-vo" ng-click="ctrl.updatePrice('0')"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE&CONTINUE</button>
+        <button class="btn btn-vo" ng-click="ctrl.listOrDelist('1')"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE</button>
+        <button class="btn btn-vo" ng-click="ctrl.listOrDelist('0')"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE&CONTINUE</button>
     </div>
 </div>
 
