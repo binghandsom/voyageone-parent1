@@ -7,23 +7,27 @@
  */
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.CmsBtPriceLogModel_Mysql;
 import java.util.List;
 import org.springframework.stereotype.Repository;
 
-@Repository
+@Repository("cmsBtPriceLogDaoMysql")
 public interface CmsBtPriceLogDao {
-    List<CmsBtPriceLogModel> selectList(Object map);
+    List<CmsBtPriceLogModel_Mysql> selectList(Object map);
 
-    CmsBtPriceLogModel selectOne(Object map);
+    List<CmsBtPriceLogModel_Mysql> selectList4Transfer(Object map);
+
+    List<CmsBtPriceLogModel_Mysql> selectList4TransferHistory(Object map);
+
+    CmsBtPriceLogModel_Mysql selectOne(Object map);
 
     int selectCount(Object map);
 
-    CmsBtPriceLogModel select(Integer id);
+    CmsBtPriceLogModel_Mysql select(Integer id);
 
-    int insert(CmsBtPriceLogModel record);
+    int insert(CmsBtPriceLogModel_Mysql record);
 
-    int update(CmsBtPriceLogModel record);
+    int update(CmsBtPriceLogModel_Mysql record);
 
     int delete(Integer id);
 }

@@ -179,7 +179,7 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                 if ("1".equals(useOriUrlStr)) {
                     // 使用原图
                     // start
-                    try {
+//                    try {
                         // 20160717 tom 换一种方法 START
 //                        String url = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?req=imageprops", cmsBtProductModelFieldImage.getName());
 //                        $info("[CustomWordModuleGetAllImages]取得图片大小url:" + url);
@@ -198,13 +198,15 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
 //                            }
 //                        }
 //                        completeImageUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&rgn=0,0,%s,%s", cmsBtProductModelFieldImage.getName(), responseMap.get("width"), responseMap.get("height"));
-                        completeImageUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100", cmsBtProductModelFieldImage.getName());
+//                        completeImageUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100", cmsBtProductModelFieldImage.getName());
                         // 20160717 tom 换一种方法 END
-                        $info("[CustomWordModuleGetAllImages]取得原始图片url:" + completeImageUrl);
-                    } catch (Exception e) {
-                        throw new BusinessException("[CustomWordModuleGetAllImages]取得原始图片url失败!");
-                    }
+//                        $info("[CustomWordModuleGetAllImages]取得原始图片url:" + completeImageUrl);
+//
+//                    } catch (Exception e) {
+//                        throw new BusinessException("[CustomWordModuleGetAllImages]取得原始图片url失败!");
+//                    }
                     // end
+                    completeImageUrl = getPicOriUrl(cmsBtProductModelFieldImage.getName(), moduleName);
                 } else {
 //                    completeImageUrl = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, cmsBtProductModelFieldImage.getName());
 //                    completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());
@@ -227,6 +229,7 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
                   (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())
                 || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())
                 || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())
+                || shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.NTES.getId())
                 )) {
             map = sxProductService.uploadImage(sxData.getChannelId(), sxData.getCartId(), String.valueOf(sxData.getGroupId()), shopBean, imageSet, user);
         }

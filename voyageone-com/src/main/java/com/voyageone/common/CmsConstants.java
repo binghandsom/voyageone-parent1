@@ -191,6 +191,9 @@ public class CmsConstants {
 
         // usjoi导入的白名单
         String CATEGORY_WHITE = "CATEGORY_WHITE";
+
+        // WMS->CMS推送平台库存，当Code库存为0时是否切换平台主商品
+        String AUTO_SWITCH_MASTER_PRODUCT = "AUTO_SWITCH_MASTER_PRODUCT";
     }
 
     public interface ImageUploadStatus {

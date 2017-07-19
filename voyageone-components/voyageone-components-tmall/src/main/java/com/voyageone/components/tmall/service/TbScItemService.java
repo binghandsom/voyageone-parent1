@@ -14,8 +14,6 @@ import com.voyageone.components.tmall.TbBase;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by tom.zhu on 2016-10-08.
@@ -119,7 +117,7 @@ public class TbScItemService extends TbBase {
 		ScitemAddResponse res = reqTaobaoApi(shopBean, request);
 
 		if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
-			return null;
+			throw new BusinessException(res.getSubCode() + ":" + res.getSubMsg());
 		}
 
 		return res.getScItem();
@@ -254,18 +252,19 @@ public class TbScItemService extends TbBase {
 	/**
 	 * taobao.scitem.get (根据id查询商品)
 	 * @param shopBean shopBean
-	 * @param numIId 天猫id
+	 * @param itemId 货品id
 	 * @return （符合条件的sku的）关联信息列表
 	 * @throws ApiException
 	 */
-	public ScItem getScitemByNumIId(ShopBean shopBean, long numIId) throws ApiException {
+	public ScItem getScitemByItemId(ShopBean shopBean, long itemId, StringBuffer failCause) throws ApiException {
 		ScitemGetRequest request = new ScitemGetRequest();
 
-		request.setItemId(numIId);
+		request.setItemId(itemId);
 
 		ScitemGetResponse res = reqTaobaoApi(shopBean, request);
 
 		if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
+			failCause.append(res.getSubCode()).append(":").append(res.getSubMsg());
 			return null;
 		}
 

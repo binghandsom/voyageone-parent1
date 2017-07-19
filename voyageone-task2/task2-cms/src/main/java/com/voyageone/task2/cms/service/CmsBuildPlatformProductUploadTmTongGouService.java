@@ -8,6 +8,7 @@ import com.taobao.api.domain.Item;
 import com.taobao.api.domain.ScItem;
 import com.taobao.api.domain.ScItemMap;
 import com.taobao.top.schema.exception.TopSchemaException;
+import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.InputField;
@@ -410,6 +411,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
     public void uploadProduct(CmsBtSxWorkloadModel cmsBtSxWorkloadModel, ShopBean shopProp,
                               List<String> tmTonggouFeedAttrList, Map<String, List<Map<String, String>>> categoryMappingListMap) {
 
+
         // 当前groupid(用于取得产品信息)
         long groupId = cmsBtSxWorkloadModel.getGroupId();
         // 渠道id
@@ -484,11 +486,12 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             // 20170417 全链路库存改造 charis STA
             // 判断一下是否需要做货品绑定
             String storeCode = taobaoScItemService.doGetLikingStoreCode(shopProp, sxData.getMainProduct().getOrgChannelId());
-            if (!StringUtils.isEmpty(storeCode) && !channelId.equals("928")) {
+            if (!StringUtils.isEmpty(storeCode) && !ChannelConfigEnums.Channel.USJGJ.getId().equals(channelId)) {
                 String title = getTitleForTongGou(mainProduct, sxData, errorWord);
-                Map<String, ScItem> scItemMap = new HashMap<>();
+//                Map<String, ScItem> scItemMap = new HashMap<>();
                 for (String sku_outerId : strSkuCodeList) {
                     ScItem scItem;
+                    boolean isNew = false;
                     // 检查是否发布过仓储商品
                     try {
                         scItem = tbScItemService.getScItemByOuterCode(shopProp, sku_outerId);
@@ -500,14 +503,16 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                         // 没有发布过仓储商品的场合， 发布仓储商品
                         try {
                             scItem = tbScItemService.addScItemSimple(shopProp, title, sku_outerId);
+                            isNew = true;
                         } catch (ApiException e) {
                             String errMsg = String.format("自动设置天猫商品全链路库存管理:发布仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
                             throw new BusinessException(errMsg);
                         }
                     }
-                    scItemMap.put(sku_outerId, scItem);
+//                    scItemMap.put(sku_outerId, scItem);
+                    sxData.putSxScItem(sku_outerId, scItem, isNew);
                 }
-                sxData.setScItemMap(scItemMap);
+//                sxData.setScItemMap(scItemMap);
             }
             // 20170417 全链路库存改造 charis END
 
@@ -779,20 +784,20 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 if (skuMapList != null) {
                     String error = "";
                     try {
-                        // 先去看看是否已经创建过关联了
-                        List<ScItemMap> scItemMapList = tbScItemService.getScItemMap(shopProp, Long.parseLong(numIId), null);
-                        Map<String, String> skuIdScIdMap = new HashMap<>();
-                        if (scItemMapList != null && scItemMapList.size() > 0) {
-                            scItemMapList.stream()
-                                    .forEach(scItemMap -> skuIdScIdMap.put(String.valueOf(scItemMap.getSkuId()), String.valueOf(scItemMap.getRelItemId())));
-                        }
+//                        // 先去看看是否已经创建过关联了
+//                        List<ScItemMap> scItemMapList = tbScItemService.getScItemMap(shopProp, Long.parseLong(numIId), null);
+//                        Map<String, String> skuIdScIdMap = new HashMap<>();
+//                        if (scItemMapList != null && scItemMapList.size() > 0) {
+//                            scItemMapList.stream()
+//                                    .forEach(scItemMap -> skuIdScIdMap.put(String.valueOf(scItemMap.getSkuId()), String.valueOf(scItemMap.getRelItemId())));
+//                        }
                         for (Map<String, Object> skuMap : skuMapList) {
 //                        skuMap: outer_id, price, quantity, sku_id
                             try {
                                 skuMap.put("scProductId",
                                         taobaoScItemService.doSetLikingScItem(
                                                 shopProp, sxData,
-                                                Long.parseLong(numIId), skuMap, skuIdScIdMap));
+                                                Long.parseLong(numIId), skuMap));
                                 saveCmsBtTmScItem_Liking(sxData, cartId, skuMap);
                             } catch (Exception e) {
 
@@ -805,15 +810,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                             throw new Exception("关联货品失败 sku如下：" + error);
                         }
                     } catch (Exception e) {
-//                        String error = "";
-//                        if (e.getMessage().contains("创建关联失败") && !updateWare) {
-//                            try {
-//                                tbProductService.delItem(shopProp, String.valueOf(numIId));
-//                            } catch (ApiException e1) {
-//                                error = "商品上新的场合,关联货品失败后做删除商品的动作时失败了！";
-//                            }
-//                        }
-                        throw new Exception(e.getMessage());
+                        throw e;
                     }
 
                 }
@@ -1353,7 +1350,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 //                    // 直接删掉违禁词
 //                    valDescription = valDescription.replaceAll(notAllow, "");
 //                }
-                sxProductService.deleteErrorWord(valTitle, errorWord);
+                sxProductService.deleteErrorWord(valDescription, errorWord);
             }
         }
         // 店铺级标题禁用词 20161216 tom END
@@ -2443,7 +2440,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         } else {
             // 更新商品的时候
             result = tbSimpleItemService.updateSimpleItem(shopProp, NumberUtils.toLong(numIId), productInfoXml);
-
             if (result == null) {
                 List<Map<String, Object>> skuTmallList = null;
                 tbItemSchema = tbSimpleItemService.getSimpleItem(shopProp, Long.parseLong(numIId));
@@ -2460,25 +2456,25 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 }
                 if (ListUtils.notNull(skuTmallList)) {
                     List<Map<String, Object>> skuCmsList;
-                    String skuCmsJson = (String) JacksonUtil.jsonToMap(productInfoXml).get("skus");
+                    String skuCmsJson = ((InputField)SchemaReader.readXmlForMap(productInfoXml).get("skus")).getValue();
                     skuCmsList = JacksonUtil.jsonToMapList(skuCmsJson);
                     if (skuCmsList.size() != skuTmallList.size()) {
                         return "ERROR: 检查商品时发现sku数量不一致，请及时确认！ ";
                     }
                     if (ListUtils.notNull(skuCmsList)) {
                         for (Map<String, Object> skuCms : skuCmsList) {
+                            BigDecimal skuCmsPrice = new BigDecimal(String.valueOf(skuCms.get("price")));
+                            String skuCmsOuterId = String.valueOf(skuCms.get("outer_id"));
                             for (Map<String, Object> skuTmall : skuTmallList) {
-                                String skuCmsPrice = String.valueOf(skuCms.get("price"));
-                                String skuTmallPrice = String.valueOf(skuTmall.get("price"));
-                                String skuCmsOuterId = String.valueOf(skuCms.get("outer_id"));
+                                BigDecimal skuTmallPrice = new BigDecimal(String.valueOf(skuTmall.get("price")));
                                 String skuTmallOuterId = String.valueOf(skuTmall.get("outer_id"));
-                                if (skuCmsOuterId.equals(skuTmallOuterId) && !skuCmsPrice.equals(skuTmallPrice)) {
+                                if (skuCmsOuterId.equals(skuTmallOuterId) && skuCmsPrice.compareTo(skuTmallPrice) != 0) {
                                     return "ERROR: 检查商品时发现部分sku价格不一致! ";
                                 }
                             }
                         }
 
-                        errorResult.append("由于天猫超时,请确认sku以外的属性是否更新成功！");
+                        errorResult.append("友情提示(并不是错误)：由于天猫超时,请确认sku以外的属性是否更新成功！");
                     }
                 }
             }

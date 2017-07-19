@@ -12,8 +12,6 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.*;
@@ -26,6 +24,7 @@ import com.voyageone.service.model.cms.mongo.CmsBtOperationLogModel_Msg;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedAttributesModel;
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +34,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toCollection;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -108,6 +106,10 @@ public class FeedToCmsService extends BaseService {
             isSetCategory = "1".equalsIgnoreCase(cmsChannelConfigs.getConfigValue1());
         }
         for (CmsBtFeedInfoModel productItem : productList) {
+            if(StringUtil.isEmpty(productItem.getCode())){
+                $error("code为空"+ JacksonUtil.bean2Json(productItem));
+                continue;
+            }
             List<CmsBtFeedInfoModel> products = getRelatedProducts(channelId, productItem);
             for (CmsBtFeedInfoModel product : products) {
                 product.setCode(product.getCode().replaceAll("\"", "-"));
@@ -355,17 +357,19 @@ public class FeedToCmsService extends BaseService {
                      * priceClientMsrp:美金专柜价
                      */
                     if (targetSku != null) {
-                        triggerPrice = !((targetSku.getPriceNet() == null || targetSku.getPriceNet() == 0)
-                                && (targetSku.getPriceClientRetail() == null || targetSku.getPriceClientRetail() == 0)
-                                && (targetSku.getPriceClientMsrp() == null || targetSku.getPriceClientMsrp() == 0));
+                        if (!triggerPrice)
+                            triggerPrice = (targetSku.getPriceNet() != null && targetSku.getPriceNet() > 0 && !ObjectUtils.equals(targetSku.getPriceNet(), skuInfo.getPriceNet()))
+                                    || (targetSku.getPriceClientRetail() != null && targetSku.getPriceClientRetail() > 0 && !ObjectUtils.equals(targetSku.getPriceClientRetail(), skuInfo.getPriceClientRetail()))
+                                    || (targetSku.getPriceClientMsrp() != null && targetSku.getPriceClientMsrp() > 0 && !ObjectUtils.equals(targetSku.getPriceClientMsrp(), skuInfo.getPriceClientMsrp()))
+                                || (targetSku.getIsSale() != null && targetSku.getIsSale() != skuInfo.getIsSale());
 
                         // 同步价格
                         if (targetSku.getPriceNet() != null && targetSku.getPriceNet() != 0)
-                            skuInfo.setPriceNet(skuInfo.getPriceNet());
+                            skuInfo.setPriceNet(targetSku.getPriceNet());
                         if (targetSku.getPriceClientRetail() != null && targetSku.getPriceClientRetail() != 0)
-                            skuInfo.setPriceClientRetail(skuInfo.getPriceClientRetail());
+                            skuInfo.setPriceClientRetail(targetSku.getPriceClientRetail());
                         if (targetSku.getPriceClientMsrp() != null && targetSku.getPriceClientMsrp() != 0)
-                            skuInfo.setPriceClientMsrp(skuInfo.getPriceClientMsrp());
+                            skuInfo.setPriceClientMsrp(targetSku.getPriceClientMsrp());
 
                         // 同步库存
                         if (targetSku.getQty() != null) {
@@ -392,6 +396,8 @@ public class FeedToCmsService extends BaseService {
                     // 计算人民币价格
                     if (triggerPrice) {
                         priceService.setFeedPrice(orgFeedInfo);
+                        if (orgFeedInfo.getUpdFlg() == CmsConstants.FeedUpdFlgStatus.Succeed)
+                            orgFeedInfo.setUpdFlg(0);
                     }
 
                     // 原feed数据导入成功或者导入失败,则自动重新导入一次
@@ -445,7 +451,9 @@ public class FeedToCmsService extends BaseService {
     }
 
     public Boolean checkProduct(CmsBtFeedInfoModel product) {
-        if (!product.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())) {
+        if (!product.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.CHAMPION.getId())
+//                && !product.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.KitBag.getId())
+                && !product.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.REAL_MADRID.getId())) {
             if (product.getImage() == null || product.getImage().size() == 0) {
                 product.setUpdFlg(CmsConstants.FeedUpdFlgStatus.FeedErr);
                 product.setUpdMessage("没有图片");

@@ -15,6 +15,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -74,6 +75,15 @@ public class CmsSetMainPropMongo2ServiceTest {
                 throw new BusinessException("主类目属于黑名单不能导入CMS：" );
             }
         }
+    }
+
+    @Test
+    public void testOnStartup () throws Exception {
+        TaskControlBean t = new TaskControlBean();
+        t.setTask_id("2");
+        t.setCfg_name("order_channel_id");
+        t.setCfg_val1("001");
+        cmsSetMainPropMongo2Service.onStartup(Collections.singletonList(t));
     }
 
 }

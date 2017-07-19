@@ -54,6 +54,15 @@ define([
                     return !(context.fileType !== 3 && item.name.indexOf('是否销售') >= 0);
                 });
 
+                $scope.vm.commonProps = _.filter($scope.vm.commonProps, function (item) {
+                    return !(context.fileType !== 1 && item.propName.indexOf('产品图') >= 0);
+                });
+
+                //只有sku级别显示cart是否销售
+                $scope.vm.platformDataList = _.filter($scope.vm.platformDataList, function (item) {
+                    return !(context.fileType !== 3 && item.name.indexOf('sku货品编码') >= 0);
+                });
+
                 // 检查全选框
                 for (var i = 1; i <= 6; i++) {
                     chkItemStatus(i);

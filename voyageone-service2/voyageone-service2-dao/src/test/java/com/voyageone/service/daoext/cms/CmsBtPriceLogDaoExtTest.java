@@ -1,6 +1,6 @@
 package com.voyageone.service.daoext.cms;
 
-import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.model.cms.CmsBtPriceLogModel_Mysql;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,8 +45,8 @@ public class CmsBtPriceLogDaoExtTest {
 
     @Test
     public void testInsertCmsBtPriceLogList() throws Exception {
-        List<CmsBtPriceLogModel> list  =  new ArrayList<CmsBtPriceLogModel>();
-        CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
+        List<CmsBtPriceLogModel_Mysql> list  =  new ArrayList<CmsBtPriceLogModel_Mysql>();
+        CmsBtPriceLogModel_Mysql cmsBtPriceLogModel = new CmsBtPriceLogModel_Mysql();
         cmsBtPriceLogModel.setChannelId("1");
         cmsBtPriceLogModel.setProductId(1);
         cmsBtPriceLogModel.setCode("1");
