@@ -222,7 +222,6 @@ public class UsaAdvanceSearchController extends CmsController {
                     Boolean isSale = (Boolean) map.get("isSale");
                     if (isSale != null && isSale) {
                         for (CmsBtProductModel_Sku skus : cmsBtProductBean.getCommonNotNull().getSkus()) {
-//                        for (WmsBtInventoryCenterLogicModel inventoryInfo : inventoryList) {
                             if (skus.getSkuCode().equals(sku)) {
                                 qty = qty + skus.getQty();
                             }
