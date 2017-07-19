@@ -506,6 +506,12 @@ define(function () {
             templateUrl: "views/usa/product/search/index.tpl.html",
             controllerUrl: "modules/cms/views/usa/product/search/index.ctl",
             controller: 'usProductSearchController as ctrl'
+        },
+        "us-product/detail":{
+            hash: "/product/usa/detail/:prodId?",
+            templateUrl: "views/usa/product/detail/index.tpl.html",
+            controllerUrl: "modules/cms/views/usa/product/detail/index.ctl",
+            controller: 'usProductDetailController as ctrl'
         }
     };
 });

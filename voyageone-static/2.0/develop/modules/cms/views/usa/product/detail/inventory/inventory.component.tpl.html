@@ -1,0 +1,64 @@
+<div class="product-shema-detail" ng-init="initial();">
+    <div class="form-horizontal" name="productFieldForm" novalidate ng-controller="popupCtrl">
+        <div class="container-fluid" id="skuproperty">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <div class="text-warnings" ng-show="noStock">
+                            <i class="icon fa fa-bell-o"></i>&nbsp;
+                            从WMS未查询到SKU物理库存数据
+                        </div>
+                        {{nostock}}
+                        <table class="table table-hover-new table-hover table_main table_compare" ng-show="!noStock">
+                            <thead>
+                            <tr>
+                                <th class="text-center" style="border: 1px solid #ccc;" colspan="4">基础信息</th>
+                                <th class="text-center" style="border: 1px solid #ccc;" ng-repeat="item in store" ng-if="key != 'base'" colspan="1">{{item}}</th>
+                                <!--新增一个海外品牌商库存-->
+                                <th class="text-center" style="border: 1px solid #ccc;" ng-attr-colspan="{{foreign}}">
+                                    <label class="pull-left" style="margin-bottom: 0">
+                                        <i ng-class="{'fa fa-plus-circle':!showDetail,'fa fa-minus-circle':showDetail}" ng-click="showDetail=!showDetail;count(showDetail)"></i>
+                                    </label>
+                                    第三方库存
+                                </th>
+                            </tr>
+                            <tr id="store-column-head">
+                                <!-- 基础信息 -->
+                                <th class="text-center" style="border: 1px solid #ccc;width: 117px;">SKU</th>
+                                <th class="text-center" style="border: 1px solid #ccc;width: 65px;">原始尺码</th>
+                                <th class="text-center" style="border: 1px solid #ccc;width: 88px;">销售尺码</th>
+                                <th class="text-center" style="border: 1px solid #ccc;width: 50px;">总库存</th>
+                                <th class="text-center" style="border: 1px solid #ccc;width: 50px;" ng-repeat="item in store">{{item}}库存</th>
+                                <!--默认显示总库-->
+                                <th class="text-center" style="border: 1px solid #ccc;width: 50px;" ng-repeat="item in supplier" ng-show="item == 'total' || showDetail">
+                                    <div ng-if="item == 'total'">总库存</div>
+                                    <div ng-if="item != 'total'">{{item}}</div>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="skuDetail in stocks" >
+
+                                <td ng-if="!$last" class="text-left v-middle">{{skuDetail.base.sku}}</td>
+                                <td ng-if="$last" class="text-center v-middle">Total</td>
+                                <td class="text-center v-middle">{{skuDetail.base.origSize}}</td>
+                                <td class="text-center v-middle">{{skuDetail.base.saleSize}}</td>
+
+                                <!--逻辑可售库存-->
+                                <td class="text-right v-middle">{{skuDetail.base.total[0]}}</td>
+
+                                <td class="text-right v-middle" ng-repeat="column in store">{{skuDetail.store[column] ? skuDetail.store[column][0] : 0}}</td>
+                                <td class="text-right v-middle" ng-repeat="column in supplier" ng-show="column == 'total' || showDetail">{{skuDetail.supplier[column] ? skuDetail.supplier[column][0] : 0}}</td>
+                            </tbody>
+                        </table>
+                        <div class="text-warnings" ng-if="noStockSkus.length > 0">
+                            <i class="icon fa fa-bell-o"></i>&nbsp;
+                            CMS中部分SKU&nbsp;<strong>{{noStockSkus}}</strong>&nbsp;在WMS未查询到库存，该SKU库存信息不显示
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -322,7 +322,9 @@
                                         </td>
                                     </tr>
                                     <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="height: 66px">
-                                        <td>{{productInfo.common.fields.code}}</td>
+                                        <td>
+                                            <a href="#/product/usa/detail/{{productInfo.prodId}}" target="_blank" >{{productInfo.common.fields.code}}</a>
+                                        </td>
                                         <td>{{productInfo.common.fields.productNameEn}}</td>
                                         <td>{{productInfo.common.fields.origProductType}}</td>
                                         <td>{{productInfo.common.fields.brand}}</td>
