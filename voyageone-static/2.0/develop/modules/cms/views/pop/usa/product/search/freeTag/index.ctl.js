@@ -48,6 +48,8 @@ define([
             params.searchInfo = context.searchInfo;
 
             self.usTagService.init(self.parameter).then(function (res) {
+
+                console.log(res.data);
                 self.orgTagTree = res.data.tagTree;
 
                 /**设置自由标签时，有初始勾选值*/

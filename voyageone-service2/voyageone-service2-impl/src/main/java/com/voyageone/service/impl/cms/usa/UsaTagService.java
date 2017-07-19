@@ -58,10 +58,9 @@ public class UsaTagService extends BaseService {
         String orgFlg = (String) params.get("orgFlg");
         String selAllFlg = (String) params.get("selAllFlg");
         String selTagType = (String) params.get("selTagType");
-        CmsSearchInfoBean2 searchInfo = (CmsSearchInfoBean2) params.get("searchInfo");
-        if (searchInfo == null) {
-            searchInfo = new CmsSearchInfoBean2();
-        }
+        List<String> selCodeList = (List<String>) params.get("selCodeList");
+        Map<String, Object> searchInfoMap = (Map<String, Object>) params.get("searchInfo");
+        CmsSearchInfoBean2 searchInfo = JacksonUtil.json2Bean(JacksonUtil.bean2Json(searchInfoMap), CmsSearchInfoBean2.class);
 
 
         Map<String, Object> result = new HashMap<>();
@@ -88,13 +87,13 @@ public class UsaTagService extends BaseService {
                 isSelAll = 0;
             }
             List<String> codeList = null;
-            if (isSelAll == 1) {
+            if (Objects.equals(selAllFlg, Integer.valueOf(1))) {
                 // TODO: 2017/7/19 rex.wu Solr是否有未分页方法
                 // 从高级检索重新取得查询结果（根据session中保存的查询条件）
                 CmsProductCodeListBean productCodeListBean = cmsProductSearchQueryService.getProductCodeList(searchInfo, channelId);
                 codeList = productCodeListBean.getProductCodeList();
             } else {
-                codeList = Arrays.asList(searchInfo.getCodeList());
+                codeList = selCodeList;
             }
             if (codeList == null || codeList.isEmpty()) {
 //                $warn("没有code条件 params=" + param.toString());

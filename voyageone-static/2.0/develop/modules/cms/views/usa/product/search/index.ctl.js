@@ -315,7 +315,8 @@ define([
                 orgFlg: '2',
                 tagType: '6',
                 selAllFlg: '0',
-                searchInfo: self.searchInfoBefo
+                selCodeList: self.getSelectedProduct("code"),
+                searchInfo: self.searchInfo
             };
             self.popups.openUsFreeTag(params).then(res => {
                console.log(res);
