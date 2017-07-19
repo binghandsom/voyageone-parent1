@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.jumei;
 
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
@@ -46,8 +47,6 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
     @Autowired
     private TagService tagService;
 
-    //图片模板前缀
-    private static final String url = "http://s7d5.scene7.com/is/image/sneakerhead/";
     //图片模板后缀
     private static final String suffix = "?fmt=jpg&scl=1&qlt=100";
     //专场飘窗
@@ -70,6 +69,9 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
         CmsBtJmPromotionImagesModel picNameModel = cmsBtJmPromotionImagesDao.selectPromotionImagesList(promotionId);
         //取得打包图片的名称转换成对象
         Map<String, Object> imageNameMap = JacksonUtil.jsonToMap(JacksonUtil.bean2Json(picNameModel));
+
+        final String channelId = cmsBtJmPromotionSaveBean.getModel().getChannelId();
+
         imageNameMap.forEach((s, o) -> {
             if (o instanceof String) {
                 //取得打包图片的信息(图片类型及图片路径)
@@ -99,7 +101,7 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
                             System.out.println(imageType);
                         }
                     } else {
-                        urlMap.put("url", url + imageName + suffix);
+                        urlMap.put("url", ImageServer.imageUrl(channelId, imageName + suffix));
                         urlMap.put("picturePath", imagePath);
                         promotionImagesList.add(urlMap);
                     }
@@ -155,7 +157,7 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
             for (CmsBtJmPromotionProductModel model : modelList) {
                 //压缩图片的所需要的对象
                 Map<String, String> urlMap = new HashMap<>();
-                urlMap.put("url", url + model.getImage1() + "?wid=2000&hei=2000");
+                urlMap.put("url", ImageServer.imageUrl(model.getChannelId(), model.getImage1() + "?wid=2000&hei=2000"));
                 urlMap.put("picturePath", model.getProductCode());
                 promotionImagesList.add(urlMap);
             }

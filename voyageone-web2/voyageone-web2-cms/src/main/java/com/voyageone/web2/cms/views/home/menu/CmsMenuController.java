@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.home.menu;
 
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.TypeChannels;
@@ -63,10 +64,7 @@ public class CmsMenuController extends CmsController {
         resultBean.put("platformType", getCmsSession().getPlatformType());
 
         // 获取CategoryList
-        List<Map<String, Object>> categoryList = new ArrayList<>();
-//        List<Map<String, Object>> categoryList = menuService.getCategoryList(cTypeId, channelId);
-        resultBean.put("categoryList", categoryList);
-        resultBean.put("imageUrl", imageTemplateService.getDefaultImageUrl());
+        resultBean.put("imageUrl", ImageServer.frontendImageUrlTemplate());
         resultBean.put("productUrl", platformService.getPlatformProductUrl(getCmsSession().getPlatformType().get("cartId").toString()));
 
         //主数据类目+Feed类目

@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.jmpromotion;
 
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
@@ -31,8 +32,6 @@ public class JmPromotionImagesService extends BaseViewService {
     @Autowired
     private CmsBtJmImageTemplateService cmsBtJmImageTemplateService;
 
-    private static String ORIGINAL_SCENE7_IMAGE_URL = "http://s7d5.scene7.com/is/image/sneakerhead/✓?fmt=jpg&scl=1&qlt=100";
-
     public Map<String, Object> getJmPromotionImage(int promotionId, int jmPromotionId) {
 
         CmsBtJmPromotionImagesModel promotionImagesModel = cmsBtJmPromotionImagesDao.selectJmPromotionImage(promotionId, jmPromotionId);
@@ -59,12 +58,13 @@ public class JmPromotionImagesService extends BaseViewService {
         Map<String, String> promotionImageUrl = new HashMap<String, String>();
         Map<String, Object> imageMap = JacksonUtil.jsonToMap(JacksonUtil.bean2Json(model));
         if (imageMap != null) {
+            final String channelId = cmsBtJmPromotionSaveBean.getModel().getChannelId();
             imageMap.forEach((s, o) -> {
                 if (s != null && o instanceof String && o.toString().contains("-" + s + "-")) {
                     if (model.getUseTemplate() != null && model.getUseTemplate())
                         promotionImageUrl.put(s, cmsBtJmImageTemplateService.getUrl(o.toString(), s, cmsBtJmPromotionSaveBean));
                     else
-                        promotionImageUrl.put(s, ORIGINAL_SCENE7_IMAGE_URL.replace("✓", o.toString()));
+                        promotionImageUrl.put(s, ImageServer.imageUrl(channelId, o.toString() + "?fmt=jpg&scl=1&qlt=100"));
                 }
             });
         }

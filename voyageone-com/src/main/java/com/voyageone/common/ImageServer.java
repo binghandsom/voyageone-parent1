@@ -30,6 +30,8 @@ public class ImageServer {
     private static String template = null;
     private static String httpTemplate = null;
     private static String exTemplate = null;
+    private static String domain;
+    private static String frontendImageUrlTemplate;
 
     static {
         Class<ImageServer> imageServerClass = ImageServer.class;
@@ -93,18 +95,42 @@ public class ImageServer {
     }
 
     /**
-     * 获取经过包装的 s7 图片的主题路径部分
+     * 获取渠道的图片基础路径
+     *
+     * @return http://{domain}/{channel}/is/image/sneakerhead/
      */
     public static String imageBasePath(String channel) {
         return imageServerUrl(channel, "is/image/sneakerhead/");
     }
 
+    /**
+     * 根据图片名，返回完整的图片路径
+     *
+     * @return http://{domain}/{channel}/is/image/sneakerhead/{imageName}
+     */
     public static String imageUrl(String channel, String imageName) {
         return imageBasePath(channel) + imageName;
     }
 
+    /**
+     * 返回带有域名的地址
+     *
+     * @return http://{domain}/{path}
+     */
     public static String imageServerUrl(String path) {
         return "http://" + domain() + "/" + path;
+    }
+
+    /**
+     * 返回用于前端使用的图片地址模板，地址包含两个用于替换的部分，即 {channel} 和 {image_name}
+     *
+     * @return http://{domain}/\{channel\}/is/image/sneakerhead/\{image_name\}
+     */
+    public static String frontendImageUrlTemplate() {
+        if (frontendImageUrlTemplate == null) {
+            frontendImageUrlTemplate = imageUrl("{channel}", "{image_name}");
+        }
+        return frontendImageUrlTemplate;
     }
 
     private static String imageServerUploadFilePath(String channel) {
@@ -119,7 +145,10 @@ public class ImageServer {
      * 获取当前配置的图片服务器地址
      */
     private static String domain() {
-        return Codes.getCodeName(MAIN_CODE_ID, "domain");
+        if (domain == null) {
+            domain = Codes.getCodeName(MAIN_CODE_ID, "domain");
+        }
+        return domain;
     }
 
     private static void callTheMaintainer(String message) {

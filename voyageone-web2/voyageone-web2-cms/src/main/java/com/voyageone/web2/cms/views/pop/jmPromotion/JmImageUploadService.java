@@ -20,8 +20,6 @@ import java.util.Map;
 @Service
 public class JmImageUploadService extends BaseViewService {
 
-    private static String ORIGINAL_SCENE7_IMAGE_URL = "http://s7d5.scene7.com/is/image/sneakerhead/✓?fmt=jpg&scl=1&qlt=100";
-
     @Autowired
     CmsBtJmImageTemplateService cmsBtJmImageTemplateService;
 
@@ -38,7 +36,7 @@ public class JmImageUploadService extends BaseViewService {
         if (useTemplate == true) {
             templateUrl = cmsBtJmImageTemplateService.getUrl(upLoadName, imageType, Integer.parseInt(String.valueOf(promotionId)));
         } else {
-            templateUrl = ORIGINAL_SCENE7_IMAGE_URL.replace("✓",upLoadName);
+            templateUrl = ImageServer.imageUrl(orderChannelId, upLoadName + "?fmt=jpg&scl=1&qlt=100");
         }
 
         response.put("templateUrl", templateUrl);

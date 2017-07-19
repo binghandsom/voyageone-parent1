@@ -13,6 +13,7 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.CartEnums.Cart;
@@ -602,25 +603,27 @@ public class ProductService extends BaseService {
             // TODO 无法提供,属于主数据的非共通属性
             resultInfo.setUrlKey("");
             String imagePath = "";
-            if (!product.getCommon().getFields().getImages1().isEmpty()) {
-                if (!StringUtils.isEmpty(product.getCommon().getFields().getImages1().get(0).getName()))
-                    imagePath = imageTemplateService.getImageUrl(product.getCommon().getFields().getImages1().get(0).getName());
+            final List<CmsBtProductModel_Field_Image> images1 = product.getCommon().getFields().getImages1();
+            if (!images1.isEmpty()) {
+                final String image1 = images1.get(0).getName();
+                if (!StringUtils.isEmpty(image1))
+                    imagePath = ImageServer.imageUrl(channelId, image1);
             }
             resultInfo.setShowName(imagePath);
             resultInfo.setCnName(product.getCommon().getFields().getOriginalTitleCn());
             // 获取HsCodeCrop
             String hsCodeCrop = product.getCommon().getFields().getHsCodeCrop();
-            if (!StringUtils.isEmpty(hsCodeCrop)) {
+//            if (!StringUtils.isEmpty(hsCodeCrop)) {
 //                TypeChannelBean bean = TypeChannels.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
 //                if (!StringUtils.isEmpty(hsCodeCrop)) {
-                // TODO 暂时不需要填写hsCode
+//                // 暂时不需要填写hsCode
 //                String[] hsCode = hsCodeCrop.split(",");
 //                resultInfo.setHsCodeId(hsCodeCrop);
 //                resultInfo.setHsCode(hsCode[0]);
 //                resultInfo.setHsDescription(hsCode[1]);
 //                resultInfo.setUnit(hsCode[2]);
 //                }
-            }
+//            }
             // 获取HsCodePrivate
             String hsCodePrivate = product.getCommon().getFields().getHsCodePrivate();
             if (!StringUtils.isEmpty(hsCodePrivate)) {
@@ -757,8 +760,14 @@ public class ProductService extends BaseService {
                 bean.setInventory(String.valueOf(skuInfo.getIntAttribute("qty")));
                 String imagePath = "";
                 if (!product.getCommon().getFields().getImages1().isEmpty()) {
-                    if (!StringUtils.isEmpty(product.getCommon().getFields().getImages1().get(0).getName()))
-                        imagePath = imageTemplateService.getImageUrl(product.getCommon().getFields().getImages1().get(0).getName());
+                    if (!StringUtils.isEmpty(product.getCommon().getFields().getImages1().get(0).getName())) {
+                        final String image1 = product.getCommon()
+                                .getFields()
+                                .getImages1()
+                                .get(0)
+                                .getName();
+                        imagePath = ImageServer.imageUrl(channelId, image1);
+                    }
                 }
                 bean.setImgPath(imagePath);
 
