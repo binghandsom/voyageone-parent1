@@ -1,7 +1,3 @@
-
-
-/*****************************/
-
 /**
  * angular component head file。
  * 声明各个组件的父模块
@@ -18,16 +14,7 @@ angular.module('voyageone.angular.services', []);
 angular.module('voyageone.angular.filter', []);
 
 // 总模块, 供子系统一次性引入
-angular.module('voyageone.angular', [
-    'voyageone.angular.controllers',
-    'voyageone.angular.directives',
-    'voyageone.angular.factories',
-    'voyageone.angular.services',
-    'voyageone.angular.filter'
-]);
-
-/*****************************/
-
+angular.module('voyageone.angular', ['voyageone.angular.controllers', 'voyageone.angular.directives', 'voyageone.angular.factories', 'voyageone.angular.services', 'voyageone.angular.filter']);
 /**
  * @Description:
  * select tables items
@@ -117,23 +104,20 @@ angular.module("voyageone.angular.controllers").controller("selectRowsCtrl", fun
     }
 });
 
-
-/*****************************/
-
 /**
  * @Description:
  * 显示html的popover的共同方法
  * @User: linanbin
  * @Version: 2.0.0, 15/12/14
  */
-angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope,$searchAdvanceService2,$promotionHistoryService) {
+angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", function ($scope, $searchAdvanceService2, $promotionHistoryService) {
 
     $scope.templateAction = {
-        "promotionDetailPopover":{
+        "promotionDetailPopover": {
             templateUrl: 'promotionDetailTemplate.html',
             title: 'Title'
         },
-        "advanceSkuPopover":{
+        "advanceSkuPopover": {
             templateUrl: 'advanceSkuTemplate.html',
             title: 'Title'
         }
@@ -156,8 +140,7 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
                     tempHtml += "<br>";
                 }
             });
-        }
-        else if(values.isUseComplexTemplate == true){
+        } else if (values.isUseComplexTemplate == true) {
             $scope.dynamicPopover = {
                 type: values.type,
                 value1: values.value,
@@ -165,7 +148,7 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
                 value3: values.value3,
                 templateUrl: 'dynamicPopoverTemplate.html'
             };
-        }else {
+        } else {
             tempHtml += values;
         }
         return tempHtml;
@@ -174,20 +157,20 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
     /**
      * 高级检索   显示sku
      */
-    function popoverAdvanceSku(code, skus , entity){
+    function popoverAdvanceSku(code, skus, entity) {
 
-        if(entity.isOpen){
+        if (entity.isOpen) {
             entity.isOpen = false;
             return;
         }
         entity.isOpen = true;
 
-        $searchAdvanceService2.getSkuInventory(code).then(function(resp) {
+        $searchAdvanceService2.getSkuInventory(code).then(function (resp) {
             var skuDetails = [],
                 skuInventories = resp.data;
-            _.forEach(skus, function(sku) {
+            _.forEach(skus, function (sku) {
                 var inventory = 0;
-                _.forEach(skuInventories, function(skuInventory) {
+                _.forEach(skuInventories, function (skuInventory) {
                     if (skuInventory.sku.toLowerCase() == sku.skuCode.toLowerCase()) {
                         inventory = skuInventory.qtyChina;
                         return false;
@@ -202,24 +185,22 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
 
             $scope.advanceSku = skuDetails;
         });
-
     }
 
     /**
      * 高级线索   显示活动详情
      */
-    function popoverPromotionDetail(code,entity){
+    function popoverPromotionDetail(code, entity) {
 
-        if(entity.isOpen){
+        if (entity.isOpen) {
             entity.isOpen = false;
             return;
         }
         entity.isOpen = true;
 
-        $promotionHistoryService.getUnduePromotion({code: code}).then(function(resp) {
+        $promotionHistoryService.getUnduePromotion({ code: code }).then(function (resp) {
             $scope.promotionDetail = resp.data;
         });
-
     }
 
     /**
@@ -227,13 +208,10 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
      * @param code
      * @param codeCartQty
      */
-    function getCartQty(codeCartQty){
+    function getCartQty(codeCartQty) {
         $scope.codeCartQty = codeCartQty;
     }
 });
-
-
-/*****************************/
 
 /**
  * @Date: 2016-06-22 15:59:47
@@ -248,7 +226,7 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
             return 0;
         }
         var regex = str.match(/[^\x00-\xff]/g);
-        return (str.length + (!regex ? 0 : regex.length));
+        return str.length + (!regex ? 0 : regex.length);
     }
 
     /**
@@ -269,36 +247,29 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", fu
                 scope: false,
                 link: function (scope, element, attrs, ngModelController) {
                     var length = attrs[attrName];
-                    if (!length)
-                        return;
+                    if (!length) return;
 
-                    if(checkLength(getByteLength(scope.field.value), length)){
-                        ngModelController.$setValidity(attrName,true);
-                    }else{
-                        ngModelController.$setValidity(attrName,false);
+                    if (checkLength(getByteLength(scope.field.value), length)) {
+                        ngModelController.$setValidity(attrName, true);
+                    } else {
+                        ngModelController.$setValidity(attrName, false);
                     }
 
                     ngModelController.$parsers.push(function (viewValue) {
                         ngModelController.$setValidity(attrName, checkLength(getByteLength(viewValue), length));
                         return viewValue;
                     });
-
                 }
             };
         };
     }
 
-    angular.module("voyageone.angular.directives")
-        .directive("maxbytelength", makeByteLength("maxbytelength", function (byteLength, maxLength) {
-            return byteLength <= maxLength;
-        }))
-        .directive("minbytelength", makeByteLength("minbytelength", function (byteLength, minLength) {
-            return byteLength >= minLength;
-        }));
-}());
-
-/*****************************/
-
+    angular.module("voyageone.angular.directives").directive("maxbytelength", makeByteLength("maxbytelength", function (byteLength, maxLength) {
+        return byteLength <= maxLength;
+    })).directive("minbytelength", makeByteLength("minbytelength", function (byteLength, minLength) {
+        return byteLength >= minLength;
+    }));
+})();
 /**
  * @Date: 2015-11-19 15:13:02
  * @User: Jonas
@@ -316,9 +287,6 @@ angular.module("voyageone.angular.directives").directive("dateModelFormat", func
     };
 });
 
-
-/*****************************/
-
 /**
  * 编辑产品originalTitleCn
  * @param productInfo 产品信息
@@ -326,8 +294,7 @@ angular.module("voyageone.angular.directives").directive("dateModelFormat", func
  */
 angular.module("voyageone.angular.directives").directive("editTitle", function () {
 
-    function EditTitleController($scope, $attrs, $element, notify, $translate,
-                                 productDetailService) {
+    function EditTitleController($scope, $attrs, $element, notify, $translate, productDetailService) {
         this.$attrs = $attrs;
         this.$scope = $scope;
         this.$element = $element;
@@ -339,9 +306,9 @@ angular.module("voyageone.angular.directives").directive("editTitle", function (
     EditTitleController.prototype.init = function () {
         var self = this,
             _products = {
-                originalTitleCn: angular.copy(self.$scope.data.common.fields.originalTitleCn),
-                prodId: angular.copy(self.$scope.data.prodId)
-            };
+            originalTitleCn: angular.copy(self.$scope.data.common.fields.originalTitleCn),
+            prodId: angular.copy(self.$scope.data.prodId)
+        };
 
         self.productInfo = _products;
 
@@ -359,22 +326,21 @@ angular.module("voyageone.angular.directives").directive("editTitle", function (
             originalTitleCn = productInfo.originalTitleCn.replace(/[.\n]/g, '');
 
         //如果值未改变
-        if(angular.equals(originalTitleCn,self.$scope.data.common.fields.originalTitleCn)){
+        if (angular.equals(originalTitleCn, self.$scope.data.common.fields.originalTitleCn)) {
             self.isOpen = false;
             return;
         }
 
         if (prodId && originalTitleCn) {
             self.productDetailService.updateOriginalTitleCn({
-                                                                prodId: prodId,
-                                                                originalTitleCn: originalTitleCn
-                                                            }).then(function () {
+                prodId: prodId,
+                originalTitleCn: originalTitleCn
+            }).then(function () {
                 self.isOpen = false;
                 self.$scope.data.common.fields.originalTitleCn = originalTitleCn;
                 self.notify.success(self.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             });
         }
-
     };
 
     return {
@@ -382,26 +348,12 @@ angular.module("voyageone.angular.directives").directive("editTitle", function (
         scope: {
             data: "=data"
         },
-        controller: ['$scope', '$attrs', '$element', 'notify', '$translate', 'productDetailService',
-                     EditTitleController],
+        controller: ['$scope', '$attrs', '$element', 'notify', '$translate', 'productDetailService', EditTitleController],
         controllerAs: 'ctrl',
-        template: '<div ng-init="ctrl.init()">'
-                  + '<script type="text/ng-template" id="myPopoverTemplate.html">'
-                  + '<div class="form-group">'
-                  + '<textarea class="form-control no-resize" style="min-height: 70px;width: 200px" ng-model="ctrl.productInfo.originalTitleCn"></textarea>'
-                  + '</div>'
-                  + '<div class="form-group pull-right">'
-                  + '<button class="btn btn-success" ng-click="ctrl.save()"><i class="fa fa-save"></i></button>'
-                  + '</div>'
-                  + '</script>'
-                  + '<button uib-popover-template="ctrl.dynamicPopover.templateUrl" popover-title="{{ctrl.dynamicPopover.title}}" popover-is-open="ctrl.isOpen" type="button" class="btn btn-default" title="{{ctrl.$scope.data.common.fields.originalTitleCn}}" ng-if="ctrl.$scope.data.common.fields.originalTitleCn">{{ctrl.$scope.data.common.fields.originalTitleCn  | limitTo: 25}}</button>'
-                  + '</div>'
+        template: '<div ng-init="ctrl.init()">' + '<script type="text/ng-template" id="myPopoverTemplate.html">' + '<div class="form-group">' + '<textarea class="form-control no-resize" style="min-height: 70px;width: 200px" ng-model="ctrl.productInfo.originalTitleCn"></textarea>' + '</div>' + '<div class="form-group pull-right">' + '<button class="btn btn-success" ng-click="ctrl.save()"><i class="fa fa-save"></i></button>' + '</div>' + '</script>' + '<button uib-popover-template="ctrl.dynamicPopover.templateUrl" popover-title="{{ctrl.dynamicPopover.title}}" popover-is-open="ctrl.isOpen" type="button" class="btn btn-default" title="{{ctrl.$scope.data.common.fields.originalTitleCn}}" ng-if="ctrl.$scope.data.common.fields.originalTitleCn">{{ctrl.$scope.data.common.fields.originalTitleCn  | limitTo: 25}}</button>' + '</div>'
 
-    }
+    };
 });
-
-
-/*****************************/
 
 /**
  * @Date: 2015-11-19 15:13:02
@@ -415,7 +367,8 @@ angular.module("voyageone.angular.directives").directive("enterClick", function 
             angular.element(elem).on("keyup", function (e) {
                 if (e.keyCode !== 13) return;
                 var selectExp = attr.enterClick;
-                var targetElem, handler = function () {
+                var targetElem,
+                    handler = function () {
                     targetElem.triggerHandler("click");
                 };
                 try {
@@ -439,9 +392,6 @@ angular.module("voyageone.angular.directives").directive("enterClick", function 
     };
 });
 
-
-/*****************************/
-
 /**
  * @Description:
  * 比较两个值是否相等
@@ -454,28 +404,28 @@ angular.module("voyageone.angular.directives").directive("equalTo", function () 
         restrict: "A",
         require: "ngModel",
         scope: {
-            equalTo:"="
+            equalTo: "="
         },
         link: function (scope, ele, attrs, ctrl) {
 
-            var target = attrs["equalTo"];//获取自定义指令属性键值
+            var target = attrs["equalTo"]; //获取自定义指令属性键值
 
-            if (target) {//判断键是否存在
-                scope.$watch("equalTo", function () {//存在启动监听其值
-                    ctrl.$validate()//每次改变手动调用验证
+            if (target) {
+                //判断键是否存在
+                scope.$watch("equalTo", function () {
+                    //存在启动监听其值
+                    ctrl.$validate(); //每次改变手动调用验证
                 });
 
-                ctrl.$validators.equalTo = function (viewVale) {//自定义验证器内容
+                ctrl.$validators.equalTo = function (viewVale) {
+                    //自定义验证器内容
 
-                    return scope.equalTo == viewVale;//是否等于passwordConfirm的值
+                    return scope.equalTo == viewVale; //是否等于passwordConfirm的值
                 };
             }
         }
-    }
+    };
 });
-
-/*****************************/
-
 /**
  * @Description:
  * 引入对上传框插件 fileStyle 的指令支持 基于Bootstrap Filestyle
@@ -485,33 +435,29 @@ angular.module("voyageone.angular.directives").directive("equalTo", function () 
  */
 angular.module("voyageone.angular.directives").directive("fileStyle", function () {
 
-    function FileStyleController($scope,$element){
+    function FileStyleController($scope, $element) {
         this.scope = $scope;
         this.element = $element;
     }
 
-    FileStyleController.prototype.init = function(attrs){
+    FileStyleController.prototype.init = function (attrs) {
         var options;
 
-        if(attrs.fileStyle != null && attrs.fileStyle != "")
-            options = eval("(" + attrs.fileStyle + ")");
+        if (attrs.fileStyle != null && attrs.fileStyle != "") options = eval("(" + attrs.fileStyle + ")");
 
         this.element.filestyle(options);
     };
 
     return {
         restrict: "A",
-        scope:true,
+        scope: true,
         controller: FileStyleController,
         controllerAs: 'styleCtrl',
-        link: function($scope,$element,$attrs){
+        link: function ($scope, $element, $attrs) {
             $scope.styleCtrl.init($attrs);
         }
     };
 });
-
-
-/*****************************/
 
 /**
  * @Description:
@@ -545,9 +491,6 @@ angular.module("voyageone.angular.directives").directive("ifNoRows", function ($
     };
 });
 
-
-/*****************************/
-
 /**
  * @Description: 用于替换成cms2中可显示的图片url
  *
@@ -562,15 +505,11 @@ angular.module("voyageone.angular.directives").directive("image", function () {
         },
         link: function (scope, element, attrs) {
             attrs.$observe('image', function () {
-                if (scope.image != null && scope.image != "" && scope.$root.imageUrl != undefined)
-                    element[0].src = scope.$root.imageUrl.replace('%s', scope.image);
+                if (scope.image != null && scope.image != "" && scope.$root.imageUrl != undefined) element[0].src = scope.$root.imageUrl.replace('%s', scope.image);
             });
         }
     };
 });
-
-
-/*****************************/
 
 angular.module("voyageone.angular.directives").directive("input", function () {
     return {
@@ -580,13 +519,11 @@ angular.module("voyageone.angular.directives").directive("input", function () {
 
             var type = attr.type;
 
-            if (!type)
-                return;
+            if (!type) return;
 
             type = type.toLowerCase();
 
-            if (type !== 'number')
-                return;
+            if (type !== 'number') return;
 
             element.on('keypress', function (event) {
 
@@ -621,65 +558,51 @@ angular.module("voyageone.angular.directives").directive("input", function () {
             var type = attr.type;
             var ngModelController = ctrls[0];
 
-            if (!type)
-                return;
+            if (!type) return;
 
             type = type.toLowerCase();
 
-            if (type !== 'number')
-                return;
+            if (type !== 'number') return;
 
             //默认为2位
-            var scale , _length;
+            var scale, _length;
 
-            var _numArr =  attr.scale.split(",");
+            var _numArr = attr.scale.split(",");
 
-            if(_numArr.length !== 2){
+            if (_numArr.length !== 2) {
 
                 console.warn("scale格式为{ 位数 },{ 精度 } 默认值=》位数：15位，精度为小数点2位。");
 
                 /**设置默认值 长度为15  小数点精度为2位*/
                 _length = 15;
                 scale = 2;
-
-            }else{
+            } else {
 
                 _length = _numArr[0];
                 scale = _numArr[1];
-
             }
 
             element.on('keyup', function () {
 
                 var regex;
 
-                if(scale != 0)
-                    regex = new RegExp("^\\d+(\\.\\d{1," + scale + "})?$");
-                else
-                    regex = new RegExp("^\\d+$");
+                if (scale != 0) regex = new RegExp("^\\d+(\\.\\d{1," + scale + "})?$");else regex = new RegExp("^\\d+$");
 
-
-                if (regex.test(this.value))
-                    return;
+                if (regex.test(this.value)) return;
 
                 ngModelController.$setViewValue(this.value.substr(0, this.value.length - 1));
                 ngModelController.$render();
-
-            }).on("keypress",function(event){
+            }).on("keypress", function (event) {
 
                 var _value = angular.copy(this.value);
 
-                if(_value.toString().length >= _length){
+                if (_value.toString().length >= _length) {
                     event.preventDefault();
                 }
-
             });
         }
     };
 });
-
-/*****************************/
-
 /**
  * 错误类型, 直接通过 form 验证所得的 $error 获取相应的 key, 并通过翻译获取信息结果
  */
@@ -713,87 +636,77 @@ var errorTypes = {
  * @User:    Jonas
  * @Version: 1.0.0
  */
-angular.module("voyageone.angular.directives")
+angular.module("voyageone.angular.directives").directive('voMessage', function ($translate) {
+    return {
+        restrict: "E",
+        template: '{{$message}}',
+        require: '^^form',
+        scope: {
+            'target': '='
+        },
+        link: function (scope, elem, attrs, formController) {
 
-    .directive('voMessage', function ($translate) {
-        return {
-            restrict: "E",
-            template: '{{$message}}',
-            require: '^^form',
-            scope: {
-                'target': '='
-            },
-            link: function (scope, elem, attrs, formController) {
-
-                function show(message) {
-                    scope.$message = message;
-                    elem.fadeIn();
-                }
-
-                function hide() {
-                    elem.fadeOut();
-                }
-
-                var formName;
-
-                // 初始化时保持隐藏
-                elem.hide();
-
-                formName = formController.$name;
-
-                // 对指定 form 下字段的错误信息进行监视
-                // 如果有变动, 就显示第一个错误的提示信息
-                scope.$watch('target.$error',
-
-                    function ($error) {
-
-                        if (!$error) return;
-
-                        // 取所有错误的 angular 错误名称, 如 required
-                        var errorKeys = Object.keys($error);
-
-                        var elementName = scope.target.$name;
-
-                        // 这一步可能获取的并不准确
-                        // 因为元素的 name 有可能重复
-                        var targetElement = $('[name="' + formName + '"] [name="' + elementName + '"]');
-
-                        // 如果有友好名称的话, 就用友好的
-                        var translateParam = {field: targetElement.attr('title') || elementName};
-
-                        // 取第一个
-                        var error = errorKeys[0];
-
-                        // 如果没有错误就不用继续处理错误信息了
-                        if (!error) {
-                            hide();
-                            return;
-                        }
-
-                        // 尝试获取用户定义的错误提示信息
-                        if (attrs[error]) {
-                            // 如果用户自定义了相关错误的信息
-                            // 就显示自定义信息
-                            show(attrs[error]);
-                        } else {
-                            // 如果用户没有设定提示信息，那么就自己根据参数生成
-                            if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern', 'equalTo'].indexOf(error) > -1) {
-                                if (!(translateParam.value = targetElement.attr(error)) && 'pattern' === error)
-                                    translateParam.value = targetElement.attr('ng-pattern');
-                            }
-
-                            // 取错误的翻译 Key, 如 required -> INVALID_REQUIRED, 参加上面的 var errorTypes
-                            $translate(errorTypes[error], translateParam).then(show, show);
-                        }
-
-                    }, true);
-
+            function show(message) {
+                scope.$message = message;
+                elem.fadeIn();
             }
+
+            function hide() {
+                elem.fadeOut();
+            }
+
+            var formName;
+
+            // 初始化时保持隐藏
+            elem.hide();
+
+            formName = formController.$name;
+
+            // 对指定 form 下字段的错误信息进行监视
+            // 如果有变动, 就显示第一个错误的提示信息
+            scope.$watch('target.$error', function ($error) {
+
+                if (!$error) return;
+
+                // 取所有错误的 angular 错误名称, 如 required
+                var errorKeys = Object.keys($error);
+
+                var elementName = scope.target.$name;
+
+                // 这一步可能获取的并不准确
+                // 因为元素的 name 有可能重复
+                var targetElement = $('[name="' + formName + '"] [name="' + elementName + '"]');
+
+                // 如果有友好名称的话, 就用友好的
+                var translateParam = { field: targetElement.attr('title') || elementName };
+
+                // 取第一个
+                var error = errorKeys[0];
+
+                // 如果没有错误就不用继续处理错误信息了
+                if (!error) {
+                    hide();
+                    return;
+                }
+
+                // 尝试获取用户定义的错误提示信息
+                if (attrs[error]) {
+                    // 如果用户自定义了相关错误的信息
+                    // 就显示自定义信息
+                    show(attrs[error]);
+                } else {
+                    // 如果用户没有设定提示信息，那么就自己根据参数生成
+                    if (['maxlength', 'minlength', 'maxbytelength', 'minbytelength', 'max', 'min', 'pattern', 'equalTo'].indexOf(error) > -1) {
+                        if (!(translateParam.value = targetElement.attr(error)) && 'pattern' === error) translateParam.value = targetElement.attr('ng-pattern');
+                    }
+
+                    // 取错误的翻译 Key, 如 required -> INVALID_REQUIRED, 参加上面的 var errorTypes
+                    $translate(errorTypes[error], translateParam).then(show, show);
+                }
+            }, true);
         }
-    });
-
-
-/*****************************/
+    };
+});
 
 /**
  * @Description:
@@ -805,7 +718,11 @@ angular.module("voyageone.angular.directives").directive("uiNav", function () {
     return {
         restrict: "AC",
         link: function (scope, el) {
-            var _window = $(window), _mb = 768, wrap = $(".app-aside"), next, backdrop = ".dropdown-backdrop";
+            var _window = $(window),
+                _mb = 768,
+                wrap = $(".app-aside"),
+                next,
+                backdrop = ".dropdown-backdrop";
             // unfolded
             el.on("click", "a", function (e) {
                 next && next.trigger("mouseleave.nav");
@@ -820,7 +737,11 @@ angular.module("voyageone.angular.directives").directive("uiNav", function () {
                 next && next.trigger("mouseleave.nav");
                 $("> .nav", wrap).remove();
                 if (!$(".app-aside-fixed.app-aside-folded").length || _window.width() < _mb || $(".app-aside-dock").length) return;
-                var _this = $(e.target), top, w_h = $(window).height(), offset = 50, min = 150;
+                var _this = $(e.target),
+                    top,
+                    w_h = $(window).height(),
+                    offset = 50,
+                    min = 150;
                 !_this.is("a") && (_this = _this.closest("a"));
                 if (_this.next().is("ul")) {
                     next = _this.next();
@@ -855,55 +776,46 @@ angular.module("voyageone.angular.directives").directive("uiNav", function () {
     };
 });
 
-
-/*****************************/
-
 /**
  * The ng-thumb directive
  * @author: piao wenjie
  * @version: 2.3.0, 2016-7-1
  */
 'use strict';
-angular.module('voyageone.angular.directives').directive('ngThumb', ['$window', function($window) {
+angular.module('voyageone.angular.directives').directive('ngThumb', ['$window', function ($window) {
 
-        var helper = {
-            support: !!($window.FileReader && $window.CanvasRenderingContext2D),
-            isFile: function(item) {
-                return angular.isObject(item) && item instanceof $window.File;
-            },
-            isImage: function(file) {
-                var type =  '|' + file.type.slice(file.type.lastIndexOf('/') + 1) + '|';
-                return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
-            }
-        };
+    var helper = {
+        support: !!($window.FileReader && $window.CanvasRenderingContext2D),
+        isFile: function (item) {
+            return angular.isObject(item) && item instanceof $window.File;
+        },
+        isImage: function (file) {
+            var type = '|' + file.type.slice(file.type.lastIndexOf('/') + 1) + '|';
+            return '|jpg|png|jpeg|bmp|gif|'.indexOf(type) !== -1;
+        }
+    };
 
-        return {
-            restrict: 'A',
-            link: function(scope, element, attributes) {
-                if (!helper.support) return;
+    return {
+        restrict: 'A',
+        link: function (scope, element, attributes) {
+            if (!helper.support) return;
 
-                var params = scope.$eval(attributes.ngThumb);
+            var params = scope.$eval(attributes.ngThumb);
 
-                if (!helper.isImage(params.file)) return;
+            if (!helper.isImage(params.file)) return;
 
-                var fileReader = new FileReader();
+            var fileReader = new FileReader();
 
-                fileReader.readAsDataURL(params.file);
+            fileReader.readAsDataURL(params.file);
 
-                fileReader.onload = function (event) {
-                    scope.$apply(function () {
-                        attributes.$set('src', event.target.result);
-                    });
-                };
-
-
-            }
-        };
-    }]);
-
-
-
-/*****************************/
+            fileReader.onload = function (event) {
+                scope.$apply(function () {
+                    attributes.$set('src', event.target.result);
+                });
+            };
+        }
+    };
+}]);
 
 /**
  * @Description:
@@ -928,18 +840,12 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
 
             var content = scope.content,
                 size = scope.size;
-                var li = $(element).find("li");
+            var li = $(element).find("li");
 
-            if (content.length > scope.size)
-                li.html(content.substr(0, size) + '...');
-            else
-                li.html(content).css({cursor: 'default'});
+            if (content.length > scope.size) li.html(content.substr(0, size) + '...');else li.html(content).css({ cursor: 'default' });
         }
     };
 });
-
-
-/*****************************/
 
 /**
  * @description 价格显示directive
@@ -954,17 +860,13 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
             return;
         }
 
-        if (prices.length === 1)
-            return prices[0];
+        if (prices.length === 1) return prices[0];
 
         var min = _.min(prices),
-            max  = _.max(prices),
+            max = _.max(prices),
             compiled = _.template("<%= min %> ~ <%= max %>");
 
-        if (min === max)
-            return min;
-        else
-            return compiled({min: min, max: max});
+        if (min === max) return min;else return compiled({ min: min, max: max });
     }
 
     angular.module("voyageone.angular.directives").directive("price", function () {
@@ -986,19 +888,19 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
             link: function (scope, element) {
 
                 var skuList = scope.data,
-                    final = [],rangArr = [],
+                    final = [],
+                    rangArr = [],
                     buttonPopover = angular.element('<button  type="button">');
 
-                buttonPopover.attr('ng-controller','showPopoverCtrl');
-                buttonPopover.attr('popover-title','客户建议零售价');
-                buttonPopover.attr('popover-placement','left');
+                buttonPopover.attr('ng-controller', 'showPopoverCtrl');
+                buttonPopover.attr('popover-title', '客户建议零售价');
+                buttonPopover.attr('popover-placement', 'left');
                 buttonPopover.addClass('btn btn-default btn-xs');
 
-                if (!skuList){
+                if (!skuList) {
                     console.warn('没有提供sku数据！');
                     return;
                 }
-
 
                 if (skuList instanceof Array) {
 
@@ -1020,29 +922,20 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
                         }
 
                         final.push(str + labelStr);
-
                     });
-
                 } else {
                     console.warn('传入的数据结构应该是数组！');
                 }
 
                 buttonPopover.attr('popover-html', 'showInfo(' + JSON.stringify(final) + ')');
 
-                if(rangArr[0])
-                    buttonPopover.html(_priceScale(_.pluck(skuList, 'clientMsrpPrice')) + rangArr[0]);
-                else
-                    buttonPopover.html(_priceScale(_.pluck(skuList, 'clientMsrpPrice')));
+                if (rangArr[0]) buttonPopover.html(_priceScale(_.pluck(skuList, 'clientMsrpPrice')) + rangArr[0]);else buttonPopover.html(_priceScale(_.pluck(skuList, 'clientMsrpPrice')));
 
                 element.html($compile(buttonPopover)(scope.$new()));
             }
-        }
+        };
     });
-
 })();
-
-/*****************************/
-
 (function () {
 
     /**
@@ -1109,9 +1002,9 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
      * 使用对象(引用类型)作为值, 用来方便后续判断。
      */
     var SYMBOLS = {
-        NOT_CONTAINS: {key: 'not contains'},
-        NOT_EQUALS: {key: '!='},
-        EQUALS: {key: '=='}
+        NOT_CONTAINS: { key: 'not contains' },
+        NOT_EQUALS: { key: '!=' },
+        EQUALS: { key: '==' }
     };
 
     // 使用 key 再次构建, 便于查找
@@ -1130,9 +1023,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
             return target !== null && target !== undefined && target !== "";
         };
 
-        if (!window._)
-            console.warn('Please import underscore !!!');
-        else {
+        if (!window._) console.warn('Please import underscore !!!');else {
             find = _.find;
             any = _.some;
             all = _.every;
@@ -1158,11 +1049,10 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
      */
     function getFieldId(field) {
         // 使用特殊的 $schema 来记录只有 schema directive 使用的信息
-        if (!field.$schema)
-            field.$schema = {
-                id: field.id.replace(/->/g, '.')
-            };
-        return field.$schema.id
+        if (!field.$schema) field.$schema = {
+            id: field.id.replace(/->/g, '.')
+        };
+        return field.$schema.id;
     }
 
     /**
@@ -1186,8 +1076,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
 
             if (field.fields && field.fields.length) {
                 result = searchField(fieldId, field.fields);
-                if (result)
-                    return true;
+                if (result) return true;
             }
 
             return false;
@@ -1200,7 +1089,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
      * 规则是否包含依赖条件
      */
     function hasDepend(rule) {
-        var dependExpressList = (rule && rule.dependGroup) ? rule.dependGroup.dependExpressList : null;
+        var dependExpressList = rule && rule.dependGroup ? rule.dependGroup.dependExpressList : null;
         return !!dependExpressList && !!dependExpressList.length;
     }
 
@@ -1237,39 +1126,32 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
         // 那么就需要重新生成
 
         if (rules) {
-            if (!withSchema || rules.$withSchema)
-                return rules;
+            if (!withSchema || rules.$withSchema) return rules;
         } else {
             rules = {};
         }
 
         // 没啥可用的信息就算了
-        if (!field || !field.rules)
-            return rules;
+        if (!field || !field.rules) return rules;
 
         // 没有规则好处理, 果断算了
-        if (!field.rules.length)
-            return rules;
+        if (!field.rules.length) return rules;
 
         each(field.rules, function (rule) {
             if (!hasDepend(rule)) {
                 var newRule;
                 // 除了 disable/readonly/required 这类值是布尔外, 其他的一定都不是
                 // 所以固定值总是 false 的也不用继续处理了
-                if (rule.value === 'false')
-                    return;
+                if (rule.value === 'false') return;
                 newRule = {};
                 newRule.__proto__ = rule;
 
-                if (rule.value === 'true')
-                    newRule.value = true;
+                if (rule.value === 'true') newRule.value = true;
 
                 // 尝试简单的数字检查, 如果是就转换
-                else if (/^-?\d+(\.\d+)?$/.test(rule.value))
-                    newRule.value = parseFloat(rule.value);
+                else if (/^-?\d+(\.\d+)?$/.test(rule.value)) newRule.value = parseFloat(rule.value);
 
                 rules[rule.name] = newRule;
-
             } else if (schema) {
                 // 如果有需要记录的信息, 则转换依赖条件, 并保存值
                 rules[rule.name] = new DependentRule(rule, field, schema);
@@ -1288,24 +1170,16 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
     function hasValidateRule(field) {
 
         // 额。。。这种肯定没有
-        if (!field || !field.rules)
-            return false;
+        if (!field || !field.rules) return false;
 
         // 额。。。这种肯定也他喵的没有
-        if (!field.rules.length)
-            return false;
+        if (!field.rules.length) return false;
 
         return any(field.rules, function (rule) {
 
             // 以下规则都不需要追加 vo-message
 
-            return (rule.name === 'valueTypeRule'
-                && rule.value !== VALUE_TYPES.TEXT
-                && rule.value !== VALUE_TYPES.TEXTAREA
-                && rule.value !== VALUE_TYPES.HTML)
-                || (rule.name !== 'tipRule'
-                && rule.name !== 'devTipRule'
-                && rule.name !== 'disableRule');
+            return rule.name === 'valueTypeRule' && rule.value !== VALUE_TYPES.TEXT && rule.value !== VALUE_TYPES.TEXTAREA && rule.value !== VALUE_TYPES.HTML || rule.name !== 'tipRule' && rule.name !== 'devTipRule' && rule.name !== 'disableRule';
         });
     }
 
@@ -1316,8 +1190,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
 
         var type = 'text';
 
-        if (!valueTypeRule)
-            return type;
+        if (!valueTypeRule) return type;
 
         switch (valueTypeRule.value) {
             case VALUE_TYPES.TEXT:
@@ -1356,8 +1229,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
         var parsedValue = null;
         var valueType = field.fieldValueType;
 
-        if (!exists(value))
-            return null;
+        if (!exists(value)) return null;
 
         // 如果字段上有具体的值类型声明
         // 就使用支持的类型进行转换
@@ -1371,8 +1243,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
         }
 
         // 否则, 按 valueTypeRule 来转换
-        if (!valueTypeRule)
-            return value;
+        if (!valueTypeRule) return value;
 
         switch (valueTypeRule.value) {
             case VALUE_TYPES.TEXT:
@@ -1388,20 +1259,17 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
 
                 // 这里的逻辑同上一段
                 parsedValue = parseFloat(value);
-                if (isNaN(parsedValue))
-                    return null;
+                if (isNaN(parsedValue)) return null;
                 return parsedValue;
 
             case VALUE_TYPES.DATE:
             case VALUE_TYPES.TIME:
 
-                if (!value)
-                    return null;
+                if (!value) return null;
 
                 parsedValue = new Date(value);
 
-                if (isNaN(parsedValue.getDate()))
-                    throw '日期(时间)格式不正确';
+                if (isNaN(parsedValue.getDate())) throw '日期(时间)格式不正确';
 
                 return parsedValue;
         }
@@ -1418,7 +1286,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
         if (!rule) return;
 
         if (rule instanceof DependentRule) {
-            element.attr(ngAttr || ('ng-' + attr), 'rules.' + name + '.getLength()');
+            element.attr(ngAttr || 'ng-' + attr, 'rules.' + name + '.getLength()');
         } else {
             element.attr(attr, rule.value);
         }
@@ -1430,17 +1298,11 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
             maxRule = rules.maxLengthRule;
 
         if (minRule) {
-            if (isByteUnit(minRule))
-                bindLengthRule(element, minRule, 'minLengthRule', 'minbytelength', 'minbytelength');
-            else
-                bindLengthRule(element, minRule, 'minLengthRule', 'minlength');
+            if (isByteUnit(minRule)) bindLengthRule(element, minRule, 'minLengthRule', 'minbytelength', 'minbytelength');else bindLengthRule(element, minRule, 'minLengthRule', 'minlength');
         }
 
         if (maxRule) {
-            if (isByteUnit(maxRule))
-                bindLengthRule(element, maxRule, 'maxLengthRule', 'maxbytelength', 'maxbytelength');
-            else
-                bindLengthRule(element, maxRule, 'maxLengthRule', 'maxlength');
+            if (isByteUnit(maxRule)) bindLengthRule(element, maxRule, 'maxLengthRule', 'maxbytelength', 'maxbytelength');else bindLengthRule(element, maxRule, 'maxLengthRule', 'maxlength');
         }
     }
 
@@ -1470,11 +1332,9 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
 
         each(rules, function (content, key) {
 
-            if (key.indexOf('$') === 0)
-                return;
+            if (key.indexOf('$') === 0) return;
 
-            if (key.indexOf('Rule') > 0 && key !== 'tipRule')
-                return;
+            if (key.indexOf('Rule') > 0 && key !== 'tipRule') return;
 
             var contentContainer = angular.element('<s-tip ng-if="showTip">');
             container.append(contentContainer);
@@ -1575,7 +1435,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
                 }
 
                 return false;
-            })
+            });
         } else {
             // 禁用了就保存值到缓存字段
             // 并移除现有的值
@@ -1696,14 +1556,13 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
 
             var symbol = SYMBOLS[dependExpress.symbol];
 
-            if (!symbol)
-                console.warn('没有找到可用符号: ' + dependExpress.symbol);
+            if (!symbol) console.warn('没有找到可用符号: ' + dependExpress.symbol);
 
             return {
                 field: field,
                 value: dependExpress.value,
                 symbol: symbol
-            }
+            };
         });
 
         this.value = rule.value;
@@ -1711,7 +1570,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
 
         // 如果这里直接把 field 存在 this 上, 就会造成递归访问, 无法将数据 JSON 化
         // 所以需要通过第三方存储来保存相互的关系
-        DependentRule.fieldCache[(this.$fieldId = field.$name || field.id)] = field;
+        DependentRule.fieldCache[this.$fieldId = field.$name || field.id] = field;
     }
 
     DependentRule.fieldCache = {};
@@ -1749,23 +1608,20 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
                 parentComplexValue = ComplexValue.Caches[currentField.$parentComplexValueId];
                 if (parentComplexValue) {
                     targetFieldInComplex = parentComplexValue.get(targetField);
-                    if (targetFieldInComplex)
-                        targetField = targetFieldInComplex;
+                    if (targetFieldInComplex) targetField = targetFieldInComplex;
                 }
             }
 
             // 如果依赖的目标字段不存在, 则规则强制生效
             // 2016-06-24 12:44:11 为了兼容老版本留下的垃圾数据, 此处临时修改
             // 如果依赖的目标不存在, 则强制规则失效, 并打断 all 判断
-            if (!targetField)
-                return !(forceFail = true);
+            if (!targetField) return !(forceFail = true);
 
             if (currRule.name === 'disableRule' && !!(parentDisableRule = getRules(targetField).disableRule)) {
                 // 如果当前要检查的就是 disableRule
                 // 并且父级也有 disableRule
                 // 那么如果父级不显示, 子级自然不能显示
-                if (parentDisableRule.checked())
-                    return true;
+                if (parentDisableRule.checked()) return true;
             }
 
             // 严格的逻辑应该根据 switch 判断 field 类型来取值
@@ -1773,14 +1629,12 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
 
             var value = targetField.values || targetField.value;
 
-            if (value && 'value' in value)
-                value = value.value;
+            if (value && 'value' in value) value = value.value;
 
             // 如果最终获取的值内容为空, 那么认为计算失败, 则规则强制生效
             // 2016-06-24 12:44:11 为了兼容老版本留下的垃圾数据, 此处临时修改
             // 如果最终获取的值内容为空, 则强制规则失效, 并打断 all 判断
-            if (value === null)
-                return !(forceFail = true);
+            if (value === null) return !(forceFail = true);
 
             switch (express.symbol) {
                 case SYMBOLS.EQUALS:
@@ -1789,14 +1643,14 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
                     return value != express.value;
                 case SYMBOLS.NOT_CONTAINS:
                     return !!value && !any(value, function (valueObj) {
-                            return valueObj.value == express.value;
-                        });
+                        return valueObj.value == express.value;
+                    });
                 default:
                     return false;
             }
         });
 
-        return (forceFail ? false : result);
+        return forceFail ? false : result;
     };
 
     /**
@@ -1830,17 +1684,12 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
             $compile = self.$compile;
 
         // 一次性解析字段的所有 rule
-        var rules,
-            disableRule,
-            disabledExpression,
-            fieldElement,
-            fieldScope;
+        var rules, disableRule, disabledExpression, fieldElement, fieldScope;
 
         // 2016-07-08 11:11:54
         // 增加对 isDisplay 属性的支持
         // 当该属性为字符串 0 时, 不处理该字段, 否则其他任何值都处理
-        if (field.isDisplay == "0")
-            return;
+        if (field.isDisplay == "0") return;
 
         field.$name = 'Field' + random();
 
@@ -1853,8 +1702,7 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
         // 不加入 disableRule instanceof DependentRule 判断, 这里也是可以正常运行的
         // 因为原始的 rule 其 value 是字符串型, 所以 === true 会返回 false, 虽然字符串的内容确实是 "true"
         // 但还是加上更靠谱, 所以我在 2016-07-07 21:58:50 补上了这段内容, 吓尿。。。
-        if (disableRule && !(disableRule instanceof DependentRule) && disableRule.value === true)
-            return;
+        if (disableRule && !(disableRule instanceof DependentRule) && disableRule.value === true) return;
 
         fieldElement = angular.element('<s-field>');
         // 创建专有 scope, 通过专有 scope 传递 field 给 element(directive)
@@ -1911,681 +1759,657 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
         }
     };
 
-    angular.module('voyageone.angular.directives')
+    angular.module('voyageone.angular.directives').directive('schema', function ($compile) {
 
-        .directive('schema', function ($compile) {
+        function SchemaController($scope) {
+            this.$scope = $scope;
+        }
 
-            function SchemaController($scope) {
-                this.$scope = $scope;
+        SchemaController.prototype.getSchema = function () {
+            return this.schema;
+        };
+
+        SchemaController.prototype.$setSchema = function (data) {
+            this.schema = data;
+        };
+
+        SchemaController.prototype.$render = function ($element) {
+
+            var controller = this,
+                $scope = controller.$scope,
+                schema = controller.getSchema(),
+                fieldRepeater = controller.fieldRepeater;
+
+            if (fieldRepeater) {
+                fieldRepeater.destroy();
+                controller.fieldRepeater = null;
             }
 
-            SchemaController.prototype.getSchema = function () {
-                return this.schema;
-            };
+            if (!schema || !schema.length) return;
 
-            SchemaController.prototype.$setSchema = function (data) {
-                this.schema = data;
-            };
+            fieldRepeater = new FieldRepeater(schema, schema, $scope, $element, $compile);
 
-            SchemaController.prototype.$render = function ($element) {
+            controller.fieldRepeater = fieldRepeater;
 
-                var controller = this,
-                    $scope = controller.$scope,
-                    schema = controller.getSchema(),
-                    fieldRepeater = controller.fieldRepeater;
+            fieldRepeater.renderList();
+        };
 
-                if (fieldRepeater) {
-                    fieldRepeater.destroy();
-                    controller.fieldRepeater = null;
-                }
-
-                if (!schema || !schema.length)
-                    return;
-
-                fieldRepeater = new FieldRepeater(schema, schema, $scope, $element, $compile);
-
-                controller.fieldRepeater = fieldRepeater;
-
-                fieldRepeater.renderList();
-            };
-
-            return {
-                restrict: 'E',
-                scope: true,
-                controllerAs: 'schemaController',
-                link: function ($scope, $element, $attrs) {
-                    $scope.$watch($attrs.data, function (data) {
-                        var schemaController = $scope.schemaController;
-                        schemaController.$setSchema(data);
-                        schemaController.$render($element);
-                    });
-                },
-                controller: SchemaController
-            }
-        })
-
-        .directive('sField', function ($compile) {
-
-            function SchemaFieldController($scope, $element) {
-                this.originScope = $scope;
-                this.$element = $element;
-            }
-
-            SchemaFieldController.prototype.render = function () {
-
-                var controller = this,
-                    $element, formController, showName,
-                    parentScope, $scope,
-                    field, container, hasValidate,
-                    rules, innerElement, isSimple;
-
-                controller.destroy();
-
-                parentScope = controller.originScope;
-
-                $scope = parentScope.$new();
-
-                controller.$scope = $scope;
-
-                $element = controller.$element;
-                formController = controller.formController;
-                showName = controller.showName;
-
-                field = controller.field;
-
-                container = $element;
-                hasValidate = !!formController && hasValidateRule(field);
-
-                rules = getRules(field);
-
-                isSimple = (field.type != FIELD_TYPES.COMPLEX && field.type != FIELD_TYPES.MULTI_COMPLEX);
-
-                if (showName)
-                    container.append(angular.element('<s-header>'));
-
-                //sofia
-                each(rules, function (content, key) {
-
-                    if (key.indexOf('$') === 0)
-                        return;
-
-                    if (key.indexOf('Rule') > 0 && key !== 'tipRule')
-                        return;
-
-                    var contentContainer = angular.element('<s-tip-new ng-click="showTip =! showTip">');
-
-                    container.append(contentContainer);
+        return {
+            restrict: 'E',
+            scope: true,
+            controllerAs: 'schemaController',
+            link: function ($scope, $element, $attrs) {
+                $scope.$watch($attrs.data, function (data) {
+                    var schemaController = $scope.schemaController;
+                    schemaController.$setSchema(data);
+                    schemaController.$render($element);
                 });
+            },
+            controller: SchemaController
+        };
+    }).directive('sField', function ($compile) {
 
-                /**updated by piao 去掉了 style="margin-left:15px"*/
-                innerElement = angular.element('<div class="s-wrapper">');
-                //sofia
-                // 创建一个 div 用来包裹非 name 的所有内容, 便于外观控制
-                // innerElement = angular.element('<div class="s-wrapper">');
-
-                container.append(innerElement);
-                container = innerElement;
-
-                innerElement = angular.element('<s-container>');
-                container.append(innerElement);
-
-                // 根据需要创建 vo-message
-                if (hasValidate && isSimple) {
-                    var formName = formController.$name;
-                    var voMessage = angular.element('<vo-message target="' + formName + '.' + field.$name + '"></vo-message>');
-                    container.append(voMessage);
-                }
-
-                bindDefaultValueTip(container, field);
-                bindTipRule(container, rules);
-
-                // 最终编译
-                $compile($element.contents())($scope);
-            };
-
-            SchemaFieldController.prototype.remove = function (complexValue) {
-                var $scope = this.$scope;
-                var list = $scope.$complexValues;
-                var index = list.indexOf(complexValue);
-                list.splice(index, 1);
-            };
-
-            SchemaFieldController.prototype.getField = function () {
-                return this.field;
-            };
-
-            SchemaFieldController.prototype.setField = function (field) {
-                this.field = field;
-            };
-
-            SchemaFieldController.prototype.destroy = function () {
-
-                var controller = this,
-                    $element = controller.$element,
-                    $scope = controller.$scope;
-
-                if ($element)
-                    $element.empty();
-
-                if ($scope) {
-                    $scope.$destroy();
-                    controller.$scope = null;
-                }
-            };
-
-            return {
-                restrict: 'E',
-                require: ['^^?form'],
-                scope: true,
-                controllerAs: 'schemaFieldController',
-                link: function ($scope, $element, $attrs, requiredControllers) {
-
-                    var controller = $scope.schemaFieldController;
-
-                    // 保存 formController, 用于在后面检查, 是否需要渲染 vo-message 包括一系列的 form 验证
-                    controller.formController = requiredControllers[0];
-
-                    // 如果木有设置, 那说个屁啊
-                    if (!$attrs.field) {
-                        $element.text('请提供 field 属性。');
-                        return;
-                    }
-
-                    // 保存配置
-                    controller.showName = (!$attrs.showName || $attrs.showName === 'true');
-                    controller.canAdd = $attrs.add !== 'false';
-
-                    $scope.$watch($attrs.field, function (field) {
-
-                        controller.setField(field);
-
-                        if (!field)
-                            return;
-
-                        controller.render();
-                    });
-                },
-                controller: SchemaFieldController
-            };
-        })
-
-        .directive('sHeader', function () {
-            return {
-                restrict: 'E',
-                require: ['^^sField'],
-                scope: false,
-                link: function (scope, element, attrs, requiredControllers) {
-
-                    var schemaFieldController = requiredControllers[0];
-
-                    var field = schemaFieldController.getField(),
-                        rules = getRules(field),
-                        required = rules.requiredRule,
-                        requiredClass = 's-required';
-
-                    switch (field.type) {
-                        case FIELD_TYPES.INPUT:
-                        case FIELD_TYPES.SINGLE_CHECK:
-                        case FIELD_TYPES.MULTI_CHECK:
-                            element.addClass('simple');
-                            break;
-                        case FIELD_TYPES.COMPLEX:
-                            element.addClass('complex');
-                            break;
-                        case FIELD_TYPES.MULTI_COMPLEX:
-                            element.addClass('complex multi');
-                            break;
-                    }
-
-                    element.text(field.name || field.id);
-
-                    if (required) {
-                        // 如果这个字段是需要必填的
-                        // 就加个红星
-                        // 如果是依赖型的必填, 那就要动态变更
-                        if (required instanceof DependentRule) {
-                            scope.$watch(function () {
-                                return required.checked();
-                            }, function (required) {
-                                element[required ? 'addClass' : 'removeClass'](requiredClass);
-                            });
-                        } else {
-                            element.addClass(requiredClass);
-                        }
-                    }
-                }
-            }
-        })
-
-        .directive('sContainer', function ($compile, $filter) {
-            return {
-                restrict: 'E',
-                scope: false,
-                require: ['^^sField'],
-                link: function (scope, element, attrs, requiredControllers) {
-
-                    var schemaFieldController = requiredControllers[0];
-
-                    var innerElement;
-
-                    var field = schemaFieldController.getField(),
-                        rules = getRules(field), name = field.$name;
-
-                    scope.field = field;
-                    scope.rules = rules;
-
-                    switch (field.type) {
-                        case FIELD_TYPES.INPUT:
-                            (function createInputElements() {
-
-                                var regexRule = rules.regexRule,
-                                    valueTypeRule = rules.valueTypeRule,
-                                    requiredRule = rules.requiredRule,
-                                    readOnlyRule = rules.readOnlyRule,
-                                    type = getInputType(valueTypeRule),
-                                    _value,
-                                    isDate = type.indexOf('date') > -1;
-
-                                if (type === 'textarea') {
-                                    innerElement = angular.element('<textarea class="form-control">');
-                                    // 如果是 html 就加个特殊样式用来便于外观控制
-                                    if (valueTypeRule === VALUE_TYPES.HTML)
-                                        innerElement.addClass('s-html');
-                                } else {
-                                    innerElement = angular.element('<input class="form-control">').attr('type', type);
-                                }
-
-                                innerElement.attr('name', name);
-
-                                bindBoolRule(innerElement, readOnlyRule, 'readOnlyRule', 'readonly');
-                                bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
-
-                                bindInputLengthRule(innerElement, rules);
-
-                                // 处理正则规则
-                                if (regexRule) {
-
-                                    if (regexRule instanceof DependentRule) {
-                                        // 如果是依赖类型
-                                        // 则如果需要, 则赋值正则, 否则为空。为空时将总是验证通过(即不验证)
-                                        innerElement.attr('ng-pattern', 'rules.regexRule.getRegex()');
-
-                                    } else if (regexRule.value !== 'yyyy-MM-dd') {
-                                        // 如果是日期格式验证就不需要了
-                                        // type=date 时 angular 会验证的
-                                        innerElement.attr('pattern', regexRule.value);
-                                    }
-                                }
-
-                                innerElement.attr('title', field.name || field.id);
-
-                                //ng-trim="false"
-                                innerElement.attr('ng-trim',false);
-
-                                // 根据类型转换值类型, 并填值
-                                _value = field.value;
-                                field.value = getInputValue(_value, field, valueTypeRule);
-
-                                // 没有填值, 并且有默认值, 那么就使用默认值
-                                // 之所以不和上面的转换赋值合并, 是因为 getInputValue 有可能转换返回 null
-                                // 所以这里要单独判断
-                                if (!(field.value) && exists(field.defaultValue)) {
-                                    _value = field.defaultValue;
-                                    field.value = getInputValue(_value, field, valueTypeRule);
-                                }
-
-                                if (isDate) {
-                                    // 将转换后的值放在特定的变量上, 供前端绑定
-                                    // 将老格式的值还原回字段对象中
-                                    // 当强类型的值变动, 就同步更新字段值
-                                    scope.dateValue = field.value;
-                                    field.value = _value;
-                                    innerElement.attr('ng-model', 'dateValue');
-                                    scope.$watch('dateValue', function (newDate) {
-                                        field.value = $filter('date')(newDate, (type === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd hh:mm:ss'));
-                                    });
-                                } else {
-                                    innerElement.attr('ng-model', 'field.value');
-                                }
-
-                                if ((!readOnlyRule || readOnlyRule instanceof DependentRule) && isDate) {
-                                    // 日期类型的输入框要追加一个按钮, 用来触发 popup picker
-                                    // 并且 readonly 时, 要把这个按钮隐藏掉
-                                    var inputGroup = angular.element('<div class="input-group">');
-                                    var inputGroupBtn = angular.element('<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="$opened = !$opened"><i class="glyphicon glyphicon-calendar"></i></button>');
-
-                                    innerElement.attr('uib-datepicker-popup', '');
-                                    innerElement.attr('is-open', '$opened');
-
-                                    if (readOnlyRule instanceof DependentRule) {
-                                        inputGroupBtn.attr('ng-if', '!rules.readOnlyRule.checked()')
-                                    }
-
-                                    inputGroup.append(innerElement);
-                                    inputGroup.append(inputGroupBtn);
-
-                                    innerElement = inputGroup;
-                                }
-                            })();
-                            break;
-                        case FIELD_TYPES.SINGLE_CHECK:
-                            (function createSelectElements() {
-
-                                var nullValueObj, foundValueObject;
-
-                                var requiredRule = rules.requiredRule,
-                                    options = field.options,
-                                    valueObject = field.value;
-
-                                // 要对 option 匹配, 就需要强类型转换
-                                // 但是并不能直接修改 field 上的 options, 否则会导致后端!!爆炸!!
-                                // 所以要克隆新的出来使用
-                                options = options.map(function (option) {
-                                    var newOption = {};
-                                    newOption.__proto__ = option;
-                                    newOption.value = getInputValue(option.value, field);
-                                    return newOption;
-                                });
-
-                                if (!valueObject) {
-                                    valueObject = {value: null};
-                                } else if (exists(valueObject.value)) {
-                                    // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
-                                    // 所以这一步做额外的处理
-                                    valueObject.value = getInputValue(valueObject.value, field);
-
-                                    foundValueObject = _.find(options, function (optionItem) {
-                                        return optionItem.value == valueObject.value;
-                                    });
-
-                                    valueObject.value = foundValueObject ? foundValueObject.value : valueObject.value = null;
-                                }
-
-                                // 处理默认值, 判断基本同 input 类型, 参见 input 中的注释
-                                if (!exists(valueObject.value) && exists(field.defaultValue)) {
-                                    valueObject.value = getInputValue(field.defaultValue, field);
-                                }
-
-                                if (!requiredRule) {
-                                    // 非必填, 就创建空选项
-                                    options.unshift(nullValueObj = {
-                                        displayName: 'Select...',
-                                        value: null
-                                    });
-
-                                    // 如果当前的选中值也木有, 就用这个默认的
-                                    if (!valueObject.value) {
-                                        valueObject = nullValueObj;
-                                    }
-                                }
-
-                                // 最终保存到 $scope 上, 供页面绑定使用
-                                scope.$options = options;
-                                field.value = valueObject;
-
-                                innerElement = angular.element('<select class="form-control" chosen>');
-                                innerElement.attr('ng-options', 'option.value as option.displayName for option in $options');
-                                innerElement.attr('name', name);
-                                innerElement.attr('ng-model', 'field.value.value');
-                                innerElement.attr('width', '"100%"');
-                                innerElement.attr('search-contains',true);
-                                innerElement.attr('title', field.name || field.id);
-
-                                bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
-                                bindBoolRule(innerElement, rules.readOnlyRule, 'readOnlyRule', 'readonly');
-                            })();
-                            break;
-                        case FIELD_TYPES.MULTI_CHECK:
-                            (function createCheckboxElements() {
-
-                                var selected, valueStringList;
-                                var requiredRule = rules.requiredRule;
-                                var defaultValues = field.defaultValues;
-
-                                innerElement = [];
-
-                                // 创建用于记录每个多选框选中状态的对象
-                                selected = scope.selected = [];
-
-                                // 通过事件触发 update 来操作 field 的 values 数组
-                                scope.update = function (index) {
-
-                                    // 获取选中值
-                                    var selectedValue = field.options[index].value;
-
-                                    // 获取选中的值, 在选中值集合里的位置
-                                    var selectedIndex = findIndex(field.values, function (valueObj) {
-                                        return valueObj.value == selectedValue;
-                                    });
-
-                                    if (scope.selected[index]) {
-                                        // 当前选中选中, 并且不在集合中的
-                                        if (selectedIndex < 0)
-                                            field.values.push({value: selectedValue});
-                                    } else {
-                                        // 没选中, 并且在集合中的
-                                        if (selectedIndex > -1)
-                                            field.values.splice(selectedIndex, 1);
-                                    }
-                                };
-
-                                if (!field.values)
-                                    field.values = [];
-
-                                // 先把 values 里的选中值取出, 便于后续判断
-                                valueStringList = field.values.map(function (valueObj) {
-                                    // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
-                                    // 所以这一步做额外的处理
-                                    return (valueObj.value = getInputValue(valueObj.value, field).toString());
-                                });
-
-                                each(field.options, function (option, index) {
-
-                                    var label = angular.element('<label></label>'),
-                                        checkbox = angular.element('<input type="checkbox">');
-
-                                    checkbox.attr('ng-model', 'selected[' + index + ']');
-
-                                    checkbox.attr('name', name);
-
-                                    checkbox.attr('title', field.name || field.id);
-
-                                    checkbox.attr('ng-change', 'update(' + index + ')');
-
-                                    // checkbox 的必填比较特殊
-                                    if (requiredRule) {
-                                        if (requiredRule instanceof DependentRule) {
-                                            checkbox.attr('ng-required', 'rules.requiredRule.checked() && !field.values.length');
-                                        } else {
-                                            checkbox.attr('ng-required', '!field.values.length');
-                                        }
-                                    }
-
-                                    bindBoolRule(checkbox, rules.readOnlyRule, 'readOnlyRule', 'readonly');
-
-                                    // 如果有原值, 就使用原值
-                                    // 如果没有, 看下是不是必填字段
-                                    // 如果是必填字段, 看看是不是有默认值
-                                    // 如果有就把默认值放上去
-                                    if (valueStringList.length) {
-                                        selected[index] = !(valueStringList.indexOf(option.value) < 0);
-                                    } else if (requiredRule && !!defaultValues.length) {
-                                        selected[index] = !(defaultValues.indexOf(option.value) < 0);
-                                    }
-
-                                    label.append(checkbox, '&nbsp;', option.displayName);
-
-                                    innerElement.push(label);
-                                });
-                            })();
-                            break;
-                        case FIELD_TYPES.COMPLEX:
-
-                            // complex 字段, 每个 field 的值都是存在其 value 上的。
-                            // 所以直接使用 fields 属性即可。
-                            // 还原 complexValue 中的原始值到 field 上
-
-                            var fieldValueMap,
-                                complexValue = field.complexValue;
-
-                            if (complexValue) {
-
-                                fieldValueMap = complexValue.fieldMap;
-
-                                if (fieldValueMap) {
-
-                                    each(field.fields, function (childField) {
-
-                                        var valueObj = fieldValueMap[childField.id];
-
-                                        if (!valueObj) return;
-
-                                        resetValue(valueObj, childField);
-                                    });
-                                }
-                            }
-
-                            scope.$fields = field.fields;
-
-                            innerElement = angular.element('<s-complex fields="$fields">');
-
-                            break;
-                        case FIELD_TYPES.MULTI_COMPLEX:
-
-                            // multiComplex 字段, 其值不同于 complex 字段, 是存在于 complexValues 中。
-                            // 存在 complexValues 中, 每一组的 fieldMap 的 field 的 value 中。
-                            // 所以需要根据每个 complexValues 来创建 container
-
-                            var complexValues = field.complexValues;
-
-                            if (!complexValues) complexValues = [];
-
-                            if (!complexValues.length) {
-                                // 如果获取的值里没有内容, 就创建一套默认
-                                complexValues.push(new ComplexValue(field.fields));
-                            } else {
-                                // 包装原有的 value, 便于后续使用
-                                complexValues = complexValues.map(function (complexValueObj) {
-                                    return new ComplexValue().copyFrom(complexValueObj, field);
-                                });
-                            }
-
-                            field.complexValues = complexValues;
-
-                            scope.$complexValues = complexValues;
-
-                            innerElement = angular.element('<s-complex multi="true" fields="complexValue.fieldMap">');
-
-                            innerElement.attr('ng-repeat', 'complexValue in $complexValues');
-
-                            if (schemaFieldController.canAdd) {
-                                element.append(angular.element('<s-toolbar>'));
-                            }
-
-                            break;
-                        default:
-                            element.text('不支持的类型');
-                            break;
-                    }
-
-                    if (innerElement instanceof Array)
-                        each(innerElement, function (childElement) {
-                            element.append(childElement);
-                        });
-                    else
-                        element.append(innerElement);
-
-                    $compile(element.contents())(scope);
-                }
-            }
-        })
-
-        .directive('sComplex', function ($compile) {
-
-            function SchemaComplexController($scope, $attrs) {
-                this.$scope = $scope;
-                this.fields = $scope.$eval($attrs.fields);
+        function SchemaFieldController($scope, $element) {
+            this.originScope = $scope;
+            this.$element = $element;
+        }
+
+        SchemaFieldController.prototype.render = function () {
+
+            var controller = this,
+                $element,
+                formController,
+                showName,
+                parentScope,
+                $scope,
+                field,
+                container,
+                hasValidate,
+                rules,
+                innerElement,
+                isSimple;
+
+            controller.destroy();
+
+            parentScope = controller.originScope;
+
+            $scope = parentScope.$new();
+
+            controller.$scope = $scope;
+
+            $element = controller.$element;
+            formController = controller.formController;
+            showName = controller.showName;
+
+            field = controller.field;
+
+            container = $element;
+            hasValidate = !!formController && hasValidateRule(field);
+
+            rules = getRules(field);
+
+            isSimple = field.type != FIELD_TYPES.COMPLEX && field.type != FIELD_TYPES.MULTI_COMPLEX;
+
+            if (showName) container.append(angular.element('<s-header>'));
+
+            //sofia
+            each(rules, function (content, key) {
+
+                if (key.indexOf('$') === 0) return;
+
+                if (key.indexOf('Rule') > 0 && key !== 'tipRule') return;
+
+                var contentContainer = angular.element('<s-tip-new ng-click="showTip =! showTip">');
+
+                container.append(contentContainer);
+            });
+
+            /**updated by piao 去掉了 style="margin-left:15px"*/
+            innerElement = angular.element('<div class="s-wrapper">');
+            //sofia
+            // 创建一个 div 用来包裹非 name 的所有内容, 便于外观控制
+            // innerElement = angular.element('<div class="s-wrapper">');
+
+            container.append(innerElement);
+            container = innerElement;
+
+            innerElement = angular.element('<s-container>');
+            container.append(innerElement);
+
+            // 根据需要创建 vo-message
+            if (hasValidate && isSimple) {
+                var formName = formController.$name;
+                var voMessage = angular.element('<vo-message target="' + formName + '.' + field.$name + '"></vo-message>');
+                container.append(voMessage);
             }
 
-            SchemaComplexController.prototype.$render = function (schema, isMulti, $element) {
+            bindDefaultValueTip(container, field);
+            bindTipRule(container, rules);
 
-                var controller = this,
-                    fields = controller.fields,
-                    $scope = controller.$scope,
-                    repeater = controller.repeater;
+            // 最终编译
+            $compile($element.contents())($scope);
+        };
 
-                if (repeater) {
-                    repeater.destroy();
-                    controller.repeater = null;
-                }
+        SchemaFieldController.prototype.remove = function (complexValue) {
+            var $scope = this.$scope;
+            var list = $scope.$complexValues;
+            var index = list.indexOf(complexValue);
+            list.splice(index, 1);
+        };
 
-                if (!fields)
+        SchemaFieldController.prototype.getField = function () {
+            return this.field;
+        };
+
+        SchemaFieldController.prototype.setField = function (field) {
+            this.field = field;
+        };
+
+        SchemaFieldController.prototype.destroy = function () {
+
+            var controller = this,
+                $element = controller.$element,
+                $scope = controller.$scope;
+
+            if ($element) $element.empty();
+
+            if ($scope) {
+                $scope.$destroy();
+                controller.$scope = null;
+            }
+        };
+
+        return {
+            restrict: 'E',
+            require: ['^^?form'],
+            scope: true,
+            controllerAs: 'schemaFieldController',
+            link: function ($scope, $element, $attrs, requiredControllers) {
+
+                var controller = $scope.schemaFieldController;
+
+                // 保存 formController, 用于在后面检查, 是否需要渲染 vo-message 包括一系列的 form 验证
+                controller.formController = requiredControllers[0];
+
+                // 如果木有设置, 那说个屁啊
+                if (!$attrs.field) {
+                    $element.text('请提供 field 属性。');
                     return;
-
-                repeater = new FieldRepeater(fields, schema, $scope, $element, $compile);
-
-                controller.repeater = repeater;
-
-                repeater.renderList();
-
-                // 这里偷个懒, 直接在 scope 找
-                // schemaFieldController.canAdd
-                if (isMulti && $scope.schemaFieldController.canAdd) {
-                    var toolbox = angular.element('<s-toolbox>');
-                    $element.append(toolbox);
-                    $compile(toolbox)($scope);
                 }
-            };
 
-            return {
-                restrict: 'E',
-                scope: true,
-                require: ['^^?schema', '^^sField'],
-                controllerAs: 'schemaComplexController',
-                link: function ($scope, $element, $attrs, requiredControllers) {
+                // 保存配置
+                controller.showName = !$attrs.showName || $attrs.showName === 'true';
+                controller.canAdd = $attrs.add !== 'false';
 
-                    var controller = $scope.schemaComplexController;
+                $scope.$watch($attrs.field, function (field) {
 
-                    var isMulti = ($attrs.multi === 'true');
+                    controller.setField(field);
 
-                    var schemaController = requiredControllers[0];
+                    if (!field) return;
 
-                    if (schemaController) {
-                        controller.$render(schemaController.getSchema(), isMulti, $element);
+                    controller.render();
+                });
+            },
+            controller: SchemaFieldController
+        };
+    }).directive('sHeader', function () {
+        return {
+            restrict: 'E',
+            require: ['^^sField'],
+            scope: false,
+            link: function (scope, element, attrs, requiredControllers) {
+
+                var schemaFieldController = requiredControllers[0];
+
+                var field = schemaFieldController.getField(),
+                    rules = getRules(field),
+                    required = rules.requiredRule,
+                    requiredClass = 's-required';
+
+                switch (field.type) {
+                    case FIELD_TYPES.INPUT:
+                    case FIELD_TYPES.SINGLE_CHECK:
+                    case FIELD_TYPES.MULTI_CHECK:
+                        element.addClass('simple');
+                        break;
+                    case FIELD_TYPES.COMPLEX:
+                        element.addClass('complex');
+                        break;
+                    case FIELD_TYPES.MULTI_COMPLEX:
+                        element.addClass('complex multi');
+                        break;
+                }
+
+                element.text(field.name || field.id);
+
+                if (required) {
+                    // 如果这个字段是需要必填的
+                    // 就加个红星
+                    // 如果是依赖型的必填, 那就要动态变更
+                    if (required instanceof DependentRule) {
+                        scope.$watch(function () {
+                            return required.checked();
+                        }, function (required) {
+                            element[required ? 'addClass' : 'removeClass'](requiredClass);
+                        });
                     } else {
-                        controller.$render(null, isMulti, $element);
+                        element.addClass(requiredClass);
                     }
-                },
-                controller: SchemaComplexController
-            };
-        })
-
-        .directive('sToolbar', function () {
-            return {
-                restrict: 'E',
-                require: ['^^sField'],
-                template: '<button class="btn btn-schema btn-success" ng-click="$newComplexValue()"><i class="fa fa-plus"></i></button>',
-                scope: false,
-                link: function ($scope) {
-                    $scope.$newComplexValue = function () {
-                        $scope.$complexValues.push(new ComplexValue($scope.field.fields));
-                    };
                 }
-            };
-        })
+            }
+        };
+    }).directive('sContainer', function ($compile, $filter) {
+        return {
+            restrict: 'E',
+            scope: false,
+            require: ['^^sField'],
+            link: function (scope, element, attrs, requiredControllers) {
 
-        .directive('sToolbox', function () {
-            return {
-                restrict: 'E',
-                require: ['^^sField', '^^sComplex'],
-                template: '<button class="btn btn-schema btn-danger" ng-click="schemaFieldController.remove(complexValue)" ng-if="$complexValues.length > 1"><i class="fa fa-trash-o"></i></button>',
-                scope: false
-            };
-        });
-}());
+                var schemaFieldController = requiredControllers[0];
 
-/*****************************/
+                var innerElement;
 
+                var field = schemaFieldController.getField(),
+                    rules = getRules(field),
+                    name = field.$name;
+
+                scope.field = field;
+                scope.rules = rules;
+
+                switch (field.type) {
+                    case FIELD_TYPES.INPUT:
+                        (function createInputElements() {
+
+                            var regexRule = rules.regexRule,
+                                valueTypeRule = rules.valueTypeRule,
+                                requiredRule = rules.requiredRule,
+                                readOnlyRule = rules.readOnlyRule,
+                                type = getInputType(valueTypeRule),
+                                _value,
+                                isDate = type.indexOf('date') > -1;
+
+                            if (type === 'textarea') {
+                                innerElement = angular.element('<textarea class="form-control">');
+                                // 如果是 html 就加个特殊样式用来便于外观控制
+                                if (valueTypeRule === VALUE_TYPES.HTML) innerElement.addClass('s-html');
+                            } else {
+                                innerElement = angular.element('<input class="form-control">').attr('type', type);
+                            }
+
+                            innerElement.attr('name', name);
+
+                            bindBoolRule(innerElement, readOnlyRule, 'readOnlyRule', 'readonly');
+                            bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
+
+                            bindInputLengthRule(innerElement, rules);
+
+                            // 处理正则规则
+                            if (regexRule) {
+
+                                if (regexRule instanceof DependentRule) {
+                                    // 如果是依赖类型
+                                    // 则如果需要, 则赋值正则, 否则为空。为空时将总是验证通过(即不验证)
+                                    innerElement.attr('ng-pattern', 'rules.regexRule.getRegex()');
+                                } else if (regexRule.value !== 'yyyy-MM-dd') {
+                                    // 如果是日期格式验证就不需要了
+                                    // type=date 时 angular 会验证的
+                                    innerElement.attr('pattern', regexRule.value);
+                                }
+                            }
+
+                            innerElement.attr('title', field.name || field.id);
+
+                            //ng-trim="false"
+                            innerElement.attr('ng-trim', false);
+
+                            // 根据类型转换值类型, 并填值
+                            _value = field.value;
+                            field.value = getInputValue(_value, field, valueTypeRule);
+
+                            // 没有填值, 并且有默认值, 那么就使用默认值
+                            // 之所以不和上面的转换赋值合并, 是因为 getInputValue 有可能转换返回 null
+                            // 所以这里要单独判断
+                            if (!field.value && exists(field.defaultValue)) {
+                                _value = field.defaultValue;
+                                field.value = getInputValue(_value, field, valueTypeRule);
+                            }
+
+                            if (isDate) {
+                                // 将转换后的值放在特定的变量上, 供前端绑定
+                                // 将老格式的值还原回字段对象中
+                                // 当强类型的值变动, 就同步更新字段值
+                                scope.dateValue = field.value;
+                                field.value = _value;
+                                innerElement.attr('ng-model', 'dateValue');
+                                scope.$watch('dateValue', function (newDate) {
+                                    field.value = $filter('date')(newDate, type === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd hh:mm:ss');
+                                });
+                            } else {
+                                innerElement.attr('ng-model', 'field.value');
+                            }
+
+                            if ((!readOnlyRule || readOnlyRule instanceof DependentRule) && isDate) {
+                                // 日期类型的输入框要追加一个按钮, 用来触发 popup picker
+                                // 并且 readonly 时, 要把这个按钮隐藏掉
+                                var inputGroup = angular.element('<div class="input-group">');
+                                var inputGroupBtn = angular.element('<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="$opened = !$opened"><i class="glyphicon glyphicon-calendar"></i></button>');
+
+                                innerElement.attr('uib-datepicker-popup', '');
+                                innerElement.attr('is-open', '$opened');
+
+                                if (readOnlyRule instanceof DependentRule) {
+                                    inputGroupBtn.attr('ng-if', '!rules.readOnlyRule.checked()');
+                                }
+
+                                inputGroup.append(innerElement);
+                                inputGroup.append(inputGroupBtn);
+
+                                innerElement = inputGroup;
+                            }
+                        })();
+                        break;
+                    case FIELD_TYPES.SINGLE_CHECK:
+                        (function createSelectElements() {
+
+                            var nullValueObj, foundValueObject;
+
+                            var requiredRule = rules.requiredRule,
+                                options = field.options,
+                                valueObject = field.value;
+
+                            // 要对 option 匹配, 就需要强类型转换
+                            // 但是并不能直接修改 field 上的 options, 否则会导致后端!!爆炸!!
+                            // 所以要克隆新的出来使用
+                            options = options.map(function (option) {
+                                var newOption = {};
+                                newOption.__proto__ = option;
+                                newOption.value = getInputValue(option.value, field);
+                                return newOption;
+                            });
+
+                            if (!valueObject) {
+                                valueObject = { value: null };
+                            } else if (exists(valueObject.value)) {
+                                // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
+                                // 所以这一步做额外的处理
+                                valueObject.value = getInputValue(valueObject.value, field);
+
+                                foundValueObject = _.find(options, function (optionItem) {
+                                    return optionItem.value == valueObject.value;
+                                });
+
+                                valueObject.value = foundValueObject ? foundValueObject.value : valueObject.value = null;
+                            }
+
+                            // 处理默认值, 判断基本同 input 类型, 参见 input 中的注释
+                            if (!exists(valueObject.value) && exists(field.defaultValue)) {
+                                valueObject.value = getInputValue(field.defaultValue, field);
+                            }
+
+                            if (!requiredRule) {
+                                // 非必填, 就创建空选项
+                                options.unshift(nullValueObj = {
+                                    displayName: 'Select...',
+                                    value: null
+                                });
+
+                                // 如果当前的选中值也木有, 就用这个默认的
+                                if (!valueObject.value) {
+                                    valueObject = nullValueObj;
+                                }
+                            }
+
+                            // 最终保存到 $scope 上, 供页面绑定使用
+                            scope.$options = options;
+                            field.value = valueObject;
+
+                            innerElement = angular.element('<select class="form-control" chosen>');
+                            innerElement.attr('ng-options', 'option.value as option.displayName for option in $options');
+                            innerElement.attr('name', name);
+                            innerElement.attr('ng-model', 'field.value.value');
+                            innerElement.attr('width', '"100%"');
+                            innerElement.attr('search-contains', true);
+                            innerElement.attr('title', field.name || field.id);
+
+                            bindBoolRule(innerElement, requiredRule, 'requiredRule', 'required');
+                            bindBoolRule(innerElement, rules.readOnlyRule, 'readOnlyRule', 'readonly');
+                        })();
+                        break;
+                    case FIELD_TYPES.MULTI_CHECK:
+                        (function createCheckboxElements() {
+
+                            var selected, valueStringList;
+                            var requiredRule = rules.requiredRule;
+                            var defaultValues = field.defaultValues;
+
+                            innerElement = [];
+
+                            // 创建用于记录每个多选框选中状态的对象
+                            selected = scope.selected = [];
+
+                            // 通过事件触发 update 来操作 field 的 values 数组
+                            scope.update = function (index) {
+
+                                // 获取选中值
+                                var selectedValue = field.options[index].value;
+
+                                // 获取选中的值, 在选中值集合里的位置
+                                var selectedIndex = findIndex(field.values, function (valueObj) {
+                                    return valueObj.value == selectedValue;
+                                });
+
+                                if (scope.selected[index]) {
+                                    // 当前选中选中, 并且不在集合中的
+                                    if (selectedIndex < 0) field.values.push({ value: selectedValue });
+                                } else {
+                                    // 没选中, 并且在集合中的
+                                    if (selectedIndex > -1) field.values.splice(selectedIndex, 1);
+                                }
+                            };
+
+                            if (!field.values) field.values = [];
+
+                            // 先把 values 里的选中值取出, 便于后续判断
+                            valueStringList = field.values.map(function (valueObj) {
+                                // 如果 value 的值是一些原始值类型, 如数字那么可能需要转换处理
+                                // 所以这一步做额外的处理
+                                return valueObj.value = getInputValue(valueObj.value, field).toString();
+                            });
+
+                            each(field.options, function (option, index) {
+
+                                var label = angular.element('<label></label>'),
+                                    checkbox = angular.element('<input type="checkbox">');
+
+                                checkbox.attr('ng-model', 'selected[' + index + ']');
+
+                                checkbox.attr('name', name);
+
+                                checkbox.attr('title', field.name || field.id);
+
+                                checkbox.attr('ng-change', 'update(' + index + ')');
+
+                                // checkbox 的必填比较特殊
+                                if (requiredRule) {
+                                    if (requiredRule instanceof DependentRule) {
+                                        checkbox.attr('ng-required', 'rules.requiredRule.checked() && !field.values.length');
+                                    } else {
+                                        checkbox.attr('ng-required', '!field.values.length');
+                                    }
+                                }
+
+                                bindBoolRule(checkbox, rules.readOnlyRule, 'readOnlyRule', 'readonly');
+
+                                // 如果有原值, 就使用原值
+                                // 如果没有, 看下是不是必填字段
+                                // 如果是必填字段, 看看是不是有默认值
+                                // 如果有就把默认值放上去
+                                if (valueStringList.length) {
+                                    selected[index] = !(valueStringList.indexOf(option.value) < 0);
+                                } else if (requiredRule && !!defaultValues.length) {
+                                    selected[index] = !(defaultValues.indexOf(option.value) < 0);
+                                }
+
+                                label.append(checkbox, '&nbsp;', option.displayName);
+
+                                innerElement.push(label);
+                            });
+                        })();
+                        break;
+                    case FIELD_TYPES.COMPLEX:
+
+                        // complex 字段, 每个 field 的值都是存在其 value 上的。
+                        // 所以直接使用 fields 属性即可。
+                        // 还原 complexValue 中的原始值到 field 上
+
+                        var fieldValueMap,
+                            complexValue = field.complexValue;
+
+                        if (complexValue) {
+
+                            fieldValueMap = complexValue.fieldMap;
+
+                            if (fieldValueMap) {
+
+                                each(field.fields, function (childField) {
+
+                                    var valueObj = fieldValueMap[childField.id];
+
+                                    if (!valueObj) return;
+
+                                    resetValue(valueObj, childField);
+                                });
+                            }
+                        }
+
+                        scope.$fields = field.fields;
+
+                        innerElement = angular.element('<s-complex fields="$fields">');
+
+                        break;
+                    case FIELD_TYPES.MULTI_COMPLEX:
+
+                        // multiComplex 字段, 其值不同于 complex 字段, 是存在于 complexValues 中。
+                        // 存在 complexValues 中, 每一组的 fieldMap 的 field 的 value 中。
+                        // 所以需要根据每个 complexValues 来创建 container
+
+                        var complexValues = field.complexValues;
+
+                        if (!complexValues) complexValues = [];
+
+                        if (!complexValues.length) {
+                            // 如果获取的值里没有内容, 就创建一套默认
+                            complexValues.push(new ComplexValue(field.fields));
+                        } else {
+                            // 包装原有的 value, 便于后续使用
+                            complexValues = complexValues.map(function (complexValueObj) {
+                                return new ComplexValue().copyFrom(complexValueObj, field);
+                            });
+                        }
+
+                        field.complexValues = complexValues;
+
+                        scope.$complexValues = complexValues;
+
+                        innerElement = angular.element('<s-complex multi="true" fields="complexValue.fieldMap">');
+
+                        innerElement.attr('ng-repeat', 'complexValue in $complexValues');
+
+                        if (schemaFieldController.canAdd) {
+                            element.append(angular.element('<s-toolbar>'));
+                        }
+
+                        break;
+                    default:
+                        element.text('不支持的类型');
+                        break;
+                }
+
+                if (innerElement instanceof Array) each(innerElement, function (childElement) {
+                    element.append(childElement);
+                });else element.append(innerElement);
+
+                $compile(element.contents())(scope);
+            }
+        };
+    }).directive('sComplex', function ($compile) {
+
+        function SchemaComplexController($scope, $attrs) {
+            this.$scope = $scope;
+            this.fields = $scope.$eval($attrs.fields);
+        }
+
+        SchemaComplexController.prototype.$render = function (schema, isMulti, $element) {
+
+            var controller = this,
+                fields = controller.fields,
+                $scope = controller.$scope,
+                repeater = controller.repeater;
+
+            if (repeater) {
+                repeater.destroy();
+                controller.repeater = null;
+            }
+
+            if (!fields) return;
+
+            repeater = new FieldRepeater(fields, schema, $scope, $element, $compile);
+
+            controller.repeater = repeater;
+
+            repeater.renderList();
+
+            // 这里偷个懒, 直接在 scope 找
+            // schemaFieldController.canAdd
+            if (isMulti && $scope.schemaFieldController.canAdd) {
+                var toolbox = angular.element('<s-toolbox>');
+                $element.append(toolbox);
+                $compile(toolbox)($scope);
+            }
+        };
+
+        return {
+            restrict: 'E',
+            scope: true,
+            require: ['^^?schema', '^^sField'],
+            controllerAs: 'schemaComplexController',
+            link: function ($scope, $element, $attrs, requiredControllers) {
+
+                var controller = $scope.schemaComplexController;
+
+                var isMulti = $attrs.multi === 'true';
+
+                var schemaController = requiredControllers[0];
+
+                if (schemaController) {
+                    controller.$render(schemaController.getSchema(), isMulti, $element);
+                } else {
+                    controller.$render(null, isMulti, $element);
+                }
+            },
+            controller: SchemaComplexController
+        };
+    }).directive('sToolbar', function () {
+        return {
+            restrict: 'E',
+            require: ['^^sField'],
+            template: '<button class="btn btn-schema btn-success" ng-click="$newComplexValue()"><i class="fa fa-plus"></i></button>',
+            scope: false,
+            link: function ($scope) {
+                $scope.$newComplexValue = function () {
+                    $scope.$complexValues.push(new ComplexValue($scope.field.fields));
+                };
+            }
+        };
+    }).directive('sToolbox', function () {
+        return {
+            restrict: 'E',
+            require: ['^^sField', '^^sComplex'],
+            template: '<button class="btn btn-schema btn-danger" ng-click="schemaFieldController.remove(complexValue)" ng-if="$complexValues.length > 1"><i class="fa fa-trash-o"></i></button>',
+            scope: false
+        };
+    });
+})();
 /**
  * @description:
  * 提供"滚动到"和"滚动到顶部"功能
@@ -2599,53 +2423,47 @@ angular.module("voyageone.angular.directives").directive("popoverText", function
  * @version: 0.2.8
  * @since    0.2.0
  */
-angular.module("voyageone.angular.directives")
-    .directive("scrollTo", function () {
-        return {
-            restrict: "A",
-            scope: false,
-            link: function (scope, element, attr) {
-                var option = attr.scrollTo;
-                if (!option)
-                    return;
-                option = option.split(',');
-                option[1] = parseInt(option[1]) || 200;
-                option[2] = parseInt(option[2]) || 0;
+angular.module("voyageone.angular.directives").directive("scrollTo", function () {
+    return {
+        restrict: "A",
+        scope: false,
+        link: function (scope, element, attr) {
+            var option = attr.scrollTo;
+            if (!option) return;
+            option = option.split(',');
+            option[1] = parseInt(option[1]) || 200;
+            option[2] = parseInt(option[2]) || 0;
 
-                element.on("click", function () {
-                    var option0;
-                    if (option[0]) {
-                        option0 = $(option[0]);
-                        if (option0.length) {
-                            option0 = option0.offset().top;
-                        } else {
-                            option0 = parseInt(option[0]) || 0;
-                        }
+            element.on("click", function () {
+                var option0;
+                if (option[0]) {
+                    option0 = $(option[0]);
+                    if (option0.length) {
+                        option0 = option0.offset().top;
                     } else {
-                        option0 = 0;
+                        option0 = parseInt(option[0]) || 0;
                     }
-                    $("body").animate({scrollTop: option0 + option[2]}, option[1]);
-                    return false;
-                });
-            }
-        };
-    })
-    .directive("goTop", function () {
-        return {
-            restrict: "A",
-            scope: false,
-            link: function (scope, element, attrs) {
-                var speed = +attrs.goTop;
-                $(element).on("click", function () {
-                    $("body").animate({scrollTop: 0}, speed);
-                    return false;
-                });
-            }
-        };
-    });
-
-/*****************************/
-
+                } else {
+                    option0 = 0;
+                }
+                $("body").animate({ scrollTop: option0 + option[2] }, option[1]);
+                return false;
+            });
+        }
+    };
+}).directive("goTop", function () {
+    return {
+        restrict: "A",
+        scope: false,
+        link: function (scope, element, attrs) {
+            var speed = +attrs.goTop;
+            $(element).on("click", function () {
+                $("body").animate({ scrollTop: 0 }, speed);
+                return false;
+            });
+        }
+    };
+});
 /**
  * @description:
  * 为 jQuery 的插件 stickUp 提供 angular 风格包装
@@ -2674,9 +2492,6 @@ angular.module("voyageone.angular.directives").directive("sticky", function () {
     };
 });
 
-
-/*****************************/
-
 /**
  * @Description:
  * 可以在textarea当中使用tab键，
@@ -2689,7 +2504,8 @@ angular.module("voyageone.angular.directives").directive("tabInTextarea", functi
         restrict: "A",
         link: function (scope, element) {
             $(element).keydown(function (e) {
-                if (e.keyCode === 9) { // tab was pressed
+                if (e.keyCode === 9) {
+                    // tab was pressed
                     // get caret position/selection
                     var start = this.selectionStart;
                     var end = this.selectionEnd;
@@ -2698,9 +2514,7 @@ angular.module("voyageone.angular.directives").directive("tabInTextarea", functi
                     var value = $this.val();
 
                     // set textarea value to: text before caret + tab + text after caret
-                    $this.val(value.substring(0, start)
-                        + "\t"
-                        + value.substring(end));
+                    $this.val(value.substring(0, start) + "\t" + value.substring(end));
 
                     // put caret at right position again (add one for the tab)
                     this.selectionStart = this.selectionEnd = start + 1;
@@ -2712,9 +2526,6 @@ angular.module("voyageone.angular.directives").directive("tabInTextarea", functi
         }
     };
 });
-
-
-/*****************************/
 
 /**
  * @Description:
@@ -2759,8 +2570,7 @@ angular.module("voyageone.angular.directives").directive("vpagination", function
             scope.config.setPageIndex = function (pageIndex) {
                 if (scope.config.curr == pageIndex) {
                     scope.config.fetch(scope.config.curr, scope.config.size);
-                }
-                else {
+                } else {
                     scope.goPage(pageIndex);
                 }
             };
@@ -2813,13 +2623,10 @@ angular.module("voyageone.angular.directives").directive("vpagination", function
                 //当改变页数时，切换到第一页
                 scope.config.curr = 1;
                 p.goPage(parseInt(scope.config.curr));
-            }
+            };
         }
     };
 });
-
-
-/*****************************/
 
 /**
  * @Description:
@@ -2850,7 +2657,8 @@ angular.module("voyageone.angular.directives").directive("ngCharMaxlength", func
      * @returns {number}
      */
     function getByteLength(value) {
-        var byteLen = 0, len = value.length;
+        var byteLen = 0,
+            len = value.length;
         if (value) {
             for (var i = 0; i < len; i++) {
                 if (value.charCodeAt(i) > 255) {
@@ -2887,7 +2695,8 @@ angular.module("voyageone.angular.directives").directive("ngCharMaxlength", func
      * @returns {number}
      */
     function getByteLength(value) {
-        var byteLen = 0, len = value.length;
+        var byteLen = 0,
+            len = value.length;
         if (value) {
             for (var i = 0; i < len; i++) {
                 if (value.charCodeAt(i) > 255) {
@@ -2909,7 +2718,7 @@ angular.module("voyageone.angular.directives").directive("ngCharMaxlength", func
             if (!ctrl) return;
             var maxvalue = -1;
             attr.$observe("ngMaxvalue", function (value) {
-                if (/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/.test(value)) maxvalue = new Date(value); else if (/^(\d+)(\.[0-9]{0,2})?$/.test(value)) maxvalue = isNaN(parseFloat(value)) ? -1 : parseFloat(value); else if (/^(\d+)$/.test(value)) maxvalue = isNaN(parseInt(value)) ? -1 : parseInt(value); else maxvalue = -1;
+                if (/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/.test(value)) maxvalue = new Date(value);else if (/^(\d+)(\.[0-9]{0,2})?$/.test(value)) maxvalue = isNaN(parseFloat(value)) ? -1 : parseFloat(value);else if (/^(\d+)$/.test(value)) maxvalue = isNaN(parseInt(value)) ? -1 : parseInt(value);else maxvalue = -1;
                 ctrl.$validate();
             });
             ctrl.$validators.maxvalue = function (modelValue, viewValue) {
@@ -2925,7 +2734,7 @@ angular.module("voyageone.angular.directives").directive("ngCharMaxlength", func
             if (!ctrl) return;
             var minvalue = -1;
             attr.$observe("ngMinvalue", function (value) {
-                if (/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/.test(value)) minvalue = new Date(value); else if (/^(\d+)(\.[0-9]{0,2})?$/.test(value)) minvalue = isNaN(parseFloat(value)) ? -1 : parseFloat(value); else if (/^(\d+)$/.test(value)) minvalue = isNaN(parseInt(value)) ? -1 : parseInt(value); else minvalue = -1;
+                if (/^(\d{4})\/(\d{1,2})\/(\d{1,2})$/.test(value)) minvalue = new Date(value);else if (/^(\d+)(\.[0-9]{0,2})?$/.test(value)) minvalue = isNaN(parseFloat(value)) ? -1 : parseFloat(value);else if (/^(\d+)$/.test(value)) minvalue = isNaN(parseInt(value)) ? -1 : parseInt(value);else minvalue = -1;
                 ctrl.$validate();
             });
             ctrl.$validators.minvalue = function (modelValue, viewValue) {
@@ -2966,9 +2775,6 @@ angular.module("voyageone.angular.directives").directive("ngCharMaxlength", func
         }
     };
 });
-
-
-/*****************************/
 
 /**
  * @User: Jonas
@@ -3011,7 +2817,6 @@ angular.module("voyageone.angular.factories").factory("$dialogs", function ($uib
         };
         return modalInstance;
     };
-
 }).factory("alert", function ($dialogs) {
     return function (content, title) {
         return $dialogs({
@@ -3029,9 +2834,6 @@ angular.module("voyageone.angular.factories").factory("$dialogs", function ($uib
         }).result;
     };
 });
-
-
-/*****************************/
 
 /**
  * @Date:    2015-11-16 20:51:05
@@ -3134,8 +2936,8 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
         response: function (res) {
             var result = res.data;
             // 特殊处理部分内容
-           // if (autoRedirect(result) || sessionTimeout(result) || adminSessionTimeout(result) || adminResetPassword(result)||adminReLogin(result)) {
-            if (autoRedirect(result) || sessionTimeout(result)||adminReLogin(result)) {
+            // if (autoRedirect(result) || sessionTimeout(result) || adminSessionTimeout(result) || adminResetPassword(result)||adminReLogin(result)) {
+            if (autoRedirect(result) || sessionTimeout(result) || adminReLogin(result)) {
                 return res;
             }
             unknownException(res);
@@ -3144,15 +2946,11 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
         requestError: function (config) {
             return config;
         },
-        responseError: function (res) {
-        }
+        responseError: function (res) {}
     };
 }).config(function ($httpProvider) {
     $httpProvider.interceptors.push("interceptorFactory");
 });
-
-
-/*****************************/
 
 /**
  * Notify 的可用参数
@@ -3194,15 +2992,15 @@ angular.module("voyageone.angular.factories").factory("interceptorFactory", func
 angular.module("voyageone.angular.factories").factory("notify", function ($filter) {
 
     var notifyStyle = {
-        'noticeTip':{
+        'noticeTip': {
             html: "<div><span data-notify-text/></div>",
             classes: {
                 base: {
-                    "min-width":'150px',
+                    "min-width": '150px',
                     "background-color": "#ee903d",
                     "padding": "5px",
                     "color": "white",
-                    "border":"1px solid #ee903d"
+                    "border": "1px solid #ee903d"
                 },
                 superBlue: {
                     "color": "white",
@@ -3232,13 +3030,13 @@ angular.module("voyageone.angular.factories").factory("notify", function ($filte
         }
         options.message = $filter("translate")(options.message, values);
 
-        if(options.type === 'noticeTip'){
+        if (options.type === 'noticeTip') {
             $.notify.addStyle('noticeTip', notifyStyle.noticeTip);
 
             options.style = 'noticeTip';
-            _.extend(options,options.opts);
+            _.extend(options, options.opts);
 
-            return $.notify(options.jqObj,options.message, options);
+            return $.notify(options.jqObj, options.message, options);
         }
 
         return $.notify(options.message, options);
@@ -3263,20 +3061,17 @@ angular.module("voyageone.angular.factories").factory("notify", function ($filte
         });
     };
 
-    notify.noticeTip = function(jqObj,message,options){
+    notify.noticeTip = function (jqObj, message, options) {
         return notify({
-            jqObj:jqObj,
-            type:'noticeTip',
+            jqObj: jqObj,
+            type: 'noticeTip',
             message: message,
-            opts:options
+            opts: options
         });
     };
 
     return notify;
 });
-
-
-/*****************************/
 
 /**
  * @ngdoc
@@ -3326,15 +3121,12 @@ angular.module("voyageone.angular.factories").factory("pppAutoImpl", function ($
 
     function getControllerName(key) {
         return key.replace(/\.(\w)/g, function (m, m1) {
-                return m1.toUpperCase();
-            }).replace(/^(\w)/, function (m, m1) {
-                return m1.toLowerCase();
-            }) + "PopupController";
+            return m1.toUpperCase();
+        }).replace(/^(\w)/, function (m, m1) {
+            return m1.toLowerCase();
+        }) + "PopupController";
     }
 });
-
-
-/*****************************/
 
 /**
  * @Description:
@@ -3375,9 +3167,6 @@ angular.module("voyageone.angular.factories").factory("selectRowsFactory", funct
     };
 });
 
-
-/*****************************/
-
 /**
  * @User: Edward
  * @Version: 2.0.0, 2015-12-09
@@ -3388,7 +3177,10 @@ angular.module("voyageone.angular.factories").factory("vpagination", function ()
      * @param {{ curr: number, size: number, total: number, fetch: function }} config 配置
      */
     return function (config) {
-        var _pages, _lastTotal = 0, _showPages = [], defaultPage = config.size;
+        var _pages,
+            _lastTotal = 0,
+            _showPages = [],
+            defaultPage = config.size;
         /**默认page为20，当改变时触发分页，add by pwj*/
         /**
          * 返回总件数
@@ -3447,10 +3239,12 @@ angular.module("voyageone.angular.factories").factory("vpagination", function ()
          * @returns {Array}
          */
         function createShowPages() {
-            var minPage, maxPage, _showPages = [];
+            var minPage,
+                maxPage,
+                _showPages = [];
             if (config.curr < config.showPageNo) {
                 minPage = 1;
-                if (_pages <= config.showPageNo) maxPage = _pages; else maxPage = config.showPageNo;
+                if (_pages <= config.showPageNo) maxPage = _pages;else maxPage = config.showPageNo;
             } else if (config.curr + 2 > _pages) {
                 minPage = _pages + 1 - config.showPageNo;
                 maxPage = _pages;
@@ -3544,9 +3338,6 @@ angular.module("voyageone.angular.factories").factory("vpagination", function ()
     };
 });
 
-
-/*****************************/
-
 /**
  * @description 格林威治时间转换为当地时区时间
  */
@@ -3563,7 +3354,7 @@ angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) 
         switch (typeof input) {
             case 'string':
                 input = new Date(input);
-                miliTimes = input.getTime() + new Date().getTimezoneOffset() * 60 * 1000 * (-1);
+                miliTimes = input.getTime() + new Date().getTimezoneOffset() * 60 * 1000 * -1;
                 break;
             case 'number':
                 miliTimes = new Date(input);
@@ -3573,19 +3364,14 @@ angular.module("voyageone.angular.filter").filter("gmtDate", function ($filter) 
         }
 
         return $filter('date')(new Date(miliTimes), format);
-
     };
-
 });
-
-
-/*****************************/
 
 /**
  * Created by sofia on 2016/7/22.
  */
 
-angular.module("voyageone.angular.filter").filter("stringCutter", function() {
+angular.module("voyageone.angular.filter").filter("stringCutter", function () {
     return function (value, wordWise, max, tail) {
         if (!value) return '';
 
@@ -3603,9 +3389,6 @@ angular.module("voyageone.angular.filter").filter("stringCutter", function() {
         return value + (tail || ' …');
     };
 });
-
-/*****************************/
-
 /**
  * @description
  *
@@ -3638,7 +3421,8 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
      */
     function closureDataService(name, actions, cacheKey) {
 
-        var _ServiceClass, root = actions.root;
+        var _ServiceClass,
+            root = actions.root;
 
         if (!actions) {
             return;
@@ -3665,28 +3449,21 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
 
             var _url, _root, _resolve, _reject, _cacheFlag, _cacheWith;
 
-            if (_.isString(option))
-                _url = option;
-            else if (_.isObject(option)) {
+            if (_.isString(option)) _url = option;else if (_.isObject(option)) {
                 _url = option.url;
                 _resolve = option.then;
                 _root = option.root;
                 _cacheFlag = option.cache;
                 _cacheWith = option.cacheWith;
 
-                if (!_.isArray(_cacheWith))
-                    _cacheWith = null;
-                else {
+                if (!_.isArray(_cacheWith)) _cacheWith = null;else {
                     var __cacheWith = _cacheWith.map(function (cacheKeyName) {
                         return cacheKey[cacheKeyName];
                     }).filter(function (cacheKeyValue) {
                         return !!cacheKeyValue;
                     });
 
-                    if (__cacheWith.length !== _cacheWith.length)
-                        _cacheFlag = 0;
-                    else
-                        _cacheWith = __cacheWith;
+                    if (__cacheWith.length !== _cacheWith.length) _cacheFlag = 0;else _cacheWith = __cacheWith;
                 }
             }
 
@@ -3695,23 +3472,18 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                 return;
             }
 
-            if (_root === false)
-                _root = "";
-            else if (_root === null || _root === undefined || _root === true)
-                _root = root;
+            if (_root === false) _root = "";else if (_root === null || _root === undefined || _root === true) _root = root;
 
             if (_.isArray(_resolve)) {
                 _reject = _resolve[1];
-                _resolve = _resolve[0]
+                _resolve = _resolve[0];
             }
 
-            if (!_.isFunction(_resolve))
-                _resolve = function (res) {
-                    return res;
-                };
+            if (!_.isFunction(_resolve)) _resolve = function (res) {
+                return res;
+            };
 
-            if (!_cacheFlag || _cacheFlag > 3)
-                _cacheFlag = 0;
+            if (!_cacheFlag || _cacheFlag > 3) _cacheFlag = 0;
 
             _url = getActionUrl(_root, _url);
 
@@ -3723,34 +3495,30 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
                     local = this._lc,
                     hash = actionHashcode(this._5, root, actionName, args, _cacheWith),
                     promise = this._c[hash];
-                if (promise)
-                    return promise;
+                if (promise) return promise;
                 deferred = this._q.defer();
                 promise = deferred.promise;
                 this._c[hash] = promise;
 
-                result = _cacheFlag === 2 ? session[hash] : (_cacheFlag === 3 ? local[hash] : null);
+                result = _cacheFlag === 2 ? session[hash] : _cacheFlag === 3 ? local[hash] : null;
 
-                if (result !== null && result !== undefined)
+                if (result !== null && result !== undefined) deferred.resolve(result);else this._a.post(_url, args, option).then(function (res) {
+                    result = _resolve(res);
+
+                    switch (_cacheFlag) {
+                        case 2:
+                            session[hash] = result;
+                            break;
+                        case 3:
+                            local[hash] = result;
+                            break;
+                    }
+
                     deferred.resolve(result);
-                else
-                    this._a.post(_url, args, option).then(function (res) {
-                        result = _resolve(res);
-                        
-                        switch (_cacheFlag) {
-                            case 2:
-                                session[hash] = result;
-                                break;
-                            case 3:
-                                local[hash] = result;
-                                break;
-                        }
-                        
-                        deferred.resolve(result);
-                    }, function (res) {
-                        result = _reject(res);
-                        deferred.reject(result);
-                    });
+                }, function (res) {
+                    result = _reject(res);
+                    deferred.reject(result);
+                });
 
                 return promise;
             };
@@ -3780,9 +3548,6 @@ angular.module("voyageone.angular.vresources", []).provider("$vresources", funct
         };
     };
 });
-
-/*****************************/
-
 /**
  * @Date:    2015-11-16 18:48:29
  * @User:    Jonas
@@ -3808,20 +3573,20 @@ $Ajax.prototype.post = function (url, data, option) {
         cancelBlock = null;
 
     option = option || {
-            autoBlock: true,
-            blockDelay: 1000
-        };
+        autoBlock: true,
+        blockDelay: 1000
+    };
 
     var autoBlock = option.autoBlock,
         blockDelay = option.blockDelay;
 
     if (autoBlock) {
-        cancelBlock = (function (blockPromise) {
+        cancelBlock = function (blockPromise) {
             return function () {
                 $timeout.cancel(blockPromise);
                 blockUI.stop();
             };
-        })($timeout(function () {
+        }($timeout(function () {
             blockUI.start();
         }, blockDelay));
     }
@@ -3879,10 +3644,6 @@ AjaxService.prototype.post = function (url, data, option) {
     return defer.promise;
 };
 
-
-
-/*****************************/
-
 /**
  * @Date:    2015-11-16 20:30:37
  * @User:    Jonas
@@ -3924,13 +3685,11 @@ function CookieService($cookies) {
 
 CookieService.prototype.get = function (key) {
     var result = this.$cookies.get(key);
-    if (result === undefined || result === null)
-        return '';
+    if (result === undefined || result === null) return '';
 
     // 为了兼容老数据
     // 不是以 { 起始的认为不是 json, 直接返回
-    if (result.indexOf('{') !== 0)
-        return result;
+    if (result.indexOf('{') !== 0) return result;
 
     // 否则转换输出
     var item = JSON.parse(result);
@@ -3957,9 +3716,6 @@ CookieService.prototype.company = makeProps(keys.company);
 CookieService.prototype.channel = makeProps(keys.channel);
 
 CookieService.prototype.application = makeProps(keys.application);
-
-
-/*****************************/
 
 /**
  * 对后台的信息进行自动处理
@@ -4022,9 +3778,6 @@ MessageService.prototype = {
     }
 };
 
-
-/*****************************/
-
 /**
  * @Date:    2015-11-19 14:26:43
  * @User:    Jonas
@@ -4056,9 +3809,6 @@ PermissionService.prototype = {
     }
 };
 
-
-/*****************************/
-
 /**
  * @Date:    2015-11-19 14:35:25
  * @User:    Jonas
@@ -4071,12 +3821,12 @@ function TranslateService($translate) {
 }
 
 TranslateService.prototype = {
-    
+
     languages: {
         en: "en",
         zh: "zh"
     },
-    
+
     /**
      * set the web side language type.
      */
@@ -4087,7 +3837,7 @@ TranslateService.prototype = {
         this.$translate.use(language);
         return language;
     },
-    
+
     /**
      * get the browser language type.
      * @returns {string}
