@@ -93,24 +93,19 @@
                             </div>
 
                             <div class="form-group">
-                                <!--<div class="col-sm-3">-->
-                                    <!--<select  class="form-control" chosen>-->
-                                        <!--<option value="">Total Qty</option>-->
-                                        <!--<option value="">LA Qty</option>-->
-                                    <!--</select>-->
-                                <!--</div>-->
-                                <div class="col-sm-9">
-                                    <label class="col-sm-3 control-label query-title">Total Qty</label>
-                                    <div class="col-sm-5">
+
+                                <label class="col-sm-3 control-label query-title">Total Qty</label>
+                                <div class="col-sm-9 form-inline">
+                                    <div class="col-sm-5 input-group">
                                         <input type="number" min="1" max="ctrl.searchInfo.inventoryTo" class="form-control" ng-model="ctrl.searchInfo.inventoryFrom">
                                     </div>
-                                    <div class="col-sm-1 text-center">
-                                        ~
-                                    </div>
-                                    <div class="col-sm-5">
+                                        &nbsp;~&nbsp;
+                                    <div class="col-sm-5 input-group">
                                         <input type="number" max="ctrl.searchInfo.inventoryFrom" class="form-control" ng-model="ctrl.searchInfo.inventoryTo">
                                     </div>
                                 </div>
+
+
                             </div>
                         </div>
                     </div>

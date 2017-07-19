@@ -227,11 +227,13 @@ define([
         batchCategory(){
             let self = this;
 
+            console.log(self.getSelectedProduct());
+
         }
 
         /**
-         * 获取选中产品
-         * @param onlyAttr 按照属性名抽出数组
+         * 获取选中产品 getSelectedProduct('code')
+         * @param  id  or code
          * @returns {Array}
          */
         getSelectedProduct(onlyAttr){
