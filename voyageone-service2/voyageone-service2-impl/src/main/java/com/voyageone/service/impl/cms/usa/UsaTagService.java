@@ -41,7 +41,7 @@ public class UsaTagService extends BaseService {
 
     @Autowired
     private TagService tagService;
-//    @Autowired
+    //    @Autowired
 //    private CmsAdvanceSearchService advanceSearchService;
     @Autowired
     private CmsProductSearchQueryService cmsProductSearchQueryService;
@@ -51,61 +51,55 @@ public class UsaTagService extends BaseService {
 
     /**
      * 取得标签管理初始化数据（注意：高级检索画面(查询条件)使用时，查询的是最近90天的所有活动，包括已结束的）
-     * @param lang
+     *
      * @return result
      */
     public Map<String, Object> getInitTagInfo(String channelId, Map<String, Object> params, String lang) {
-        String orgFlg = (String) params.get("orgFlg");
-        String selAllFlg = (String) params.get("selAllFlg");
-        String selTagType = (String) params.get("selTagType");
-        List<String> selCodeList = (List<String>) params.get("selCodeList");
-        Map<String, Object> searchInfoMap = (Map<String, Object>) params.get("searchInfo");
+        String orgFlg = (String) params.get("orgFlg"); //
+        String selAllFlg = (String) params.get("selAllFlg");                                // 是否全选: 1用searchInfo检索全选;其他非全选,具体Code以selCodeList为准
+        String selTagType = (String) params.get("selTagType");                              // 标签类型: USA 自由标签6
+        List<String> selCodeList = (List<String>) params.get("selCodeList");                // 勾选的具体Code集合
+        Map<String, Object> searchInfoMap = (Map<String, Object>) params.get("searchInfo"); // 全选时检索条件
         CmsSearchInfoBean2 searchInfo = JacksonUtil.json2Bean(JacksonUtil.bean2Json(searchInfoMap), CmsSearchInfoBean2.class);
 
-
-        Map<String, Object> result = new HashMap<>();
+        // 返回结果
+        Map<String, Object> resultMap = new HashMap<>();
 
         // 先查询 美国自由标签(type=6), 然后将其Convert to Tree
         List<CmsBtTagBean> tagsList = cmsBtTagDaoExt.selectListByType(channelId, CmsBtTagModelTagType.usa_free_tags);
-        List<CmsBtTagBean> categoryList = convertToTree(tagsList);
+        List<CmsBtTagBean> tagTree = convertToTree(tagsList);
+        resultMap.put("tagTree", tagTree);
 
-        // 取得所有的标签类型
-        result.put("tagTree", categoryList);
-
-        List<TypeBean>  types = Types.getTypeList(TypeConfigEnums.MastType.tagType.getId(), lang);
+        // 标签类型
+        List<TypeBean> types = Types.getTypeList(TypeConfigEnums.MastType.tagType.getId(), lang);
         if (types != null) {
-            //标签类型
-            result.put("tagTypeList", types.stream().filter(w->w.getValue().equals(String.valueOf(CmsBtTagModelTagType.usa_free_tags))).collect(Collectors.toList()));
+            resultMap.put("tagTypeList", types.stream().filter(type -> type.getValue().equals(String.valueOf(CmsBtTagModelTagType.usa_free_tags))).collect(Collectors.toList()));
         }
 
         orgFlg = "2";
         if (Objects.equals(orgFlg, "2")) {
             // 高级检索，设置自由标签的场合，需要检索一遍所选择商品的自由标签设值，返回到前端
-//            Integer isSelAll = (Integer) param.get("isSelAll");
-            Integer isSelAll = 0;
-            if (isSelAll == null) {
-                isSelAll = 0;
-            }
             List<String> codeList = null;
             if (Objects.equals(selAllFlg, Integer.valueOf(1))) {
                 // TODO: 2017/7/19 rex.wu Solr是否有未分页方法
-                // 从高级检索重新取得查询结果（根据session中保存的查询条件）
                 CmsProductCodeListBean productCodeListBean = cmsProductSearchQueryService.getProductCodeList(searchInfo, channelId);
                 codeList = productCodeListBean.getProductCodeList();
             } else {
                 codeList = selCodeList;
             }
             if (codeList == null || codeList.isEmpty()) {
-//                $warn("没有code条件 params=" + param.toString());
+                $warn(String.format("USA free tags, codeList is empty, parameter: %s", JacksonUtil.bean2Json(params)));
             } else {
                 // 检索商品的自由标签设值
                 JongoQuery queryObj = new JongoQuery();
                 queryObj.setQuery("{'common.fields.code':{$in:#}}");
                 queryObj.setParameters(codeList);
-                queryObj.setProjectionExt("prodId", "common.fields.code", "usFreeTags");
+                // TODO: 2017/7/19 rex.wu
+//                queryObj.setProjectionExt("prodId", "common.fields.code", "usFreeTags");
+                queryObj.setProjectionExt("prodId", "common.fields.code", "freeTags");
                 List<CmsBtProductModel> prodList = productService.getList(channelId, queryObj);
                 if (prodList == null || prodList.isEmpty()) {
-//                    $warn("根据条件查不到商品 params=" + param.toString());
+                    $warn(String.format("USA free tags, product query result is empty, codeList is %s", JacksonUtil.bean2Json(codeList)));
                 } else {
                     // 用于标识是否已勾选
                     Map<String, Boolean> orgChkStsMap = new HashMap<>();
@@ -113,23 +107,23 @@ public class UsaTagService extends BaseService {
                     Map<String, Boolean> orgDispMap = new HashMap<>();
 
                     // TODO 此段先注释掉，即勾选子节点的话，再显示弹出画面时父节点也显示被勾选
-//                    for (CmsBtProductModel prodObj : prodList) {
-//                        List<String> tags = prodObj.getFreeTags();
-//                        if (tags == null || tags.isEmpty()) {
-//                            continue;
-//                        }
-//                        // 先过滤一遍父节点
-//                        for (int i = 0; i < tags.size(); i ++) {
-//                            String tagPath = tags.get(i);
-//                            for (String tagPath2 : tags) {
-//                                if (tagPath != null && tagPath2 != null && tagPath2.length() > tagPath.length() && tagPath2.startsWith(tagPath)) {
-//                                    tags.set(i, null);
-//                                }
-//                            }
-//                        }
-//                        tags = tags.stream().filter(tagPath -> tagPath != null).collect(Collectors.toList());
-//                        prodObj.setFreeTags(tags);
-//                    }
+                    /*for (CmsBtProductModel prodObj : prodList) {
+                        List<String> tags = prodObj.getFreeTags();
+                        if (tags == null || tags.isEmpty()) {
+                            continue;
+                        }
+                        // 先过滤一遍父节点
+                        for (int i = 0; i < tags.size(); i ++) {
+                            String tagPath = tags.get(i);
+                            for (String tagPath2 : tags) {
+                                if (tagPath != null && tagPath2 != null && tagPath2.length() > tagPath.length() && tagPath2.startsWith(tagPath)) {
+                                    tags.set(i, null);
+                                }
+                            }
+                        }
+                        tags = tags.stream().filter(tagPath -> tagPath != null).collect(Collectors.toList());
+                        prodObj.setFreeTags(tags);
+                    }*/
 
                     for (CmsBtTagBean tagBean : tagsList) {
                         // 遍历商品列表，查看是否勾选(这里的tagsList是列表,不是树型结构)
@@ -141,7 +135,7 @@ public class UsaTagService extends BaseService {
                             }
                             if (tags.indexOf(tagBean.getTagPath()) >= 0) {
                                 // 有勾选
-                                selCnt ++;
+                                selCnt++;
                             }
                         }
                         if (selCnt == prodList.size()) {
@@ -150,19 +144,18 @@ public class UsaTagService extends BaseService {
                             orgDispMap.put(tagBean.getTagPath(), true);
                         }
                     }
-                    result.put("orgChkStsMap", orgChkStsMap);
-                    result.put("orgDispMap", orgDispMap);
+                    resultMap.put("orgChkStsMap", orgChkStsMap);
+                    resultMap.put("orgDispMap", orgDispMap);
                 }
             }
         }
         //返回数据类型
-        return result;
+        return resultMap;
     }
 
     /**
      * 将数据转换为树型结构
      *
-     * @param valueList
      * @return List<CmsBtTagBean>
      */
     public List<CmsBtTagBean> convertToTree(List<CmsBtTagBean> valueList) {

@@ -188,17 +188,16 @@ define([
 
         popUsFreeTag() {
             let self = this;
-
-            self.popups.openUsFreeTag({
-                orgFlg: 2,
-                tagTypeSel: '4',
-                cartId: 23,
-                productIds: null,
-                selAllFlg: 0,
-                searchInfo: self.searchInfoBefo
-            }).then(res => {
-
-            })
+            let params = {
+                orgFlg: '0',
+                tagType: '6',
+                selAllFlg: '0',
+                selCodeList: [],
+                searchInfo: {}
+            };
+            self.popups.openUsFreeTag(params).then(res => {
+                console.log(res);
+            });
         }
 
         /**
@@ -327,13 +326,15 @@ define([
          * 弹出usFreeTags修改框
          */
         popUpdateFreeTags() {
+
             let self = this;
+            console.log(self._selall);
             let params = {
                 orgFlg: '2',
                 tagType: '6',
                 selAllFlg: '0',
                 selCodeList: self.getSelectedProduct("code"),
-                searchInfo: self.searchInfo
+                searchInfo: self.handleQueryParams()
             };
             self.popups.openUsFreeTag(params).then(res => {
                console.log(res);
