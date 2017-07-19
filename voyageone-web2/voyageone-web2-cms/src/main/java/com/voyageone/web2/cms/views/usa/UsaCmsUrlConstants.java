@@ -65,4 +65,14 @@ public class UsaCmsUrlConstants {
         String GET_PRODUCT_INFO = "getProductInfo";
 
     }
+
+    /**
+     * Tag管理
+     */
+    public interface TAG {
+        String ROOT = "/cms/us/tag";
+
+        String INIT = "init";
+
+    }
 }

@@ -3,6 +3,7 @@ package com.voyageone.service.daoext.cms;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtTagModel;
+
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -66,8 +67,8 @@ public class CmsBtTagDaoExt extends ServiceBaseDao {
         return selectList("select_list_by_channel_id_and_parent_tag", params);
     }
 
-    public List<CmsBtTagModel> selectCmsBtTagByTagInfo(String channelId,String parentTagId,String tagType) {
-        return selectList("select_one_by_tag_info", parameters("channelId", channelId, "parentTagId", parentTagId,"tagType",tagType));
+    public List<CmsBtTagModel> selectCmsBtTagByTagInfo(String channelId, String parentTagId, String tagType) {
+        return selectList("select_one_by_tag_info", parameters("channelId", channelId, "parentTagId", parentTagId, "tagType", tagType));
     }
 
     // 查询同级别的tag信息
@@ -87,6 +88,16 @@ public class CmsBtTagDaoExt extends ServiceBaseDao {
         paraIn.put("tagPathList", tagPathList);
 
         return selectList("select_tagpathname_list_by_tagpath", paraIn);
+    }
+
+    /**
+     * 根据Tag 类型查询channel Tag
+     *
+     * @param channelId 渠道ID
+     * @param type      Tag类型
+     */
+    public List<CmsBtTagBean> selectListByType(String channelId, Integer type) {
+        return selectList("select_list_by_type", parameters("channelId", channelId, "type", type));
     }
 
 }

@@ -45,4 +45,10 @@
     border-bottom: 3px solid #e67e22;
 }
 
+.td-width-100{
+    min-width: 100px;
+}
 
+.td-width-150{
+    min-width: 150px;
+}

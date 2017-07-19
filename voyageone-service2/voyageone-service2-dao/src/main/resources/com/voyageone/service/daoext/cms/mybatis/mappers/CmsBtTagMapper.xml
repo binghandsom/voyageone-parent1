@@ -350,4 +350,22 @@
         order by tag.id
     </select>
 
+    <select id="select_list_by_type" resultType="com.voyageone.service.bean.cms.CmsBtTagBean" parameterType="Map">
+        SELECT
+        tag.id,
+        tag.tag_name as tagname,
+        tag.channel_id as channelId,
+        tag.tag_path as tagPath,
+        tag.tag_path_name as tagPathName,
+        tag.tag_path_name as tagChildrenName,
+        tag.tag_type as tagType,
+        tag.tag_status as tagStatus,
+        tag.sort_order as sortOrder,
+        tag.parent_tag_id as parentTagid
+        FROM voyageone_cms2.cms_bt_tag tag
+        WHERE
+        tag.channel_id = #{channelId} AND tag_type=#{type}
+        and tag.active = 1
+    </select>
+
 </mapper>

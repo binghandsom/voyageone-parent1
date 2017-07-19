@@ -9,11 +9,12 @@ define([
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor(popups, advanceSearch,selectRowsFactory) {
+        constructor(popups, advanceSearch,selectRowsFactory,$parse) {
             let self = this;
 
             self.popups = popups;
             self.srInstance = new selectRowsFactory();
+            self.$parse = $parse;
             self.advanceSearch = advanceSearch;
 
             self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
@@ -39,6 +40,7 @@ define([
                 selPlatformAttributes:[],
                 selPlatformSales:[]
             };
+            self.columnArrow = {};
         }
 
         init() {
@@ -58,10 +60,14 @@ define([
                     });
                     // 品牌列表
                     self.masterData.brandList = res.data.brandList;
+
                     // 用户自定义列
-                    self.customColumns.selCommonProps = res.data.selCommonProps == null ? [] : res.data.selCommonProps;
-                    self.customColumns.selPlatformAttributes = res.data.selPlatformAttributes == null ? [] : res.data.selPlatformAttributes;
-                    self.customColumns.selPlatformSales = res.data.selPlatformSales == null ? [] : res.data.selPlatformSales;
+                    self.customColumns.selCommonProps = self.getselectedProps(res.data.commonProps,res.data.selCommonProps,'propId');
+                    self.customColumns.selPlatformAttributes = self.getselectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
+                    //self.customColumns.selPlatformSales = self.getselectedProps(res.data.platformSales,res.data.selPlatformSales);
+
+                    console.log(self.customColumns.selPlatformAttributes);
+
                 }
             });
             this.search();
@@ -82,6 +88,47 @@ define([
                     self.productSelList = self.srInstance.selectRowsInfo;
                 }
             });
+        }
+
+        /**
+         * @description 此方法可优化 先偷个懒
+         * @param array  总数组
+         * @param selectedArray 用户选择数组
+         * @returns {Array}
+         */
+        getselectedProps(array,selectedArray,attrName){
+            let result = [];
+
+            if(!selectedArray || selectedArray.length === 0)
+                return result;
+
+            selectedArray.forEach(prop => {
+
+                let obj = array.find(item => {
+                    return item[attrName] === prop;
+                });
+
+                result.push(obj);
+
+            });
+
+            return result;
+
+        }
+
+        getProductValue(element,prop){
+            let self = this,
+                attrName;
+
+            if(prop.hasOwnProperty('propId'))
+                attrName = 'propId';
+            else
+                attrName = 'value';
+
+            let _func = self.$parse(attrName);
+
+            return _func(element) ? _func(element) : '';
+
         }
 
         // 处理请求参数
@@ -180,11 +227,13 @@ define([
         batchCategory(){
             let self = this;
 
+            console.log(self.getSelectedProduct());
+
         }
 
         /**
-         * 获取选中产品
-         * @param onlyAttr 按照属性名抽出数组
+         * 获取选中产品 getSelectedProduct('code')
+         * @param  id  or code
          * @returns {Array}
          */
         getSelectedProduct(onlyAttr){
@@ -202,6 +251,76 @@ define([
 
             self.popups.openUsList().then(res => {
 
+            });
+        }
+
+        /**
+         * 检索列排序
+         * */
+        columnOrder (columnName) {
+            let self  = this,
+                column,
+                columnArrow = self.columnArrow;
+
+            _.forEach(columnArrow, function (value, key) {
+                if (key != columnName)
+                    columnArrow[key] = null;
+            });
+
+            column = columnArrow[columnName];
+
+            if (!column) {
+                column = {};
+                column.mark = 'unsorted';
+                column.count = null;
+            }
+
+            column.count = !column.count;
+
+            //偶数升序，奇数降序
+            if (column.count)
+                column.mark = 'sort-desc';
+            else
+                column.mark = 'sort-up';
+
+            columnArrow[columnName] = column;
+
+            self.searchByOrder(columnName, column.mark);
+        };
+
+        getArrowName(columnName) {
+            let columnArrow = this.columnArrow;
+
+            if (!columnArrow || !columnArrow[columnName])
+                return 'unsorted';
+
+            return columnArrow[columnName].mark;
+        };
+
+        searchByOrder(columnName, sortOneType) {
+            let self = this,
+                searchInfo = self.searchInfo;
+
+            searchInfo.sortOneName = columnName;
+            searchInfo.sortOneType = sortOneType == 'sort-up' ? '1' : '-1';
+
+            self.search();
+
+        }
+
+        /**
+         * 弹出usFreeTags修改框
+         */
+        popUpdateFreeTags() {
+            let self = this;
+            let params = {
+                orgFlg: '2',
+                tagType: '6',
+                selAllFlg: '0',
+                searchInfo: self.searchInfoBefo
+            };
+            self.popups.openUsFreeTag(params).then(res => {
+               console.log(res);
             });
         }
 
