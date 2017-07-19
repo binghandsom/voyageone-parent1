@@ -144,7 +144,7 @@ public class UsaCustomColumnService extends BaseService {
             // TODO: 2017/7/17 rex.wu
             Map<String, String> keyPublishTimeMap = new HashMap<>(2);
             keyPublishTimeMap.put("name", String.format("%s Publish Time", cartName));
-            keyPublishTimeMap.put("value", String.format("usPlatforms.P%d.pulishTime", cartId));
+            keyPublishTimeMap.put("value", String.format("usPlatforms.P%d.publishTime", cartId));
             platformAttrList.add(keyPublishTimeMap);
 
             Map<String, String> keyMarpMap = new HashMap<>(2);

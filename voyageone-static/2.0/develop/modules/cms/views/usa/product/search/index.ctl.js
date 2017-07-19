@@ -62,6 +62,9 @@ define([
                     self.masterData.brandList = res.data.brandList;
 
                     // 用户自定义列
+                    self.customColumns.commonProps = res.data.commonProps;
+                    self.customColumns.platformAttributes = res.data.platformAttributes;
+                    self.customColumns.platformSales = res.data.platformSales;
                     self.customColumns.selCommonProps = self.getselectedProps(res.data.commonProps,res.data.selCommonProps,'propId');
                     self.customColumns.selPlatformAttributes = self.getselectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
                     //self.customColumns.selPlatformSales = self.getselectedProps(res.data.platformSales,res.data.selPlatformSales);
@@ -127,7 +130,9 @@ define([
             else
                 attrName = 'value';
 
-            let _func = self.$parse(attrName);
+            let _func = self.$parse(prop[attrName]);
+
+            //console.log('attr',);
 
             return _func(element) ? _func(element) : '';
 
@@ -167,9 +172,9 @@ define([
         popCustomAttributes() {
             let self = this;
             self.popups.openCustomAttributes().then(res => {
-                self.customColumns.selCommonProps = res.selCommonProps;
-                self.customColumns.selPlatformAttributes = res.selPlatformAttributes;
-                self.customColumns.selPlatformSales = res.selPlatformSales;
+                self.customColumns.selCommonProps = self.getselectedProps(self.customColumns.commonProps,res.selCommonProps,'propId');
+                self.customColumns.selPlatformAttributes = self.getselectedProps(self.customColumns.platformAttributes, res.selPlatformAttributes,'value');
+                //self.customColumns.selPlatformSales = self.getselectedProps(res.data.platformSales,res.data.selPlatformSales);
             })
         }
 

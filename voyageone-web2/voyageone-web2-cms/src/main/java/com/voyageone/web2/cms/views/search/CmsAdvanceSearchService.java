@@ -384,7 +384,7 @@ public class CmsAdvanceSearchService extends BaseViewService {
         queryObject.setQuery("{'common.fields.code':{$in:#}}");
         queryObject.setParameters(prodCodeList);
 
-        queryObject.setProjectionExt(CmsAdvSearchQueryService.searchItems.split(";"));
+        // queryObject.setProjectionExt(CmsAdvSearchQueryService.searchItems.split(";"));
         queryObject.setSort(advSearchQueryService.getSortValue(searchValue));
 
         List<CmsBtProductBean> prodInfoList = productService.getBeanList(userInfo.getSelChannelId(), queryObject);
