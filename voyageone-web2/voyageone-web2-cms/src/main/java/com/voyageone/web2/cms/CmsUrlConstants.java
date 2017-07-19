@@ -603,8 +603,6 @@ public interface CmsUrlConstants {
 
             String DoTranslateStatus="doTranslateStatus";
 
-            String GET_PRODUCT_INFO = "getProductInfo";
-
             String UPDATE_PRODUCT_MASTER_INFO = "updateProductMasterInfo";
 
             String UPDATE_PRODUCT_SKU_INFO = "updateProductSkuInfo";
