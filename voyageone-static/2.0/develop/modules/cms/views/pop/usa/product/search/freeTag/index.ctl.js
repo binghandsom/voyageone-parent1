@@ -9,11 +9,20 @@ define([
 
     cms.controller('freeTagOfUsController', class FreeTagOfUsController {
 
-        constructor(context, channelTagService, $uibModalInstance, alert) {
+        constructor(context, channelTagService, $uibModalInstance, alert, usTagService) {
             this.context = context;
             this.channelTagService = channelTagService;
             this.$uibModalInstance = $uibModalInstance;
             this.alert = alert;
+            this.usTagService = usTagService;
+
+            this.parameter = {
+                orgFlg:context.orgFlg,
+                selTagType:context.selTagType,
+                selAllFlg:context.selAllFlg,
+                searchInfo:context.searchInfo
+            };
+
             this.searchName = [];
             this.orgDispMap = {};           // 半选状态
             this.orgChkStsMap = {};         // 全选状态
@@ -38,7 +47,7 @@ define([
             }
             params.searchInfo = context.searchInfo;
 
-            self.channelTagService.init(params).then(function (res) {
+            self.usTagService.init(self.parameter).then(function (res) {
                 self.orgTagTree = res.data.tagTree;
 
                 /**设置自由标签时，有初始勾选值*/

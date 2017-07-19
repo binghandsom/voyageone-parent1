@@ -3,41 +3,43 @@
  * @author piao
  */
 define([
-    'cms',
-    'modules/cms/directives/navBar.directive'
-], function (cms) {
+           'cms',
+           'modules/cms/directives/navBar.directive'
+       ], function (cms) {
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor(popups, advanceSearch,selectRowsFactory) {
+        constructor(popups, advanceSearch, selectRowsFactory) {
             let self = this;
 
             self.popups = popups;
             self.srInstance = new selectRowsFactory();
             self.advanceSearch = advanceSearch;
 
-            self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
-                self.search();
-            }};
+            self.pageOption = {
+                curr: 1, total: 0, size: 10, fetch: function () {
+                    self.search();
+                }
+            };
             self.searchInfo = {}; // 检索条件
             self.searchResult = {
                 productList: []
             };
-            self.productSelList =  {selList: []};
+            self.productSelList = {selList: []};
             self.masterData = {
                 platforms: [],
                 usPlatforms: [],
                 brandList: [],
-                platformStatus:[
-                    {status:'Pending',display:'Pending'},
-                    {status:'OnSale', display:'List'},
-                    {status:'InStock', display:'Delist'}
+                platformStatus: [
+                    {status: 'Pending', display: 'Pending'},
+                    {status: 'OnSale', display: 'List'},
+                    {status: 'InStock', display: 'Delist'}
                 ]
             };
             self.customColumns = {
-                selCommonProps:[],
-                selPlatformAttributes:[],
-                selPlatformSales:[]
+                selCommonProps: [],
+                selPlatformAttributes: [],
+                selPlatformSales: []
             };
         }
 
@@ -59,9 +61,13 @@ define([
                     // 品牌列表
                     self.masterData.brandList = res.data.brandList;
                     // 用户自定义列
-                    self.customColumns.selCommonProps = res.data.selCommonProps == null ? [] : res.data.selCommonProps;
-                    self.customColumns.selPlatformAttributes = res.data.selPlatformAttributes == null ? [] : res.data.selPlatformAttributes;
-                    self.customColumns.selPlatformSales = res.data.selPlatformSales == null ? [] : res.data.selPlatformSales;
+                    self.customColumns.selCommonProps =
+                        res.data.selCommonProps == null ? [] : res.data.selCommonProps;
+                    self.customColumns.selPlatformAttributes =
+                        res.data.selPlatformAttributes == null ? []
+                            : res.data.selPlatformAttributes;
+                    self.customColumns.selPlatformSales =
+                        res.data.selPlatformSales == null ? [] : res.data.selPlatformSales;
                 }
             });
             this.search();
@@ -76,7 +82,8 @@ define([
                     self.pageOption.total = res.data.productListTotal;
 
                     self.searchResult.productList.forEach(productInfo => {
-                        self.srInstance.currPageRows({"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
+                        self.srInstance.currPageRows(
+                            {"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
                     });
 
                     self.productSelList = self.srInstance.selectRowsInfo;
@@ -98,14 +105,16 @@ define([
             }
             // 处理平台状态
             if (searchInfo.platformStatus) {
-                let platformStatusObj = _.pick(searchInfo.platformStatus, function (value, key, object) {
-                    return value;
-                });
+                let platformStatusObj = _.pick(searchInfo.platformStatus,
+                                               function (value, key, object) {
+                                                   return value;
+                                               });
                 searchInfo.platformStatus = _.keys(platformStatusObj);
             }
 
             // 分页参数处理
-            _.extend(searchInfo, {productPageNum:self.pageOption.curr, productPageSize:self.pageOption.size});
+            _.extend(searchInfo,
+                     {productPageNum: self.pageOption.curr, productPageSize: self.pageOption.size});
             return searchInfo;
         }
 
@@ -128,11 +137,11 @@ define([
             let self = this;
 
             self.popups.openBatchPrice({
-                selAll:self._selall,
-                codeList:self.getSelectedProduct('code'),
-                queryMap:self.handleQueryParams(),
-                cartId:cartId? cartId :0
-            }).then(res => {
+                                           selAll: self._selall,
+                                           codeList: self.getSelectedProduct('code'),
+                                           queryMap: self.handleQueryParams(),
+                                           cartId: cartId ? cartId : 0
+                                       }).then(res => {
                 //根据返回参数确定勾选状态,"1",需要清除勾选状态,"0"不需要清除勾选状态
             });
         }
@@ -141,13 +150,13 @@ define([
             let self = this;
 
             self.popups.openUsFreeTag({
-                orgFlg: 2,
-                tagTypeSel: '4',
-                cartId: 23,
-                productIds: null,
-                selAllFlg: 0,
-                searchInfo: self.searchInfoBefo
-            }).then(res => {
+                                          orgFlg: 2,
+                                          tagTypeSel: '4',
+                                          cartId: 23,
+                                          productIds: null,
+                                          selAllFlg: 0,
+                                          searchInfo: self.searchInfoBefo
+                                      }).then(res => {
 
             })
         }
@@ -177,7 +186,7 @@ define([
             return arr.indexOf(this.searchInfo.cartId) < 0;
         }
 
-        batchCategory(){
+        batchCategory() {
             let self = this;
 
         }
@@ -187,21 +196,37 @@ define([
          * @param onlyAttr 按照属性名抽出数组
          * @returns {Array}
          */
-        getSelectedProduct(onlyAttr){
+        getSelectedProduct(onlyAttr) {
             let self = this;
 
-            if(onlyAttr){
-                return _.pluck(self.productSelList.selList,onlyAttr);
-            }else{
+            if (onlyAttr) {
+                return _.pluck(self.productSelList.selList, onlyAttr);
+            } else {
                 return self.productSelList.selList;
             }
         }
 
-        batchList(){
+        batchList() {
             let self = this;
 
             self.popups.openUsList().then(res => {
 
+            });
+        }
+
+        /**
+         * 弹出usFreeTags修改框
+         */
+        popUpdateFreeTags() {
+            let self = this;
+            let params = {
+                orgFlg: '2',
+                tagType: '6',
+                selAllFlg: '0',
+                searchInfo: self.searchInfoBefo
+            };
+            self.popups.openUsFreeTag(params).then(res => {
+               console.log(res);
             });
         }
 
