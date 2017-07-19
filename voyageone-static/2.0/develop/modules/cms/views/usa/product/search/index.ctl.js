@@ -124,16 +124,16 @@ define([
             })
         }
 
-        popBatchPrice() {
+        popBatchPrice(cartId) {
             let self = this;
 
             self.popups.openBatchPrice({
-                selAll:"false",
-                codeList:["000009515"],
-                queryMap:{},
-                cartId:1
+                selAll:self._selall,
+                codeList:self.getSelectedProduct('code'),
+                queryMap:self.handleQueryParams(),
+                cartId:cartId? cartId :0
             }).then(res => {
-
+                //根据返回参数确定勾选状态,"1",需要清除勾选状态,"0"不需要清除勾选状态
             });
         }
 

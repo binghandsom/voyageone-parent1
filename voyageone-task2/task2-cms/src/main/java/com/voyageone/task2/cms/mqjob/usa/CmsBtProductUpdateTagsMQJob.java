@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 /**
  * Created by dell on 2017/7/18.
- *
  */
 @Service
 @RabbitListener()
@@ -30,8 +29,8 @@ public class CmsBtProductUpdateTagsMQJob extends TBaseMQCmsSubService<CmsProduct
 
     @Override
     public void onStartup(CmsProductFreeTagsUpdateMQMessageBody messageBody) throws Exception {
-        if (messageBody != null){
-            List<String> productCodeList =  cmsProductFreeTagsUpdateService.setProductFreeTags(messageBody);
+        if (messageBody != null) {
+            List<String> productCodeList = cmsProductFreeTagsUpdateService.setProductFreeTags(messageBody);
             super.count = productCodeList.size();
         }
     }

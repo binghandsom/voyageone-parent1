@@ -60,50 +60,101 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                     CmsBtProductModel cmsBtProductModel = productService.getProductByCode(messageBody.getChannelId(), productCode);
                     if (cmsBtProductModel != null) {
                         Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
-                        CmsBtProductModel_Platform_Cart platform = usPlatforms.get("P" + cartId);
-                        String status = platform.getStatus();
-                        if (platform != null) {
-                            List<BaseMongoMap<String, Object>> skus = platform.getSkus();
-                            if (skus != null) {
-                                for (BaseMongoMap<String, Object> sku : skus) {
-                                    //获取到对应的skuCode
-                                    String skuCode = (String) sku.get("skuCode");
-                                    Double newPrice = null;
-                                    Double basePrice = null;
-                                    if ("clientMsrpPrice".equals(basePriceType) || "clientRetailPrice".equals(basePriceType)) {
-                                        basePrice = (Double) sku.get(basePriceType);
-                                        if ("*".equals(optionType)) {
-                                            newPrice = basePrice * value;
+                        if (cartId > 0){
+                            CmsBtProductModel_Platform_Cart platform = usPlatforms.get("P" + cartId);
+                            String status = platform.getStatus();
+                            if (platform != null) {
+                                List<BaseMongoMap<String, Object>> skus = platform.getSkus();
+                                if (skus != null) {
+                                    for (BaseMongoMap<String, Object> sku : skus) {
+                                        //获取到对应的skuCode
+                                        String skuCode = (String) sku.get("skuCode");
+                                        Double newPrice = null;
+                                        Double basePrice = null;
+                                        if ("clientMsrpPrice".equals(basePriceType) || "clientRetailPrice".equals(basePriceType)) {
+                                            basePrice = (Double) sku.get(basePriceType);
+                                            if ("*".equals(optionType)) {
+                                                newPrice = basePrice * value;
+                                            }
+                                            if ("/".equals(optionType)) {
+                                                newPrice = basePrice / value;
+                                            }
+                                            if ("+".equals(optionType)) {
+                                                newPrice = basePrice + value;
+                                            }
+                                            if ("-".equals(optionType)) {
+                                                newPrice = basePrice - value;
+                                            }
+                                        } else {
+                                            //固定值类型
+                                            newPrice = value;
                                         }
-                                        if ("/".equals(optionType)) {
-                                            newPrice = basePrice / value;
+                                        if (flag == "1") {
+                                            //将价格取整
+                                            Math.round(newPrice);
                                         }
-                                        if ("+".equals(optionType)) {
-                                            newPrice = basePrice + value;
+                                        JongoUpdate jongoUpdate = new JongoUpdate();
+                                        jongoUpdate.setQuery("{\"usPlatforms.P" + cartId + ".skus.skuCode\":#}");
+                                        jongoUpdate.setQueryParameters(skuCode);
+                                        jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + ".skus.$." + changedPriceType + "\":#}}");
+                                        jongoUpdate.setUpdateParameters(newPrice);
+                                        cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+                                        if ("Approve".equals(status)) {
+                                            platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, sender);
                                         }
-                                        if ("-".equals(optionType)) {
-                                            newPrice = basePrice - value;
-                                        }
-                                    } else {
-                                        //固定值类型
-                                        newPrice = value;
-                                    }
-                                    if (flag == "1") {
-                                        //将价格取整
-                                        Math.round(newPrice);
-                                    }
-                                    JongoUpdate jongoUpdate = new JongoUpdate();
-                                    jongoUpdate.setQuery("{\"usPlatforms.P" + cartId + ".skus.skuCode\":#}");
-                                    jongoUpdate.setQueryParameters(skuCode);
-                                    jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + ".skus.$." + changedPriceType + "\":#}}");
-                                    jongoUpdate.setUpdateParameters(newPrice);
-                                    cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
-                                    if ("Approve".equals(status)) {
-                                        platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, sender);
                                     }
                                 }
                             }
+                        }else {
+                            //cartId=0,修改所有平台的价格
+                            usPlatforms.forEach((cartId1,platform)->{
+                                Integer cartId2 = Integer.parseInt(cartId1);
+                                String status = platform.getStatus();
+                                if (platform != null) {
+                                    List<BaseMongoMap<String, Object>> skus = platform.getSkus();
+                                    if (skus != null) {
+                                        for (BaseMongoMap<String, Object> sku : skus) {
+                                            //获取到对应的skuCode
+                                            String skuCode = (String) sku.get("skuCode");
+                                            Double newPrice = null;
+                                            Double basePrice = null;
+                                            if ("clientMsrpPrice".equals(basePriceType) || "clientRetailPrice".equals(basePriceType)) {
+                                                basePrice = (Double) sku.get(basePriceType);
+                                                if ("*".equals(optionType)) {
+                                                    newPrice = basePrice * value;
+                                                }
+                                                if ("/".equals(optionType)) {
+                                                    newPrice = basePrice / value;
+                                                }
+                                                if ("+".equals(optionType)) {
+                                                    newPrice = basePrice + value;
+                                                }
+                                                if ("-".equals(optionType)) {
+                                                    newPrice = basePrice - value;
+                                                }
+                                            } else {
+                                                //固定值类型
+                                                newPrice = value;
+                                            }
+                                            if (flag == "1") {
+                                                //将价格取整
+                                                Math.round(newPrice);
+                                            }
+                                            JongoUpdate jongoUpdate = new JongoUpdate();
+                                            jongoUpdate.setQuery("{\"usPlatforms.P" + cartId2 + ".skus.skuCode\":#}");
+                                            jongoUpdate.setQueryParameters(skuCode);
+                                            jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId2 + ".skus.$." + changedPriceType + "\":#}}");
+                                            jongoUpdate.setUpdateParameters(newPrice);
+                                            cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+                                            if ("Approve".equals(status)) {
+                                                platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId2, productCode, null, 0, sender);
+                                            }
+                                        }
+                                    }
+                                }
+                            });
                         }
+
                     }
                 }
             }

@@ -228,7 +228,7 @@
                     <!--right-btn-->
                     <div class="form-inline m-b-xs pull-right advance-solr-tabs" style="margin-right:10px">
                         <label class="checkbox-inline c-checkbox" style="margin-top:12px">
-                            <input type="checkbox" value="1" ng-model="vm._selall">
+                            <input type="checkbox" value="1" ng-model="ctrl._selall">
                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;Select All Items By Query Terms&nbsp;
                         </label>
                     </div>
@@ -371,7 +371,7 @@
                         <a href="javascript:void(0)" ng-click="ctrl.batchList(0)"><i class="fa fa-minus"></i>&nbsp;Delist</a>
                     </li>
                     <li>
-                        <a href="javascript:void(0)" ng-click="ctrl.popBatchPrice()"><i class="fa fa-minus"></i>&nbsp;Platform Price</a>
+                        <a href="javascript:void(0)" ng-click="ctrl.popBatchPrice(platform.value)"><i class="fa fa-minus"></i>&nbsp;Platform Price</a>
                     </li>
                 </ul>
             </div>
