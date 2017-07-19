@@ -76,6 +76,8 @@ define([
         search() {
             let self = this;
             let searchInfo = self.handleQueryParams();
+
+            self.srInstance.clearCurrPageRows();
             self.advanceSearch.search(searchInfo).then(res => {
                 if (res.data) {
                     self.searchResult.productList = res.data.productList;
@@ -244,6 +246,10 @@ define([
             }else{
                 return self.productSelList.selList;
             }
+        }
+
+        clearSelList(){
+            this.srInstance.clearSelectedList();
         }
 
         //进行上下架操作
