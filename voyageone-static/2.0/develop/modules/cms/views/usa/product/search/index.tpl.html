@@ -126,12 +126,10 @@
                             </div>
 
                             <div class="form-group">
-                                <div class="col-md-8 col-lg-offset-3">
-                                    <div class="col-sm-8 checkbox">
-                                        <label ng-repeat="platform in ctrl.masterData.platforms" style="min-width: 60px;">
-                                            <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;&nbsp;{{platform.add_name2}}
-                                        </label>
-                                    </div>
+                                <div class="col-md-8 col-lg-offset-3 checkbox">
+                                    <label ng-repeat="platform in ctrl.masterData.platforms" style="min-width: 60px;">
+                                        <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;&nbsp;{{platform.add_name2}}
+                                    </label>
                                 </div>
                             </div>
 
@@ -139,7 +137,7 @@
                                 <label class="col-sm-3 control-label query-title">status</label>
                                 <div class="col-sm-8 checkbox">
                                     <label ng-repeat="platform in ctrl.masterData.platformStatus">
-                                        <input type="checkbox" ng-disabled="!ctrl.searchInfo.cartId" ng-model="ctrl.searchInfo.platformStatus[platform.status]">{{platform.display}}
+                                        <input type="checkbox" ng-disabled="!ctrl.searchInfo.cartId" ng-model="ctrl.searchInfo.platformStatus[platform.status]">{{platform.display}}&emsp;
                                     </label>
                                 </div>
                             </div>
