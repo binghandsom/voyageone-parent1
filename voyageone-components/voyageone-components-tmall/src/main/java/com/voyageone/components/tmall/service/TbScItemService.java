@@ -221,7 +221,7 @@ public class TbScItemService extends TbBase {
 
 		ScitemMapQueryResponse res = reqTaobaoApi(shopBean, request);
 
-		if (!res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
+		if (res == null || !res.isSuccess() || !StringUtils.isEmpty(res.getSubCode())) {
 			return null;
 		}
 

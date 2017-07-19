@@ -784,20 +784,20 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 if (skuMapList != null) {
                     String error = "";
                     try {
-//                        // 先去看看是否已经创建过关联了
-//                        List<ScItemMap> scItemMapList = tbScItemService.getScItemMap(shopProp, Long.parseLong(numIId), null);
-//                        Map<String, String> skuIdScIdMap = new HashMap<>();
-//                        if (scItemMapList != null && scItemMapList.size() > 0) {
-//                            scItemMapList.stream()
-//                                    .forEach(scItemMap -> skuIdScIdMap.put(String.valueOf(scItemMap.getSkuId()), String.valueOf(scItemMap.getRelItemId())));
-//                        }
+                        // 先去看看是否已经创建过关联了
+                        List<ScItemMap> scItemMapList = tbScItemService.getScItemMap(shopProp, Long.parseLong(numIId), null);
+                        Map<String, String> skuIdScIdMap = new HashMap<>();
+                        if (ListUtils.notNull(scItemMapList)) {
+                            scItemMapList.stream()
+                                    .forEach(scItemMap -> skuIdScIdMap.put(String.valueOf(scItemMap.getSkuId()), String.valueOf(scItemMap.getRelItemId())));
+                        }
                         for (Map<String, Object> skuMap : skuMapList) {
 //                        skuMap: outer_id, price, quantity, sku_id
                             try {
                                 skuMap.put("scProductId",
                                         taobaoScItemService.doSetLikingScItem(
                                                 shopProp, sxData,
-                                                Long.parseLong(numIId), skuMap));
+                                                Long.parseLong(numIId), skuMap, skuIdScIdMap));
                                 saveCmsBtTmScItem_Liking(sxData, cartId, skuMap);
                             } catch (Exception e) {
 

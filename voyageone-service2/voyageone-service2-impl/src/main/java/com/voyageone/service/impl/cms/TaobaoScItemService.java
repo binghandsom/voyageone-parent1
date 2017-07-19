@@ -14,6 +14,7 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.exceptions.GetUpdateSchemaFailException;
@@ -280,7 +281,7 @@ public class TaobaoScItemService extends BaseService {
 	 * @param sxData sxData
 	 * @param skuMap {outer_id: xx, price: xx, quantity: xx, sku_id: xx}
 	 */
-	public String doSetLikingScItem(ShopBean shopBean, SxData sxData, long numIId, Map<String, Object> skuMap) {
+	public String doSetLikingScItem(ShopBean shopBean, SxData sxData, long numIId, Map<String, Object> skuMap, Map<String, String> skuIdScIdMap) throws Exception {
 
 		String orgChannelId = sxData.getMainProduct().getOrgChannelId();
 
@@ -294,20 +295,27 @@ public class TaobaoScItemService extends BaseService {
 		String outerId = String.valueOf(skuMap.get("outer_id"));
 		String skuId = String.valueOf(skuMap.get("sku_id")); // 可能为null
 		String qty = String.valueOf(skuMap.get("quantity"));
-//		if (StringUtils.isNullOrBlank2(skuId)) {
-//			if (!StringUtils.isEmpty(skuIdScIdMap.get("0"))) {
-//				return skuIdScIdMap.get("0");
-//			}
-//		} else {
-//			if (!StringUtils.isEmpty(skuIdScIdMap.get(skuId))) {
-//				return skuIdScIdMap.get(skuId);
-//			}
-//		}
+		if (skuIdScIdMap.size() > 0) {
+			if (StringUtils.isNullOrBlank2(skuId)) {
+				if (!StringUtils.isEmpty(skuIdScIdMap.get("0"))) {
+					return skuIdScIdMap.get("0");
+				}
+			} else {
+				if (!StringUtils.isEmpty(skuIdScIdMap.get(skuId))) {
+					return skuIdScIdMap.get(skuId);
+				}
+			}
+		} else {
+			List<ScItemMap> scItemMapList = tbScItemService.getScItemMap(shopBean, numIId, skuId);
+			if (ListUtils.notNull(scItemMapList)) {
+				return String.valueOf(scItemMapList.get(0).getRelItemId());
+			}
+		}
 
 		SxData.SxScItem scItem = sxData.getScItemMap().get(outerId);
-		if (!scItem.isNew()) {
-			return String.valueOf(scItem.getItemId());
-		}
+//		if (!scItem.isNew()) {
+//			return String.valueOf(scItem.getItemId());
+//		}
 
 		return doSetLikingScItemSku(shopBean, orgChannelId, numIId, outerId, skuId, qty, scItem);
 
