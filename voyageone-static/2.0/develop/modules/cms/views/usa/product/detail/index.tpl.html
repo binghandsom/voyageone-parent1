@@ -7,31 +7,19 @@
 
     <div>
         <uib-tabset class="tab-container vo_nav-tabs">
-            <!---------------------------------------------------master 产品详情页面---------------------------------------------->
             <uib-tab active="ctrl.master">
-                <tab-heading>Master产品详情</tab-heading>
-                <master-schema product-info="ctrl.product"></master-schema>
+                <tab-heading>Sneakerhead</tab-heading>
+                <sn-tab product-info="ctrl.product"></sn-tab>
             </uib-tab>
-            <!---------------------------------------------------sku 价格一览页面---------------------------------------------->
             <uib-tab active="ctrl.price">
-                <tab-heading>价格一览详情</tab-heading>
+                <tab-heading>Qty</tab-heading>
                 <price-schema product-info="ctrl.product"></price-schema>
             </uib-tab>
-            <!---------------------------------------------------SKU 属性 页面------------------------------------------------>
             <uib-tab active="ctrl.sku">
-                <tab-heading>{{'TXT_PRODUCT_SKU_DETAIL'|translate}}</tab-heading>
+                <tab-heading>Price</tab-heading>
                 <sku-schema product-info="ctrl.product"></sku-schema>
             </uib-tab>
-            <!---------------------------------------------------SKU 库存 页面------------------------------------------------>
-            <uib-tab active="ctrl.inventory">
-                <tab-heading>SKU 库存</tab-heading>
-                <inventory-schema product-info="ctrl.product"></inventory-schema>
-            </uib-tab>
-            <!---------------------------------------------------feed 产品详情页面------------------------------------------------>
-            <uib-tab active="ctrl.feed">
-                <tab-heading>Feed详情</tab-heading>
-                <feed-schema product-info="ctrl.product"></feed-schema>
-            </uib-tab>
+
             <!---------------------------------------------------平台产品详情页面(不包含独立官网)---------------------------------->
             <uib-tab ng-repeat="platformType in ctrl.platformTypes"
                      ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
