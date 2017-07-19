@@ -1,687 +1,711 @@
-<div class="product-shema-detail" ng-init="ctrl.init()">
-    <div class="panel-group">
-        <div class="panel panel-default">
-            <div class="panel-heading cur-p" ng-click="vm.panelShow = true" ng-if="!vm.panelShow">
-                <h4 class="panel-title">
-                    <a href="javascript:void(0)">
-                        <i class="fa fa-caret-right"></i>&nbsp;&nbsp;<strong>展开</strong>
-                    </a>
-                </h4>
-            </div>
-            <div class="panel-heading cur-p" ng-click="vm.panelShow = false" ng-if="vm.panelShow">
-                <h4 class="panel-title">
-                    <a href="javascript:void(0)">
-                        <i class="fa fa-caret-down"></i>&nbsp;&nbsp;<strong>收起</strong>
-                    </a>
-                </h4>
-            </div>
-            <div class="panel-body" ng-if="vm.panelShow">
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="col-sm-7" style="color: #000">
-                            <label class="control-label"> APP端启用开关</label>
-                        </div>
-                        <div class="col-sm-5">
-                            <div class="onoffswitch">
-                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox"
-                                       ng-model="vm.lockStatus.onOffSwitch1"
-                                       ng-click="lockProduct('onOffSwitch1')"
-                                       id="onOffSwitch1">
-                                <label class="onoffswitch-label" for="onOffSwitch1">
-                                    <span class="onoffswitch-inner"></span>
-                                    <span class="onoffswitch-switch"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="col-sm-7" style="color: #000">
-                            <label class="control-label"> 翻译完成开关</label>
-                        </div>
-                        <div class="col-sm-5">
-                            <div class="onoffswitch">
-                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox"
-                                       ng-model="vm.lockStatus.onOffSwitch2"
-                                       ng-click="lockProduct('onOffSwitch2')"
-                                       id="onOffSwitch2">
-                                <label class="onoffswitch-label" for="onOffSwitch2">
-                                    <span class="onoffswitch-inner"></span>
-                                    <span class="onoffswitch-switch"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="col-sm-7" style="color: #000">
-                            <label class="control-label"> Lock开关
-                                <span notice-direction="bottom"
-                                      notice-content="一旦锁定商品，CMS将不会同步最新状态至各个平台。仅仅同步库存。" notice-tip
-                                      class="text-warnings cur-p"><i class="fa fa-bell pull-right text-warnings"></i></span>
-                            </label>
-                        </div>
-                        <div class="col-sm-5">
-                            <div class="onoffswitch">
-                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox"
-                                       ng-model="vm.lockStatus.onOffSwitch3"
-                                       ng-click="lockProduct('onOffSwitch3')"
-                                       id="onOffSwitch3">
-                                <label class="onoffswitch-label" for="onOffSwitch3">
-                                    <span class="onoffswitch-inner"></span>
-                                    <span class="onoffswitch-switch"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="row m-t-xs">
-                    <div class="col-md-6">
-                        <div class="btn-group" uib-dropdown ng-controller="popupCtrl">
-                            <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
-                                &nbsp;历史记录&nbsp;<span class="caret"></span>
-                            </button>
-                            <ul uib-dropdown-menu>
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="openHistoryPrice(vm.productComm.fields.code,vm.productComm.skus)">
-                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;价格历史
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="openHistoryPriceConfirm(vm.productComm.fields.code,vm.productComm.skus)">
-                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;价格确认历史
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="openHistoryPromotion('lg', vm.productComm.fields.code)">
-                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;活动历史
-                                    </a>
-                                </li>
-                                <li ng-if="false">
-                                    <a href="javascript:void(0)">
-                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;SKU追加历史
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="openProductStatusHistory(vm.productComm.fields.code)">
-                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;商品修改历史
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="openHistoryPutOnOff(vm.productComm.fields.code,0,vm.mastData.platformList)">
-                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;上下架历史
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>&nbsp;&nbsp;
-                        <div class="btn-group" uib-dropdown ng-controller="popupCtrl" ng-if="vm.mastData.isMain != true">
-                            <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
-                                &nbsp;Master操作&nbsp;<span class="caret"></span>
-                            </button>
-                            <ul uib-dropdown-menu>
-                                <li>
-                                    <a href="javascript:void(0)" ng-click="copyCommonProperty()">
-                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;复制主商品
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="wrapper-md" ng-init="ctrl.init()">
+    <div class="panel panel-vo">
+        <div class="panel-heading">
+            <h4 class="panel-title"><i class="fa fa-star"></i>&nbsp;Products</h4>
         </div>
-    </div>
-    <div class="form-horizontal" name="productFieldForm" novalidate>
-        <div class="panel vo_panel tab_panel">
-            <div class="container-fluid"  id="master">
-                <div class="row">
-                    <div class="col-sm-7">
-                        <div class="row form-group">
-                            <label class="col-md-2 control-label"></label>
-                            <div class="col-md-8">
-                                <label class="control-label" ng-if="vm.productComm.fields.clientProductUrl">
-                                    <a class="text-warnings" ng-href="{{vm.productComm.fields.clientProductUrl}}" target="_blank">品牌方商品链接</a>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <label class="col-md-2 control-label"><strong>平台状态</strong></label>
-                            <div class="col-md-8 m-l-35">
-                                    <span ng-repeat='entity in vm.mastData.platformList'>
-                                           <platform-status data="entity"></platform-status>
-                                    </span>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col-md-2">
-                                <div class="row text-right">
-                                    <div class="form-horizontal">
-                                        <div class="form-group">
-                                            <label class="control-label"><strong>Group Info</strong></label>
+        <div class="panel-body">
+            <div class="container-fluid">
+                <form role="form" class="form-horizontal" name="feedForm" novalidate>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Sneakerhead</label>
+                                        <label class="col-md-6" style="padding-top:4px">
+                                            <strong class="text-u-l"></strong>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_reqfield">Code</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="code" ng-model="ctrl.feed.code" required readonly>
                                         </div>
-                                        <div class="form-group">
-                                                <span ng-if="!moreCodeFlg && canMoreCode()">
-                                                    <i class="fa fa-angle-double-down more-code" ng-click="moreCode()"></i>
-                                                </span>
-                                            <span ng-if="moreCodeFlg && canMoreCode()">
-                                                    <i class="fa fa-angle-double-up more-code" ng-click="moreCode()"></i>
-                                                </span>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.code"></vo-message>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-1" style="width: 35px;">
-                                    <span notice-direction="bottom" notice-content="点击跳动图标展开更多code！"
-                                          notice-tip class="text-warnings cur-p"><i
-                                            class="icon fa fa-question-circle text-md"></i></span>
-                            </div>
-                            <div class="col-md-8">
-                                <div class="row">
-                                    <div class="col-xs-6 col-md-2"  ng-repeat="image in vm.mastData.images"
-                                         ng-init = "$currentCode = (image.productCode == productInfo.masterField.code)"
-                                         ng-if="image.productCode == productInfo.masterField.code || moreCodeFlg || image.isMain || image.qty > 0">
-                                        <a href="javascript:void(0)" class="thumbnail clear-margin-bottom"
-                                           ng-href="{{$currentCode ? 'javascript:void(0)' : '#/product/detail/'+image.prodId}}"
-                                           ng-class="{'current' : $currentCode}"
-                                           target="{{$currentCode ? '_self':'_blank'}}"
-                                           style="min-height: 80px;">
-                                            <strong class="main" ng-if="image.isMain == true">
-                                                <span class="label label-danger">&nbsp;M&nbsp;</span>
-                                            </strong>
-                                            <img class="thumb-group"
-                                                 ng-src="http://image.voyageone.com.cn/is/image/sneakerhead/{{image.imageName}}"
-                                                 title="{{image.productCode}}">
-                                        </a>
-                                        <div class="thumbInfo">
-                                            <div class="row">
-                                                <div class="col-md-7"><strong>总库存:</strong></div>
-                                                <div class="col-md-5 text-right">{{image.qty}}</div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_reqfield">Model</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="model" ng-model="ctrl.feed.model" required>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-default" ng-click="ctrl.getTopModel(5)">
+                                                <i ng-class="{'fa-angle-double-down':!ctrl.isShowModal,'fa-angle-double-up':ctrl.isShowModal}" class="fa" style="font-size: 16px;"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.model"></vo-message>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-group" ng-if="ctrl.isShowModal">
+                                    <div class="row">
+                                        <div class="col-md-8 col-md-offset-4" ng-if="ctrl.topFeedList.length > 0">
+                                            <div class="col-xs-6 col-md-2" ng-repeat="item in ctrl.topFeedList">
+                                                <a href="javascript:void(0);" class="thumbnail pos-relative" style="height: 88px;padding: 0px"
+                                                   ng-class="{'active':item.status=='Approved'}">
+                                                    <img class="thumb-sm-search" src="{{item.image[0]}}">
+                                                    <button type="button" class="btn btn-primary pos-absolute-right" ng-click="ctrl.copyAttr(item)">
+                                                        <i class="fa fa-copy"></i>
+                                                    </button>
+                                                </a>
+                                                <span class="text-wrap"><strong>{{item.code}}</strong></span>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <button class="col-md-2 btn btn-default" ng-disabled="vm.channelId != '928' && vm.channelId != '024'"
-                                    ng-controller="popupCtrl" ng-click="masterCategoryMapping(popupCategoryNew)"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
-                            </button>
-                            <div class="col-md-1" style="width: 35px;">
-                                    <span notice-direction="bottom" notice-content="切换平台类目将影响整个Group中的所有商品，请慎重！"
-                                          notice-tip class="text-warnings cur-p"><i
-                                            class="icon fa fa-question-circle text-md"></i></span>
-                            </div>
-                            <div class="col-md-8">
-                                <input class="form-control"  ng-model="vm.productComm.catPath" readonly>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <label class="col-md-2 control-label"><strong>Model</strong></label>
-                            <div class="col-md-8  m-l-35 control-label text-left">
-                                {{vm.productComm.fields.model}}
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <label class="col-md-2 control-label"><strong>Product Code</strong></label>
-                            <div class="col-md-8 m-l-35 control-label text-left">
-                                {{vm.productComm.fields.code}}
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <button class="col-md-2 btn btn-default" disabled><span>Master Brand</span></button>
-                            <div class="col-md-8  m-l-35">
-                                <input class="form-control" ng-model="vm.productComm.fields.brand" readonly>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="product-title">
-                <h3><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</h3>
-            </div>
-            <!------------------------------------------------以下为产品schema------------------------------------------------------->
-            <div class="container-fluid" id="product">
-
-                <div class="row">
-
-                    <ng-form name="schemaForm" class="col-sm-7" novalidate>
-                        <div id="schemaContainer">
-                            <schema data="vm.productComm.schemaFields"></schema>
-                        </div>
-
-                    </ng-form>
-
-                    <!-------------------------------显示图片-------------------------------->
-                    <div class="col-sm-3" style="width: 420px;" id="img-fix">
-                        <div class="col no-padder bg-light vo_prodDetailPanel">
-                            <div id="vo_fixProdPanel">
-                                <!-- product photos -->
-                                <div class="vo_prodGallery">
-                                    <div class="imageContainer">
-                                        <div class="imageWrapper">
-                                            <img  class="imageWrapper" style="cursor: pointer;max-width: 330px; max-height: 200px;" ng-src="{{vm.currentImage}}" title="【click me】" ng-click="goDetail()">
+                                        <div class="col-md-6 col-md-offset-4" ng-if="ctrl.topFeedList.length == 0">
+                                            <div class="alert alert-danger" role="alert">
+                                                <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                                                <span class="sr-only">Warning:</span>
+                                                no query data
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div>
-                                    <uib-tabset class="tab-container vo_nav-tabs">
-                                        <uib-tab>
-                                            <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
-                                                品牌方商品图
-                                            </tab-heading>
-                                            <div class="tab-content" style="border-top: 1px solid #d4cfcf;">
-                                                <div class="tab-pane active">
-                                                    <div class="row sortable-container" sv-root sv-part="vm.productComm.fields.images1" sv-on-sort="sortImg('images1',$event)">
-                                                        <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images1"
-                                                             sv-element="{containment:'#img-fix'}"
-                                                             ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image1)">
-                                                            <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
-                                                            <div class="btn-group btn-copy" uib-dropdown ng-if="image.image1">
-                                                                <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
-                                                                    <i class="fa fa-copy"></i>&nbsp;<span class="caret"></span>
-                                                                </button>
-                                                                <ul uib-dropdown-menu>
-                                                                    <li ng-repeat="item in vm.copyImages">
-                                                                        <a href="javascript:void(0)" ng-click="copyToOtherImg(image,'品牌方商品图',item)" ng-if="item.name != '品牌方商品图'">
-                                                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{item.name}}
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image1}" style="height: 88px">
-                                                                <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image1)}}">
-                                                                <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image1,0,$event)"><i class="fa fa-cloud-download "></i></button>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </uib-tab>
-                                        <uib-tab>
-                                            <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
-                                                PC端自拍商品图
-                                            </tab-heading>
-                                            <div class="tab-content" style="border-top: 1px solid #d4cfcf;">
-                                                <div class="tab-pane active">
-                                                    <div class="row" sv-root sv-part="vm.productComm.fields.images6" sv-on-sort="sortImg('images6',$event)">
-                                                        <div class="col-md-3"  ng-repeat="image in vm.productComm.fields.images6 | filter : {image6:''}" sv-element="{containment:'#img-fix'}"
-                                                             ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image6)">
-                                                            <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
-                                                            <div class="btn-group btn-copy" uib-dropdown ng-if="image.image6">
-                                                                <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
-                                                                    <i class="fa fa-copy"></i>&nbsp;<span class="caret"></span>
-                                                                </button>
-                                                                <ul uib-dropdown-menu>
-                                                                    <li ng-repeat="item in vm.copyImages">
-                                                                        <a href="javascript:void(0)" ng-click="copyToOtherImg(image,'PC端自拍商品图',item)" ng-if="item.name != 'PC端自拍商品图'">
-                                                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{item.name}}
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image6}" style="height: 88px">
-                                                                <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image6)}}">
-                                                                <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images6',image.image6,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
-                                                                <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image6,0,$event)"><i class="fa fa-cloud-download "></i></button>
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-md-3 text-center m-t-md">
-                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image6',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </uib-tab>
-                                        <uib-tab>
-                                            <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
-                                                APP端自拍商品图
-                                            </tab-heading>
-                                            <div class="tab-content" style="border-top: 1px solid #d4cfcf;">
-                                                <div class="tab-pane active">
-                                                    <div class="row" sv-root sv-part="vm.productComm.fields.images7" sv-on-sort="sortImg('images7',$event)">
-                                                        <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images7 | filter : {image7:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image7)">
-                                                            <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
-                                                            <div class="btn-group btn-copy" uib-dropdown ng-if="image.image7">
-                                                                <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
-                                                                    <i class="fa fa-copy"></i>&nbsp;<span class="caret"></span>
-                                                                </button>
-                                                                <ul uib-dropdown-menu>
-                                                                    <li ng-repeat="item in vm.copyImages">
-                                                                        <a href="javascript:void(0)" ng-click="copyToOtherImg(image,'APP端自拍商品图',item)" ng-if="item.name != 'APP端自拍商品图'">
-                                                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{item.name}}
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image7}" style="height: 88px">
-                                                                <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image7)}}">
-                                                                <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images7',image.image7,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
-                                                                <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image7,0,$event)"><i class="fa fa-cloud-download "></i></button>
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-md-3 text-center m-t-md">
-                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image7',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </uib-tab>
-                                        <uib-tab>
-                                            <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
-                                                包装图
-                                            </tab-heading>
-                                            <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
-                                                <div class="tab-pane active">
-
-                                                    <div class="row" sv-root sv-part="vm.productComm.fields.images2" sv-on-sort="sortImg('images2',$event)">
-                                                        <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images2 | filter : {image2:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image2)">
-                                                            <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
-                                                            <div class="btn-group btn-copy" uib-dropdown ng-if="image.image2">
-                                                                <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
-                                                                    <i class="fa fa-copy"></i>&nbsp;<span class="caret"></span>
-                                                                </button>
-                                                                <ul uib-dropdown-menu>
-                                                                    <li ng-repeat="item in vm.copyImages">
-                                                                        <a href="javascript:void(0)" ng-click="copyToOtherImg(image,'包装图',item)" ng-if="item.name != '包装图'">
-                                                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{item.name}}
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image2}" style="height: 88px">
-                                                                <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image2)}}">
-                                                                <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images2',image.image2,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
-                                                                <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image2,0,$event)"><i class="fa fa-cloud-download "></i></button>
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-md-3 text-center m-t-md">
-                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image2',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </uib-tab>
-                                        <uib-tab>
-                                            <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
-                                                角度图
-                                            </tab-heading>
-                                            <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
-                                                <div class="tab-pane active">
-                                                    <div class="row" sv-root sv-part="vm.productComm.fields.images3" sv-on-sort="sortImg('images3',$event)">
-                                                        <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images3 | filter : {image3:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image3)">
-                                                            <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
-                                                            <div class="btn-group btn-copy" uib-dropdown ng-if="image.image3">
-                                                                <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
-                                                                    <i class="fa fa-copy"></i>&nbsp;<span class="caret"></span>
-                                                                </button>
-                                                                <ul uib-dropdown-menu>
-                                                                    <li ng-repeat="item in vm.copyImages">
-                                                                        <a href="javascript:void(0)" ng-click="copyToOtherImg(image,'角度图',item)" ng-if="item.name != '角度图'">
-                                                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{item.name}}
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image3}" style="height: 88px">
-                                                                <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image3)}}">
-                                                                <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images3',image.image3,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
-                                                                <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image3,0,$event)"><i class="fa fa-cloud-download "></i></button>
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-md-3 text-center m-t-md">
-                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image3',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </uib-tab>
-                                        <uib-tab>
-                                            <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
-                                                PC端自定义图
-                                            </tab-heading>
-                                            <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
-                                                <div class="tab-pane active">
-
-                                                    <div class="row" sv-root sv-part="vm.productComm.fields.images4" sv-on-sort="sortImg('images4',$event)">
-                                                        <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images4 | filter : {image4:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image4)">
-                                                            <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
-                                                            <div class="btn-group btn-copy" uib-dropdown ng-if="image.image4">
-                                                                <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
-                                                                    <i class="fa fa-copy"></i>&nbsp;<span class="caret"></span>
-                                                                </button>
-                                                                <ul uib-dropdown-menu>
-                                                                    <li ng-repeat="item in vm.copyImages">
-                                                                        <a href="javascript:void(0)" ng-click="copyToOtherImg(image,'PC端自定义图',item)" ng-if="item.name != 'PC端自定义图'">
-                                                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{item.name}}
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image4}" style="height: 88px">
-                                                                <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image4)}}">
-                                                                <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images4',image.image4,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
-                                                                <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image4,1,$event)"><i class="fa fa-cloud-download "></i></button>
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-md-3 text-center m-t-md">
-                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image4',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </uib-tab>
-                                        <uib-tab>
-                                            <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
-                                                APP端自定义图
-                                            </tab-heading>
-                                            <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
-                                                <div class="tab-pane active">
-                                                    <div class="row" sv-root sv-part="vm.productComm.fields.images5" sv-on-sort="sortImg('images5',$event)">
-                                                        <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images5 | filter : {image5:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image5)">
-                                                            <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
-                                                            <div class="btn-group btn-copy" uib-dropdown ng-if="image.image5">
-                                                                <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
-                                                                    <i class="fa fa-copy"></i>&nbsp;<span class="caret"></span>
-                                                                </button>
-                                                                <ul uib-dropdown-menu>
-                                                                    <li ng-repeat="item in vm.copyImages">
-                                                                        <a href="javascript:void(0)" ng-click="copyToOtherImg(image,'APP端自定义图',item)" ng-if="item.name != 'APP端自定义图'">
-                                                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{item.name}}
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image5}" style="height: 88px">
-                                                                <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image5)}}">
-                                                                <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images5',image.image5,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
-                                                                <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image5,1,$event)"><i class="fa fa-cloud-download "></i></button>
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-md-3 text-center m-t-md">
-                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image5',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </uib-tab>
-                                        <uib-tab>
-                                            <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
-                                                吊牌图
-                                            </tab-heading>
-                                            <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
-                                                <div class="tab-pane active">
-                                                    <div class="row" sv-root sv-part="vm.productComm.fields.images8" sv-on-sort="sortImg('images8',$event)">
-                                                        <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images8 | filter : {image8:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image8)">
-                                                            <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
-                                                            <div class="btn-group btn-copy" uib-dropdown ng-if="image.image8">
-                                                                <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
-                                                                    <i class="fa fa-copy"></i>&nbsp;<span class="caret"></span>
-                                                                </button>
-                                                                <ul uib-dropdown-menu>
-                                                                    <li ng-repeat="item in vm.copyImages">
-                                                                        <a href="javascript:void(0)" ng-click="copyToOtherImg(image,'吊牌图',item)" ng-if="item.name != '吊牌图'">
-                                                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{item.name}}
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image8}" style="height: 88px">
-                                                                <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image8)}}">
-                                                                <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images8',image.image8,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
-                                                                <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image8,0,$event)"><i class="fa fa-cloud-download "></i></button>
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-md-3 text-center m-t-md">
-                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image8',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </uib-tab>
-                                        <uib-tab>
-                                            <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
-                                                耐久性标签图
-                                            </tab-heading>
-                                            <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
-                                                <div class="tab-pane active">
-                                                    <div class="row" sv-root sv-part="vm.productComm.fields.images9" sv-on-sort="sortImg('images9',$event)">
-                                                        <div class="col-md-3" ng-repeat="image in vm.productComm.fields.images9 | filter : {image9:''}" sv-element="{containment:'#img-fix'}" ng-click="vm.currentImage = $root.imageUrl.replace('%s', image.image9)">
-                                                            <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
-                                                            <div class="btn-group btn-copy" uib-dropdown ng-if="image.image9">
-                                                                <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
-                                                                    <i class="fa fa-copy"></i>&nbsp;<span class="caret"></span>
-                                                                </button>
-                                                                <ul uib-dropdown-menu>
-                                                                    <li ng-repeat="item in vm.copyImages">
-                                                                        <a href="javascript:void(0)" ng-click="copyToOtherImg(image,'耐久性标签图',item)" ng-if="item.name != '耐久性标签图'">
-                                                                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{item.name}}
-                                                                        </a>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                            <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':vm.currentImage == image.image9}" style="height: 88px">
-                                                                <img style="max-height: 80px" class="thumb-group" ng-src="{{$root.imageUrl.replace('%s', image.image9)}}">
-                                                                <button class="btn btn-dangerdel btn-xs btn-image" ng-click="removeImg('images9',image.image9,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
-                                                                <button class="btn btn-upLoad btn-xs btn-image" ng-click="simpleImgDown(image.image9,0,$event)"><i class="fa fa-cloud-download "></i></button>
-                                                            </a>
-                                                        </div>
-                                                        <div class="col-md-3 text-center m-t-md">
-                                                            <button ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="openProImageSetting('image9',openImageSetting)"><i class="glyphicon glyphicon-plus"></i></button>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-                                        </uib-tab>
-                                    </uib-tabset>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_reqfield">
+                                            <button type="button" class="btn btn-info btn-pop"
+                                                    ng-click="ctrl.popUsCategory({cartId:1,from:ctrl.feed.category})">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;SN Primary Category
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.category}}"
+                                                   name="category" ng-model="ctrl.feed.category"  required readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.category"></vo-message>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="wrapper-sm m-t-xs" style="margin-top: -10px;">
-                                    <uib-tabset class="tab-container vo_nav-tabs">
-                                        <uib-tab>
-                                            <tab-heading>库存明细</tab-heading>
-                                            <div>
-                                                <!---------xu--------->
-                                                <div class="form-group" >
-                                                    <label class="col-sm-6 control-label text-left m-l-md">SKU</label>
-                                                    <div class="col-sm-4 text-left">
-                                                        <label class="col-sm-8 control-label text-right m-l-md">总库存</label>
-                                                    </div>
-                                                </div>
-                                                <!--------xu---------->
-                                                <div class="form-group" ng-repeat="invObj in vm.mastData.inventoryList">
-                                                    <label class="col-sm-8 control-label text-left m-l-md">{{invObj.skuCode}}</label>
-                                                    <div class="col-sm-2 text-left">
-                                                        <input type="text" class="form-control" ng-model="invObj.skuQty" readonly>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </uib-tab>
-                                        <uib-tab>
-                                            <tab-heading>尺码表 <i ng-if="!vm.productComm.sizeChart" class="fa fa-warning" style="color: red;"></i></tab-heading>
-                                            <select class="form-control" ng-model="vm.productComm.sizeChart" ng-change ="selectSizeChartChange()" ng-options="m.sizeChartId as m.sizeChartName for m in vm.sizeChartList">
-                                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory({cartId:1,froms:ctrl.feed.categoriesTree,muiti:true})">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;SN Other Category
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <select name="categories" chosen multiple width="'100%'"
+                                                    ng-options="cat as cat.catPath for cat in ctrl.feed.categoriesTree"
+                                                    ng-model="ctrl.feed.categoriesTree"></select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_reqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.popCategory({cartId:5},'amazonBrowseTree')">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Amazon Browse Tree
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="amazonBrowseTree" ng-model="ctrl.feed.amazonBrowseTree" required readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.amazonBrowseTree"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:17,from:ctrl.feed.googleCategory},'googleCategory')">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Google Category
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.googleCategory}}"
+                                                   name="googleCategory" ng-model="ctrl.feed.googleCategory" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:18,from:ctrl.feed.googleDepartment},'googleDepartment')">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Google DepartMent
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.googleDepartment}}"
+                                                   name="googleDepartment" ng-model="ctrl.feed.googleDepartment" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:19,from:ctrl.feed.priceGrabberCategory},'priceGrabberCategory')">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;PriceGrabber Category
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" title="{{ctrl.feed.priceGrabberCategory}}"
+                                                   name="priceGrabberCategory" ng-model="ctrl.feed.priceGrabberCategory" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_reqfield">Name</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="name" ng-model="ctrl.feed.name" ng-change="ctrl.generateUrlKey()" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.name"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_reqfield">Brand</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control" name="brand" chosen search-contain="true"
+                                                    ng-options="brand.value as brand.name for brand in ctrl.brandList"
+                                                    ng-model="ctrl.feed.brand" required>
                                             </select>
-                                            <div  ng-controller="popupCtrl">
-                                                <div class="table-responsive">
-                                                    <table class="table table-hover-new vo_table">
-                                                        <thead>
-                                                        <tr>
-                                                            <th class="mfb-xt text-center">Origin Size</th>
-                                                            <th class="mfb-xt text-center">Platfrom Size</th>
-                                                            <th class="mfb-xt text-center" ng-if="vm.productComm.sizeChart==null">
-                                                                <a href="#/image/size_chart_list" target="_blank" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></a>
-                                                            </th>
-                                                            <th class="mfb-xt text-center" ng-if="vm.productComm.sizeChart">
-                                                                <a href="#/channel/sizechart/detail/{{vm.productComm.sizeChart}}" target="_blank" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></a>
-                                                            </th>
-                                                        </tr>
-                                                        </thead>
-                                                        <tbody ng-if="vm.selectSizeChart">
-                                                        <tr ng-repeat="m in vm.selectSizeChart.sizeMap" >
-                                                            <td class="mfb-xt text-center">{{m.originalSize}}</td>
-                                                            <td class="mfb-xt text-center">{{m.adjustSize}}</td>
-                                                            <td class="mfb-xt text-center">
-                                                                <label class="checkbox-inline c-checkbox" >
-                                                                    <input type="checkbox" style="margin: 0;"  readonly="readonly" disabled="disabled" ng-checked="m.usual==1"  ><span class="fa fa-check"></span>
-                                                                </label>
-                                                            </td>
-                                                        </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.brand"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_reqfield">Product Type</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control" name="productType" chosen search-contain="true"
+                                                    ng-options="productType.value as productType.name for productType in ctrl.productTypeList"
+                                                    ng-model="ctrl.feed.productType" ng-change="ctrl.setSkuProperty(null,null,'1')" required>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.productType"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_reqfield">Size Type</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control" name="sizeType"  chosen search-contain="true"
+                                                    ng-options="sizeType.value as sizeType.name for sizeType in ctrl.sizeTypeList"
+                                                    ng-model="ctrl.feed.sizeType" required>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.sizeType"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_reqfield">Material</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control" name="material"  chosen search-contain="true"
+                                                    ng-options="material.value as material.name for material in ctrl.materialList"
+                                                    ng-model="ctrl.feed.material" required>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.material"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Made in</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control" name="origin"  chosen search-contain="true"
+                                                    ng-options="origin.value as origin.name for origin in ctrl.originList"
+                                                    ng-model="ctrl.feed.origin">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Color Map</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control" name="origin" chosen search-contain="true"
+                                                    ng-options="color.value as color.name for color in ctrl.colorMap"
+                                                    ng-model="ctrl.feed.colorMap">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Color</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.color">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Usage</label>
+                                        <div class="col-md-6">
+                                            <textarea class="form-control no-resize" ng-model="ctrl.feed.usageEn"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Short Description</label>
+                                        <div class="col-md-6">
+                                            <textarea class="form-control no-resize" ng-model="ctrl.feed.shortDescription"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Long Description</label>
+                                        <div class="col-md-6">
+                                            <textarea class="form-control no-resize" ng-model="ctrl.feed.longDescription"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Order Limit Count</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.orderlimitcount">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">URL Key</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.urlkey" ng-disabled="ctrl.feed.urlkey">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Abstract</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.abstract">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Accessory</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.accessory">
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Phone Order Only</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.phoneOrderOnly">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Title</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.seoTitle">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Description</label>
+                                        <div class="col-md-6">
+                                            <textarea class="form-control" ng-model="ctrl.feed.seoDescription"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Keywords</label>
+                                        <div class="col-md-6">
+                                            <textarea class="form-control" ng-model="ctrl.feed.seoKeywords"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--特殊属性 Begin-->
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Free Shipping</label>
+                                        <div class="col-md-1">
+                                            <div class="onoffswitch" style="margin: 0px auto;">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isFreeShipping"
+                                                       ng-true-value="'1'" ng-false-value="'0'"
+                                                       ng-model="ctrl.feed.freeShipping">
+                                                <label class="onoffswitch-label" for="isFreeShipping">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
                                             </div>
-                                        </uib-tab>
-                                        <uib-tab>
-                                            <tab-heading>备注 <i ng-if="vm.productComm.comment!=null&&vm.productComm.comment!=''" class="fa fa-warning" style="color: orange;"></i></tab-heading>
-                                            <div>
-                                                <div class="row form-group">
-                                                    <label class="col-md-3 control-label">商品相关备注</label>
-                                                </div>
-                                                <div class="row form-group">
-                                                    <div class="col-md-12">
-                                                        <textarea type="text" rows="4" class="form-control no-resize" ng-model="vm.productComm.comment"></textarea>
-                                                    </div>
-                                                </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Reward Eligible</label>
+                                        <div class="col-md-1">
+                                            <div class="onoffswitch" style="margin: 0px auto;">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isRewardEligible"
+                                                       ng-true-value="'1'" ng-false-value="'0'"
+                                                       ng-model="ctrl.feed.rewardEligible">
+                                                <label class="onoffswitch-label" for="isRewardEligible">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
                                             </div>
-                                        </uib-tab>
-                                    </uib-tabset>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Discount Eligible</label>
+                                        <div class="col-md-1">
+                                            <div class="onoffswitch" style="margin: 0px auto;">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isDiscountEligible"
+                                                       ng-true-value="'1'" ng-false-value="'0'"
+                                                       ng-model="ctrl.feed.discountEligible">
+                                                <label class="onoffswitch-label" for="isDiscountEligible">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Sneakerhead+</label>
+                                        <div class="col-md-1">
+                                            <div class="onoffswitch" style="margin: 0px auto;">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isSneakerhead"
+                                                       ng-true-value="'1'" ng-false-value="'0'"
+                                                       ng-model="ctrl.feed.sneakerheadPlus">
+                                                <label class="onoffswitch-label" for="isSneakerhead">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is New Arrival</label>
+                                        <div class="col-md-1">
+                                            <div class="onoffswitch" style="margin: 0px auto;">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isNewArrival"
+                                                       ng-true-value="'1'" ng-false-value="'0'"
+                                                       ng-model="ctrl.feed.newArrival">
+                                                <label class="onoffswitch-label" for="isNewArrival">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Taxable</label>
+                                        <div class="col-md-1">
+                                            <div class="onoffswitch" style="margin: 0px auto;">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isTaxable"
+                                                       ng-true-value="'1'" ng-false-value="'0'"
+                                                       ng-model="ctrl.feed.taxable">
+                                                <label class="onoffswitch-label" for="isTaxable">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--特殊属性 End-->
+
+                                <div class="form-group" ng-if="ctrl.feed.status!='New'">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title vo_unreqfield">Approve Pricing ?</label>
+                                        <div class="col-md-1">
+                                            <div class="onoffswitch" style="margin: 0px auto;">
+                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="approvePricing"
+                                                       ng-true-value="'1'" ng-false-value="'0'"
+                                                       ng-model="ctrl.feed.approvePricing">
+                                                <label class="onoffswitch-label" for="approvePricing">
+                                                    <span class="onoffswitch-inner"></span>
+                                                    <span class="onoffswitch-switch"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-3">
+                            <div class="col no-padder bg-light vo_prodDetailPanel">
+
+                                <uib-tabset class="tab-container vo_nav-tabs">
+                                    <uib-tab>
+                                        <tab-heading>Item</tab-heading>
+                                        <div id="vo_fixProdPanel">
+                                            <!-- product photos -->
+                                            <div class="vo_prodGallery">
+                                                <div class="imageContainer">
+                                                    <div class="imageWrapper">
+                                                        <img  class="imageWrapper" style="cursor: pointer;max-width: 200px; max-height: 170px;"
+                                                              src="{{ctrl.currentFeedImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentFeedImage)">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="wrapper-sm m-t-xs">
+                                                <div>
+                                                    <div class="tab-pane active">
+                                                        <div class="row">
+                                                            <div class="col-md-3" ng-repeat="image in ctrl.feed.image track by $index">
+                                                                <a href="javascript:void(0)"
+                                                                   class="thumbnail clear-margin-bottom img-auto-fix" ng-click="ctrl.currentFeedImage = image"
+                                                                   ng-class="active" style="height: 88px;padding: 0px">
+                                                                    <img class="thumb-group" style="max-height: 80px;max-width: 45px" src="{{image}}" align="bottom">
+                                                                </a>
+                                                            </div>
+                                                            <div class="col-md-3 text-center m-t-md">
+                                                                <button type="button" class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.addImage()"><i class="glyphicon glyphicon-plus"></i></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="wrapper-sm m-t-xs">
+
+                                                <div class="row">
+                                                    <div class="col-md-12 form-horizontal">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-md-6 query-title">&nbsp;&nbsp;Image Count</label>
+                                                                <div class="col-md-6">
+                                                                    <input type="text" class="form-control" ng-model="ctrl.feed.imageNum" ng-enter="ctrl.initImage(ctrl.feed.imageNum)">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <ul class="list-group">
+                                                    <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.image track by $index">
+                                                        <div class="row">
+                                                            <div class="col-md-10">
+                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-change="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <button type="button" class="btn btn-default" ng-click="ctrl.deleteImage($index)"><i class="fa fa-trash"></i></button>
+                                                            </div>
+                                                        </div>
+
+
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+                                        </div>
+                                    </uib-tab>
+                                    <uib-tab>
+                                        <tab-heading>Box</tab-heading>
+                                        <div id="vo_fixProdPanel_">
+                                            <!-- product photos -->
+                                            <div class="vo_prodGallery">
+                                                <div class="imageContainer">
+                                                    <div class="imageWrapper">
+                                                        <img  class="imageWrapper"  style="cursor: pointer;max-width: 200px; max-height: 170px;"
+                                                              ng-src="{{ctrl.currentBoxImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentBoxImage)">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="wrapper-sm m-t-xs">
+                                                <div>
+                                                    <div class="tab-pane active">
+                                                        <div class="row">
+                                                            <div class="col-md-3" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
+                                                                <a href="javascript:void(0)" class="thumbnail clear-margin-bottom img-auto-fix"
+                                                                   ng-click="ctrl.currentBoxImage = image"
+                                                                   ng-class="active" style="height: 80px">
+                                                                    <img style="max-height: 80px;max-width: 45px" class="thumb-group pos-abt" src="{{image}}">
+                                                                </a>
+                                                            </div>
+                                                            <div class="col-md-3 text-center m-t-md">
+                                                                <button type="button" ng-controller="popupCtrl" class="btn btn-success input-lg mfb-xxxsm" ng-click="ctrl.addBoxImage()"><i class="glyphicon glyphicon-plus"></i></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="wrapper-sm m-t-xs">
+
+                                                <div class="row">
+                                                    <div class="col-md-12 form-horizontal">
+                                                        <div class="form-group">
+                                                            <div class="row">
+                                                                <label class="col-md-6 query-title">&nbsp;&nbsp;Image Count</label>
+                                                                <div class="col-md-6">
+                                                                    <input type="text" class="form-control" ng-model="ctrl.feed.boxImageNum" ng-keyup="ctrl.initBoxImage(ctrl.feed.boxImageNum)">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <ul class="list-group">
+                                                    <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
+                                                        <div class="row">
+                                                            <div class="col-md-10">
+                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-change="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                                <button type="button" class="btn btn-default" ng-click="ctrl.deleteBoxImage($index)"><i class="fa fa-trash"></i></button>
+                                                            </div>
+                                                        </div>
+
+                                                    </li>
+                                                </ul>
+
+                                            </div>
+                                        </div>
+                                    </uib-tab>
+                                </uib-tabset>
+
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <br>
+
+                    <div class="skuItem">
+                        <div class="skuItem-head">
+                            <h4>Skus</h4>
+                        </div>
+                        <div class="skuItem-body">
+                            <div class="table-responsive box box-body">
+                                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                                    <thead>
+                                        <th class="text-left">Size</th>
+                                        <th class="text-left">Sku</th>
+                                        <th class="text-left">Upc</th>
+                                        <th class="text-center">platformQty</th>
+                                        <th class="text-center">Weight</th>
+                                        <th class="text-center">Weitch Unit</th>
+                                        <th class="text-right">Msrp($)</th>
+                                        <th class="text-right">price($)</th>
+                                        <th class="text-right">price($)</th>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="text-left">Size</td>
+                                            <td class="text-left">Sku</td>
+                                            <td class="text-left">Upc</td>
+                                            <td class="text-center">platformQty</td>
+                                            <td class="text-center">Weight</td>
+                                            <td class="text-center">Weitch Unit</td>
+                                            <td class="text-right">Msrp($)</td>
+                                            <td class="text-right">price($)</td>
+                                            <td class="text-right">price($)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
     <!-------------------------------- 导航栏 --------------------------------->
-    <sticky top-fix="-100" style="position: absolute; top: 280px; right: 47px;" drag>
-        <nav class="bs-docs-sidebar master-sidebar">
+    <!--1、New只有Save Button-->
+    <!--2、Pending有Save和Submit Button-->
+    <!--3、Ready有Save和Approve Button-->
+    <sticky top-fix="-100" style="position: absolute; top: 380px; right: 47px;" drag ng-if="ctrl.feed.status != 'Approved' && ctrl.feed.feedAuth <= ctrl.auth">
+        <nav class="bs-docs-sidebar" style="opacity: 1">
             <h3 drag-handle>导航栏</h3>
-            <ul class="nav bs-docs-sidenav" style="margin-bottom: 0px">
-                <li>
-                    <a href="javascript:void(0)" ng-click="pageAnchor('master',1000)">共通属性</a>
+            <ul class="nav bs-docs-sidenav">
+                <li class="text-center" style="margin: 7px">
+                    <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
+                            ng-disabled="feedForm.$invalid" ng-click="ctrl.save('0')">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Save
+                    </button>
                 </li>
-                <li>
-                    <a href="javascript:void(0)" ng-click="pageAnchor('product',1000)">产品属性</a>
+                <li class="text-center" style="margin: 7px">
+                    <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
+                            ng-disabled="feedForm.$invalid"
+                            ng-if="ctrl.feed.status != 'Ready'" ng-click="ctrl.save('1')">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Submit
+                    </button>
+                </li>
+                <li class="text-center" style="margin: 7px">
+                    <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
+                            ng-disabled="feedForm.$invalid"
+                            ng-if="ctrl.auth==3 && ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')">
+                        <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Approve
+                    </button>
                 </li>
             </ul>
-
-            <button type="button" class="btn btn-nav btn-nav-pop" ng-click="saveProduct(openHsCodeChange)" ng-controller="popupCtrl">
-                <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;&nbsp;保存
-            </button>
         </nav>
     </sticky>
-
 </div>

@@ -8,7 +8,8 @@ define([
     'modules/cms/service/product.detail.service',
     'modules/cms/directives/platFormStatus.directive',
     'modules/cms/directives/noticeTip.directive',
-    'modules/cms/directives/contextMenu.directive'
+    'modules/cms/directives/contextMenu.directive',
+    '../detail.data.service'
 ], function (cms, carts) {
 
     const mConfig = {
@@ -19,12 +20,12 @@ define([
 
     class SnTabController{
 
-        constructor(productDetailService, sizeChartService, $rootScope, systemCategoryService, alert, notify, confirm, $localStorage){
-
+        constructor(productDetailService, sizeChartService, $rootScope, systemCategoryService, alert, notify, confirm, $localStorage,detailDataService){
+            this.detailDataService = detailDataService;
         }
 
         init(){
-            console.log('init');
+            this.detailDataService.test();
         }
 
     }
@@ -32,7 +33,7 @@ define([
     cms.directive('snTab', function () {
         return {
             restrict: 'E',
-            controller: ['productDetailService', 'sizeChartService', '$rootScope', 'systemCategoryService', 'alert', 'notify', 'confirm', '$localStorage', SnTabController],
+            controller: ['productDetailService', 'sizeChartService', '$rootScope', 'systemCategoryService', 'alert', 'notify', 'confirm', '$localStorage', 'detailDataService',SnTabController],
             controllerAs: 'ctrl',
             scope: {
                 productInfo: "=productInfo",
