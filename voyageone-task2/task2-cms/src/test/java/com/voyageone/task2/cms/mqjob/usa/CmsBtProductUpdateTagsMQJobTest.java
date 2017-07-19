@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.mqjob.usa;
 
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProductFreeTagsUpdateMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdateTagsMQMessageBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +24,7 @@ public class CmsBtProductUpdateTagsMQJobTest {
     CmsBtProductUpdateTagsMQJob cmsBtProductUpdateTagsMQJob;
     @Test
     public void testOnStartup() throws Exception {
-        CmsBtProductUpdateTagsMQMessageBody map = new CmsBtProductUpdateTagsMQMessageBody();
+        CmsProductFreeTagsUpdateMQMessageBody map = new CmsProductFreeTagsUpdateMQMessageBody();
 
         map.setChannelId("001");
         map.setProdCodeList(Collections.singletonList("812654-110"));
