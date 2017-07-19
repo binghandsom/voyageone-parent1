@@ -543,6 +543,8 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                 //勾选了全部,需要通过检索条件,查询出所有信息
                 Map<String, Object> map = (Map) paraMap.get("queryMap");
                 CmsSearchInfoBean2 queryParams = BeanUtils.toModel(map, CmsSearchInfoBean2.class);
+                queryParams.setProductPageNum(null);
+                queryParams.setProductPageSize(null);
                 CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId(), user.getUserId(), user.getUserName());
                 List<String> productCodeList = cmsProductCodeListBean.getProductCodeList();
                 MqMap.setProductCodes(productCodeList);

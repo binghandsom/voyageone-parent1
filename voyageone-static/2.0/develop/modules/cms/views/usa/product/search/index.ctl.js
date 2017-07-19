@@ -69,6 +69,24 @@ define([
 
         search() {
             let self = this;
+            let searchInfo = self.handleQueryParams();
+            self.advanceSearch.search(searchInfo).then(res => {
+                if (res.data) {
+                    self.searchResult.productList = res.data.productList;
+                    self.pageOption.total = res.data.productListTotal;
+
+                    self.searchResult.productList.forEach(productInfo => {
+                        self.srInstance.currPageRows({"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
+                    });
+
+                    self.productSelList = self.srInstance.selectRowsInfo;
+                }
+            });
+        }
+
+        // 处理请求参数
+        handleQueryParams() {
+            let self = this;
             let searchInfo = angular.copy(self.searchInfo);
             if (!searchInfo) {
                 searchInfo = {};
@@ -88,19 +106,7 @@ define([
 
             // 分页参数处理
             _.extend(searchInfo, {productPageNum:self.pageOption.curr, productPageSize:self.pageOption.size});
-
-            self.advanceSearch.search(searchInfo).then(res => {
-                if (res.data) {
-                    self.searchResult.productList = res.data.productList;
-                    self.pageOption.total = res.data.productListTotal;
-
-                    self.searchResult.productList.forEach(productInfo => {
-                        self.srInstance.currPageRows({"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
-                    });
-
-                    self.productSelList = self.srInstance.selectRowsInfo;
-                }
-            });
+            return searchInfo;
         }
 
         clear() {
@@ -118,16 +124,16 @@ define([
             })
         }
 
-        popBatchPrice() {
+        popBatchPrice(cartId) {
             let self = this;
 
             self.popups.openBatchPrice({
-                selAll:"false",
-                codeList:["000009515"],
-                queryMap:{},
-                cartId:1
+                selAll:self._selall,
+                codeList:self.getSelectedProduct('code'),
+                queryMap:self.handleQueryParams(),
+                cartId:cartId? cartId :0
             }).then(res => {
-
+                //根据返回参数确定勾选状态,"1",需要清除勾选状态,"0"不需要清除勾选状态
             });
         }
 
