@@ -986,7 +986,9 @@
                                         </td>
                                         <td rowspan="2">
                                             <a href="javascript:void(0)" ng-click="openAdvanceImagedetail(productInfo)">
-                                                <img image="{{productInfo.common.fields.images6 && productInfo.common.fields.images6[0].image6?productInfo.common.fields.images6[0].image6:productInfo.common.fields.images1[0].image1}}" alt="{{productInfo.common.fields.code}}" class="thumb-sm-search"/>
+                                                <img-by-name name="productInfo.thumb"
+                                                                    alt="{{productInfo.common.fields.code}}"
+                                                                    class="thumb-sm-search"></img-by-name>
                                             </a>
                                         </td>
                                         <td colspan="{{productInfo.commArr.length + productInfo.custArr.length + productInfo.selSalesTyeArr.length + productInfo.selBiDataArr.length + 9}}" class="control-label text-left form-inline" style="height:27px; ">
@@ -1175,7 +1177,9 @@
                                         </td>
                                         <td class="text-center" rowspan="2" style="padding-left: 0">
                                             <a href="javascript:void(0)" ng-click="openAdvanceImagedetail(groupInfo)">
-                                                <img image="{{groupInfo.common.fields.images6 && groupInfo.common.fields.images6[0].image6?groupInfo.common.fields.images6[0].image6:groupInfo.common.fields.images1[0].image1}}" alt="{{groupInfo.common.fields.code}}" class="thumb-sm-search"/>
+                                                <img-by-name name="groupInfo.thumb"
+                                                                    alt="{{groupInfo.common.fields.code}}"
+                                                                    class="thumb-sm-search"></img-by-name>
                                             </a>
                                         </td>
                                         <td colspan="{{vm.commonProps.length + vm.sumCustomProps.length + vm.selSalesType.length + vm.selBiDataList.length + 1}}" class="control-label text-left form-inline" style="height:27px;">
@@ -1210,7 +1214,8 @@
                                                 <a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.common.fields.code" target="_blank"></a>
                                             </span>&nbsp;
                                             <span class="form-inline" ng-if="groupInfo.grpImgList.length > 0">
-                                                <a ng-repeat="prop2 in groupInfo.grpImgList"><img class="thumb-xxs m-r-xs" image="{{prop2.value}}" /></a>
+                                                <a ng-repeat="prop2 in groupInfo.grpImgList">
+                                                    <img-by-name class="thumb-xxs m-r-xs" name="prop2.value"></img-by-name></a>
                                             </span>
                                             <span class="pull-right" style="margin-right:10px">{{'TXT_MATER_CATEGORY_WITH_COLON' | translate}}&nbsp;{{groupInfo.common.catPath}}</span>
                                         </td>

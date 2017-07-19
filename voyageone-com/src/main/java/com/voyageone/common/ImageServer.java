@@ -30,8 +30,6 @@ public class ImageServer {
     private static String template = null;
     private static String httpTemplate = null;
     private static String exTemplate = null;
-    private static String domain;
-    private static String frontendImageUrlTemplate;
 
     static {
         Class<ImageServer> imageServerClass = ImageServer.class;
@@ -127,10 +125,7 @@ public class ImageServer {
      * @return http://{domain}/\{channel\}/is/image/sneakerhead/\{image_name\}
      */
     public static String frontendImageUrlTemplate() {
-        if (frontendImageUrlTemplate == null) {
-            frontendImageUrlTemplate = imageUrl("{channel}", "{image_name}");
-        }
-        return frontendImageUrlTemplate;
+        return imageUrl("{channel}", "{image_name}");
     }
 
     private static String imageServerUploadFilePath(String channel) {
@@ -145,10 +140,7 @@ public class ImageServer {
      * 获取当前配置的图片服务器地址
      */
     private static String domain() {
-        if (domain == null) {
-            domain = Codes.getCodeName(MAIN_CODE_ID, "domain");
-        }
-        return domain;
+        return Codes.getCodeName(MAIN_CODE_ID, "domain");
     }
 
     private static void callTheMaintainer(String message) {

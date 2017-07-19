@@ -282,6 +282,18 @@ define([
 
                 $scope.vm.productUrl = res.data.productUrl;
                 $scope.vm.productList = res.data.productList;
+
+                // 预先处理商品的缩略图，简化页面上如下的缩略图绑定
+                // productInfo.common.fields.images6 && productInfo.common.fields.images6[0].image6
+                //     ?productInfo.common.fields.images6[0].image6
+                //     :productInfo.common.fields.images1[0].image1
+                $scope.vm.productList.forEach(function (p) {
+                    var f = p.common.fields;
+                    p.thumb = f.images6 && f.images6[0].image6
+                        ?f.images6[0].image6
+                        :f.images1[0].image1
+                });
+
                 $scope.vm.codeMap = res.data.codeMap;
                 $scope.vm.qtyList = res.data.qtyList;
                 $scope.vm.productPageOption.total = res.data.productListTotal;

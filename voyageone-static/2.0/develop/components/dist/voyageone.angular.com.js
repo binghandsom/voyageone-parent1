@@ -509,7 +509,7 @@ const imageDirectiveService = ['$localStorage', class ImageDirectiveService {
 
 //noinspection JSUnusedGlobalSymbols
 const imgByName = ['imageDirectiveService', function imgByNameFactory(imageDirectiveService) {
-    const srcBindTemplate = imageDirectiveService.imageUrlTemplate.replace('{channel}', '{{channel || selectedChannel}}').replace('{image_name}', '{{name}}{{\'?\'+s7Options}}');
+    const srcBindTemplate = imageDirectiveService.imageUrlTemplate.replace('{channel}', '{{channel || selectedChannel}}').replace('{image_name}', '{{name}}{{::s7Options?\'?\'+s7Options:\'\'}}');
     return {
         restrict: 'E',
         replace: true,
