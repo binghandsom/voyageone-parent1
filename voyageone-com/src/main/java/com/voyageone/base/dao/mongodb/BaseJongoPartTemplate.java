@@ -397,4 +397,9 @@ public class BaseJongoPartTemplate {
     public void ensureIndex(String keys, String options, String collectionName) {
         getCollection(collectionName).ensureIndex(keys, options);
     }
+
+    public MongoTemplate getMongoTemplate() {
+        return mongoTemplate;
+    }
+
 }
