@@ -414,7 +414,7 @@ define([
             let params = {
                 orgFlg: '2',
                 selTagType: '6',
-                selAllFlg: self._selall,
+                selAllFlg: self._selall ? 1 : 0,
                 selCodeList: self.getSelectedProduct('code'),
                 searchInfo: self.handleQueryParams()
             };

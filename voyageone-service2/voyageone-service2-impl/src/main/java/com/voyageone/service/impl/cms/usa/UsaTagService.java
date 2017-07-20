@@ -51,6 +51,13 @@ public class UsaTagService extends BaseService {
     @Autowired
     private ProductService productService;
 
+    /**
+     * 获取USA CMS Free tags
+     */
+    public List<CmsBtTagBean> getUsaFreeTags(String channelId) {
+        return cmsBtTagDaoExt.selectListByType(channelId, CmsBtTagModelTagType.usa_free_tags);
+    }
+
 
     /**
      * 取得标签管理初始化数据（注意：高级检索画面(查询条件)使用时，查询的是最近90天的所有活动，包括已结束的）
@@ -59,7 +66,7 @@ public class UsaTagService extends BaseService {
      */
     public Map<String, Object> getInitTagInfo(String channelId, Map<String, Object> params, String lang) {
         String orgFlg = (String) params.get("orgFlg"); //
-        String selAllFlg = (String) params.get("selAllFlg");                                // 是否全选: 1用searchInfo检索全选;其他非全选,具体Code以selCodeList为准
+        Integer selAllFlg = (Integer) params.get("selAllFlg");                              // 是否全选: 1用searchInfo检索全选;其他非全选,具体Code以selCodeList为准
         String selTagType = (String) params.get("selTagType");                              // 标签类型: USA 自由标签6
         List<String> selCodeList = (List<String>) params.get("selCodeList");                // 勾选的具体Code集合
         Map<String, Object> searchInfoMap = (Map<String, Object>) params.get("searchInfo"); // 全选时检索条件
@@ -69,7 +76,7 @@ public class UsaTagService extends BaseService {
         Map<String, Object> resultMap = new HashMap<>();
 
         // 先查询 美国自由标签(type=6), 然后将其Convert to Tree
-        List<CmsBtTagBean> tagsList = cmsBtTagDaoExt.selectListByType(channelId, CmsBtTagModelTagType.usa_free_tags);
+        List<CmsBtTagBean> tagsList = this.getUsaFreeTags(channelId);
         List<CmsBtTagBean> tagTree = convertToTree(tagsList);
         resultMap.put("tagTree", tagTree);
 
@@ -89,7 +96,6 @@ public class UsaTagService extends BaseService {
             // 高级检索，设置自由标签的场合，需要检索一遍所选择商品的自由标签设值，返回到前端
             List<String> codeList = null;
             if (Objects.equals(selAllFlg, Integer.valueOf(1))) {
-                // TODO: 2017/7/19 rex.wu Solr是否有未分页方法
                 CmsProductCodeListBean productCodeListBean = cmsProductSearchQueryService.getProductCodeList(searchInfo, channelId);
                 long total = productCodeListBean.getTotalCount();
                 if (total > 0) {
@@ -99,73 +105,33 @@ public class UsaTagService extends BaseService {
                         searchInfo.setProductPageSize(pageSize);
                         searchInfo.setProductPageNum(i);
                         CmsProductCodeListBean subProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(searchInfo, channelId);
-
+                        if (subProductCodeListBean.getTotalCount() > 0l) {
+                            this.pickFreeTags(channelId, subProductCodeListBean.getProductCodeList(), tagsList, orgChkStsMap, orgChkStsMap);
+                        }
                     }
                 }
-                codeList = productCodeListBean.getProductCodeList();
             } else {
                 codeList = selCodeList;
-            }
-            if (codeList == null || codeList.isEmpty()) {
-                $warn(String.format("USA free tags, codeList is empty, parameter: %s", JacksonUtil.bean2Json(params)));
-            } else {
-                // 检索商品的自由标签设值
-                JongoQuery queryObj = new JongoQuery();
-                queryObj.setQuery("{'common.fields.code':{$in:#}}");
-                queryObj.setParameters(codeList);
-                queryObj.setProjectionExt("prodId", "common.fields.code", "usFreeTags");
-                List<CmsBtProductModel> prodList = productService.getList(channelId, queryObj);
-                if (prodList == null || prodList.isEmpty()) {
-                    $warn(String.format("USA free tags, product query result is empty, codeList is %s", JacksonUtil.bean2Json(codeList)));
-                } else {
-
-                    // TODO 此段先注释掉，即勾选子节点的话，再显示弹出画面时父节点也显示被勾选
-                    /*for (CmsBtProductModel prodObj : prodList) {
-                        List<String> tags = prodObj.getFreeTags();
-                        if (tags == null || tags.isEmpty()) {
-                            continue;
-                        }
-                        // 先过滤一遍父节点
-                        for (int i = 0; i < tags.size(); i ++) {
-                            String tagPath = tags.get(i);
-                            for (String tagPath2 : tags) {
-                                if (tagPath != null && tagPath2 != null && tagPath2.length() > tagPath.length() && tagPath2.startsWith(tagPath)) {
-                                    tags.set(i, null);
-                                }
-                            }
-                        }
-                        tags = tags.stream().filter(tagPath -> tagPath != null).collect(Collectors.toList());
-                        prodObj.setFreeTags(tags);
-                    }*/
-
-                    for (CmsBtTagBean tagBean : tagsList) {
-                        // 遍历商品列表，查看是否勾选(这里的tagsList是列表,不是树型结构)
-                        int selCnt = 0;
-                        for (CmsBtProductModel prodObj : prodList) {
-                            List<String> tags = prodObj.getUsFreeTags();
-                            if (tags == null || tags.isEmpty()) {
-                                continue;
-                            }
-                            if (tags.indexOf(tagBean.getTagPath()) >= 0) {
-                                // 有勾选
-                                selCnt++;
-                            }
-                        }
-                        if (selCnt == prodList.size()) {
-                            orgChkStsMap.put(tagBean.getTagPath(), true);
-                        } else if (0 < selCnt && selCnt < prodList.size()) {
-                            orgDispMap.put(tagBean.getTagPath(), true);
-                        }
-                    }
-                    resultMap.put("orgChkStsMap", orgChkStsMap);
-                    resultMap.put("orgDispMap", orgDispMap);
+                if (CollectionUtils.isNotEmpty(codeList)) {
+                    this.pickFreeTags(channelId, codeList, tagsList, orgChkStsMap, orgChkStsMap);
                 }
             }
+            resultMap.put("orgChkStsMap", orgChkStsMap);
+            resultMap.put("orgDispMap", orgDispMap);
         }
         //返回数据类型
         return resultMap;
     }
 
+    /**
+     * 处理Free tags的全选和半选
+     *
+     * @param channelId    渠道ID
+     * @param codeList     产品Code
+     * @param tagsList     标签
+     * @param orgChkStsMap 全选
+     * @param orgDispMap   半选
+     */
     private void pickFreeTags(String channelId, List<String> codeList, List<CmsBtTagBean> tagsList, Map<String, Boolean> orgChkStsMap, Map<String, Boolean> orgDispMap) {
         if (StringUtils.isBlank(channelId) || CollectionUtils.isEmpty(codeList)) {
             return;
@@ -217,12 +183,17 @@ public class UsaTagService extends BaseService {
                     }
                 }
                 if (selCnt == prodList.size()) {
-                    // 本页数据全选, 看原来数据是否全选，如果为空/全选那么全量结果--->>>全选
-                    Boolean flag = orgChkStsMap.get(tagBean.getTagPath());
-                    if (flag == null || flag.booleanValue()) {
-                        orgChkStsMap.put(tagBean.getTagPath(), true);
+                    if (orgDispMap.containsKey(tagBean.getTagPath())) {
+                        // 如果在半选中直接跳过了
+                        continue;
                     }
+                    // 本页数据全选
+                    orgChkStsMap.put(tagBean.getTagPath(), true);
                 } else if (0 < selCnt && selCnt < prodList.size()) {
+                    // 如果在全选中则移除
+                    if (orgChkStsMap.containsKey(tagBean.getTagPath())) {
+                        orgChkStsMap.remove(tagBean.getTagPath());
+                    }
                     orgDispMap.put(tagBean.getTagPath(), true);
                 }
             }
