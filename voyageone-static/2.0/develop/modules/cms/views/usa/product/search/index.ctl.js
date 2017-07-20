@@ -146,10 +146,11 @@ define([
                 searchInfo = {};
             }
             // codeList 换行符分割
+            let codeList = [];
             if (searchInfo.codeList) {
-                let codeList = searchInfo.codeList.split("\n");
-                searchInfo.codeList = codeList;
+                codeList = searchInfo.codeList.split("\n");
             }
+            searchInfo.codeList = codeList;
             // 处理平台状态
             if (searchInfo.platformStatus) {
                 let platformStatusObj = _.pick(searchInfo.platformStatus, function (value, key, object) {
