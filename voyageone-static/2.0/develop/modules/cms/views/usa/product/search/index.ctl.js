@@ -9,7 +9,7 @@ define([
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2) {
+        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2,notify) {
             let self = this;
 
             self.popups = popups;
@@ -20,6 +20,7 @@ define([
             self.confirm = confirm;
             self.advanceSearch = advanceSearch;
             self.$searchAdvanceService2 = $searchAdvanceService2;
+            self.notify = notify;
 
             self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
                 self.search();

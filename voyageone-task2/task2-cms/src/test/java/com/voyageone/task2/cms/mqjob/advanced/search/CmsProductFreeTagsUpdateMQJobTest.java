@@ -39,8 +39,12 @@ public class CmsProductFreeTagsUpdateMQJobTest {
         cmsSearchInfoBean2.setGroupPageSize(10);
         map.setSearchValue(cmsSearchInfoBean2);
 
-        String data = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"test\",\"channelId\":\"001\",\"isSelAll\":false,\"prodCodeList\":[\"68220-gem\",\"68220-lag\"],\"searchValue\":null,\"tagPathList\":[\"-12234-\"],\"orgDispTagList\":[],\"type\":\"usa\",\"selAll\":false,\"subBeanName\":\"001\"}";
+        // 设置 Usa free tags
+        // String data = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"test\",\"channelId\":\"001\",\"isSelAll\":false,\"prodCodeList\":[\"68220-gem\",\"68220-lag\"],\"searchValue\":null,\"tagPathList\":[\"-12234-\"],\"orgDispTagList\":[],\"type\":\"usa\",\"selAll\":false,\"subBeanName\":\"001\"}";
+        // 清空 Usa free tags
+        String data = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"test\",\"channelId\":\"001\",\"isSelAll\":false,\"prodCodeList\":[\"68220-lag\"],\"searchValue\":null,\"tagPathList\":[],\"orgDispTagList\":[],\"type\":\"usa\",\"selAll\":false,\"subBeanName\":\"001\"}";
         CmsProductFreeTagsUpdateMQMessageBody mqMessageBody = JacksonUtil.json2Bean(data, CmsProductFreeTagsUpdateMQMessageBody.class);
+
         service.onStartup(mqMessageBody);
 
     }
