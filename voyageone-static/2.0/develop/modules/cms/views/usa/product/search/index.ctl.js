@@ -74,6 +74,7 @@ define([
 
                 }
             });
+
             this.search();
         }
 
@@ -170,6 +171,10 @@ define([
             self.searchInfo = {};
         }
 
+        dismiss(attrName){
+            this.searchInfo[attrName] = null;
+        }
+
         /**
          * 批量操作前判断是否选中
          * @param cartId
@@ -230,15 +235,15 @@ define([
 
         popUsFreeTag() {
             let self = this;
-            let params = {
-                orgFlg: '0',
-                tagType: '6',
-                selAllFlg: '0',
-                selCodeList: [],
-                searchInfo: {}
-            };
-            self.popups.openUsFreeTag(params).then(res => {
-                console.log(res);
+
+            self.popups.openUsFreeTag({
+                orgFlg: '1',
+                tagType: '4',
+                orgChkStsMap:self.searchInfo.usFreeTags
+            }).then(res => {
+
+                self.searchInfo.usFreeTags = _.pluck(res.selectdTagList,'tagPath');
+
             });
         }
 

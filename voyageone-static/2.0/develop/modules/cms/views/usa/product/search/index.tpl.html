@@ -66,10 +66,10 @@
                                 <div class="col-sm-8">
                                     <div class="input-group">
                                         <select multiple chosen width="'100%'" class="form-control"
-                                                ng-model="ctrl.searchInfo.brandList" search-contains = "true"
-                                                ng-options="brand.value as brand.name for brand in ctrl.masterData.brandList">
+                                                ng-model="ctrl.searchInfo.usFreeTags"
+                                                ng-options="tag for tag in ctrl.searchInfo.usFreeTags ">
                                         </select>
-                                        <span class="input-group-addon cur-p" ng-click="dismiss('brandList')">reset</span>
+                                        <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('usFreeTags')">reset</span>
                                     </div>
                                 </div>
                             </div>
@@ -125,7 +125,7 @@
                                 <label class="col-sm-3 control-label query-title">Platform</label>
                                 <div class="col-sm-8 checkbox">
                                     <label ng-repeat="platform in ctrl.masterData.usPlatforms" style="min-width: 120px;">
-                                        <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;&nbsp;{{platform.name}}
+                                        <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;{{platform.value}}&nbsp;{{platform.name}}
                                     </label>
                                 </div>
                             </div>
@@ -156,7 +156,20 @@
                                     </button>
                                 </div>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control">
+                                    <div class="input-group" ng-if="ctrl.searchInfo.cartId == 5">
+                                        <select multiple chosen width="'100%'" class="form-control"
+                                                ng-model="ctrl.searchInfo.pCatPathList"
+                                                ng-options="category for tag in ctrl.searchInfo.pCatPathList ">
+                                        </select>
+                                        <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('pCatPathList')">reset</span>
+                                    </div>
+                                    <div class="input-group" ng-if="ctrl.searchInfo.cartId != 5">
+                                        <select multiple chosen width="'100%'" class="form-control"
+                                                ng-model="ctrl.searchInfo.cidValue"
+                                                ng-options="category for category in ctrl.searchInfo.cidValue ">
+                                        </select>
+                                        <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('cidValue')">reset</span>
+                                    </div>
                                 </div>
                             </div>
 

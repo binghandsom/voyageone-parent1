@@ -46,6 +46,16 @@ define([
                 params.productIds = context.productIds;
                 params.isSelAll = context.selAllFlg;
             }
+
+            if(context.orgFlg == 1){
+                let _obj = {};
+                _.each(context.orgChkStsMap,item => {
+                    _obj[item] = true;
+                });
+
+                self.orgChkStsMap = _obj;
+            }
+
             params.searchInfo = context.searchInfo;
 
             self.usTagService.init(self.parameter).then(function (res) {
