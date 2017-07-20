@@ -38,6 +38,8 @@ import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -586,7 +588,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
 
                 for (int i = 0; i < pageNumber; i++) {
                     queryParams.setProductPageSize(100);
-                    queryParams.setProductPageNum(i);
+                    queryParams.setProductPageNum(i + 1);
                     CmsProductCodeListBean cmsProductCodeListBean1 = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId());
                     List<String> productCodeList = cmsProductCodeListBean1.getProductCodeList();
                     mqMap.setProductCodes(productCodeList);
@@ -639,7 +641,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
 
                 for (int i = 0; i < pageNumber; i++) {
                     queryParams.setProductPageSize(100);
-                    queryParams.setProductPageNum(i);
+                    queryParams.setProductPageNum(i + 1);
                     CmsProductCodeListBean cmsProductCodeListBean1 = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId());
                     List<String> productCodeList = cmsProductCodeListBean1.getProductCodeList();
                     mqMap.setProductCodes(productCodeList);
@@ -681,52 +683,52 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                 Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
                 CmsBtProductModel_Platform_Cart usPlatform = usPlatforms.get("P" + cartId);
                 if (usPlatform != null) {
-                        List<BaseMongoMap<String, Object>> skus = usPlatform.getSkus();
-                        if (skus != null) {
-                            for (BaseMongoMap<String, Object> sku : skus) {
-                                //获取到对应的skuCode
-                                String skuCode = (String) sku.get("skuCode");
+                    List<BaseMongoMap<String, Object>> skus = usPlatform.getSkus();
+                    if (skus != null) {
+                        for (BaseMongoMap<String, Object> sku : skus) {
+                            //获取到对应的skuCode
+                            String skuCode = (String) sku.get("skuCode");
+                            //修改最大值最小值
+                            List<BulkUpdateModel> minMaxPrice = new ArrayList<>(1);
+                            HashMap<String, Object> minMaxPriceQueryMap = new HashMap<>();
+                            //设置查询条件,通过productCode进行定位
+                            minMaxPriceQueryMap.put("common.fields.code", code);
+                            HashMap<String, Object> minMaxPriceUpdateMap = new HashMap<>();
+
+                            List<BulkUpdateModel> bulkList = new ArrayList<>(1);
+                            HashMap<String, Object> updateMap = new HashMap<>();
+                            if (clientMsrpPrice != null) {
+                                updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientMsrpPrice", clientMsrpPrice);
                                 //修改最大值最小值
-                                List<BulkUpdateModel> minMaxPrice = new ArrayList<>(1);
-                                HashMap<String, Object> minMaxPriceQueryMap = new HashMap<>();
-                                //设置查询条件,通过productCode进行定位
-                                minMaxPriceQueryMap.put("common.fields.code", code);
-                                HashMap<String, Object> minMaxPriceUpdateMap = new HashMap<>();
-
-                                List<BulkUpdateModel> bulkList = new ArrayList<>(1);
-                                HashMap<String, Object> updateMap = new HashMap<>();
-                                if (clientMsrpPrice != null) {
-                                    updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientMsrpPrice", clientMsrpPrice);
-                                    //修改最大值最小值
-                                    minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceMsrpSt", clientMsrpPrice);
-                                    minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceMsrpEd", clientMsrpPrice);
-                                }
-                                if (clientRetailPrice != null) {
-                                    updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientRetailPrice", clientRetailPrice);
-                                    updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientNetPrice", clientRetailPrice);
-                                    //修改最大值最小值
-                                    minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceRetailSt", clientRetailPrice);
-                                    minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceRetailEd", clientRetailPrice);
-                                }
-                                HashMap<String, Object> queryMap = new HashMap<>();
-                                //设置查询条件
-                                queryMap.put("usPlatforms.P" + cartId + ".skus.skuCode", skuCode);
-                                BulkUpdateModel model = new BulkUpdateModel();
-                                model.setUpdateMap(updateMap);
-                                model.setQueryMap(queryMap);
-                                bulkList.add(model);
-                                productService.bulkUpdateWithMap(user.getSelChannelId(), bulkList, user.getUserName(), "$set");
-
-                                //修改最大值最小值
-                                BulkUpdateModel minMaxPriceModel = new BulkUpdateModel();
-                                minMaxPriceModel.setUpdateMap(minMaxPriceUpdateMap);
-                                minMaxPriceModel.setQueryMap(minMaxPriceQueryMap);
-                                minMaxPrice.add(minMaxPriceModel);
-                                productService.bulkUpdateWithMap(user.getSelChannelId(), minMaxPrice, user.getUserName(), "$set");
-
-
+                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceMsrpSt", clientMsrpPrice);
+                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceMsrpEd", clientMsrpPrice);
                             }
+                            if (clientRetailPrice != null) {
+                                updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientRetailPrice", clientRetailPrice);
+                                updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientNetPrice", clientRetailPrice);
+                                //修改最大值最小值
+                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceRetailSt", clientRetailPrice);
+                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceRetailEd", clientRetailPrice);
+                            }
+                            HashMap<String, Object> queryMap = new HashMap<>();
+                            //设置查询条件
+                            queryMap.put("usPlatforms.P" + cartId + ".skus.skuCode", skuCode);
+                            BulkUpdateModel model = new BulkUpdateModel();
+                            model.setUpdateMap(updateMap);
+                            model.setQueryMap(queryMap);
+                            bulkList.add(model);
+                            productService.bulkUpdateWithMap(user.getSelChannelId(), bulkList, user.getUserName(), "$set");
+
+                            //修改最大值最小值
+                            BulkUpdateModel minMaxPriceModel = new BulkUpdateModel();
+                            minMaxPriceModel.setUpdateMap(minMaxPriceUpdateMap);
+                            minMaxPriceModel.setQueryMap(minMaxPriceQueryMap);
+                            minMaxPrice.add(minMaxPriceModel);
+                            productService.bulkUpdateWithMap(user.getSelChannelId(), minMaxPrice, user.getUserName(), "$set");
+
+
                         }
+                    }
                 }
             } else {
                 //修改中国平台价格
@@ -791,5 +793,42 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             }
         }
         return null;
+    }
+
+
+    //根据productCode获取中国和美国的平台价格信息
+    public HashMap<String, Map<String, Double>> getAllPlatformsPrice(String code, UserSessionBean user) {
+        HashMap<String, Map<String, Double>> priceList = new HashMap<>();
+        if (StringUtils.isNotEmpty(code)) {
+            CmsBtProductModel cmsBtProductModel = productService.getProductByCode(user.getSelChannelId(), code);
+            if (cmsBtProductModel != null) {
+                //封装返回的价格map,cartId作为key,对应平台下价格的最大值最小值作为值
+
+                Map<String, CmsBtProductModel_Platform_Cart> platforms = cmsBtProductModel.getPlatforms();
+                Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
+                if (MapUtils.isNotEmpty(platforms)) {
+                    platforms.forEach((key, value) -> {
+                        HashMap<String, Double> priceMap = new HashMap<>();
+                        priceMap.put("priceMsrpSt", value.getpPriceMsrpSt());
+                        priceMap.put("priceMsrpEd", value.getpPriceMsrpEd());
+                        priceMap.put("priceRetailSt", value.getpPriceRetailSt());
+                        priceMap.put("priceRetailEd", value.getpPriceRetailEd());
+                        priceList.put(key.replace("P",""), priceMap);
+
+                    });
+                }
+                if (MapUtils.isNotEmpty(usPlatforms)) {
+                    usPlatforms.forEach((key, value) -> {
+                        HashMap<String, Double> priceMap = new HashMap<>();
+                        priceMap.put("priceMsrpSt", value.getpPriceMsrpSt());
+                        priceMap.put("priceMsrpEd", value.getpPriceMsrpEd());
+                        priceMap.put("priceRetailSt", value.getpPriceRetailSt());
+                        priceMap.put("priceRetailEd", value.getpPriceRetailEd());
+                        priceList.put(key.replace("P",""), priceMap);
+                    });
+                }
+            }
+        }
+        return priceList;
     }
 }

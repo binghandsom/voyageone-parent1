@@ -44,36 +44,38 @@ public class CmsBtProductUpdateListDelistStatusMQJob extends TBaseMQCmsService<C
                     Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
                     if (usPlatforms != null) {
                         CmsBtProductModel_Platform_Cart usPlatform = usPlatforms.get("P" + cartId);
-                        String status = usPlatform.getStatus();
-                        //status为Approve状态才可以进行上下架
-                        if ("Approve".equals(status)) {
+                        if (usPlatform != null){
+                            String status = usPlatform.getStatus();
+                            //status为Approve状态才可以进行上下架
+                            if ("Approve".equals(status)) {
 
-                            JongoUpdate jongoUpdate = new JongoUpdate();
-                            jongoUpdate.setQuery("{\"common.fields.code\":#}");
-                            jongoUpdate.setQueryParameters(productCode);
-                            jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + ".pStatus\":#}}");
-                            if ("list".equals(activeStatus)) {
-                                //上架操作
-                                jongoUpdate.setUpdateParameters("OnSale");
-                            }
-                            if ("deList".equals(activeStatus)) {
-                                //下架操作
-                                jongoUpdate.setUpdateParameters("InStock");
-                            }
-                            cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+                                JongoUpdate jongoUpdate = new JongoUpdate();
+                                jongoUpdate.setQuery("{\"common.fields.code\":#}");
+                                jongoUpdate.setQueryParameters(productCode);
+                                jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + ".pStatus\":#}}");
+                                if ("list".equals(activeStatus)) {
+                                    //上架操作
+                                    jongoUpdate.setUpdateParameters("OnSale");
+                                }
+                                if ("deList".equals(activeStatus)) {
+                                    //下架操作
+                                    jongoUpdate.setUpdateParameters("InStock");
+                                }
+                                cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
 
-                            //设置滞后发布日期
-                            if (days != 0){
-                                Date date = new Date();
-                                Calendar calendar = new GregorianCalendar();
-                                calendar.setTime(date);
-                                calendar.add(calendar.DATE, days);
-                                date = calendar.getTime();
-                                platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, date, 0, messageBody.getSender());
-                            }else {
-                                platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, messageBody.getSender());
-                            }
+                                //设置滞后发布日期
+                                if (days != 0){
+                                    Date date = new Date();
+                                    Calendar calendar = new GregorianCalendar();
+                                    calendar.setTime(date);
+                                    calendar.add(calendar.DATE, days);
+                                    date = calendar.getTime();
+                                    platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, date, 0, messageBody.getSender());
+                                }else {
+                                    platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, messageBody.getSender());
+                                }
 
+                            }
                         }
                     }
                 }

@@ -34,4 +34,12 @@ public class CmsAdvSearchOtherServiceTest {
         user.setUserName("xusong");
         cmsAdvSearchOtherService.updateOnePrice(map,user);
     }
+
+    @Test
+    public void testGetAllPlatformsPrice() throws Exception {
+        UserSessionBean user = new UserSessionBean();
+        user.setSelChannelId("001");
+        user.setUserName("xusong");
+        cmsAdvSearchOtherService.getAllPlatformsPrice("609973-460",user);
+    }
 }

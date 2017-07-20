@@ -4,12 +4,13 @@
  */
 define([
     'cms',
+    'modules/cms/directives/platFormStatus.directive',
     'modules/cms/directives/navBar.directive'
 ], function (cms) {
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm) {
+        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2,notify) {
             let self = this;
 
             self.popups = popups;
@@ -19,6 +20,8 @@ define([
             self.alert = alert;
             self.confirm = confirm;
             self.advanceSearch = advanceSearch;
+            self.$searchAdvanceService2 = $searchAdvanceService2;
+            self.notify = notify;
 
             self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
                 self.search();
@@ -27,6 +30,7 @@ define([
             self.searchResult = {
                 productList: []
             };
+            self.tempUpEntity = {};
             self.productSelList =  {selList: []};
             self.masterData = {
                 platforms: [],
@@ -63,7 +67,10 @@ define([
                     });
                     // 品牌列表
                     self.masterData.brandList = res.data.brandList;
-
+                    self.masterData.freeTags = {};
+                    _.each(res.data.freeTags,freeTag => {
+                        self.masterData.freeTags[freeTag.tagPath] = freeTag;
+                    });
                     // 用户自定义列
                     self.customColumns.commonProps = res.data.commonProps;
                     self.customColumns.platformAttributes = res.data.platformAttributes;
@@ -89,12 +96,32 @@ define([
                     self.pageOption.total = res.data.productListTotal;
 
                     self.searchResult.productList.forEach(productInfo => {
+                        self.setFreeTagList(productInfo);
                         self.srInstance.currPageRows({"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
                     });
 
                     self.productSelList = self.srInstance.selectRowsInfo;
                 }
             });
+        }
+
+        /**
+         * 获取自由标签tagName
+         * @param productInfo
+         */
+        setFreeTagList(productInfo){
+            let self = this,
+                _usFreeTags = [];
+
+            productInfo.usFreeTags.forEach(tag => {
+                let _tag = self.masterData.freeTags[tag];
+
+                _usFreeTags.push(_tag.tagName);
+            });
+
+            productInfo._usFreeTags = _usFreeTags;
+
+            console.log(productInfo);
         }
 
         /**
@@ -160,6 +187,14 @@ define([
                 });
                 searchInfo.platformStatus = _.keys(platformStatusObj);
             }
+
+            //处理类目和店铺内分类
+            if(self.tempUpEntity.pCatPathListTmp)
+                _.extend(searchInfo, {pCatPathType:1}); // 1 in, 2 not in
+                searchInfo.pCatPathList = _.pluck(self.tempUpEntity.pCatPathListTmp,'catPath');
+            if(self.tempUpEntity.cidValueTmp)
+                _.extend(searchInfo, {shopCatType:1}); // 1 in, 2 not in
+                searchInfo.cidValue = _.pluck(self.tempUpEntity.cidValueTmp,'catId');
 
             // 分页参数处理
             _.extend(searchInfo, {productPageNum:self.pageOption.curr, productPageSize:self.pageOption.size});
@@ -253,13 +288,19 @@ define([
 
             if (Number(self.searchInfo.cartId) === 5) {
                 //只有亚马逊显示类目
-                self.popups.openAmazonCategory({cartId: 5}).then(res => {
-                    _.extend(self.searchInfo, {pCatPathList:[res.catPath]});
+                self.tempUpEntity.cidValueTmp = null;
+                self.tempUpEntity.cidValue = null;
+
+                self.popups.openAmazonCategory({cartId: 5,froms:self.searchInfo.pCatPathList,muiti:true}).then(res => {
+                    self.tempUpEntity.pCatPathListTmp = res;
                 });
             } else {
                 //sneakerhead 显示店铺内分类
-                self.popups.openUsCategory({cartId: self.searchInfo.cartId, from: ''}).then(res => {
-                    _.extend(self.searchInfo, {cidValue:[res.catId]});
+                self.tempUpEntity.pCatPathListTmp = null;
+                self.tempUpEntity.pCatPathList = null;
+
+                self.popups.openUsCategory({cartId:self.searchInfo.cartId,froms:self.searchInfo.cidValue,muiti:true}).then(res => {
+                    self.tempUpEntity.cidValueTmp = res;
                 });
             }
         }
@@ -394,23 +435,46 @@ define([
          * 添加产品到指定自由标签
          */
         addFreeTag () {
-            // _chkProductSel(null, _addFreeTag);
-
             let self = this;
             let selCodeList = self.getSelectedProduct('code');
             let params = {
                 orgFlg: '2',
                 selTagType: '6',
-                selAllFlg: self._selall,
+                selAllFlg: self._selall ? 1 : 0,
                 selCodeList: self.getSelectedProduct('code'),
                 searchInfo: self.handleQueryParams()
             };
             self.popups.openUsFreeTag(params).then(res => {
-                console.log(res);
+                let msg = '';
+                if (_.size(res.selectdTagList) > 0) {
+                    let freeTagsTxt = _.chain(res.selectdTagList).map(function (key, value) {
+                        return key.tagPathName;
+                    }).value();
+                    msg = "Set free tags for selected products:<br>" + freeTagsTxt.join('; ');
+                } else {
+                    msg = "Clear free tags for selected products";
+                }
+                let freeTags = _.chain(res.selectdTagList).map(function (key, value) {
+                    return key.tagPath;
+                }).value();
+                self.confirm(msg)
+                    .then(function () {
+                        var data = {
+                            "type":"usa",
+                            "tagPathList": freeTags,
+                            "prodIdList": selCodeList,
+                            "isSelAll": self._selall ? 1 : 0,
+                            "orgDispTagList": res.orgDispTagList,
+                            'searchInfo': self.handleQueryParams()
+                        };
+                        self.$searchAdvanceService2.addFreeTag(data).then(function () {
+                            // notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
+                            self.notify.success("Set free tags succeeded.");
+                            self.clearSelList();
+                            self.search();
+                        })
+                    });
             });
-
-
-
         };
 
     });

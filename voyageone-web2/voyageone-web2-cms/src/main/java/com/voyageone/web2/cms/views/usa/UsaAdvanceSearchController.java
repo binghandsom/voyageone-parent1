@@ -14,6 +14,7 @@ import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
 import com.voyageone.service.impl.cms.usa.UsaAdvanceSearchService;
 import com.voyageone.service.impl.cms.usa.UsaCustomColumnService;
+import com.voyageone.service.impl.cms.usa.UsaTagService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -59,6 +60,8 @@ public class UsaAdvanceSearchController extends CmsController {
     private UsaAdvanceSearchService usaAdvanceSearchService;
     @Autowired
     private UsaCustomColumnService usaCustomColumnService;
+    @Autowired
+    private UsaTagService usaTagService;
 
     /**
      * 统一的当前语言环境提供
@@ -81,6 +84,8 @@ public class UsaAdvanceSearchController extends CmsController {
         resultMap.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), getLang()));
         // 平台
         resultMap.put("platforms", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.SKU_CARTS_53, userInfo.getSelChannelId(), getLang()));
+        // USA Free tags
+        resultMap.put("freeTags", usaTagService.getUsaFreeTags(userInfo.getSelChannelId()));
         return success(resultMap);
     }
 
@@ -240,5 +245,13 @@ public class UsaAdvanceSearchController extends CmsController {
         advSearchOtherService.updateOnePrice(params, user);
         // 返回用户信息
         return success(null);
+    }
+    //根据productCode获取中国和美国的平台价格信息
+    @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.GETALLPLATFORMSPRICE)
+    public AjaxResponse getAllPlatformsPrice(@RequestBody String code) {
+        UserSessionBean user = getUser();
+        HashMap<String, Map<String, Double>> allPlatformsPrice = advSearchOtherService.getAllPlatformsPrice(code, user);
+        // 返回用户信息
+        return success(allPlatformsPrice);
     }
 }
