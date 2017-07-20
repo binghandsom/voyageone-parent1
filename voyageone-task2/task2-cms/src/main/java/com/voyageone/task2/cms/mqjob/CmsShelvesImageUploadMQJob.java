@@ -5,6 +5,7 @@ import com.taobao.api.ApiException;
 import com.taobao.api.response.PictureUploadResponse;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
@@ -12,7 +13,6 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.FileUtils;
-import com.voyageone.common.util.HttpUtils;
 import com.voyageone.components.jd.service.JdImgzoneService;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.service.bean.cms.CmsBtShelvesInfoBean;
@@ -26,16 +26,11 @@ import com.voyageone.service.model.cms.CmsBtShelvesModel;
 import com.voyageone.service.model.cms.CmsBtShelvesProductModel;
 import com.voyageone.service.model.cms.CmsBtShelvesTemplateModel;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -119,13 +114,19 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
     }
 
     private void uploadLocal(String path, CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel) {
+
         String saveFile = String.format("%s/%s.jpg", path, cmsBtShelvesProductModel.getProductCode());
+
         String imageUrl = getImageUrl(cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
-        byte[] imageBuf = downImage(imageUrl);
-        if(imageBuf == null && imageBuf.length == 0) {
-            failMessage.append("图片下载失败url=" + imageUrl);
+
+        String channelId = cmsBtShelvesTemplateModel.getChannelId();
+        byte[] imageBuf = downImage(imageUrl, channelId);
+
+        if(imageBuf == null || imageBuf.length == 0) {
+            failMessage.append("图片下载失败url=").append(imageUrl);
             return;
         }
+
         try (FileOutputStream fileOutputStream = new FileOutputStream((new File(saveFile)))) {
             fileOutputStream.write(imageBuf);
             cmsBtShelvesProductModel.setPlatformImageId(cmsBtShelvesProductModel.getProductCode());
@@ -136,18 +137,19 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
             failMessage.append(e.getMessage());
             $error(e);
         }
-
     }
 
     private void uploadImageTm(ShopBean shopBean, CmsBtShelvesProductBean cmsBtShelvesProductModel, CmsBtShelvesTemplateModel cmsBtShelvesTemplateModel, String picCatId) {
         String imageUrl = getImageUrl(cmsBtShelvesProductModel, cmsBtShelvesTemplateModel);
+        String channel = cmsBtShelvesTemplateModel.getChannelId();
         try {
             PictureUploadResponse pictureUploadResponse;
 
             // 图片是否传过
             if (StringUtil.isEmpty(cmsBtShelvesProductModel.getPlatformImageId())) {
                 //没有传过 上传
-                pictureUploadResponse = tbPictureService.uploadPicture(shopBean, downImage(imageUrl), cmsBtShelvesProductModel.getShelvesId() + "-" + cmsBtShelvesProductModel.getImage(), picCatId);
+                pictureUploadResponse = tbPictureService.uploadPicture(shopBean, downImage(imageUrl, channel),
+                        cmsBtShelvesProductModel.getShelvesId() + "-" + cmsBtShelvesProductModel.getImage(), picCatId);
             } else {
                 try {
                     // 删除
@@ -155,7 +157,8 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
                 } catch (Exception e) {
                     $error(e);
                 }
-                pictureUploadResponse = tbPictureService.uploadPicture(shopBean, downImage(imageUrl), cmsBtShelvesProductModel.getShelvesId() + "-" + cmsBtShelvesProductModel.getImage(), picCatId);
+                pictureUploadResponse = tbPictureService.uploadPicture(shopBean, downImage(imageUrl, channel),
+                        cmsBtShelvesProductModel.getShelvesId() + "-" + cmsBtShelvesProductModel.getImage(), picCatId);
             }
             if (pictureUploadResponse != null && pictureUploadResponse.getPicture() != null) {
                 cmsBtShelvesProductModel.setPlatformImageId(pictureUploadResponse.getPicture().getPictureId() + "");
@@ -163,7 +166,7 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
                 cmsBtShelvesProductService.updatePlatformImage(cmsBtShelvesProductModel);
             }
         } catch (ApiException e) {
-            failMessage.append("图片上传TM失败url=" + imageUrl + "\t");
+            failMessage.append("图片上传TM失败url=").append(imageUrl).append("\t");
             e.printStackTrace();
             $error(e);
         }
@@ -184,7 +187,11 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
                     $error(e);
                 }
             }
-            pictureUploadResponse = jdImgzoneService.uploadPicture("MQ", imageUrl, shopBean, downImage(imageUrl), picCatId, cmsBtShelvesProductModel.getShelvesId() + "-" + cmsBtShelvesProductModel.getImage());
+            String channel = cmsBtShelvesTemplateModel.getChannelId();
+
+            pictureUploadResponse = jdImgzoneService.uploadPicture("MQ", imageUrl, shopBean,
+                    downImage(imageUrl, channel), picCatId, cmsBtShelvesProductModel.getShelvesId() + "-" +
+                            cmsBtShelvesProductModel.getImage());
 
             if (pictureUploadResponse != null && !StringUtil.isEmpty(pictureUploadResponse.getPictureId())) {
                 cmsBtShelvesProductModel.setPlatformImageId(pictureUploadResponse.getPictureId() + "");
@@ -192,7 +199,7 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
                 cmsBtShelvesProductService.updatePlatformImage(cmsBtShelvesProductModel);
             }
         } catch (Exception e) {
-            failMessage.append("图片上传TM失败url=" + imageUrl + "\t");
+            failMessage.append("图片上传TM失败url=").append(imageUrl).append("\t");
             e.printStackTrace();
             $error(e);
         }
@@ -227,43 +234,15 @@ public class CmsShelvesImageUploadMQJob extends TBaseMQCmsService<CmsShelvesImag
         return tmeplate;
     }
 
-    public byte[] downImage(String imageUrl) {
-        $info(imageUrl);
-        HttpGet httpGet = new HttpGet(imageUrl);
+    public byte[] downImage(String imageUrl, String channel) {
+        $info("下载货架图片 %s", imageUrl);
 
-        try (CloseableHttpClient httpClient = HttpClients.createMinimal();
-             CloseableHttpResponse response = httpClient.execute(httpGet);
-             InputStream inputStream = response.getEntity().getContent()) {
+        try (InputStream inputStream = ImageServer.proxyDownloadImage(imageUrl, channel)) {
             return IOUtils.toByteArray(inputStream);
         } catch (IOException e) {
             $error(e);
         }
+
         return null;
-//
-//        long threadNo = Thread.currentThread().getId();
-//        //如果promotionImagesList为空的时，不做处理
-//        byte[] buffer = new byte[1024 * 10];
-//        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-//            int len;
-//            URL url = new URL(imageUrl);
-//            $info("threadNo:" + threadNo + " url:" + imageUrl + "下载开始");
-//            //Url
-//            try (InputStream inputStream = HttpUtils.getInputStream(imageUrl)) {
-//                while ((len = inputStream.read(buffer)) > 0) {
-//                    $info("len: "+len);
-//                    byteArrayOutputStream.write(buffer, 0, len);
-//                }
-//                inputStream.close();
-//            } catch (Exception e) {
-//                $error(e);
-//                e.printStackTrace();
-//            }
-//
-//            $info("threadNo:" + threadNo + " url:" + imageUrl + "下载结束");
-//            return byteArrayOutputStream.toByteArray();
-//        } catch (IOException e) {
-//            $error(e);
-//        }
-//        return null;
     }
 }

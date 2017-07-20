@@ -7,6 +7,7 @@ import com.taobao.api.response.PictureUploadResponse;
 import com.taobao.api.response.TmallItemSchemaUpdateResponse;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
@@ -36,7 +37,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -345,30 +345,18 @@ public class BeatJobService extends BaseCronTaskService {
 
         private InputStream getImageStream(String templateUrl, String imageName, boolean withPrice) {
 
-            // 检查当前图片状态
-            ImageStatus currentStatus = beatInfoBean.getImageStatusEnum();
-
-            // 如果没有, 则默认为 None
-            if (currentStatus == null)
-                currentStatus = ImageStatus.None;
-
-            // 如果是 Error, 放弃执行
-            if (currentStatus == ImageStatus.Error)
-                throw new BreakBeatJobException("取图失败");
-
-            // 此处预想逻辑是异步处理图片。此时使用同步所以, 只要不是 Error 状态。都直接请求取图
-            // 所以也就是只要不是 Error 其他状态都直接取图
-
             Double promotionPrice = beatInfoBean.getPromotion_code().getPromotionPrice();
             try {
                 String imageUrl;
                 if (withPrice)
-                    imageUrl = templateUrl.replace("{key}", imageName).replace("{price}", new DecimalFormat("#.##").format(promotionPrice));
+                    imageUrl = templateUrl
+                            .replace("{key}", imageName)
+                            .replace("{price}", new DecimalFormat("#.##").format(promotionPrice));
                 else
                     imageUrl = templateUrl.replace("{key}", imageName);
 
-                URL url = new URL(imageUrl);
-                return url.openStream();
+                // 对于下载请求，替换域名，转移到图片服务上，让图片服务来判断是从 s7 下载，还是七牛
+                return ImageServer.proxyDownloadImage(imageUrl, shopBean.getOrder_channel_id());
             } catch (Exception e) {
                 beatInfoBean.setImageStatus(ImageStatus.Error);
                 $info("取图失败, 发生异常", e);
