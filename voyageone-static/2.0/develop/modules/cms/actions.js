@@ -389,7 +389,8 @@ define(function () {
             "task": {
                 "taskService": {
                     "root": "/cms/promotion/task",
-                    "page": "page"
+                    "page": "page",
+                    "updateStatus": "updateStatus"
                 },
                 "taskBeatService": {
                     "root": "/cms/task/beat",

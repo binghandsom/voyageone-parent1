@@ -1,42 +1,22 @@
 <div class="wrapper-md" ng-init="ctrl.init()">
-	<div class="vo_accordion vo_attr">
-		<div class="panel-group">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title"><i class="glyphicon glyphicon-star"></i>&nbsp;{{'TXT_TASK_LIST' | translate}}</h4>
-				</div>
-				<div class="container-fluid m-t-sm m-b-md">
-					<div class="col-sm-12">
-						<div class="col-sm-4">
-							<div class="form-horizontal">
-								<div class="form-group" >
-									<label class="col-sm-4  control-label" translate="TXT_TASK_TYPE"></label>
-									<div class="col-sm-7">
-										<select class="form-control" ng-model="ctrl.searchInfo.task_type">
-											<option value='' translate="TXT_SELECT_NO_VALUE"></option>
-											<option ng-repeat="type in ctrl.taskType" value={{type.value}}>{{type.name}}</option>
-										</select>
-									</div>
-								</div>
-								<!--<div class="col-sm-3">-->
-								<!--<div class="form-horizontal">-->
-								<div class="form-group">
-									<label class="col-sm-4 control-label" translate="TXT_TIME_START"></label>
-									<div class="col-sm-8 form-inline">
-										<div class="col-sm-5 input-group">
-											<input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.activityStart"
-												   max-date="ctrl.searchInfo.activityEnd" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker1" ng-required="true" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker1 = !ctrl.datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
-										</div>&nbsp;~&nbsp;
-										<div class="col-sm-5 input-group">
-											<input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.activityEnd"
-												   min-date="ctrl.searchInfo.activityStart" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker2" ng-required="true" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker2 = !ctrl.datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
-                                        </div>
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="glyphicon glyphicon-star"></i>&nbsp;{{'TXT_TASK_LIST' | translate}}</h4>
+                </div>
+                <div class="container-fluid m-t-sm m-b-md">
+                    <div class="col-sm-12">
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" translate="TXT_PLATFORM_TYPE"></label>
+
+                                    <div class="col-sm-7">
+                                        <label class="checkbox-inline c-checkbox" ng-repeat="platform in ctrl.platformTypeList">
+                                            <input type="checkbox" ng-value="platform.value" style="margin: 0"
+                                                   ng-model="ctrl.platformStatus[platform.value]"><span class="fa fa-check"></span> {{platform.name}}
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -44,18 +24,64 @@
                         <div class="col-sm-4">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label" translate="TXT_SEARCH"></label>
+                                    <label class="col-sm-4  control-label" translate="TXT_TASK_TYPE"></label>
+
+                                    <div class="col-sm-7">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.task_type">
+                                            <option value='' translate="TXT_SELECT_NO_VALUE"></option>
+                                            <option ng-repeat="type in ctrl.taskType" value={{type.value}}>{{type.name}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <!--<div class="col-sm-3">-->
+                                <!--<div class="form-horizontal">-->
+
+
+                                <div class="form-group">
+                                    <label class="col-sm-4  control-label" translate="TXT_TASK_STATUS"></label>
+
+                                    <div class="col-sm-8">
+                                        <select class="form-control" ng-model="ctrl.searchInfo.status">
+                                            <option value='' translate="TXT_SELECT_NO_VALUE"></option>
+                                            <option ng-repeat="status in ctrl.taskStatus" value={{status.value}}>{{status.name}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" translate="TXT_TASK_NAME"></label>
+
                                     <div class="col-sm-7">
                                         <input class="form-control" ng-model="ctrl.searchInfo.searchKey">
                                     </div>
                                 </div>
+
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label" ></label>
-                                    <div class="col-sm-7">
-                                        <label class="checkbox-inline c-checkbox" ng-repeat="platform in ctrl.platformTypeList">
-                                            <input type="checkbox" ng-value="platform.value" style="margin: 0"
-                                                   ng-model="ctrl.platformStatus[platform.value]"><span class="fa fa-check"></span> {{platform.name}}
-                                        </label>
+                                    <label class="col-sm-4 control-label" translate="TXT_TIME_START"></label>
+
+                                    <div class="col-sm-8 form-inline">
+                                        <div class="col-sm-5 input-group">
+                                            <input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.activityStart"
+                                                   max-date="ctrl.searchInfo.activityEnd" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker1"
+                                                   ng-required="true" close-text="Close"/>
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker1 = !ctrl.datePicker1"><i
+                                                        class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div>
+                                        &nbsp;~&nbsp;
+                                        <div class="col-sm-5 input-group">
+                                            <input type="text" class="form-control" uib-datepicker-popup ng-model="ctrl.searchInfo.activityEnd"
+                                                   min-date="ctrl.searchInfo.activityStart" date-model-format="yyyy-MM-dd" is-open="ctrl.datePicker2"
+                                                   ng-required="true" close-text="Close"/>
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="ctrl.datePicker2 = !ctrl.datePicker2"><i
+                                                        class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div><!-- .form-group -->
@@ -79,7 +105,7 @@
     <div class="panel panel-default">
         <div class="panel-heading">
             <div class="btn-group">
-                <button  type="button" class="btn btn-success btn-pop" ng-click="ctrl.addOrUpdateTask(null)">
+                <button type="button" class="btn btn-success btn-pop" ng-click="ctrl.addOrUpdateTask(null)">
                     <i class="fa fa-plus"></i> &nbsp;{{'BTN_CREATE_BEAT_TASK' | translate}}
                 </button>
             </div>
@@ -92,7 +118,7 @@
                         <tr>
                             <th class="mfb-xt3 text-center">ID</th>
                             <!--<th class="text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label></th>-->
-                            <th class="mfb-xt text-left">{{'TXT_STATUS' | translate}}</th>
+                            <th class="mfb-xt text-left">{{'TXT_TASK_STATUS' | translate}}</th>
                             <th class="mfb-xt text-left">{{'TXT_TASK_NAME' | translate}}</th>
                             <th class="mfb-xt text-left">{{'TXT_PLATFORM_TYPE_WITH_COLON' | translate}}</th>
                             <th class="mfb-xt text-left">{{'TXT_TYPE' | translate}}</th>
@@ -105,8 +131,14 @@
                         <tbody>
                         <tr ng-repeat="task in ctrl.tasks">
                             <td class="mfb-xt3 text-center">{{task.id}}</td>
-                            <td class="mfb-xt text-left"><span ng-show="task.status==0" class="label label-success-new m-r-lg"> Open </span><span
-                                    ng-show="task.status==1" class="label label-yellow-new m-r-lg"> Close </span></td>
+                            <td class="mfb-xt text-left">
+						        <span ng-show="task.status==1" class="label label-success-new m-r-lg">
+							        <a ng-click="setClosePromotionStatus(promotion)"> Open </a>
+						        </span>
+						        <span ng-show="task.status==0" class="label label-yellow-new m-r-lg">
+							        <a ng-click="setOpenPromotionStatus(promotion)"> Close </a>
+						        </span>
+                            </td>
                             <td class="mfb-xt text-left">
                                 <!--<a ng-if="task.taskType == 1" ng-href="#/promotion/task/beat/{{task.id}}" target="_blank">
                                     {{task.taskName}}
@@ -120,42 +152,47 @@
                                 </a>
                             </td>
 
-                    <td class="mfb-xt text-left">{{ctrl.cartName(task.cartId)}}</td>
-                    <td class="mfb-xt text-left">{{ctrl.typeName(task)}}</td>
-                    <td class="mfb-xxt text-left">{{task.activityStart}} ~ {{task.activityEnd}}</td>
-                    <td class="mfb-xxs text-left">
-                        <div class="row" ng-if="task.taskType == 1">
-                            <div >
-                                <button ng-click="ctrl.controlAll(task.id, 'BEATING')" class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP_ALL"></span></button>
-                                <button ng-click="ctrl.controlAll(task.id, 'STOP')" class="btn btn-danger"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP_ALL"></span></button>
-                                <button ng-click="ctrl.controlAll(task.id, 'REVERT')" class="btn btn-success"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_ALL"></span></button>
+                            <td class="mfb-xt text-left">{{ctrl.cartName(task.cartId)}}</td>
+                            <td class="mfb-xt text-left">{{ctrl.typeName(task)}}</td>
+                            <td class="mfb-xxt text-left">{{task.activityStart}} ~ {{task.activityEnd}}</td>
+                            <td class="mfb-xxs text-left">
+                                <div class="row" ng-if="task.taskType == 1">
+                                    <div>
+                                        <button ng-click="ctrl.controlAll(task.id, 'BEATING')" class="btn btn-primary"><i
+                                                class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP_ALL"></span></button>
+                                        <button ng-click="ctrl.controlAll(task.id, 'STOP')" class="btn btn-danger"><i
+                                                class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP_ALL"></span></button>
+                                        <button ng-click="ctrl.controlAll(task.id, 'REVERT')" class="btn btn-success"><i
+                                                class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_ALL"></span></button>
 
-                                <button title="编辑" class="btn btn-success btn-xs ng-scope" ng-click="ctrl.addOrUpdateTask(task)"><i class="fa fa-pencil"></i></button>
-                                <button title="删除" class="btn btn-danger btn-xs" ng-click="ctrl.delTask(task)"><i class="fa  fa-trash-o"></i></button>
-                            </div>
-                        </div>
-                        <!--<a ng-if="task.taskType == 1" ng-href="#/promotion/task/beat/{{task.id}}" target="_blank">-->
-                            <!--<button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i-->
-                                    <!--class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}-->
-                            <!--</button>-->
-                        <!--</a>-->
-                        <!--<a ng-if="task.taskType == 0" ng-href="#/promotion/task/price/{{task.promotion.id}}"-->
-                           <!--target="_blank">-->
-                            <!--<button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i-->
-                                    <!--class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}-->
-                            <!--</button>-->
-                        <!--</a>-->
-                        <!--<a ng-if="task.taskType == 2" ng-href="#/promotion/task_stock/{{task.id}}"-->
-                           <!--target="_blank">-->
-                            <!--<button title="{{'TXT_STOCK_SEPARATE_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_STOCK_SEPARATE_DETAIL' | translate}}-->
-                            <!--</button>-->
-                        <!--</a>-->
-                        <!--<a ng-if="task.taskType == 2"-->
-                           <!--ng-href="#/promotion/task_stock_increment/{{::task.id}}" target="_blank">-->
-                            <!--<button title="{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}-->
-                            <!--</button>-->
-                        <!--</a>-->
-                    </td>
+                                        <button title="编辑" class="btn btn-success btn-xs ng-scope" ng-click="ctrl.addOrUpdateTask(task)"><i
+                                                class="fa fa-pencil"></i></button>
+                                        <button title="删除" class="btn btn-danger btn-xs" ng-click="ctrl.delTask(task)"><i class="fa  fa-trash-o"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!--<a ng-if="task.taskType == 1" ng-href="#/promotion/task/beat/{{task.id}}" target="_blank">-->
+                                <!--<button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i-->
+                                <!--class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}-->
+                                <!--</button>-->
+                                <!--</a>-->
+                                <!--<a ng-if="task.taskType == 0" ng-href="#/promotion/task/price/{{task.promotion.id}}"-->
+                                <!--target="_blank">-->
+                                <!--<button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i-->
+                                <!--class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}-->
+                                <!--</button>-->
+                                <!--</a>-->
+                                <!--<a ng-if="task.taskType == 2" ng-href="#/promotion/task_stock/{{task.id}}"-->
+                                <!--target="_blank">-->
+                                <!--<button title="{{'TXT_STOCK_SEPARATE_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_STOCK_SEPARATE_DETAIL' | translate}}-->
+                                <!--</button>-->
+                                <!--</a>-->
+                                <!--<a ng-if="task.taskType == 2"-->
+                                <!--ng-href="#/promotion/task_stock_increment/{{::task.id}}" target="_blank">-->
+                                <!--<button title="{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}-->
+                                <!--</button>-->
+                                <!--</a>-->
+                            </td>
 
                         </tr>
                         </tbody>

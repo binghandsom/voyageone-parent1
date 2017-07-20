@@ -228,6 +228,8 @@ public interface CmsUrlConstants {
                 String ROOT = "/cms/promotion/task";
 
                 String PAGE = "page";
+
+                String UPDATE_STATUS = "updateStatus";
             }
 
             interface BEAT {

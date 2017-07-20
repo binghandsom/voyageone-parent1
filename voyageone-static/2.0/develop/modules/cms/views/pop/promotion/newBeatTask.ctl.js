@@ -9,11 +9,10 @@ define([
                                taskJiagepiluService, $location) {
 
             var self = this;
-            var task = null;
-            var taskBean = null;
+            //var task = null;
             if (context.task) {
-                task = context.task;
-                self.task = context.task;
+                self.taskBean = angular.copy(context.task);
+                self.oldTaskBean = angular.copy(context.task);
                 self.isEdit = true;
             }
 
@@ -26,14 +25,14 @@ define([
 
             if (context.platformTypeList && _.size(context.platformTypeList) > 0) {
                 self.platformTypeList = context.platformTypeList;
-                angular.forEach(self.platformTypeList, function (platform) {
+                _.forEach(self.platformTypeList, function (platform) {
                     var cartIdVal = platform.value;
                     platform.value = parseInt(cartIdVal);
                 });
             } else {
-                if (task) {
+                if (self.taskBean) {
                     self.platformTypeList =
-                        [{value: task.cartId, name: carts.valueOf(task.cartId).desc}];
+                        [{value: self.taskBean.cartId, name: carts.valueOf(self.taskBean.cartId).desc}];
                 }
             }
             // 将字符串日期转换为 Date 日期。
@@ -41,18 +40,25 @@ define([
             // 否则会报错
 
 
-            if (task) {
-                task.activityStart = self.formatDate(task.activityStart);
-                task.activityEnd = self.formatDate(task.activityEnd);
-                self.taskBean = task;
-                if (_.isString(task.config)) {
-                    task.config = JSON.parse(task.config);
+            if (self.taskBean) {
+                self.taskBean.activityStart = self.formatDate(self.taskBean.activityStart);
+                self.taskBean.activityEnd = self.formatDate(self.taskBean.activityEnd);
+                //self.taskBean = task;
+                if (_.isString(self.taskBean.config)) {
+                    self.taskBean.config = JSON.parse(self.taskBean.config);
                 }
                 self.selectCart();
+                self.taskBean.testPrice = 9999;
+                self.changeBeatTemplate();
+                self.selectRevertTemplate();
             } else {
                 self.taskBean = {
                     taskName: '',
                     cartId: '',
+                    testPrice: 9999,
+                    need_vimage: false,
+                    selectTemplate: null,
+                    testVteImageUrl: null,
                     // activityStart: new Date(promotion.activityStart),
                     // activityEnd: new Date(promotion.activityEnd),
                     config: {
@@ -64,10 +70,6 @@ define([
                     }
                 };
             }
-
-            // taskBeatService.getTemplates({promotionId: promotion.id}).then(function (res) {
-            //     self.templates = res.data;
-            // });
         }
 
         PopNewBeatCtl.prototype = {
@@ -87,6 +89,7 @@ define([
                 //         });
                 //     }
                 // });
+
             },
 
             ok: function () {
@@ -119,16 +122,23 @@ define([
             },
 
             cancel: function () {
-                this.$uibModalInstance.dismiss();
+                this.$uibModalInstance.dismiss(self.oldTaskBean);
             },
 
             changeBeatTemplate: function () {
                 var self = this;
                 if (self.taskBean.config.beat_template && self.taskBean.testPrice) {
                     var beatTemplate = angular.copy(self.taskBean.config.beat_template);
-                    beatTemplate = beatTemplate.replace("{key}", "patagonia-down-sweater-vest-kids-68220gem-1");
+                    beatTemplate = beatTemplate.replace("{key}", "adidas-samba-lifestyle-shoesg17102-1");
                     beatTemplate = beatTemplate.replace("{price}", self.taskBean.testPrice);
                     _.extend(self.taskBean, {testImageUrl: beatTemplate});
+                }
+
+                if (self.taskBean.config.need_vimage && self.taskBean.config.beat_vtemplate && self.taskBean.testPrice) {
+                    var beatTemplate = angular.copy(self.taskBean.config.beat_vtemplate);
+                    beatTemplate = beatTemplate.replace("{key}", "adidas-samba-lifestyle-shoesg17102-1");
+                    beatTemplate = beatTemplate.replace("{price}", self.taskBean.testPrice);
+                    _.extend(self.taskBean, {testVteImageUrl: beatTemplate});
                 }
             },
 
@@ -144,13 +154,7 @@ define([
                     }
 
                     self.taskJiagepiluService.getPlatformSxTemplate({cartId: self.taskBean.cartId}).then(function (resp) {
-                        if (resp.data) {
-                            // angular.forEach(resp.data, function (template) {
-                            //     self.platformSxImageTemplates.push(template.imageTemplate);
-                            // })
-                            self.platformSxImageTemplates = _.pluck(resp.data,'imageTemplate');
-                        }
-
+                        self.platformSxImageTemplates = resp.data;
                     });
                 } else {
                     self.platformSxImageTemplates = [];
@@ -159,8 +163,19 @@ define([
 
             selectRevertTemplate: function () {
                 var self = this;
-                if (self.taskBean && self.taskBean.selectTemplate) {
-                    self.taskBean.config.revert_template = self.taskBean.selectTemplate;
+                if (self.taskBean && self.taskBean.config.revert_template) {
+                    self.taskBean.selectTemplate = self.taskBean.config.revert_template.replace("%s", "adidas-samba-lifestyle-shoesg17102-1");
+                }
+
+                if (self.taskBean.config.need_vimage && self.taskBean && self.taskBean.config.revert_vtemplate) {
+                    self.taskBean.selectVteTemplateUrl = self.taskBean.config.revert_vtemplate.replace("%s", "adidas-samba-lifestyle-shoesg17102-1");
+                }
+            },
+            changeNeedVimage: function () {
+                var self = this;
+                if (!self.taskBean.config.need_vimage) {
+                    self.taskBean.config.beat_vtemplate = null;
+                    self.taskBean.config.revert_vtemplate = null;
                 }
             }
 
