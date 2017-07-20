@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.mqjob.usa;
 
+import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -98,7 +99,8 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                                         jongoUpdate.setQueryParameters(skuCode);
                                         jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + ".skus.$." + changedPriceType + "\":#}}");
                                         jongoUpdate.setUpdateParameters(newPrice);
-                                        cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+                                        BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+                                        System.out.println("修改结果:" + bulkWriteResult);
                                         if ("Approve".equals(status)) {
                                             platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, sender);
                                         }
@@ -108,7 +110,7 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                         } else {
                             //cartId=0,修改所有平台的价格
                             usPlatforms.forEach((cartId1, platform) -> {
-                                Integer cartId2 = Integer.parseInt(cartId1);
+                                Integer cartId2 = Integer.parseInt(cartId1.replace("P",""));
                                 String status = platform.getStatus();
                                 if (platform != null) {
                                     List<BaseMongoMap<String, Object>> skus = platform.getSkus();
@@ -145,7 +147,8 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                                             jongoUpdate.setQueryParameters(skuCode);
                                             jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId2 + ".skus.$." + changedPriceType + "\":#}}");
                                             jongoUpdate.setUpdateParameters(newPrice);
-                                            cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+                                            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+                                            System.out.println("修改结果:" + bulkWriteResult);
                                             if ("Approve".equals(status)) {
                                                 platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId2, productCode, null, 0, sender);
                                             }
