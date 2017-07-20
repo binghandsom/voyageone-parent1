@@ -55,6 +55,8 @@ public class UsaCmsUrlConstants {
 
         String LISTORDELIST = "listOrDelist";
 
+        String UPDATEONEPRICE = "updateOnePrice";
+
 
     }
 

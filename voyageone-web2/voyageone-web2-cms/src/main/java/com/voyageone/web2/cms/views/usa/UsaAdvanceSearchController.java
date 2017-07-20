@@ -233,4 +233,12 @@ public class UsaAdvanceSearchController extends CmsController {
         // 返回用户信息
         return success(null);
     }
+    //单个修改价格
+    @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.UPDATEONEPRICE)
+    public AjaxResponse updateOnePrice(@RequestBody Map params) {
+        UserSessionBean user = getUser();
+        advSearchOtherService.updateOnePrice(params, user);
+        // 返回用户信息
+        return success(null);
+    }
 }
