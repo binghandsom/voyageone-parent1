@@ -11,10 +11,7 @@ define([
             restrict: 'E',
             transclude: true,
             replace: true,
-            template:"<nav class=\"nav-bar\">\n" +
-                    " <div ng-transclude></div>\n" +
-                    "</nav>\n" +
-                    "",
+            templateUrl:"directives／navBar.directive.html",
             scope: {
                 heading: '@',
                 isOpen: '=?',
