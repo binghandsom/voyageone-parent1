@@ -49,7 +49,6 @@
                                         <select multiple chosen width="'100%'" class="form-control"
                                                 ng-model="ctrl.searchInfo.brandList" search-contains = "true"
                                                 ng-options="brand.value as brand.name for brand in ctrl.masterData.brandList">
-                                            <!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
                                         </select>
                                         <span class="input-group-addon cur-p" ng-click="dismiss('brandList')">reset</span>
                                     </div>
@@ -65,7 +64,13 @@
                                     </button>
                                 </div>
                                 <div class="col-sm-8">
-                                    <input type="text" class="form-control">
+                                    <div class="input-group">
+                                        <select multiple chosen width="'100%'" class="form-control"
+                                                ng-model="ctrl.searchInfo.brandList" search-contains = "true"
+                                                ng-options="brand.value as brand.name for brand in ctrl.masterData.brandList">
+                                        </select>
+                                        <span class="input-group-addon cur-p" ng-click="dismiss('brandList')">reset</span>
+                                    </div>
                                 </div>
                             </div>
 
