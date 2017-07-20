@@ -57,6 +57,8 @@ public class UsaCmsUrlConstants {
 
         String UPDATEONEPRICE = "updateOnePrice";
 
+        String GETALLPLATFORMSPRICE = "getAllPlatformsPrice";
+
 
     }
 
