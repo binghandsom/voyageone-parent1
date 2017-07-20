@@ -254,15 +254,15 @@ define([
 
             $scope.searchInfo.hasStatus = undefined;//是否有状态
             if ($scope.searchInfo.synchStatus0) {
-                $scope.searchInfo.synchStatusList.push(0)
-                $scope.searchInfo.synchStatusList.push(1)
+                $scope.searchInfo.synchStatusList.push(0);
+                $scope.searchInfo.synchStatusList.push(1);
                 $scope.searchInfo.hasStatus = 1;
             }
             if ($scope.searchInfo.allStatus1) {
                 $scope.searchInfo.hasStatus = 1;
             }
             if ($scope.searchInfo.synchStatus2) {
-                $scope.searchInfo.synchStatusList.push(2)
+                $scope.searchInfo.synchStatusList.push(2);
                 $scope.searchInfo.hasStatus = 1;
             }
             if ($scope.searchInfo.allErrorStatus) {
@@ -588,7 +588,7 @@ define([
         $scope.openTagModifyWin = function () {
             var listPromotionProduct = $scope.getSelectedPromotionProductList();
             if (listPromotionProduct.length == 0 && $scope.vm._selall == false) {
-                alert("请选择修改价格的商品!");
+                alert("请选择修改标签的商品!");
                 return;
             }
             popups.openJMTagModify({
