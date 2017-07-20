@@ -125,7 +125,7 @@
                                 <label class="col-sm-3 control-label query-title">Platform</label>
                                 <div class="col-sm-8 checkbox">
                                     <label ng-repeat="platform in ctrl.masterData.usPlatforms" style="min-width: 120px;">
-                                        <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;{{platform.value}}&nbsp;{{platform.name}}
+                                        <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp&nbsp;{{platform.name}}
                                     </label>
                                 </div>
                             </div>
@@ -158,15 +158,15 @@
                                 <div class="col-sm-8">
                                     <div class="input-group" ng-if="ctrl.searchInfo.cartId == 5">
                                         <select multiple chosen width="'100%'" class="form-control"
-                                                ng-model="ctrl.searchInfo.pCatPathList"
-                                                ng-options="category for tag in ctrl.searchInfo.pCatPathList ">
+                                                ng-model="ctrl.tempUpEntity.pCatPathListTmp"
+                                                ng-options="category as category.catPath for category in ctrl.tempUpEntity.pCatPathListTmp">
                                         </select>
                                         <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('pCatPathList')">reset</span>
                                     </div>
                                     <div class="input-group" ng-if="ctrl.searchInfo.cartId != 5">
                                         <select multiple chosen width="'100%'" class="form-control"
-                                                ng-model="ctrl.searchInfo.cidValue"
-                                                ng-options="category for category in ctrl.searchInfo.cidValue ">
+                                                ng-model="ctrl.tempUpEntity.cidValueTmp"
+                                                ng-options="category as category.catPath for category in ctrl.tempUpEntity.cidValueTmp">
                                         </select>
                                         <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('cidValue')">reset</span>
                                     </div>
@@ -340,10 +340,7 @@
                                                     <button ng-if="productInfo.usFreeTags != null && productInfo.usFreeTags.length > 0"
                                                             ng-controller="showPopoverCtrl" popover-html="showInfo(productInfo.usFreeTags)"
                                                             popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
-                                                    <button type="button" class="btn btn-pop btn-default" ng-disabled="vm.masterData.freetagList.length == 0"
-                                                            ng-click="ctrl.addProductFreeTag(productInfo)">
-                                                        <i class="fa fa-cog"></i>&nbsp;{{'TXT_CUS_TAGS_SETTING' | translate}}
-                                                    </button>
+
                                                 </span>
 
                                             <span class="label m-t-xs m-r-sm m-l-sm" style="font-size:12px;background-color:black;" ng-if="productInfo.lock == 1">&nbsp;锁定&nbsp;</span>
