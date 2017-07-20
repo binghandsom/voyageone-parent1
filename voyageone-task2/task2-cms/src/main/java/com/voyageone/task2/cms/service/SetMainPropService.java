@@ -53,6 +53,7 @@ import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
+import com.voyageone.service.impl.cms.usa.UsaNewArrivalService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.WmsCreateOrUpdateProductMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
@@ -172,6 +173,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
     @Autowired
     SellerCatService sellerCatService;
+
+    @Autowired
+    UsaNewArrivalService usaNewArrivalService;
 
 
     /**
@@ -1248,26 +1252,40 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
                         platform.getFields().setAttribute("sneakerfoiko", false);
 
-                        List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
+                        List<String> catPath = new ArrayList<>();
                         if(!StringUtil.isEmpty(feed.getCategory())) {
-                            CmsBtProductModel_SellerCat sellerCat = getSellerCat(feed.getChannelId(), SN.getValue(), feed.getCategory());
-                            if(sellerCat != null) {
-                                sellerCats.add(sellerCat);
-                            }
+                            catPath.add(feed.getCategory());
                         }
                         if(ListUtils.notNull(feed.getAttribute().get("categoriesTree"))){
                             try {
                                 List<Map<String, Object>> cats = JacksonUtil.jsonToMapList(feed.getAttribute().get("categoriesTree").get(0));
-                                cats.forEach(item->{
-                                    CmsBtProductModel_SellerCat sellerCat = getSellerCat(feed.getChannelId(), SN.getValue(), (String) item.get("catPath"));
-                                    if (sellerCat != null) {
-                                        sellerCats.add(sellerCat);
-                                    }
-                                });
+                                for(Map<String, Object> item:cats){
+                                    catPath.add((String) item.get("catPath"));
+                                }
                             }catch (Exception ignored){
                             }
                         }
+                        // NewArrival的自动匹配店铺分类
+                        if(platform.getFields().getAttribute("newArrival") != null && "1".equals(platform.getFields().getAttribute("newArrival"))){
+                            List<String> newArrivalCategorys = usaNewArrivalService.getNewArrivalCategory(feed.getProductType(), feed.getSizeType());
+                            if(ListUtils.notNull(newArrivalCategorys)){
+                                catPath.addAll(newArrivalCategorys);
+                            }
+                        }
 
+                        // 店铺内分类去重
+                        if(ListUtils.notNull(catPath)){
+                            catPath = catPath.stream().distinct().collect(Collectors.toList());
+                        }
+
+                        // 店铺内分类设置
+                        List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
+                        catPath.forEach(cat -> {
+                            CmsBtProductModel_SellerCat sellerCat = getSellerCat(feed.getChannelId(), SN.getValue(), cat);
+                            if (sellerCat != null) {
+                                sellerCats.add(sellerCat);
+                            }
+                        });
                         platform.setSellerCats(sellerCats);
                         break;
                     case Xsneakers:
