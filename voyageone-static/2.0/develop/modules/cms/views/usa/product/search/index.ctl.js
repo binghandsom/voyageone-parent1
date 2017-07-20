@@ -4,6 +4,7 @@
  */
 define([
     'cms',
+    'modules/cms/directives/platFormStatus.directive',
     'modules/cms/directives/navBar.directive'
 ], function (cms) {
 

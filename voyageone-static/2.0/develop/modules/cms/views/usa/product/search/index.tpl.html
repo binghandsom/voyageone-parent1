@@ -337,11 +337,11 @@
                                             <span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall==1&&productInfo._prodOrgChaName">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>&nbsp;
                                             <!-- Todo 标签 -->
                                             <span>&nbsp;&nbsp;
-                                                    <button ng-if="productInfo.usFreeTags != null && productInfo.usFreeTags.length > 0"
-                                                            ng-controller="showPopoverCtrl" popover-html="showInfo(productInfo.usFreeTags)"
-                                                            popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
+                                                <button ng-if="productInfo.usFreeTags != null && productInfo.usFreeTags.length > 0"
+                                                        ng-controller="showPopoverCtrl" popover-html="showInfo(productInfo.usFreeTags)"
+                                                        popover-title="标签" type="button" popover-placement="left" class="btn btn-warning btn-xs">标签</button>
 
-                                                </span>
+                                            </span>
 
                                             <span class="label m-t-xs m-r-sm m-l-sm" style="font-size:12px;background-color:black;" ng-if="productInfo.lock == 1">&nbsp;锁定&nbsp;</span>
                                             <span class="text-right">
