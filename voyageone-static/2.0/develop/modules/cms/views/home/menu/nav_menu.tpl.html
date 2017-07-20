@@ -19,12 +19,12 @@
             </div>
 
             <div ng-switch-default>
-                <a  ng-if="!$root.isParentMenu(item) && isCn" href="{{item.resUrl}}">
+                <a  ng-if="!$root.isParentMenu(item) && !item.selfAuth" href="{{item.resUrl}}">
                     <i class="{{item.icon}}"></i>
                     <span >{{item.resName}}</span>
                 </a>
 
-                <a  ng-if="!$root.isParentMenu(item) && !isCn" href="javascript:void(0)" ng-click="linkPage(item)">
+                <a  ng-if="!$root.isParentMenu(item) && item.selfAuth" href="javascript:void(0)" ng-click="linkPage(item)">
                     <i class="{{item.icon}}"></i>
                     <span >{{item.resName}}</span>
                 </a>

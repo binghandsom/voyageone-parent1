@@ -7,11 +7,8 @@
  */
 package com.voyageone.service.dao.cms;
 
-import com.sun.tools.corba.se.idl.StringGen;
 import com.voyageone.service.model.cms.CmsMtPropModel;
 import java.util.List;
-import java.util.Map;
-
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -29,6 +26,4 @@ public interface CmsMtPropDao {
     int update(CmsMtPropModel record);
 
     int delete(Integer id);
-
-    List<Map<String, String>> selectByType(Integer type);
 }

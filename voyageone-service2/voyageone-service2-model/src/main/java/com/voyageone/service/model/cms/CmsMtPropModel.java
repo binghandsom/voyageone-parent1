@@ -29,6 +29,16 @@ public class CmsMtPropModel extends BaseModel {
     protected Integer type;
 
     /**
+     * 排序名，主要和Solr Bean属性名对应
+     */
+    protected String sortName;
+
+    /**
+     * 是否可排序：1可排序；0不可排序
+     */
+    protected Integer sortFlag;
+
+    /**
      * 语言：中文cn,英文en
      */
     protected String lang;
@@ -55,6 +65,22 @@ public class CmsMtPropModel extends BaseModel {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public String getSortName() {
+        return sortName;
+    }
+
+    public void setSortName(String sortName) {
+        this.sortName = sortName == null ? null : sortName.trim();
+    }
+
+    public Integer getSortFlag() {
+        return sortFlag;
+    }
+
+    public void setSortFlag(Integer sortFlag) {
+        this.sortFlag = sortFlag;
     }
 
     public String getLang() {

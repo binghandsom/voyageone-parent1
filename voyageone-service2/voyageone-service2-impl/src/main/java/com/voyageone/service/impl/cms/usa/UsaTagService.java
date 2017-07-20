@@ -94,9 +94,7 @@ public class UsaTagService extends BaseService {
                 JongoQuery queryObj = new JongoQuery();
                 queryObj.setQuery("{'common.fields.code':{$in:#}}");
                 queryObj.setParameters(codeList);
-                // TODO: 2017/7/19 rex.wu
-//                queryObj.setProjectionExt("prodId", "common.fields.code", "usFreeTags");
-                queryObj.setProjectionExt("prodId", "common.fields.code", "freeTags");
+                queryObj.setProjectionExt("prodId", "common.fields.code", "usFreeTags");
                 List<CmsBtProductModel> prodList = productService.getList(channelId, queryObj);
                 if (prodList == null || prodList.isEmpty()) {
                     $warn(String.format("USA free tags, product query result is empty, codeList is %s", JacksonUtil.bean2Json(codeList)));
@@ -129,7 +127,7 @@ public class UsaTagService extends BaseService {
                         // 遍历商品列表，查看是否勾选(这里的tagsList是列表,不是树型结构)
                         int selCnt = 0;
                         for (CmsBtProductModel prodObj : prodList) {
-                            List<String> tags = prodObj.getFreeTags();
+                            List<String> tags = prodObj.getUsFreeTags();
                             if (tags == null || tags.isEmpty()) {
                                 continue;
                             }

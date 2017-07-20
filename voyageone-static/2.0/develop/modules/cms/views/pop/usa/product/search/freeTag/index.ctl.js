@@ -46,6 +46,16 @@ define([
                 params.productIds = context.productIds;
                 params.isSelAll = context.selAllFlg;
             }
+
+            if(context.orgFlg == 1){
+                let _obj = {};
+                _.each(context.orgChkStsMap,item => {
+                    _obj[item] = true;
+                });
+
+                self.orgChkStsMap = _obj;
+            }
+
             params.searchInfo = context.searchInfo;
 
             self.usTagService.init(self.parameter).then(function (res) {
@@ -54,7 +64,7 @@ define([
                 self.orgTagTree = res.data.tagTree;
 
                 /**设置自由标签时，有初始勾选值*/
-                if (context.orgFlg == 2) {
+                if (context.orgFlg == '2') {
                     /**勾选状态*/
                     self.orgChkStsMap = res.data.orgChkStsMap;
                     /**半选状态*/
@@ -67,7 +77,7 @@ define([
             });
         }
 
-        openTag() {
+        openTag(tag, treeIndex) {
             let self = this, vm = self.vm,
                 nextTags = vm.trees[treeIndex + 1];
 
@@ -80,7 +90,7 @@ define([
             vm.trees.push({tags: tag.children});
         }
 
-        selOrgDisp() {
+        selOrgDisp(id, path, event) {
             let self = this;
 
             /**设置checkbox的选择状态*/
@@ -95,7 +105,7 @@ define([
             event.stopPropagation();
         }
 
-        filterByName() {
+        filterByName(parentIndex, tags) {
             let self = this,
                 searchName = self.searchName[parentIndex];
 
