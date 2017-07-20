@@ -109,7 +109,10 @@
                                         </label>
                                     </td>
                                     <td class="text-center v-middle">
-                                        <a href="javascript:void(0)" ng-click="ctrl.openImageDetail(productInfo)"><img class="thumb-md" image="{{productInfo.common.fields.images1[0].image1}}"></a>
+                                        <a href="javascript:void(0)" ng-click="ctrl.openImageDetail(productInfo)">
+                                            <img-by-name class="thumb-md" name="productInfo.common.fields.images1[0].image1">
+                                            </img-by-name>
+                                        </a>
                                     </td>
                                     <td class="text-left v-middle">
                                         <a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank">
@@ -142,29 +145,29 @@
                 <div class="form-group">
                     <table class="table table-hover-new table-hover table_main table_compare">
                         <thead>
-                            <tr>
-                                <th class="text-center table_compare_before" colspan="4" translate="TXT_MOVED_BEFORE"></th>
-                                <th class="text-center table_compare_after" colspan="4" translate="TXT_MOVED_AFTER"></th>
-                            </tr>
-                            <tr>
-                                <th class="text-center table_compare_before" colspan="2" translate="TXT_SOURCE_INFO"></th>
-                                <th class="text-center table_compare_before" colspan="2" translate="TXT_TARGET_INFO"></th>
-                                <th class="text-center table_compare_after" colspan="2" translate="TXT_SOURCE_INFO"></th>
-                                <th class="text-center table_compare_after" colspan="2" translate="TXT_TARGET_INFO"></th>
-                            </tr>
-                            <tr>
-                                <th class="text-left mfb-xxt table_compare_before" translate="TXT_SOURCE_CODE_INFO"></th>
-                                <th class="text-left mfb-xxt table_compare_before" translate="TXT_SOURCE_SKU_INFO"></th>
-                                <th class="text-left mfb-xxt table_compare_before" translate="TXT_TARGET_CODE_INFO"></th>
-                                <th class="text-left mfb-xxt table_compare_before" translate="TXT_TARGET_SKU_INFO"></th>
-                                <th class="text-left mfb-xxt table_compare_after" translate="TXT_SOURCE_CODE_INFO"></th>
-                                <th class="text-left mfb-xxt table_compare_after" translate="TXT_SOURCE_SKU_INFO"></th>
-                                <th class="text-left mfb-xxt table_compare_after" translate="TXT_TARGET_CODE_INFO"></th>
-                                <th class="text-left mfb-xxt table_compare_after" translate="TXT_TARGET_SKU_INFO"></th>
-                            </tr>
+                        <tr>
+                            <th class="text-center table_compare_before" colspan="4" translate="TXT_MOVED_BEFORE"></th>
+                            <th class="text-center table_compare_after" colspan="4" translate="TXT_MOVED_AFTER"></th>
+                        </tr>
+                        <tr>
+                            <th class="text-center table_compare_before" colspan="2" translate="TXT_SOURCE_INFO"></th>
+                            <th class="text-center table_compare_before" colspan="2" translate="TXT_TARGET_INFO"></th>
+                            <th class="text-center table_compare_after" colspan="2" translate="TXT_SOURCE_INFO"></th>
+                            <th class="text-center table_compare_after" colspan="2" translate="TXT_TARGET_INFO"></th>
+                        </tr>
+                        <tr>
+                            <th class="text-left mfb-xxt table_compare_before" translate="TXT_SOURCE_CODE_INFO"></th>
+                            <th class="text-left mfb-xxt table_compare_before" translate="TXT_SOURCE_SKU_INFO"></th>
+                            <th class="text-left mfb-xxt table_compare_before" translate="TXT_TARGET_CODE_INFO"></th>
+                            <th class="text-left mfb-xxt table_compare_before" translate="TXT_TARGET_SKU_INFO"></th>
+                            <th class="text-left mfb-xxt table_compare_after" translate="TXT_SOURCE_CODE_INFO"></th>
+                            <th class="text-left mfb-xxt table_compare_after" translate="TXT_SOURCE_SKU_INFO"></th>
+                            <th class="text-left mfb-xxt table_compare_after" translate="TXT_TARGET_CODE_INFO"></th>
+                            <th class="text-left mfb-xxt table_compare_after" translate="TXT_TARGET_SKU_INFO"></th>
+                        </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                        <tr>
                             <td class="text-left v-middle">{{ctrl.sourceCodeInfoBefore}}</td>
                             <td class="text-left v-middle">
                                 <div ng-repeat="skuInfo in ctrl.sourceSkuInfoBefore">
@@ -192,7 +195,7 @@
                                     <div ng-if="skuInfo.current != true">{{skuInfo.sku}}</div>
                                 </div>
                             </td>
-                            </tr>
+                        </tr>
                         </tbody>
                     </table>
                 </div>

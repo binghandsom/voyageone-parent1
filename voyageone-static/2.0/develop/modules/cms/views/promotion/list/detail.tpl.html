@@ -4,7 +4,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h4 class="panel-title"><i class="glyphicon glyphicon-star"></i>
-                    <span translate="TXT_PROMOTION_DETAIL"></span></h4>
+                        <span translate="TXT_PROMOTION_DETAIL"></span></h4>
                 </div>
                 <div class="container-fluid m-t-sm m-b-md">
                     <div class="col-sm-12">
@@ -79,7 +79,7 @@
                                             <input type="text" ng-model="vm.promotion.prePeriodStart" class="form-control" uib-datepicker-popup
                                                    is-open="datePicker1" date-model-format="yyyy-MM-dd" close-text="Close"
                                                    max-date="vm.promotion.prePeriodEnd"/>
-								              <span class="input-group-btn">
+                                            <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>&nbsp;~&nbsp;
@@ -87,7 +87,7 @@
                                             <input type="text" ng-model="vm.promotion.prePeriodEnd" class="form-control" uib-datepicker-popup
                                                    is-open="datePicker2" date-model-format="yyyy-MM-dd" close-text="Close"
                                                    min-date="vm.promotion.prePeriodStart"/>
-								              <span class="input-group-btn">
+                                            <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>
@@ -100,7 +100,7 @@
                                             <input type="text" ng-model="vm.promotion.preSaleStart" class="form-control" uib-datepicker-popup
                                                    is-open="datePicker3" date-model-format="yyyy-MM-dd" close-text="Close"
                                                    max-date="vm.promotion.preSaleEnd"/>
-								              <span class="input-group-btn">
+                                            <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>&nbsp;~&nbsp;
@@ -108,7 +108,7 @@
                                             <input type="text" ng-model="vm.promotion.preSaleEnd" class="form-control" uib-datepicker-popup
                                                    is-open="datePicker4" date-model-format="yyyy-MM-dd" close-text="Close"
                                                    min-date="vm.promotion.preSaleStart"/>
-								              <span class="input-group-btn">
+                                            <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>
@@ -121,7 +121,7 @@
                                             <input type="text" ng-model="vm.promotion.activityStart" class="form-control" uib-datepicker-popup
                                                    is-open="datePicker5" date-model-format="yyyy-MM-dd" close-text="Close"
                                                    max-date="vm.promotion.activityEnd"/>
-								              <span class="input-group-btn">
+                                            <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker5 = !datePicker5"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>&nbsp;~&nbsp;
@@ -129,7 +129,7 @@
                                             <input type="text" ng-model="vm.promotion.activityEnd" class="form-control" uib-datepicker-popup
                                                    is-open="datePicker6" date-model-format="yyyy-MM-dd" close-text="Close"
                                                    min-date="vm.promotion.activityStart"/>
-								              <span class="input-group-btn">
+                                            <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker6 = !datePicker6"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>
@@ -160,10 +160,10 @@
                             </div>
                         </div>
                     </div>
-                    </div>
                 </div>
             </div>
         </div>
+    </div>
     <div class="box">
         <uib-tabset class="tab-container vo_nav-tabs">
             <!--right-btn-->
@@ -248,8 +248,9 @@
                             </tr>
                             <tr>
                                 <td class="mfb-xxt text-center">
-                                    <img image="{{code.image}}"
-                                         alt="{{code.productName}}" class="thumb-sm-search pull-left m-r"/>
+                                    <img-by-name name="code.image"
+                                                 alt="{{code.productName}}"
+                                                 class="thumb-sm-search pull-left m-r"></img-by-name>
                                 </td>
                                 <td class="mfb-xxt text-left">
                                     <!--ng-model="model.tagNameList"-->
@@ -355,9 +356,8 @@
                             </tr>
                             <tr>
                                 <td class="mfb-xxxs text-left">
-                                    <img image="{{group.image}}"
-                                         alt="{{group.productName}}" class="thumb-sm-search pull-left m-r"/>
-
+                                    <img-by-name name="group.image" alt="{{group.productName}}"
+                                                 class="thumb-sm-search pull-left m-r"></img-by-name>
                                     <div class="table_main pull-left" style="width:60%">
                                         <ul>
 
@@ -473,11 +473,3 @@
     </div>
     <!-- tabs ng-controller -->
 </div><!-- end .wrapper-md -->
-
-
-
-
-
-
-
-

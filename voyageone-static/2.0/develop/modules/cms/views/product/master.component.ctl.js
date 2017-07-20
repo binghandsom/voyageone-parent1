@@ -119,8 +119,9 @@ define([
                         }));
 
                         //champion不存在主商品图
-                        if (_fields.images1 && _fields.images1[0])
-                            scope.vm.currentImage = $rootScope.imageUrl.replace('%s', _fields.images1[0].image1);
+                        if (_fields.images1 && _fields.images1[0]) {
+                            scope.vm.currentImage = _fields.images1[0].image1
+                        }
 
                         scope.productInfo.feedInfo = scope.vm.mastData.feedInfo;
                         scope.productInfo.productCustomIsDisp = scope.vm.mastData.productCustomIsDisp;

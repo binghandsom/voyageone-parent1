@@ -68,7 +68,7 @@ define([
         UploadImagesCtl.prototype.init = function () {
             var self = this;
 
-            self.currentImage = self.$rootScope.imageUrl.replace('%s', self.context.platform.images1[0].image1);
+            self.currentImage = self.context.platform.images1[0].image1;
 
             self.images1 = self.context.platform.images1;
             self.platform = self.context.platform;

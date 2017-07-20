@@ -118,23 +118,26 @@
                                         </label>
                                     </td>
                                     <td class="text-center v-middle">
-                                        <a href="javascript:void(0)" ng-click="ctrl.openImageDetail(group.mainProductInfo)"><img class="thumb-md" image="{{group.mainProductInfo.common.fields.images1[0].image1}}"></a>
+                                        <a href="javascript:void(0)" ng-click="ctrl.openImageDetail(group.mainProductInfo)">
+                                            <img-by-name class="thumb-md" name="group.mainProductInfo.common.fields.images1[0].image1">
+                                            </img-by-name>
+                                        </a>
                                     </td>
                                     <td class="text-left v-middle" ng-if="group.mainProductInfo.common.fields.originalTitleCn != ''">
                                         <a ng-href="#/product/detail/{{group.mainProductInfo.prodId}}" target="_blank">
-                                        {{group.mainProductInfo.common.fields.originalTitleCn}}</a>
+                                            {{group.mainProductInfo.common.fields.originalTitleCn}}</a>
                                     </td>
                                     <td class="text-left v-middle" ng-if="group.mainProductInfo.common.fields.originalTitleCn == ''">
                                         <a ng-href="#/product/detail/{{group.mainProductInfo.prodId}}" target="_blank">
-                                        {{group.mainProductInfo.common.fields.productNameEn}}</a>
+                                            {{group.mainProductInfo.common.fields.productNameEn}}</a>
                                     </td>
                                     <td class="text-left v-middle">
                                         <a ng-href="{{ctrl.productUrl}}{{group.groupInfo.numIId}}{{ctrl.cartId=='27'?'.html':''}}" target="_blank">
-                                        {{group.groupInfo.numIId}}</a>
+                                            {{group.groupInfo.numIId}}</a>
                                     </td>
                                     <td class="text-left v-middle">
                                         <a ng-href="#/group/detail/{{group.groupInfo.groupId}}" target="_blank">
-                                        {{group.mainProductInfo.common.fields.model}}</a>
+                                            {{group.mainProductInfo.common.fields.model}}</a>
                                     </td>
                                     <td class="text-left v-middle">
                                         {{group.groupInfo.platformStatus}}
