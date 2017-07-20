@@ -69,7 +69,7 @@ define([
                     self.customColumns.selPlatformAttributes = self.getselectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
                     //self.customColumns.selPlatformSales = self.getselectedProps(res.data.platformSales,res.data.selPlatformSales);
 
-                    console.log(self.customColumns.commonProps);
+                    console.log('commonProp',self.customColumns.commonProps);
 
                 }
             });

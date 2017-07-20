@@ -36,6 +36,11 @@
     margin:0 auto;
 }
 
+.th-border-white{
+    border: 1px solid #fff;
+    padding-left: 10px;
+}
+
 /**advance search*/
 .tab-title{
     width: 175px;

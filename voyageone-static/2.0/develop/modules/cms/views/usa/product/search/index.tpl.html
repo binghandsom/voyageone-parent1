@@ -241,35 +241,37 @@
                                             <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
                                         </label>
                                     </th>
-                                    <th class="text-center td-width-100 white-space-noWrap">IMG</th>
-                                    <th class="text-left td-width-100 white-space-noWrap">Code</th>
-                                    <th class="text-left td-width-150 white-space-noWrap">Name</th>
-                                    <th class="text-left td-width-100 white-space-noWrap">ProductType</th>
-                                    <th class="text-left td-width-100 white-space-noWrap">Brand
+                                    <th class="text-center td-width-100 white-space-noWrap th-border-white">IMG</th>
+                                    <th class="text-left td-width-100 white-space-noWrap th-border-white">Code</th>
+                                    <th class="text-left td-width-150 white-space-noWrap th-border-white">Name</th>
+                                    <th class="text-left td-width-100 white-space-noWrap th-border-white">ProductType</th>
+                                    <th class="text-left td-width-100 white-space-noWrap th-border-white">Brand
                                         <button class="opacityBtn" ng-click="ctrl.columnOrder('brand')">
                                             <i class="fa fa-{{ctrl.getArrowName('brand')}}"></i>
                                         </button>
                                     </th>
-                                    <th class="text-right td-width-100 white-space-noWrap">Total Qty
+                                    <th class="text-right td-width-100 white-space-noWrap th-border-white">Total Qty
                                         <button class="opacityBtn" ng-click="ctrl.columnOrder('quantity')">
                                             <i class="fa fa-{{ctrl.getArrowName('quantity')}}"></i>
                                         </button>
                                     </th>
-                                    <th class="text-center td-width-100 white-space-noWrap">Last Received
+                                    <th class="text-center td-width-100 white-space-noWrap th-border-white">Last Received
                                         <button class="opacityBtn" ng-click="ctrl.columnOrder('lastReceivedOn')">
                                             <i class="fa fa-{{ctrl.getArrowName('lastReceivedOn')}}"></i>
                                         </button>
                                     </th>
-                                    <th class="text-center td-width-150 white-space-noWrap" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selCommonProps">
+                                    <th class="text-center td-width-150 white-space-noWrap th-border-white" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selCommonProps">
                                         {{prop.propName}}
-                                        <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.propId)">
-                                            <i class="fa fa-{{ctrl.getArrowName(prop.propId)}}"></i>
+                                        <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.sortName)"
+                                            ng-if="prop.sortFlag == 1 && prop.sortName != ''">
+                                            <i class="fa fa-{{ctrl.getArrowName(prop.sortName)}}"></i>
                                         </button>
                                     </th>
-                                    <th class="text-center td-width-150 white-space-noWrap" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes">
+                                    <th class="text-center td-width-150 white-space-noWrap th-border-white" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes">
                                         {{prop.name}}
-                                        <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.value)">
-                                            <i class="fa fa-{{ctrl.getArrowName(prop.value)}}"></i>
+                                        <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.sortName)"
+                                                ng-if="prop.sortFlag == 1 && prop.sortName != ''">
+                                            <i class="fa fa-{{ctrl.getArrowName(prop.sortName)}}"></i>
                                         </button>
                                     </th>
                                 </tr>
