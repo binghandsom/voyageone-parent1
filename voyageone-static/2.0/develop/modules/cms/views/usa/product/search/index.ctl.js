@@ -386,6 +386,30 @@ define([
 
         }
 
+        // 批量修改Free tags
+        /**
+         * 添加产品到指定自由标签
+         */
+        addFreeTag () {
+            // _chkProductSel(null, _addFreeTag);
+
+            let self = this;
+            let selCodeList = self.getSelectedProduct('code');
+            let params = {
+                orgFlg: '2',
+                selTagType: '6',
+                selAllFlg: self._selall,
+                selCodeList: self.getSelectedProduct('code'),
+                searchInfo: self.handleQueryParams()
+            };
+            self.popups.openUsFreeTag(params).then(res => {
+                console.log(res);
+            });
+
+
+
+        };
+
     });
 
 });

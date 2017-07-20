@@ -54,7 +54,7 @@ define([
                 self.orgTagTree = res.data.tagTree;
 
                 /**设置自由标签时，有初始勾选值*/
-                if (context.orgFlg == 2) {
+                if (context.orgFlg == '2') {
                     /**勾选状态*/
                     self.orgChkStsMap = res.data.orgChkStsMap;
                     /**半选状态*/
