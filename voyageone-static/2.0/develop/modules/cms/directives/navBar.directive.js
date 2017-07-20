@@ -11,7 +11,7 @@ define([
             restrict: 'E',
             transclude: true,
             replace: true,
-            templateUrl:"directives／navBar.directive.html",
+            templateUrl:"directives/navBar.directive.html",
             scope: {
                 heading: '@',
                 isOpen: '=?',
