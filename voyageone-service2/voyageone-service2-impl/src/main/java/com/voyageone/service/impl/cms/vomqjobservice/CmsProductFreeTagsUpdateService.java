@@ -146,13 +146,16 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
                 queryParams.setProductPageNum(i);
                 CmsProductCodeListBean cmsProductCodeListBean1 = cmsProductSearchQueryService.getProductCodeList(queryParams, messageMap.getChannelId());
                 prodCodeList = cmsProductCodeListBean1.getProductCodeList();
+                $info("productCnt=" + prodCodeList.size());
+                productTagService.setProdUsFreeTag(messageMap.getChannelId(), tagPathList, prodCodeList, orgDispTagList, EnumProductOperationType.BatchSetFreeTag, messageMap.getSender());
             }
         } else {
             prodCodeList = messageMap.getProdCodeList();
+            $info("productCnt=" + prodCodeList.size());
+            productTagService.setProdUsFreeTag(messageMap.getChannelId(), tagPathList, prodCodeList, orgDispTagList, EnumProductOperationType.BatchSetFreeTag, messageMap.getSender());
         }
 
-        $info("productCnt=" + prodCodeList.size());
-        productTagService.setProdUsFreeTag(messageMap.getChannelId(), tagPathList, prodCodeList, orgDispTagList, EnumProductOperationType.BatchSetFreeTag, messageMap.getSender());
+
 
         return prodCodeList;
     }

@@ -38,6 +38,8 @@ import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -790,6 +792,31 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                 }
             }
         }
+        return null;
+    }
+
+
+    //根据productCode获取中国和美国的平台价格信息
+    public String getAllPlatformsPrice(String code, UserSessionBean user) {
+        if (StringUtils.isNotEmpty(code)){
+            CmsBtProductModel cmsBtProductModel = productService.getProductByCode(user.getSelChannelId(), code);
+            if (cmsBtProductModel != null){
+                //封装返回的价格map,cartId作为key,对应平台下价格的最大值最小值作为值
+                HashMap<String, Map<String,Double>> priceList = new HashMap<>();
+                Map<String, CmsBtProductModel_Platform_Cart> platforms = cmsBtProductModel.getPlatforms();
+                Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
+                if (MapUtils.isNotEmpty(platforms)){
+                    platforms.forEach((key,value)->{
+
+                        HashMap<String, Double> priceMap = new HashMap<>();
+
+                    });
+                }
+
+            }
+        }
+
+
         return null;
     }
 }
