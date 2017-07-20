@@ -813,7 +813,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                         priceMap.put("priceMsrpEd", value.getpPriceMsrpEd());
                         priceMap.put("priceRetailSt", value.getpPriceRetailSt());
                         priceMap.put("priceRetailEd", value.getpPriceRetailEd());
-                        priceList.put(key, priceMap);
+                        priceList.put(key.replace("P",""), priceMap);
 
                     });
                 }
@@ -824,7 +824,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                         priceMap.put("priceMsrpEd", value.getpPriceMsrpEd());
                         priceMap.put("priceRetailSt", value.getpPriceRetailSt());
                         priceMap.put("priceRetailEd", value.getpPriceRetailEd());
-                        priceList.put(key, priceMap);
+                        priceList.put(key.replace("P",""), priceMap);
                     });
                 }
             }

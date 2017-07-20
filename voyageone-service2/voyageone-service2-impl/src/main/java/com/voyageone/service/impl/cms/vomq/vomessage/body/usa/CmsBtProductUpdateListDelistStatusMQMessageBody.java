@@ -15,8 +15,10 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_USA_PRODUCT_LIST_DELIST)
 public class CmsBtProductUpdateListDelistStatusMQMessageBody extends BaseMQMessageBody {
     private Integer cartId;
+    //"list"上架操作,"deList"下架操作
     private String activeStatus;
     private List<String> productCodes;
+    //延迟操作的天数
     private Integer days;
 
     public Integer getDays() {
