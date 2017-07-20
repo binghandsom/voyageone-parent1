@@ -9,7 +9,7 @@ define([
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm) {
+        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2) {
             let self = this;
 
             self.popups = popups;
@@ -19,6 +19,7 @@ define([
             self.alert = alert;
             self.confirm = confirm;
             self.advanceSearch = advanceSearch;
+            self.$searchAdvanceService2 = $searchAdvanceService2;
 
             self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
                 self.search();
@@ -391,8 +392,6 @@ define([
          * 添加产品到指定自由标签
          */
         addFreeTag () {
-            // _chkProductSel(null, _addFreeTag);
-
             let self = this;
             let selCodeList = self.getSelectedProduct('code');
             let params = {
@@ -403,11 +402,36 @@ define([
                 searchInfo: self.handleQueryParams()
             };
             self.popups.openUsFreeTag(params).then(res => {
-                console.log(res);
+                let msg = '';
+                if (_.size(res.selectdTagList) > 0) {
+                    let freeTagsTxt = _.chain(res.selectdTagList).map(function (key, value) {
+                        return key.tagPathName;
+                    }).value();
+                    msg = "Set free tags for selected products:<br>" + freeTagsTxt.join('; ');
+                } else {
+                    msg = "Clear free tags for selected products";
+                }
+                let freeTags = _.chain(res.selectdTagList).map(function (key, value) {
+                    return key.tagPath;
+                }).value();
+                self.confirm(msg)
+                    .then(function () {
+                        var data = {
+                            "type":"usa",
+                            "tagPathList": freeTags,
+                            "prodIdList": selCodeList,
+                            "isSelAll": self._selall ? 1 : 0,
+                            "orgDispTagList": res.orgDispTagList,
+                            'searchInfo': self.handleQueryParams()
+                        };
+                        self.$searchAdvanceService2.addFreeTag(data).then(function () {
+                            // notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
+                            self.notify.success("Set free tags succeeded.");
+                            self.clearSelList();
+                            self.search();
+                        })
+                    });
             });
-
-
-
         };
 
     });

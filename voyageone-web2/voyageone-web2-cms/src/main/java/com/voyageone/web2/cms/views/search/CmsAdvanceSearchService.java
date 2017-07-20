@@ -36,6 +36,7 @@ import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.AdvSearchExportMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProductFreeTagsUpdateMQMessageBody;
 import com.voyageone.service.impl.cms.vomqjobservice.CmsProductFreeTagsUpdateService;
 import com.voyageone.service.model.cms.CmsBtExportTaskModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -493,15 +494,25 @@ public class CmsAdvanceSearchService extends BaseViewService {
             if (isSelAll == null) {
                 isSelAll = 0;
             }
+            CmsProductFreeTagsUpdateMQMessageBody mqMessageBody = new CmsProductFreeTagsUpdateMQMessageBody();
+            mqMessageBody.setIsSelAll(isSelAll == 1);
+            mqMessageBody.setOrgDispTagList(orgDispTagList);
+            mqMessageBody.setChannelId(channelId);
+            mqMessageBody.setSender(modifier);
+            mqMessageBody.setTagPathList(tagPathList);
+            // type=usa是美国USA高级检索批量修改free tags
+            mqMessageBody.setType((String) params.get("type"));
             List<String> prodCodeList;
             if (isSelAll == 1) {
                 CmsSearchInfoBean2 searchValue = new CmsSearchInfoBean2();
                 BeanUtils.copyProperties((Map<String, Object>) params.get("searchInfo"), searchValue);
-                cmsProductFreeTagsUpdateService.sendMessage(channelId, searchValue, tagPathList, orgDispTagList, modifier);
+                mqMessageBody.setSearchValue(searchValue);
             } else {
                 prodCodeList = (List<String>) params.get("prodIdList");
-                cmsProductFreeTagsUpdateService.sendMessage(channelId, prodCodeList, tagPathList, orgDispTagList, modifier);
+                mqMessageBody.setProdCodeList(prodCodeList);
             }
+            cmsMqSenderService.sendMessage(mqMessageBody);
+
         }
 
     }

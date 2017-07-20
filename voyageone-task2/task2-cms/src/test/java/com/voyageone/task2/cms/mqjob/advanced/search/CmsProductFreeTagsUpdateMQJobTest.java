@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.mqjob.advanced.search;
 
 import com.voyageone.common.configs.MQConfigInitTestUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsProductFreeTagsUpdateMQMessageBody;
 import org.junit.Test;
@@ -37,7 +38,10 @@ public class CmsProductFreeTagsUpdateMQJobTest {
         cmsSearchInfoBean2.setProductPageNum(1);
         cmsSearchInfoBean2.setGroupPageSize(10);
         map.setSearchValue(cmsSearchInfoBean2);
-        service.onStartup(map);
+
+        String data = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"test\",\"channelId\":\"001\",\"isSelAll\":false,\"prodCodeList\":[\"68220-gem\",\"68220-lag\"],\"searchValue\":null,\"tagPathList\":[\"-12234-\"],\"orgDispTagList\":[],\"type\":\"usa\",\"selAll\":false,\"subBeanName\":\"001\"}";
+        CmsProductFreeTagsUpdateMQMessageBody mqMessageBody = JacksonUtil.json2Bean(data, CmsProductFreeTagsUpdateMQMessageBody.class);
+        service.onStartup(mqMessageBody);
 
     }
 }
