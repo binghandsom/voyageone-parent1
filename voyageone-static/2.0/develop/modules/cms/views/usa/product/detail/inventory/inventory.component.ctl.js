@@ -10,51 +10,67 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    cms.directive("inventorySchema", function (productDetailService) {
+    class IntentoryController {
+        constructor($scope, detailDataService) {
+            this.$scope = $scope;
+            this.detailDataService = detailDataService;
+            this.productInfo = $scope.productInfo;
+        }
+
+        init() {
+            let self = this;
+
+            self.showDetail = false;
+            self.noStock = false;
+            self.noStockSkus = [];
+            self.tblData = {};
+
+            /*设置海外库存表头宽度*/
+            self.foreign = '1';
+            self.detailDataService.getSkuStockInfo(self.productInfo.productId)
+                .then(function (resp) {
+                    if (!resp) {
+
+                    } else {
+                        self.noStock = resp.data.nostock;
+                        self.supplier = resp.data.excute.data.header.supplier;
+                        self.store = resp.data.excute.data.header.store;
+                        self.base = resp.data.excute.data.header.base;
+                        self.stocks = resp.data.excute.data.stocks;
+
+                        let noStockSkuData = resp.data.noStockSkus;
+                        if (noStockSkuData && noStockSkuData.length > 0) {
+                            scope.noStockSkus = angular.copy(noStockSkuData);
+                        }
+                    }
+                });
+        }
+
+        count(value) {
+            let self = this;
+
+            self.showDetail = value;
+
+            if (value == true) {
+                self.foreign = self.supplier.length;
+            } else {
+                self.foreign = '1';
+            }
+
+        }
+
+    }
+
+
+    cms.directive("inventoryTab", function () {
 
         return {
             restrict: "E",
-            templateUrl: "views/product/inventory.component.tpl.html",
-            scope: {productInfo: "=productInfo"},
-            link: function (scope) {
-
-                initialize();
-                scope.count = count;
-
-                function initialize() {
-                    scope.showDetail = false;
-                    scope.noStock = false;
-                    scope.noStockSkus = [];
-                    scope.tblData = {};
-                    /*设置海外库存表头宽度*/
-                    scope.foreign = '1';
-                    productDetailService.getSkuStockInfo(scope.productInfo.productId)
-                        .then(function (resp) {
-                            if (!resp ) {
-
-                            } else {
-                                scope.noStock = resp.data.nostock;
-                                scope.supplier = resp.data.excute.data.header.supplier;
-                                scope.store = resp.data.excute.data.header.store;
-                                scope.base = resp.data.excute.data.header.base;
-                                scope.stocks = resp.data.excute.data.stocks;
-                                var noStockSkuData = resp.data.noStockSkus;
-                                if (noStockSkuData && noStockSkuData.length > 0) {
-                                    scope.noStockSkus = angular.copy(noStockSkuData);
-                                }
-                            }
-                        });
-                }
-                function count(value) {
-                    scope.showDetail= value;
-                    if (value == true) {
-
-                        scope.foreign = scope.supplier.length;
-                    } else {
-                        scope.foreign = '1';
-                    }
-                }
-            }
+            controller: IntentoryController,
+            controllerAs: 'ctrl',
+            templateUrl: "views/usa/product/detail/inventory/inventory.component.tpl.html",
+            scope: {productInfo: "=productInfo"}
         };
     });
+
 });
