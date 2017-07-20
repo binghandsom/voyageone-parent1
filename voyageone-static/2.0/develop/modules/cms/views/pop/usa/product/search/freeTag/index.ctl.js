@@ -67,7 +67,7 @@ define([
             });
         }
 
-        openTag() {
+        openTag(tag, treeIndex) {
             let self = this, vm = self.vm,
                 nextTags = vm.trees[treeIndex + 1];
 
@@ -80,7 +80,7 @@ define([
             vm.trees.push({tags: tag.children});
         }
 
-        selOrgDisp() {
+        selOrgDisp(id, path, event) {
             let self = this;
 
             /**设置checkbox的选择状态*/
@@ -95,7 +95,7 @@ define([
             event.stopPropagation();
         }
 
-        filterByName() {
+        filterByName(parentIndex, tags) {
             let self = this,
                 searchName = self.searchName[parentIndex];
 
