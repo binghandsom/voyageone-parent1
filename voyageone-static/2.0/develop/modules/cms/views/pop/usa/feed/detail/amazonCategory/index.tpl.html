@@ -6,8 +6,10 @@
         <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;Amazon Category</h5>
     </div>
     <div class="modal-body wrapper">
-        <div class="category_ts">
-            <p>Selected Category:&emsp;<strong>{{ctrl.selected.catPath}}</strong></p>
+        <div class="category_ts"  ng-if="!ctrl.context.muiti">
+            <p>Selected Category:&emsp;
+                <strong>{{ctrl.selected.catPath ? ctrl.selected.catPath : ctrl.context.from}}</strong>
+            </p>
         </div>
         <div class="category_drags">
             <div class="category_drag col-sm-3" ng-repeat="categoryItem in ctrl.totalCategory">
@@ -16,13 +18,17 @@
                     <div class="input-group" style="padding: 0 4px;">
                         <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" ng-model="catName">
                         <div class="input-group-btn">
-                            <button type="submit" class="btn btn-vo" ng-click="search.catName = catName"><i class="fa fa-search"></i></button>
+                            <button type="button" class="btn btn-vo" ng-click="search.catName = catName"><i class="fa fa-search"></i></button>
                         </div>
                     </div>
                     <div class="category_drag_list_dp category_popup">
                         <ul>
                             <li ng-repeat="category in categoryItem.children">
                                 <a href="javascript:void(0)" ng-click="ctrl.openCategory(category,categoryItem)" ng-class="{indexSelected:categoryItem.selectedCat == category}">
+                                    <span ng-if="ctrl.context.muiti">
+                                        <input type="checkbox" ng-click="ctrl.selectCat(category)"
+                                               ng-checked="category.catPath == ctrl.selectObj[category.catId]">{{ctrl.exitPath(category.catPath)}}
+                                    </span>
                                     <span>{{::category.catName}}</span>
                                     <span class="pull-right text-muted" ng-if="category.children && category.children.length">
                                         <i class="fa fa-fw fa-angle-right text"></i>
@@ -34,6 +40,21 @@
                 </div>
             </div>
 
+        </div>
+
+        <div class="container-fluid m-t">
+            <div class="row">
+                <div class="col-md-9">
+                    <label class="col-md-2 control-label">{{'TXT_CURRENT_CATEGORY_WITH_COLON' | translate}}</label>
+                    <div class="col-sm-6">
+                        <select  multiple chosen class="form-control m-r-xs" ng-model="ctrl.catArrs"
+                                 ng-options="cat as cat.catPath for cat in ctrl.catArrs"
+                                 ng-change = "ctrl.selectChange()"
+                                 width="'100%'">
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
 
     </div>

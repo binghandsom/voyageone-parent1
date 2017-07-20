@@ -29,6 +29,7 @@ define([
             self.searchResult = {
                 productList: []
             };
+            self.tempUpEntity = {};
             self.productSelList =  {selList: []};
             self.masterData = {
                 platforms: [],
@@ -163,6 +164,12 @@ define([
                 searchInfo.platformStatus = _.keys(platformStatusObj);
             }
 
+            //处理类目和店铺内分类
+            if(self.tempUpEntity.pCatPathListTmp)
+                searchInfo.pCatPathList = _.pluck(self.tempUpEntity.pCatPathListTmp,'catPath');
+            if(self.tempUpEntity.cidValueTmp)
+                searchInfo.cidValue = _.pluck(self.tempUpEntity.cidValueTmp,'catId');
+
             // 分页参数处理
             _.extend(searchInfo, {productPageNum:self.pageOption.curr, productPageSize:self.pageOption.size});
             return searchInfo;
@@ -255,13 +262,19 @@ define([
 
             if (Number(self.searchInfo.cartId) === 5) {
                 //只有亚马逊显示类目
-                self.popups.openAmazonCategory({cartId: 5}).then(res => {
-                    _.extend(self.searchInfo, {pCatPathList:[res.catPath]});
+                self.tempUpEntity.cidValueTmp = null;
+                self.tempUpEntity.cidValue = null;
+
+                self.popups.openAmazonCategory({cartId: 5,froms:self.searchInfo.pCatPathList,muiti:true}).then(res => {
+                    self.tempUpEntity.pCatPathListTmp = res;
                 });
             } else {
                 //sneakerhead 显示店铺内分类
-                self.popups.openUsCategory({cartId: self.searchInfo.cartId, from: ''}).then(res => {
-                    _.extend(self.searchInfo, {cidValue:[res.catId]});
+                self.tempUpEntity.pCatPathListTmp = null;
+                self.tempUpEntity.pCatPathList = null;
+
+                self.popups.openUsCategory({cartId:self.searchInfo.cartId,froms:self.searchInfo.cidValue,muiti:true}).then(res => {
+                    self.tempUpEntity.cidValueTmp = res;
                 });
             }
         }
