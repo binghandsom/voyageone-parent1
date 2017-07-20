@@ -241,9 +241,7 @@ define([
                 tagType: '4',
                 orgChkStsMap:self.searchInfo.usFreeTags
             }).then(res => {
-
                 self.searchInfo.usFreeTags = _.pluck(res.selectdTagList,'tagPath');
-
             });
         }
 
@@ -267,7 +265,7 @@ define([
         }
 
         canCategory() {
-            const arr = ['1', '12', '6', '11', '5'];
+            const arr = ['8', '12', '6', '11', '5'];
 
             return arr.indexOf(this.searchInfo.cartId) < 0;
         }
