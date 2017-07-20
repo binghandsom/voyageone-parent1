@@ -215,12 +215,12 @@ define([
             if (Number(self.searchInfo.cartId) === 5) {
                 //只有亚马逊显示类目
                 self.popups.openAmazonCategory({cartId: 5}).then(res => {
-
+                    _.extend(self.searchInfo, {pCatPathList:[res.catPath]});
                 });
             } else {
                 //sneakerhead 显示店铺内分类
                 self.popups.openUsCategory({cartId: self.searchInfo.cartId, from: ''}).then(res => {
-
+                    _.extend(self.searchInfo, {cidValue:[res.catId]});
                 });
             }
         }
