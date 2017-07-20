@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.dao.cms.CmsMtPropExtDao" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtPropModel" />
+
+    <select id="selectByType" parameterType="java.lang.Integer" resultType="java.util.Map">
+        select
+        prop_id AS propId,
+        prop_name AS propName,
+        sort_name AS sortName,
+        sort_flag AS sortFlag
+        from cms_mt_prop
+        WHERE type=#{type,jdbcType=INTEGER}
+    </select>
+
+</mapper>

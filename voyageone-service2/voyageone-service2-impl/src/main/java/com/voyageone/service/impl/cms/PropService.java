@@ -1,12 +1,9 @@
 package com.voyageone.service.impl.cms;
 
-import com.voyageone.service.dao.cms.CmsMtPropDao;
+import com.voyageone.service.dao.cms.CmsMtPropExtDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.model.cms.CmsMtPropModel;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Map;
 
@@ -20,10 +17,10 @@ import java.util.Map;
 public class PropService extends BaseService {
 
     @Autowired
-    private CmsMtPropDao cmsMtPropDao;
+    private CmsMtPropExtDao cmsMtPropExtDao;
 
     public List<Map<String, String>> getPropByType(int type) {
-        return cmsMtPropDao.selectByType(type);
+        return cmsMtPropExtDao.selectByType(type);
 
     }
 }

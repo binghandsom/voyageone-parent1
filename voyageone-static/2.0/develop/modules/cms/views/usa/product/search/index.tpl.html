@@ -245,9 +245,21 @@
                                     <th class="text-left td-width-100 white-space-noWrap">Code</th>
                                     <th class="text-left td-width-150 white-space-noWrap">Name</th>
                                     <th class="text-left td-width-100 white-space-noWrap">ProductType</th>
-                                    <th class="text-left td-width-100 white-space-noWrap">Brand</th>
-                                    <th class="text-center td-width-100 white-space-noWrap">Total Qty</th>
-                                    <th class="text-center td-width-100 white-space-noWrap">Last Received</th>
+                                    <th class="text-left td-width-100 white-space-noWrap">Brand
+                                        <button class="opacityBtn" ng-click="ctrl.columnOrder('brand')">
+                                            <i class="fa fa-{{ctrl.getArrowName('brand')}}"></i>
+                                        </button>
+                                    </th>
+                                    <th class="text-right td-width-100 white-space-noWrap">Total Qty
+                                        <button class="opacityBtn" ng-click="ctrl.columnOrder('quantity')">
+                                            <i class="fa fa-{{ctrl.getArrowName('quantity')}}"></i>
+                                        </button>
+                                    </th>
+                                    <th class="text-center td-width-100 white-space-noWrap">Last Received
+                                        <button class="opacityBtn" ng-click="ctrl.columnOrder('lastReceivedOn')">
+                                            <i class="fa fa-{{ctrl.getArrowName('lastReceivedOn')}}"></i>
+                                        </button>
+                                    </th>
                                     <th class="text-center td-width-150 white-space-noWrap" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selCommonProps">
                                         {{prop.propName}}
                                         <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.propId)">
@@ -327,7 +339,7 @@
                                         <td class="text-left">{{productInfo.common.fields.productNameEn}}</td>
                                         <td class="text-left">{{productInfo.common.fields.productType}}</td>
                                         <td class="text-left">{{productInfo.common.fields.brand}}</td>
-                                        <td class="text-left">{{productInfo.common.fields.quantity}}</td>
+                                        <td class="text-right">{{productInfo.common.fields.quantity}}</td>
                                         <td class="text-center">{{productInfo.common.fields.translateTime}}</td>
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selCommonProps">{{ctrl.getProductValue(productInfo,prop)}}</td>
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes">{{ctrl.getProductValue(productInfo,prop)}}</td>

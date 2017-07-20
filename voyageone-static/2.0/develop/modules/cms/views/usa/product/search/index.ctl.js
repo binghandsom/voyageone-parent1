@@ -69,7 +69,7 @@ define([
                     self.customColumns.selPlatformAttributes = self.getselectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
                     //self.customColumns.selPlatformSales = self.getselectedProps(res.data.platformSales,res.data.selPlatformSales);
 
-                    console.log(self.customColumns.selPlatformAttributes);
+                    console.log(self.customColumns.commonProps);
 
                 }
             });
@@ -278,6 +278,7 @@ define([
          * 检索列排序
          * */
         columnOrder (columnName) {
+            console.log(columnName);
             let self  = this,
                 column,
                 columnArrow = self.columnArrow;

@@ -3,7 +3,8 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsMtPropDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtPropModel" />
     <sql id="Base_Column_List" >
-        `id`, `prop_id`, `prop_name`, `type`, `lang`, `created`, `creater`, `modified`, `modifier`
+        `id`, `prop_id`, `prop_name`, `type`, `sort_name`, `sort_flag`, `lang`, `created`, 
+        `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -24,6 +25,12 @@
             </if>
             <if test="type != null" >
                 `type` = #{type,jdbcType=INTEGER},
+            </if>
+            <if test="sortName != null" >
+                `sort_name` = #{sortName,jdbcType=VARCHAR},
+            </if>
+            <if test="sortFlag != null" >
+                `sort_flag` = #{sortFlag,jdbcType=INTEGER},
             </if>
             <if test="lang != null" >
                 `lang` = #{lang,jdbcType=VARCHAR},
@@ -66,6 +73,12 @@
             <if test="type != null" >
                 and `type` = #{type,jdbcType=INTEGER}
             </if>
+            <if test="sortName != null" >
+                and `sort_name` = #{sortName,jdbcType=VARCHAR}
+            </if>
+            <if test="sortFlag != null" >
+                and `sort_flag` = #{sortFlag,jdbcType=INTEGER}
+            </if>
             <if test="lang != null" >
                 and `lang` = #{lang,jdbcType=VARCHAR}
             </if>
@@ -99,6 +112,12 @@
             <if test="type != null" >
                 and `type` = #{type,jdbcType=INTEGER}
             </if>
+            <if test="sortName != null" >
+                and `sort_name` = #{sortName,jdbcType=VARCHAR}
+            </if>
+            <if test="sortFlag != null" >
+                and `sort_flag` = #{sortFlag,jdbcType=INTEGER}
+            </if>
             <if test="lang != null" >
                 and `lang` = #{lang,jdbcType=VARCHAR}
             </if>
@@ -128,6 +147,12 @@
             </if>
             <if test="type != null" >
                 and `type` = #{type,jdbcType=INTEGER}
+            </if>
+            <if test="sortName != null" >
+                and `sort_name` = #{sortName,jdbcType=VARCHAR}
+            </if>
+            <if test="sortFlag != null" >
+                and `sort_flag` = #{sortFlag,jdbcType=INTEGER}
             </if>
             <if test="lang != null" >
                 and `lang` = #{lang,jdbcType=VARCHAR}
@@ -159,6 +184,12 @@
             <if test="type != null" >
                 `type`,
             </if>
+            <if test="sortName != null" >
+                `sort_name`,
+            </if>
+            <if test="sortFlag != null" >
+                `sort_flag`,
+            </if>
             <if test="lang != null" >
                 `lang`,
             </if>
@@ -183,6 +214,12 @@
             </if>
             <if test="type != null" >
                 #{type,jdbcType=INTEGER},
+            </if>
+            <if test="sortName != null" >
+                #{sortName,jdbcType=VARCHAR},
+            </if>
+            <if test="sortFlag != null" >
+                #{sortFlag,jdbcType=INTEGER},
             </if>
             <if test="lang != null" >
                 #{lang,jdbcType=VARCHAR},
