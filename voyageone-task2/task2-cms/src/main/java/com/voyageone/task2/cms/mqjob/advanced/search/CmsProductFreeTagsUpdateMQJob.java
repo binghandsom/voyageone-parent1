@@ -27,7 +27,12 @@ public class CmsProductFreeTagsUpdateMQJob extends TBaseMQCmsSubService<CmsProdu
 
     @Override
     public void onStartup(CmsProductFreeTagsUpdateMQMessageBody messageBody) throws Exception {
-        List<String> productCodeList =  service.setProductFreeTags(messageBody);
+        List<String> productCodeList;
+        if("usa".equals(messageBody.getType())){
+            productCodeList =  service.setUsProductFreeTags(messageBody);
+        }else{
+            productCodeList =  service.setProductFreeTags(messageBody);
+        }
         super.count = productCodeList.size();
     }
 }

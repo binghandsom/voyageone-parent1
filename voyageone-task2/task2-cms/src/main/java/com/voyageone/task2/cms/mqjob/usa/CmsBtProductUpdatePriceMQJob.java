@@ -62,8 +62,8 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                         Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
                         if (cartId > 0) {
                             CmsBtProductModel_Platform_Cart platform = usPlatforms.get("P" + cartId);
-                            String status = platform.getStatus();
                             if (platform != null) {
+                                String status = platform.getStatus();
                                 List<BaseMongoMap<String, Object>> skus = platform.getSkus();
                                 if (skus != null) {
                                     for (BaseMongoMap<String, Object> sku : skus) {
