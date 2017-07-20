@@ -1205,6 +1205,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                 // 平台sku
                 List<BaseMongoMap<String, Object>> skuList = new ArrayList<>();
+                Double msrpMin = Double.MAX_VALUE;
+                Double msrpMax = Double.MIN_VALUE;
+                Double retailMin = Double.MAX_VALUE;
+                Double retailMax = Double.MIN_VALUE;
                 for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
                     BaseMongoMap<String, Object> skuInfo = new BaseMongoMap();
                     skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.skuCode.name(), sku.getSku());
@@ -1215,11 +1219,15 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     if(sku.getIsSale() != null && sku.getIsSale() == 0) isSale = false;
                     skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), isSale);
                     skuList.add(skuInfo);
+                    msrpMin = Double.min(msrpMin, sku.getPriceClientMsrp());
+                    msrpMax = Double.max(msrpMax, sku.getPriceClientMsrp());
+                    retailMin = Double.min(retailMin, sku.getPriceClientRetail());
+                    retailMax = Double.max(retailMax, sku.getPriceClientRetail());
                 }
-                platform.setpPriceMsrpSt(feed.getPriceClientMsrpMin());
-                platform.setpPriceMsrpEd(feed.getPriceClientMsrpMax());
-                platform.setpPriceSaleSt(feed.getPriceClientRetailMin());
-                platform.setpPriceSaleEd(feed.getPriceClientRetailMax());
+                platform.setpPriceMsrpSt(msrpMin);
+                platform.setpPriceMsrpEd(msrpMax);
+                platform.setpPriceSaleSt(retailMin);
+                platform.setpPriceSaleEd(retailMax);
                 BaseMongoMap<String, Object> fields = new BaseMongoMap<>();
                 platform.setFields(fields);
                 switch (CartEnums.Cart.getValueByID(iCartId+"")){
