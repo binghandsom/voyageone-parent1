@@ -74,7 +74,6 @@ public class CmsBtProductUpdateListDelistStatusMQJob extends TBaseMQCmsService<C
                                 }else {
                                     platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, messageBody.getSender());
                                 }
-
                             }
                         }
                     }
