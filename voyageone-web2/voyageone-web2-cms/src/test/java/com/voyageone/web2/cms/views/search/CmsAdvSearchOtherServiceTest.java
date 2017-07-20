@@ -26,8 +26,9 @@ public class CmsAdvSearchOtherServiceTest {
         HashMap<String, Object> map = new HashMap<>();
         map.put("code","609973-460");
         map.put("cartId","23");
-        map.put("clientMsrpPrice","333");
-        map.put("clientRetailPrice","444");
+        map.put("clientMsrpPrice","555");
+        map.put("clientRetailPrice","666");
+        map.put("prodId","4361021");
         UserSessionBean user = new UserSessionBean();
         user.setSelChannelId("001");
         user.setUserName("xusong");

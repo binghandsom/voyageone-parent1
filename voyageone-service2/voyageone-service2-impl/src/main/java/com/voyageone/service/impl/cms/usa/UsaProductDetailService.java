@@ -374,9 +374,7 @@ public class UsaProductDetailService extends BaseService {
                         break;
 
                 }
-
             }
         }
-
     }
 }

@@ -22,6 +22,8 @@ import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.prices.PriceService;
+import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
@@ -118,6 +120,10 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     private CmsAdvSearchQueryService advSearchQueryService;
     @Autowired
     CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    PriceService priceService;
+    @Autowired
+    private CmsBtPriceLogService cmsBtPriceLogService;
 
     /**
      * 取得当前主商品所在组的其他信息：所有商品的价格变动信息，子商品图片
@@ -656,6 +662,8 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     public String updateOnePrice(Map<String, Object> paraMap, UserSessionBean user) {
         //商品code
         String code = (String) paraMap.get("code");
+        //同事传入portId更新价格履历
+        Long prodId = Long.parseLong((String) paraMap.get("prodId"));
         //平台id
         Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
         Double clientMsrpPrice = null;
@@ -695,6 +703,7 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                                 }
                                 if (clientRetailPrice != null) {
                                     updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientRetailPrice", clientRetailPrice);
+                                    updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientNetPrice", clientRetailPrice);
                                     //修改最大值最小值
                                     minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceRetailSt", clientRetailPrice);
                                     minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceRetailEd", clientRetailPrice);
@@ -747,6 +756,11 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                             }
                             if (clientRetailPrice != null) {
                                 updateMap.put("platforms.P" + cartId + ".skus.$.priceRetail", clientRetailPrice);
+                                //修改priceDiffFlg
+                                //调用接口计算priceDiffFlg的值
+                                String priceDiffFlg = priceService.getPriceDiffFlg(user.getSelChannelId(), sku, cartId);
+                                updateMap.put("platforms.P" + cartId + ".skus.$.priceDiffFlg", priceDiffFlg);
+
                                 //修改最大值最小值
                                 minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceRetailSt", clientRetailPrice);
                                 minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceRetailEd", clientRetailPrice);
@@ -768,6 +782,10 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                             productService.bulkUpdateWithMap(user.getSelChannelId(), minMaxPrice, user.getUserName(), "$set");
 
                         }
+                        //更新价格履历
+                        List<String> skus1 = new ArrayList<>();
+                        skus.forEach(sku -> skus1.add(sku.getStringAttribute("skuCode")));
+                        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus1, user.getSelChannelId(), prodId, cartId, user.getUserName(), "产品编辑页面,手动修改价格");
                     }
                 }
             }
