@@ -141,7 +141,7 @@ public class CmsProductFreeTagsUpdateService extends BaseService {
                 pageNumber = (productListTotal / 100) + 1;
             }
 
-            for (int i = 0; i < pageNumber; i++) {
+            for (int i = 1; i <= pageNumber; i++) {
                 queryParams.setProductPageSize(100);
                 queryParams.setProductPageNum(i);
                 CmsProductCodeListBean cmsProductCodeListBean1 = cmsProductSearchQueryService.getProductCodeList(queryParams, messageMap.getChannelId());
