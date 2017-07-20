@@ -167,8 +167,10 @@ define([
 
             //处理类目和店铺内分类
             if(self.tempUpEntity.pCatPathListTmp)
+                _.extend(searchInfo, {pCatPathType:1}); // 1 in, 2 not in
                 searchInfo.pCatPathList = _.pluck(self.tempUpEntity.pCatPathListTmp,'catPath');
             if(self.tempUpEntity.cidValueTmp)
+                _.extend(searchInfo, {shopCatType:1}); // 1 in, 2 not in
                 searchInfo.cidValue = _.pluck(self.tempUpEntity.cidValueTmp,'catId');
 
             // 分页参数处理
