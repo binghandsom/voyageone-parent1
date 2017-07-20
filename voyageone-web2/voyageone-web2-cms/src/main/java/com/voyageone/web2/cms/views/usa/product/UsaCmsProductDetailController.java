@@ -39,6 +39,18 @@ public class UsaCmsProductDetailController extends CmsController {
         String channelId = getUser().getSelChannelId();
         return success(usaProductDetailService.getMastProductInfo(channelId, prodId));
     }
+
+    @RequestMapping(UsaCmsUrlConstants.PRODUCT.GET_PRODUCT_PLATFORM)
+    public AjaxResponse doGetProductPlatform(@RequestBody Map requestMap) {
+
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+
+        Integer cartId = (Integer) requestMap.get("cartId");
+
+        String channelId = getUser().getSelChannelId();
+        return success(usaProductDetailService.getProductPlatform(channelId, prodId, cartId));
+    }
+
     //根据productCode获取中国和美国的平台价格信息
     @RequestMapping(value = UsaCmsUrlConstants.PRODUCT.GETALLPLATFORMSPRICE)
     public AjaxResponse getAllPlatformsPrice(@RequestBody Long prodId) {
