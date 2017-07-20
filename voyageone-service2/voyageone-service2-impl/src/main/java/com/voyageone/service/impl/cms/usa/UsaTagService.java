@@ -41,11 +41,6 @@ public class UsaTagService extends BaseService {
 
     @Autowired
     private CmsBtTagDaoExt cmsBtTagDaoExt;
-
-    @Autowired
-    private TagService tagService;
-    //    @Autowired
-//    private CmsAdvanceSearchService advanceSearchService;
     @Autowired
     private CmsProductSearchQueryService cmsProductSearchQueryService;
     @Autowired
@@ -106,7 +101,7 @@ public class UsaTagService extends BaseService {
                         searchInfo.setProductPageNum(i);
                         CmsProductCodeListBean subProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(searchInfo, channelId);
                         if (subProductCodeListBean.getTotalCount() > 0l) {
-                            this.pickFreeTags(channelId, subProductCodeListBean.getProductCodeList(), tagsList, orgChkStsMap, orgChkStsMap);
+                            this.pickFreeTags(channelId, subProductCodeListBean.getProductCodeList(), tagsList, orgChkStsMap, orgDispMap);
                         }
                     }
                 }
