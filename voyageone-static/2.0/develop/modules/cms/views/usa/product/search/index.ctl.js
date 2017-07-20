@@ -9,12 +9,15 @@ define([
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor(popups, advanceSearch,selectRowsFactory,$parse) {
+        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm) {
             let self = this;
 
             self.popups = popups;
             self.srInstance = new selectRowsFactory();
             self.$parse = $parse;
+            self.$translate = $translate;
+            self.alert = alert;
+            self.confirm = confirm;
             self.advanceSearch = advanceSearch;
 
             self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
@@ -65,11 +68,9 @@ define([
                     self.customColumns.commonProps = res.data.commonProps;
                     self.customColumns.platformAttributes = res.data.platformAttributes;
                     self.customColumns.platformSales = res.data.platformSales;
-                    self.customColumns.selCommonProps = self.getselectedProps(res.data.commonProps,res.data.selCommonProps,'propId');
-                    self.customColumns.selPlatformAttributes = self.getselectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
-                    //self.customColumns.selPlatformSales = self.getselectedProps(res.data.platformSales,res.data.selPlatformSales);
-
-                    console.log('commonProp',self.customColumns.commonProps);
+                    self.customColumns.selCommonProps = self.getSelectedProps(res.data.commonProps,res.data.selCommonProps,'propId');
+                    self.customColumns.selPlatformAttributes = self.getSelectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
+                    //self.customColumns.selPlatformSales = self.getSelectedProps(res.data.platformSales,res.data.selPlatformSales);
 
                 }
             });
@@ -101,7 +102,7 @@ define([
          * @param selectedArray 用户选择数组
          * @returns {Array}
          */
-        getselectedProps(array,selectedArray,attrName){
+        getSelectedProps(array,selectedArray,attrName){
             let result = [];
 
             if(!selectedArray || selectedArray.length === 0)
@@ -169,13 +170,48 @@ define([
             self.searchInfo = {};
         }
 
+        /**
+         * 批量操作前判断是否选中
+         * @param cartId
+         * @param callback
+         */
+        $chkProductSel(cartId, callback) {
+            let self = this;
+
+            if (cartId === null || cartId === undefined) {
+                cartId = 0;
+            } else {
+                cartId = parseInt(cartId);
+            }
+
+            let selList;
+
+            if (!self._selall) {
+                selList = self.getSelectedProduct('code');
+                if (selList.length === 0) {
+                    self.alert(self.$translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                    return;
+                }
+                callback(cartId, selList);
+            } else {
+                if (self.pageOption.total === 0) {
+                    self.alert(self.$translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                    return;
+                }
+
+                self.confirm(`您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>${self.pageOption.total}</span></h3>`).then(function () {
+                    callback(cartId);
+                });
+            }
+        }
+
         // 自定义列弹出
         popCustomAttributes() {
             let self = this;
             self.popups.openCustomAttributes().then(res => {
-                self.customColumns.selCommonProps = self.getselectedProps(self.customColumns.commonProps,res.selCommonProps,'propId');
-                self.customColumns.selPlatformAttributes = self.getselectedProps(self.customColumns.platformAttributes, res.selPlatformAttributes,'value');
-                //self.customColumns.selPlatformSales = self.getselectedProps(res.data.platformSales,res.data.selPlatformSales);
+                self.customColumns.selCommonProps = self.getSelectedProps(self.customColumns.commonProps,res.selCommonProps,'propId');
+                self.customColumns.selPlatformAttributes = self.getSelectedProps(self.customColumns.platformAttributes, res.selPlatformAttributes,'value');
+                //self.customColumns.selPlatformSales = self.getSelectedProps(res.data.platformSales,res.data.selPlatformSales);
             })
         }
 
@@ -330,22 +366,24 @@ define([
         }
 
         /**
-         * 弹出usFreeTags修改框
+         * 弹出批量修改产品标签
          */
         popUpdateFreeTags() {
-
             let self = this;
-            console.log(self._selall);
-            let params = {
-                orgFlg: '2',
-                tagType: '6',
-                selAllFlg: '0',
-                selCodeList: self.getSelectedProduct("code"),
-                searchInfo: self.handleQueryParams()
-            };
-            self.popups.openUsFreeTag(params).then(res => {
-               console.log(res);
+
+            self.$chkProductSel(0,(cartId,codeList) => {
+
+                self.popups.openUsFreeTag({
+                    orgFlg: '2',
+                    tagType: '6',
+                    selAllFlg: '0',
+                    selCodeList: codeList,
+                    searchInfo: self.handleQueryParams()
+                }).then(res => {
+                    console.log(res);
+                });
             });
+
         }
 
     });
