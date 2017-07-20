@@ -130,24 +130,19 @@ public class UsaAdvanceSearchController extends CmsController {
         UserSessionBean userInfo = getUser();
         // 返回结果
         Map<String, Object> resultBean = new HashMap<>();
-        CmsSessionBean cmsSession = getCmsSession();
-        cmsSession.putAttribute("_adv_search_params", params);
 
         int endIdx = params.getProductPageSize();
         // 从Solr中统计满足条件的Product总数和当前页商品CodeList
         CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), userInfo.getUserId(), userInfo.getUserName());
         long productListTotal = cmsProductCodeListBean.getTotalCount();
-        cmsSession.putAttribute("_adv_search_productListTotal", productListTotal);
-        cmsSession.putAttribute("_adv_search_groupListTotal", null);
 
         // 从Solr中获取本页实际Code List后再从MongoDB中查询Product实际信息
         List<String> currCodeList = cmsProductCodeListBean.getProductCodeList();
-        List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo, cmsSession);
+        List<CmsBtProductBean> prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo);
         prodInfoList.sort((o1, o2) -> Integer.compare(currCodeList.indexOf(o1.getCommon().getFields().getCode()), currCodeList.indexOf(o2.getCommon().getFields().getCode())));
 
         Map<String, TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), getLang());
         Map<String, TypeChannelBean> sizeTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), getLang());
-        Map<String, Map<String, Integer>> codeMap = new HashMap<>();
         prodInfoList.forEach(cmsBtProductBean -> {
             String productType = cmsBtProductBean.getCommon().getFields().getProductType();
             if (StringUtils.isNotBlank(productType)) {
@@ -164,29 +159,16 @@ public class UsaAdvanceSearchController extends CmsController {
                     cmsBtProductBean.getCommon().getFields().setSizeTypeCn(sizeTypeBean.getName());
                 }
             }
-            // TODO: 2017/7/17 rex.wu  库存统计逻辑 ???
-            codeMap.putAll(getCodeQty(cmsBtProductBean, userInfo));
+            // 统计各平台库存
+            // codeMap.putAll(getCodeQty(cmsBtProductBean, userInfo));
         });
-        // TODO: 2017/7/17 rex.wu Check Produt Status ???
-        searchIndexService.checkProcStatus(prodInfoList, getLang());
-        resultBean.put("codeMap", codeMap);
+        // Check Product Status
+        // searchIndexService.checkProcStatus(prodInfoList, getLang());
         resultBean.put("productList", prodInfoList);
         resultBean.put("productListTotal", productListTotal);
 
         // 查询平台显示商品URL
-        Integer cartId = params.getCartId();
-        resultBean.put("productUrl", platformService.getPlatformProductUrl(cartId.toString()));
-
-        // 查询商品其它画面显示用的信息
-        List[] infoArr = advSearchOtherService.getProductExtraInfo(prodInfoList, userInfo.getSelChannelId(), cartId);
-        resultBean.put("prodOrgChaNameList", infoArr[0]);
-        resultBean.put("freeTagsList", infoArr[1]);
-
-        // 获取该用户自定义显示列设置
-        resultBean.put("customProps", cmsSession.getAttribute("_adv_search_customProps"));
-        resultBean.put("commonProps", cmsSession.getAttribute("_adv_search_commonProps"));
-        resultBean.put("selSalesType", cmsSession.getAttribute("_adv_search_selSalesType"));
-        resultBean.put("selBiDataList", cmsSession.getAttribute("_adv_search_selBiDataList"));
+        resultBean.put("productUrl", platformService.getPlatformProductUrl(String.valueOf(params.getCartId())));
 
         // 返回用户信息
         return success(resultBean);

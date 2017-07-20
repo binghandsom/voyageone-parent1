@@ -1,6 +1,9 @@
 package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
@@ -14,6 +17,7 @@ import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -25,10 +29,7 @@ import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdate
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdatePriceMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.enums.CartType;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -112,6 +113,8 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     private CmsProductSearchQueryService cmsProductSearchQueryService;
     @Autowired
     private CmsAdvSearchQueryService advSearchQueryService;
+    @Autowired
+    CmsBtProductDao cmsBtProductDao;
 
     /**
      * 取得当前主商品所在组的其他信息：所有商品的价格变动信息，子商品图片
@@ -539,15 +542,15 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             String selAll = (String) paraMap.get("selAll");
             List<String> codeList = (List<String>) paraMap.get("codeList");
             //Integer cartId = (Integer) paraMap.get("cartId");
-            Integer cartId =Integer.parseInt((String) paraMap.get("cartId"));
+            Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
             mqMap.setCartId(cartId);
             HashMap<String, Object> params = new HashMap<>();
 
             String changedPriceType = (String) paraMap.get("changedPriceType");
             String basePriceType = (String) paraMap.get("basePriceType");
             String optionType = (String) paraMap.get("optionType");
-           // Double value = (Double) paraMap.get("value");
-            Double value =Double.parseDouble((String)paraMap.get("value"));
+            // Double value = (Double) paraMap.get("value");
+            Double value = Double.parseDouble((String) paraMap.get("value"));
             //"1":取整,"0":不取整
             String flag = (String) paraMap.get("flag");
             params.put("changedPriceType", changedPriceType);
@@ -602,12 +605,12 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             String selAll = (String) paraMap.get("selAll");
             List<String> codeList = (List<String>) paraMap.get("codeList");
             //Integer cartId = (Integer) paraMap.get("cartId");
-            Integer cartId =Integer.parseInt((String) paraMap.get("cartId"));
+            Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
             mqMap.setCartId(cartId);
             String activeStatus = (String) paraMap.get("activeStatus");
             mqMap.setActiveStatus(activeStatus);
             //Integer days = (Integer) paraMap.get("days");
-            Integer days =Integer.parseInt((String) paraMap.get("days"));
+            Integer days = Integer.parseInt((String) paraMap.get("days"));
             mqMap.setDays(days);
             if ("true".equals(selAll)) {
                 //勾选了全部,需要通过检索条件,查询出所有信息
@@ -642,6 +645,88 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                 mqMap.setSender(user.getUserName());
                 cmsMqSenderService.sendMessage(mqMap);
             }
+        }
+        return null;
+    }
+
+    //修改单条价格
+    public String updateOnePrice(Map<String, Object> paraMap, UserSessionBean user) {
+        //商品code
+        String code = (String) paraMap.get("code");
+        //平台id
+        Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
+        Double clientMsrpPrice = null;
+        Double clientRetailPrice = null;
+        if (StringUtils.isNotEmpty((String) paraMap.get("clientMsrpPrice"))) {
+            clientMsrpPrice = Double.parseDouble((String) paraMap.get("clientMsrpPrice"));
+        }
+        if (StringUtils.isNotEmpty((String) paraMap.get("clientRetailPrice"))) {
+            clientRetailPrice = Double.parseDouble((String) paraMap.get("clientRetailPrice"));
+        }
+        CmsBtProductModel cmsBtProductModel = productService.getProductByCode(user.getSelChannelId(), code);
+        if (cmsBtProductModel != null) {
+
+            if (cartId < 20) {
+                //修改美国平台价格
+                Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
+                CmsBtProductModel_Platform_Cart usPlatform = usPlatforms.get("P" + cartId);
+                if (usPlatform != null) {
+                        List<BaseMongoMap<String, Object>> skus = usPlatform.getSkus();
+                        if (skus != null) {
+                            for (BaseMongoMap<String, Object> sku : skus) {
+                                //获取到对应的skuCode
+                                String skuCode = (String) sku.get("skuCode");
+
+                                List<BulkUpdateModel> bulkList = new ArrayList<>(1);
+                                HashMap<String, Object> updateMap = new HashMap<>();
+                                if (clientMsrpPrice != null) {
+                                    updateMap.put("{\"usPlatforms.P\" + cartId + \".skus.$.clientMsrpPrice\"}", clientMsrpPrice);
+                                }
+                                if (clientRetailPrice != null) {
+                                    updateMap.put("{\"usPlatforms.P\" + cartId + \".skus.$.clientRetailPrice\"}", clientRetailPrice);
+                                }
+                                HashMap<String, Object> queryMap = new HashMap<>();
+                                //设置查询条件
+                                queryMap.put("{\"usPlatforms.P" + cartId + ".skus.skuCode\"}", skuCode);
+                                BulkUpdateModel model = new BulkUpdateModel();
+                                model.setUpdateMap(updateMap);
+                                model.setQueryMap(queryMap);
+                                bulkList.add(model);
+                                productService.bulkUpdateWithMap(user.getSelChannelId(), bulkList, user.getUserName(), "$set");
+                            }
+                        }
+                }
+            } else {
+                //修改中国平台价格
+                CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getPlatform(cartId);
+                if (platform != null) {
+                    List<BaseMongoMap<String, Object>> skus = platform.getSkus();
+                    if (skus != null) {
+                        for (BaseMongoMap<String, Object> sku : skus) {
+                            //获取到对应的skuCode
+                            String skuCode = (String) sku.get("skuCode");
+
+                            List<BulkUpdateModel> bulkList = new ArrayList<>(1);
+                            HashMap<String, Object> updateMap = new HashMap<>();
+                            if (clientMsrpPrice != null) {
+                                updateMap.put("{\"platforms.P" + cartId + ".skus.$.priceMsrp\"}", clientMsrpPrice);
+                            }
+                            if (clientRetailPrice != null) {
+                                updateMap.put("{\"platforms.P" + cartId + ".skus.$.priceRetail\"}", clientRetailPrice);
+                            }
+                            HashMap<String, Object> queryMap = new HashMap<>();
+                            //设置查询条件
+                            queryMap.put("{\"platforms.P" + cartId + ".skus.skuCode\"}", skuCode);
+                            BulkUpdateModel model = new BulkUpdateModel();
+                            model.setUpdateMap(updateMap);
+                            model.setQueryMap(queryMap);
+                            bulkList.add(model);
+                            productService.bulkUpdateWithMap(user.getSelChannelId(), bulkList, user.getUserName(), "$set");
+                        }
+                    }
+                }
+            }
+
         }
         return null;
     }

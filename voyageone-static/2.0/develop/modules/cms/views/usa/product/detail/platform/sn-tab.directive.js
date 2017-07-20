@@ -20,12 +20,21 @@ define([
 
     class SnTabController{
 
-        constructor(productDetailService, sizeChartService, $rootScope, systemCategoryService, alert, notify, confirm, $localStorage,detailDataService){
+        constructor($scope,detailDataService){
+            this.$scope = $scope;
             this.detailDataService = detailDataService;
         }
 
         init(){
-            this.detailDataService.test();
+            let self = this;
+
+            self.detailDataService.getProductInfo({prodId:self.$scope.productInfo.productId}).then(res => {
+
+                self.mastData = res.data.mastData;
+                self.platform = res.data.platform;
+                self.productComm = res.data.productComm;
+
+            });
         }
 
     }
@@ -33,7 +42,7 @@ define([
     cms.directive('snTab', function () {
         return {
             restrict: 'E',
-            controller: ['productDetailService', 'sizeChartService', '$rootScope', 'systemCategoryService', 'alert', 'notify', 'confirm', '$localStorage', 'detailDataService',SnTabController],
+            controller: SnTabController,
             controllerAs: 'ctrl',
             scope: {
                 productInfo: "=productInfo",

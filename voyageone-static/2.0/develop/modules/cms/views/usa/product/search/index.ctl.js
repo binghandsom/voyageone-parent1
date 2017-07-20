@@ -62,6 +62,9 @@ define([
                     self.masterData.brandList = res.data.brandList;
 
                     // 用户自定义列
+                    self.customColumns.commonProps = res.data.commonProps;
+                    self.customColumns.platformAttributes = res.data.platformAttributes;
+                    self.customColumns.platformSales = res.data.platformSales;
                     self.customColumns.selCommonProps = self.getselectedProps(res.data.commonProps,res.data.selCommonProps,'propId');
                     self.customColumns.selPlatformAttributes = self.getselectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
                     //self.customColumns.selPlatformSales = self.getselectedProps(res.data.platformSales,res.data.selPlatformSales);
@@ -127,7 +130,9 @@ define([
             else
                 attrName = 'value';
 
-            let _func = self.$parse(attrName);
+            let _func = self.$parse(prop[attrName]);
+
+            //console.log('attr',);
 
             return _func(element) ? _func(element) : '';
 
@@ -141,10 +146,11 @@ define([
                 searchInfo = {};
             }
             // codeList 换行符分割
+            let codeList = [];
             if (searchInfo.codeList) {
-                let codeList = searchInfo.codeList.split("\n");
-                searchInfo.codeList = codeList;
+                codeList = searchInfo.codeList.split("\n");
             }
+            searchInfo.codeList = codeList;
             // 处理平台状态
             if (searchInfo.platformStatus) {
                 let platformStatusObj = _.pick(searchInfo.platformStatus, function (value, key, object) {
@@ -167,9 +173,9 @@ define([
         popCustomAttributes() {
             let self = this;
             self.popups.openCustomAttributes().then(res => {
-                self.customColumns.selCommonProps = res.selCommonProps;
-                self.customColumns.selPlatformAttributes = res.selPlatformAttributes;
-                self.customColumns.selPlatformSales = res.selPlatformSales;
+                self.customColumns.selCommonProps = self.getselectedProps(self.customColumns.commonProps,res.selCommonProps,'propId');
+                self.customColumns.selPlatformAttributes = self.getselectedProps(self.customColumns.platformAttributes, res.selPlatformAttributes,'value');
+                //self.customColumns.selPlatformSales = self.getselectedProps(res.data.platformSales,res.data.selPlatformSales);
             })
         }
 
@@ -188,17 +194,16 @@ define([
 
         popUsFreeTag() {
             let self = this;
-
-            self.popups.openUsFreeTag({
-                orgFlg: 2,
-                tagTypeSel: '4',
-                cartId: 23,
-                productIds: null,
-                selAllFlg: 0,
-                searchInfo: self.searchInfoBefo
-            }).then(res => {
-
-            })
+            let params = {
+                orgFlg: '0',
+                tagType: '6',
+                selAllFlg: '0',
+                selCodeList: [],
+                searchInfo: {}
+            };
+            self.popups.openUsFreeTag(params).then(res => {
+                console.log(res);
+            });
         }
 
         /**
@@ -327,13 +332,15 @@ define([
          * 弹出usFreeTags修改框
          */
         popUpdateFreeTags() {
+
             let self = this;
+            console.log(self._selall);
             let params = {
                 orgFlg: '2',
                 tagType: '6',
                 selAllFlg: '0',
                 selCodeList: self.getSelectedProduct("code"),
-                searchInfo: self.searchInfo
+                searchInfo: self.handleQueryParams()
             };
             self.popups.openUsFreeTag(params).then(res => {
                console.log(res);

@@ -20,6 +20,7 @@ define([
                 orgFlg:context.orgFlg,
                 selTagType:context.selTagType,
                 selAllFlg:context.selAllFlg,
+                selCodeList:context.selCodeList,
                 searchInfo:context.searchInfo
             };
 
