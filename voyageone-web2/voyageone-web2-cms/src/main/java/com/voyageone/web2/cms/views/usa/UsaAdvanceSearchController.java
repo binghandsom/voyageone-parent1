@@ -12,15 +12,12 @@ import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
 import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
-import com.voyageone.service.impl.cms.usa.UsaAdvanceSearchService;
 import com.voyageone.service.impl.cms.usa.UsaCustomColumnService;
 import com.voyageone.service.impl.cms.usa.UsaTagService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
-import com.voyageone.web2.cms.bean.CmsSessionBean;
-import com.voyageone.web2.cms.views.search.CmsAdvSearchCustColumnService;
 import com.voyageone.web2.cms.views.search.CmsAdvSearchOtherService;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -29,7 +26,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -55,9 +51,6 @@ public class UsaAdvanceSearchController extends CmsController {
     private PlatformService platformService;
     @Autowired
     private CmsAdvSearchOtherService advSearchOtherService;
-
-    @Autowired
-    private UsaAdvanceSearchService usaAdvanceSearchService;
     @Autowired
     private UsaCustomColumnService usaCustomColumnService;
     @Autowired
