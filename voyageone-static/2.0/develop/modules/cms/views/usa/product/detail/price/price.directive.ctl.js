@@ -19,10 +19,8 @@ define([
         init(){
             let self = this;
 
-            self.detailDataService.updateOnePrice({
-                prodId:self.productInfo.productId
-            }).then(res => {
-                console.log(res);
+            self.detailDataService.getAllPlatformsPrice(self.productInfo.productId).then(res => {
+                //console.log(res);
             });
         }
 

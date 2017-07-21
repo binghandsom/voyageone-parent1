@@ -48,7 +48,8 @@ define([
                 productInfo: "=productInfo",
                 cartInfo: "=cartInfo"
             },
-            templateUrl: 'views/usa/product/detail/platform/sn-tab.tpl.html'
+            templateUrl: 'views/usa/product/detail/platform/sn-tab.directive.html'
         }
     })
+
 });

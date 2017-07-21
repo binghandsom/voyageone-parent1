@@ -6,6 +6,7 @@ define([
     'cms',
     'modules/cms/controller/popup.ctl',
     './platform/sn-tab.directive',
+    './platform/us-tab.directive',
     './inventory/inventory.directive.ctl',
     './price/price.directive.ctl'
 ],function (cms) {
@@ -38,8 +39,9 @@ define([
                 _cartObj = self.routeParams.cartId;
 
             self.menuService.getPlatformType().then(function (resp) {
+
                 self.platformTypes = _.filter(resp, function (element) {
-                    return element.value != 21 && element.value >= 20 && element.value <= 928;
+                    return element.value < 20 && element.value != 0 ;
                 });
             });
 
