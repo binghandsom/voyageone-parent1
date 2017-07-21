@@ -68,6 +68,8 @@ public class UsaCmsUrlConstants {
 
         String GET_PRODUCT_INFO = "getProductInfo";
 
+        String UPDATE_COMMON_PRODUCT_INFO = "updateCommonProductInfo";
+
         String GETALLPLATFORMSPRICE = "getAllPlatformsPrice";
 
         String UPDATEONEPRICE = "updateOnePrice";
