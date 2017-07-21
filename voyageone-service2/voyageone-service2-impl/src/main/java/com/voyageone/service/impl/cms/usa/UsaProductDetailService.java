@@ -663,6 +663,9 @@ public class UsaProductDetailService extends BaseService {
                         priceMap.put("priceMsrpEd", value.getpPriceMsrpEd());
                         priceMap.put("priceRetailSt", value.getpPriceRetailSt());
                         priceMap.put("priceRetailEd", value.getpPriceRetailEd());
+
+                        priceMap.put("priceSaleSt", value.getpPriceSaleSt());
+                        priceMap.put("priceSaleEd", value.getpPriceSaleEd());
                         priceList.put(key.replace("P",""), priceMap);
 
                     });

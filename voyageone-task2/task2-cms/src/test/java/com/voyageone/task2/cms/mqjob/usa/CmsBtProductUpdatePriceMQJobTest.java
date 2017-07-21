@@ -27,7 +27,7 @@ public class CmsBtProductUpdatePriceMQJobTest {
     public void testOnStartup() throws Exception {
         CmsBtProductUpdatePriceMQMessageBody map = new CmsBtProductUpdatePriceMQMessageBody();
         map.setChannelId("001");
-        map.setCartId(8);
+        map.setCartId(0);
         map.setProductCodes(Collections.singletonList("609973-460"));
         Map<String, Object> paraMap = new HashMap<>();
         paraMap.put("changedPriceType","clientMsrpPrice");
