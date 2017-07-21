@@ -9,12 +9,16 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.PropService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales;
+
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -43,21 +47,34 @@ public class UsaCustomColumnService extends BaseService {
      */
     public Map<String, Object> getUserCustomColumns(String channelId, Integer userId, String language) {
         Map<String, Object> rsMap = new HashMap<>();
-        // 取得已选择Platform Attributes
-        Map<String, Object> colMap2 = commonPropService.getCustColumnsByUserId(userId, "usa_cms_cust_col_platform_attr");
-        if (colMap2 == null || colMap2.isEmpty()) {
-            rsMap.put("selPlatformAttributes", new String[]{});
-        } else {
-            String selStr = StringUtils.trimToEmpty((String) colMap2.get("cfg_val2"));
-            rsMap.put("selPlatformAttributes", selStr.split(","));
-        }
         // 取得已选择Common Attributes
-        colMap2 = commonPropService.getCustColumnsByUserId(userId, "usa_cms_cust_col_common_attr");
+        Map<String, Object> colMap2 = commonPropService.getCustColumnsByUserId(userId, "usa_cms_cust_col_common_attr");
         if (colMap2 == null || colMap2.isEmpty()) {
             rsMap.put("selCommonProps", new String[]{});
         } else {
-            String custAttrStr = StringUtils.trimToEmpty((String) colMap2.get("cfg_val2"));
+            String custAttrStr = StringUtils.trimToEmpty((String) colMap2.get("cfg_val1"));
             rsMap.put("selCommonProps", custAttrStr.split(","));
+        }
+
+        // 取得已选择Platform Attributes
+        List<Map<String, Object>> platformAttrMapList = commonPropService.getMultiCustColumnsByUserId(userId, "usa_cms_cust_col_platform_attr");
+        if (platformAttrMapList == null || platformAttrMapList.isEmpty()) {
+            rsMap.put("selPlatformAttributes", new String[]{});
+        } else {
+            List<Map<String, String>> selPlatformAttributes = new ArrayList<>();
+            for (Map<String, Object> attrMap : platformAttrMapList) {
+                String cartId = (String) attrMap.get("cfg_val2");
+                String[] cartAttrs = ((String)attrMap.get("cfg_val1")).split(",");
+                if (cartAttrs != null && cartAttrs.length > 0) {
+                    for (String attr : cartAttrs) {
+                        Map<String, String> platformAttrMap = new HashMap<>();
+                        platformAttrMap.put("cartId", cartId);
+                        platformAttrMap.put("value", attr);
+                        selPlatformAttributes.add(platformAttrMap);
+                    }
+                }
+            }
+            rsMap.put("selPlatformAttributes", selPlatformAttributes);
         }
         List<Map<String, Object>> platformSales = commonPropService.getMultiCustColumnsByUserId(userId, "usa_cms_cust_col_platform_sale");
         if (colMap2 == null || colMap2.isEmpty()) {
@@ -66,8 +83,8 @@ public class UsaCustomColumnService extends BaseService {
             List<Map<String, Object>> selPlatformSales = new ArrayList<>();
             for (Map<String, Object> map : platformSales) {
                 Map<String, Object> cartMap = new HashMap<>();
-                cartMap.put("cartId", map.get("cfg_val1"));
-                cartMap.putAll(JacksonUtil.jsonToMap((String) map.get("cfg_val2")));
+                cartMap.put("cartId", map.get("cfg_val2"));
+                cartMap.putAll(JacksonUtil.jsonToMap((String) map.get("cfg_val1")));
                 selPlatformSales.add(cartMap);
             }
             rsMap.put("selPlatformSales", selPlatformSales);
@@ -121,44 +138,51 @@ public class UsaCustomColumnService extends BaseService {
             String cartName = cartObj.getName();
             // 自定义列 --->>> 各平台销量
             Map<String, String> keySum7Map = new HashMap<>(2);
+            keySum7Map.put("cartId", String.valueOf(cartId));
             keySum7Map.put("name", String.format("%s (Last 7)", cartName));
             keySum7Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_7 + "." + CmsBtProductModel_Sales.CARTID + cartId);
             platformAttrList.add(keySum7Map);
 
             Map<String, String> keySum30Map = new HashMap<>(2);
+            keySum30Map.put("cartId", String.valueOf(cartId));
             keySum30Map.put("name", String.format("%s (Last 30)", cartName));
             keySum30Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_30 + "." + CmsBtProductModel_Sales.CARTID + cartId);
             platformAttrList.add(keySum30Map);
 
             Map<String, String> keySumYearMap = new HashMap<>(2);
+            keySumYearMap.put("cartId", String.valueOf(cartId));
             keySumYearMap.put("name", String.format("%s (Period)", cartName));
             keySumYearMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_YEAR + "." + CmsBtProductModel_Sales.CARTID + cartId);
             platformAttrList.add(keySumYearMap);
 
             Map<String, String> keySumAllMap = new HashMap<>(2);
+            keySumAllMap.put("cartId", String.valueOf(cartId));
             keySumAllMap.put("name", String.format("%s (All)", cartName));
             keySumAllMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_ALL + "." + CmsBtProductModel_Sales.CARTID + cartId);
             platformAttrList.add(keySumAllMap);
 
             // 各平台属性 >>> 'Publish Time' && 'Price' && 'Msrp' && 'QTY'
-            // TODO: 2017/7/17 rex.wu
             Map<String, String> keyPublishTimeMap = new HashMap<>(2);
+            keyPublishTimeMap.put("cartId", String.valueOf(cartId));
             keyPublishTimeMap.put("name", String.format("%s Publish Time", cartName));
             keyPublishTimeMap.put("value", String.format("usPlatforms.P%d.publishTime", cartId));
             platformAttrList.add(keyPublishTimeMap);
 
-            Map<String, String> keyMarpMap = new HashMap<>(2);
-            keyMarpMap.put("name", String.format("%s Msrp", cartName));
-            keyMarpMap.put("value", String.format("usPlatforms.P%d.msrp", cartId));
-            platformAttrList.add(keyMarpMap);
+            Map<String, String> keyMsrpMap = new HashMap<>(2);
+            keyMsrpMap.put("cartId", String.valueOf(cartId));
+            keyMsrpMap.put("name", String.format("%s Msrp", cartName));
+            keyMsrpMap.put("value", String.format("usPlatforms.P%d.pPriceMsrpSt,usPlatforms.P%d.pPriceMsrpEd", cartId, cartId));
+            platformAttrList.add(keyMsrpMap);
 
             Map<String, String> keyPriceMap = new HashMap<>(2);
-            keyPriceMap.put("name", String.format("%s Msrp", cartName));
-            keyPriceMap.put("value", String.format("usPlatforms.P%d.price", cartId));
+            keyPriceMap.put("cartId", String.valueOf(cartId));
+            keyPriceMap.put("name", String.format("%s Price", cartName));
+            keyPriceMap.put("value", String.format("usPlatforms.P%d.pPriceSaleSt,usPlatforms.P%d.pPriceSaleEd", cartId, cartId));
             platformAttrList.add(keyPriceMap);
 
             Map<String, String> keyQtyMap = new HashMap<>(2);
-            keyQtyMap.put("name", String.format("%s Msrp", cartName));
+            keyQtyMap.put("cartId", String.valueOf(cartId));
+            keyQtyMap.put("name", String.format("%s Qty", cartName));
             keyQtyMap.put("value", String.format("usPlatforms.P%d.quantity", cartId));
             platformAttrList.add(keyQtyMap);
         }
@@ -208,7 +232,7 @@ public class UsaCustomColumnService extends BaseService {
 
     public void saveUserCustomColumns(String channelId, Integer userId, String username, Map<String, Object> params) {
         List<String> selCommonProps = (List<String>) params.get("selCommonProps");
-        List<String> selPlatformAttributes = (List<String>) params.get("selPlatformAttributes");
+        Map<String, List<String>> selPlatformAttributes = (Map<String, List<String>>) params.get("selPlatformAttributes");
         List<Map<String, Object>> selPlatformSales = (List<Map<String, Object>>) params.get("selPlatformSales");
         // 保存用户自定义列 --->>> usa_cms_cust_col_common_attr
         commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_common_attr");
@@ -221,20 +245,27 @@ public class UsaCustomColumnService extends BaseService {
                     sb.append(",");
                 }
             }
-            commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_common_attr", "", sb.toString());
+            commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_common_attr", sb.toString(), "");
         }
         // 保存用户自定义列 --->>> usa_cms_cust_col_platform_attr
         commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_platform_attr");
-        if (CollectionUtils.isNotEmpty(selPlatformAttributes)) {
-            int size = selPlatformAttributes.size();
-            StringBuffer sb = new StringBuffer();
-            for (int i = 0; i < size; i++) {
-                sb.append(selPlatformAttributes.get(i));
-                if (i != size - 1) {
-                    sb.append(",");
+        if (MapUtils.isNotEmpty(selPlatformAttributes)) {
+            for (Map.Entry<String, List<String>> platformEntry : selPlatformAttributes.entrySet()) {
+                String cartId = platformEntry.getKey();
+                List<String> cartAttributes = platformEntry.getValue();
+                if (CollectionUtils.isEmpty(cartAttributes)) {
+                    continue;
                 }
+                int size = cartAttributes.size();
+                StringBuffer sb = new StringBuffer();
+                for (int i = 0; i < size; i++) {
+                    sb.append(cartAttributes.get(i));
+                    if (i != size - 1) {
+                        sb.append(",");
+                    }
+                }
+                commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_platform_attr", sb.toString(), cartId);
             }
-            commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_platform_attr", "", sb.toString());
         }
         // 保存用户自定义列 --->>> usa_cms_cust_col_platform_sale
         commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_platform_sale");
@@ -246,7 +277,7 @@ public class UsaCustomColumnService extends BaseService {
                 if (StringUtils.isBlank(cartId) || StringUtils.isBlank(beginTime) || StringUtils.isBlank(endTime)) {
                     throw new BusinessException("Platform sale parameter invalid");
                 }
-                commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_platform_sale", cartId, JacksonUtil.bean2Json(cartMap));
+                commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_platform_sale", JacksonUtil.bean2Json(cartMap), cartId);
             }
         }
     }

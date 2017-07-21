@@ -285,7 +285,7 @@
                                             <i class="fa fa-{{ctrl.getArrowName(prop.sortName)}}"></i>
                                         </button>
                                     </th>
-                                    <th class="text-center td-width-150 white-space-noWrap th-border-white" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes">
+                                    <th class="text-center td-width-150 white-space-noWrap th-border-white" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes track by $index">
                                         {{prop.name}}
                                         <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.sortName)"
                                                 ng-if="prop.sortFlag == 1 && prop.sortName != ''">
@@ -359,7 +359,7 @@
                                         <td class="text-right">{{productInfo.common.fields.quantity}}</td>
                                         <td class="text-center">{{productInfo.common.fields.translateTime}}</td>
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selCommonProps">{{ctrl.getProductValue(productInfo,prop)}}</td>
-                                        <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes">{{ctrl.getProductValue(productInfo,prop)}}</td>
+                                        <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes track by $index">{{prop}}</td>
 
                                     </tr>
                                 </tbody>
