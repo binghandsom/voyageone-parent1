@@ -14,10 +14,11 @@ define([
 
     class SnTabController{
 
-        constructor($scope,detailDataService,$usProductDetailService){
+        constructor($scope,detailDataService,$usProductDetailService,notify){
             this.$scope = $scope;
             this.detailDataService = detailDataService;
             this.$usProductDetailService = $usProductDetailService;
+            this.notify = notify;
         }
 
         init(){
@@ -36,7 +37,6 @@ define([
 
         // Save
         save() {
-            console.log("Save....");
             let self = this;
             let parameter = {
                 prodId:self.$scope.productInfo.productId,
@@ -47,7 +47,9 @@ define([
                 }
             };
             this.$usProductDetailService.updateCommonProductInfo(parameter).then(res => {
-                console.log(res.data);
+                if (res.data) {
+                    self.notify.success("Save success.");
+                }
             });
         }
 

@@ -259,7 +259,7 @@ public class UsaProductDetailService extends BaseService {
         HashMap<String, Object> updateMap = new HashMap<>();
 
         platformModel.setModified(DateTimeUtil.getNowTimeStamp());
-        updateMap.put("platforms.P" + platformModel.getCartId(), platformModel);
+        updateMap.put("usPlatforms.P" + platformModel.getCartId(), platformModel);
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);

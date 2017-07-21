@@ -365,16 +365,16 @@
                                         <th class="text-right">price($)</th>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td class="text-left">Size</td>
-                                            <td class="text-left">Sku</td>
-                                            <td class="text-left">Upc</td>
-                                            <td class="text-center">platformQty</td>
-                                            <td class="text-center">Weight</td>
-                                            <td class="text-center">Weitch Unit</td>
-                                            <td class="text-right">Msrp($)</td>
-                                            <td class="text-right">price($)</td>
-                                            <td class="text-right">price($)</td>
+                                        <tr ng-repeat="sku in ctrl.productComm.skus">
+                                            <td class="text-left">{{sku.size}}</td>
+                                            <td class="text-left">{{sku.skuCode}}</td>
+                                            <td class="text-left">{{sku.barcode}}</td>
+                                            <td class="text-center">{{sku.qty}}</td>
+                                            <td class="text-center">{{sku.weight}}</td>
+                                            <td class="text-center">{{sku.weightUnit}}</td>
+                                            <td class="text-right">{{sku.clientMsrpPrice}}</td>
+                                            <td class="text-right">{{sku.clientNetPrice}}</td>
+                                            <td class="text-right">{{sku.clientRetailPrice}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
