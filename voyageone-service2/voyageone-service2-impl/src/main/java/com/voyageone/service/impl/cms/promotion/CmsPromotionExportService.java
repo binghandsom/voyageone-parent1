@@ -3,11 +3,8 @@ package com.voyageone.service.impl.cms.promotion;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Properties;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.promotion.CmsPromotionExportBean;
 import com.voyageone.service.dao.cms.CmsBtPromotionExportTaskDao;
@@ -20,35 +17,15 @@ import com.voyageone.service.model.cms.CmsBtPromotionExportTaskModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtPromotionSkusModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.io.*;
+import java.util.*;
 
 /**
  * 活动(非聚美)商品导出Service
@@ -199,7 +176,7 @@ public class CmsPromotionExportService extends BaseService {
             cmsBtPromotionExportTaskDao.update(targetExportTaskModel);
         } catch (Exception e) {
             e.printStackTrace();
-            $error(String.format("活动(%s)商品导出失败", cmsBtPromotionModel.getPromotionName()));
+            $error(String.format("活动(%s)商品导出失败", cmsBtPromotionModel.getPromotionName()), e);
             // 如果任务出现错误，记录失败
             CmsBtPromotionExportTaskModel targetExportTaskModel = new CmsBtPromotionExportTaskModel();
             targetExportTaskModel.setId(exportTaskModel.getId());

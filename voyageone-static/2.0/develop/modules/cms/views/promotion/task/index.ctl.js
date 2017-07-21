@@ -87,6 +87,10 @@ define([
                         self.taskService.updateStatus({taskId: task.id, status: 1}).then(function (res) {
                             task.status = 1;
                             self.notify.success('TXT_MSG_SET_SUCCESS');
+
+                            self.taskService.page(self.searchInfo).then(function (res) {
+                                self.tasks = res.data;
+                            });
                         });
                     });
                 } else {
@@ -94,13 +98,13 @@ define([
                         self.taskService.updateStatus({taskId: task.id, status: 0}).then(function (res) {
                             task.status = 0;
                             self.notify.success('TXT_MSG_SET_SUCCESS');
+
+                            self.taskService.page(self.searchInfo).then(function (res) {
+                                self.tasks = res.data;
+                            });
                         });
                     });
                 }
-
-                self.taskService.page(self.searchInfo).then(function (res) {
-                    self.tasks = res.data;
-                });
             },
 
             delete: function(task){
