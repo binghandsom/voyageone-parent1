@@ -231,7 +231,7 @@
                                     <div class="input-group">
                                         <span class="input-group-addon cur-p"
                                               ng-click="feed.editMsrp =feed.approvePricing != 1? !feed.editMsrp:feed.editMsrp"><i class="fa fa-pencil"></i></span>
-                                        <input type="number" class="form-control" ng-change="feed.priceClientMsrpMax = feed.priceClientMsrpMin"
+                                        <input type="number" class="form-control text-center" ng-change="feed.priceClientMsrpMax = feed.priceClientMsrpMin"
                                                ng-enter="ctrl.updateOne(feed,'priceClientMsrp',feed.priceClientMsrpMin)"
                                                ng-model="feed.priceClientMsrpMin" ng-disabled="!feed.editMsrp ">
                                     </div>
@@ -242,7 +242,7 @@
                                 <td class="text-right" ng-if="feed.priceClientRetailMin == feed.priceClientRetailMax" ng-hide="ctrl.flag == 1">
                                     <div class="input-group">
                                         <span class="input-group-addon cur-p" ng-click="feed.editRetai =feed.approvePricing != 1?!feed.editRetai:feed.editRetai"><i class="fa fa-pencil"></i></span>
-                                        <input type="number" class="form-control" ng-model="feed.priceClientRetailMin"
+                                        <input type="number" class="form-control text-center" ng-model="feed.priceClientRetailMin"
                                                ng-disabled="!feed.editRetai"
                                                ng-enter="ctrl.updateOne(feed,'price',feed.priceClientRetailMin)"
                                                ng-change="feed.priceClientRetailMax = feed.priceClientRetailMin">
