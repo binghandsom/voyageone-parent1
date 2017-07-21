@@ -175,7 +175,7 @@ public class CmsPromotionIndexController extends CmsController {
         } else if (Objects.equals(taskModel.getTemplateType(), Integer.valueOf(2))) {
             exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_TMALL_EXPORT_PATH);
         } else if (Objects.equals(taskModel.getTemplateType(), Integer.valueOf(3))) {
-            exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_NEW_EXPORT_PATH);
+            exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_JIAGEPILU_EXPORT_PATH);
         }
         File pathFileObj = new File(exportPath);
         if (!pathFileObj.exists()) {

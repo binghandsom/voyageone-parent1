@@ -129,7 +129,7 @@ public class CmsPromotionExportService extends BaseService {
         } else if (Objects.equals(templateType, Integer.valueOf(2))) {
             exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_TMALL_EXPORT_PATH);
         } else if (Objects.equals(templateType, Integer.valueOf(3))) {
-            exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_NEW_EXPORT_PATH);
+            exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_JIAGEPILU_EXPORT_PATH);
         }
         File pathFileObj = new File(exportPath);
         if (StringUtils.isBlank(exportPath) || !(pathFileObj = new File(exportPath)).exists()) {
