@@ -1,1 +1,162 @@
-<h1>young king young boss</h1>
+<div class="product-shema-detail">
+
+    <form class="form-horizontal" name="productFieldForm" novalidate>
+        <div class="panel vo_panel tab_panel">
+            <div class="wrapper">
+                <div class="container-fluid" id="common">
+
+                    <div class="row">
+                        <div class="col-sm-6">
+
+
+                            <div class="row form-group">
+                                <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_CODE"|translate}}</strong></label>
+
+                                <div class="col-md-8">
+                                    <input class="form-control" ng-model="ctrl.vm.mastData.productCode" readonly>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <ng-form name="ctrl.schemaForm" novalidate>
+
+                    <!------------------------------------------------以下为商品Schema------------------------------------------------------->
+                    <div class="product-title">
+                        <h3><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;商品详情</h3>
+                    </div>
+                    <div class="container-fluid" id="item">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <schema data="ctrl.vm.platform.schemaFields.item"></schema>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+
+                    <!------------------------------------------------以下为产品Schema------------------------------------------------------->
+                    <div class="product-title">
+                        <h3><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</h3>
+                    </div>
+                    <div class="container-fluid" id="product">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <schema data="ctrl.vm.platform.schemaFields.product"></schema>
+                            </div>
+                        </div>
+                        <br>
+                    </div>
+
+                </ng-form>
+                <br>
+
+                <div class="product-title">
+                    <h3><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;SKU</h3>
+                </div>
+                <!------------------------------------------------以下为产品SKU------------------------------------------------------->
+                <div class="container-fluid" id="sku">
+
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <ng-form name="ctrl.skuForm" novalidate>
+                                    <table class="table text-left" style="min-width: 1400px">
+                                        <thead>
+                                        <tr>
+                                            <th class="text-center">
+                                                <input class="sku_check" type="checkbox" ng-click="ctrl.selectAll()"
+                                                       ng-model="ctrl.vm.skuFlag" ng-true-value="true"
+                                                       ng-false-value="false" ng-checked="ctrl.allSkuSale()">All
+                                            </th>
+                                            <th class="text-center">skuCode</th>
+                                            <th class="text-center">{{"TXT_SKU_INVENTORY"|translate}}</th>
+                                            <th class="text-center">size</th>
+                                            <th class="text-center">platform size</th>
+                                            <th class="text-right">客户建议零售价</th>
+                                            <th class="text-right">客户成本价</th>
+                                            <th class="mfb-xxx text-center">{{"TXT_CHINA_MSRP_PRICE"|translate}}</th>
+                                            <th class="text-center">{{"TXT_CHINA_RETAIL_PRICE"|translate}}</th>
+                                            <th class="text-center">容量/尺码</th>
+                                            <th class="mfb-xxx text-center">{{"TXT_FINAL_SALE_PRICE"|translate}}</th>
+                                            <th class="text-center">{{"TXT_BAR_CODE"|translate}}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td if-no-rows="ctrl.vm.platform.skus == null || ctrl.vm.platform.skus.length == 0 ? 0 : ctrl.vm.platform.skus.length"
+                                                colspan="10" style="padding: 0px"></td>
+                                        </tr>
+                                        <tr ng-repeat="entity in ctrl.vm.platform.skus"
+                                            ng-if="ctrl.vm.platform.skus.length > 0"
+                                            ng-init="entity.property = entity.property == null?'OTHER' : entity.property ">
+                                            <td class="text-center v-middle">
+                                                <input class="sku_check" type="checkbox" ng-model="entity.isSale"
+                                                       ng-true-value="true" ng-false-value="false">
+                                            </td>-
+                                            <td class="text-center v-middle">{{entity.skuCode}}</td>
+                                            <td class="text-center v-middle">{{entity.qty || entity.qty == 0 ? entity.qty : ctrl.vm.skuTemp[entity.skuCode].qty ? ctrl.vm.skuTemp[entity.skuCode].qty:0}}</td>
+                                            </td>
+                                            <td class="text-center v-middle">{{ctrl.vm.skuTemp[entity.skuCode].size}}
+                                            </td>
+                                            <td class="text-center v-middle">
+                                                {{ctrl.vm.skuTemp[entity.skuCode].platformSize}}
+                                            </td>
+                                            <td class="text-right  v-middle">
+                                                {{ctrl.vm.skuTemp[entity.skuCode].clientMsrpPrice}}
+                                            </td>
+                                            <td class="text-right  v-middle">
+                                                {{ctrl.vm.skuTemp[entity.skuCode].clientNetPrice}}
+                                            </td>
+                                            <td class="mfb-xxx text-center v-middle">
+                                                <label class="col-sm-3 control-label vo_reqfield"></label>
+                                                <input class="form-control ng-number" type="number"
+                                                       ng-disabled="ctrl.autoSyncPriceMsrp=='1'" ng-model="entity.priceMsrp"
+                                                       scale="15,2" required>
+                                            </td>
+                                            <td class="text-center v-middle">{{entity.priceRetail}}</td>
+                                            <td class="text-center v-middle"><input class="form-control" type="text"
+                                                                                    ng-model="entity.sizeNick"
+                                                                                    style="width: 100px;margin: 0px auto;">
+                                            </td>
+                                            <td class="mfb-xxx text-center v-middle">
+                                                <label class="col-sm-3 control-label vo_reqfield"></label>
+                                                <input class="form-control ng-number" type="number"
+                                                       ng-model="entity.priceSale"
+                                                       ng-readonly="ctrl.autoSyncPriceSale == '1'"
+                                                       scale="15,2" required></td>
+                                            <td class="text-center v-middle">
+                                                {{ctrl.vm.skuTemp[entity.skuCode].barcode}}
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </ng-form>
+                            </div>
+                        </div>
+
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+    <!-------------------------------- 导航栏 --------------------------------->
+    <sticky top-fix="-100" style="position: absolute; top: 380px; right: 47px;" drag>
+        <nav class="bs-docs-sidebar">
+            <h3 drag-handle>导航栏</h3>
+            <ul class="nav bs-docs-sidenav">
+                <li>
+                    <a href="javascript:void(0)" ng-click="ctrl.pageAnchor('common',1000)">List</a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" ng-click="ctrl.pageAnchor('item',1000)">DeList</a>
+                </li>
+
+            </ul>
+        </nav>
+    </sticky>
+</div>
+
+
