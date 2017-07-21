@@ -32,7 +32,7 @@ public class CmsAdvSearchOtherServiceTest {
         UserSessionBean user = new UserSessionBean();
         user.setSelChannelId("001");
         user.setUserName("xusong");
-        cmsAdvSearchOtherService.updateOnePrice(map,user);
+       // cmsAdvSearchOtherService.updateOnePrice(map,user);
     }
 
     @Test

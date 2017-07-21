@@ -125,7 +125,6 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                                         //获取到对应的skuCode
                                         String skuCode = (String) sku.get("skuCode");
                                         Double newPrice = null;
-                                        //Double basePrice = null;
                                         newPrice = getNewPrice(basePriceType, optionType, value, flag, sku, newPrice);
                                         minMaxPrices[i] = newPrice;
                                         JongoUpdate jongoUpdate = new JongoUpdate();

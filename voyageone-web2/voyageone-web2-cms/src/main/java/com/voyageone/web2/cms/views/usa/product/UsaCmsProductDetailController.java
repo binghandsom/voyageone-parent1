@@ -65,19 +65,19 @@ public class UsaCmsProductDetailController extends CmsController {
     }
 
     //根据productCode获取中国和美国的平台价格信息
-    @RequestMapping(value = UsaCmsUrlConstants.PRODUCT.GETALLPLATFORMSPRICE)
+    @RequestMapping(value = UsaCmsUrlConstants.PRODUCT.GET_ALL_PLATFORMS_PRICE)
     public AjaxResponse getAllPlatformsPrice(@RequestBody Long prodId) {
         UserSessionBean user = getUser();
-        HashMap<String, Map<String, Double>> allPlatformsPrice = advSearchOtherService.getAllPlatformsPrice(prodId, user);
+        HashMap<String, Map<String, Double>> allPlatformsPrice = usaProductDetailService.getAllPlatformsPrice(prodId, user.getSelChannelId());
         // 返回用户信息
         return success(allPlatformsPrice);
     }
 
     //单个修改价格
-    @RequestMapping(value = UsaCmsUrlConstants.PRODUCT.UPDATEONEPRICE)
+    @RequestMapping(value = UsaCmsUrlConstants.PRODUCT.UPDATE_ONE_PRICE)
     public AjaxResponse updateOnePrice(@RequestBody Map params) {
         UserSessionBean user = getUser();
-        advSearchOtherService.updateOnePrice(params, user);
+        usaProductDetailService.updatePrice(params,user.getSelChannelId(),user.getUserName());
         // 返回用户信息
         return success(null);
     }
