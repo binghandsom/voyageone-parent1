@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.mqjob.usa;
 
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -49,7 +50,7 @@ public class CmsBtProductUpdateCategoryMQJob extends TBaseMQCmsService<CmsBtProd
                     if (usPlatforms!= null){
                         CmsBtProductModel_Platform_Cart usPlatform = usPlatforms.get("P" + messageBody.getCartId());
                         String status = usPlatform.getStatus();
-                        if ("Approve".equals(status)){
+                        if (CmsConstants.ProductStatus.Approved.name().equals(status)){
                             platformProductUploadService.saveCmsBtUsWorkloadModel(messageBody.getChannelId(),messageBody.getCartId(),productCode,null,0,messageBody.getSender());
                         }
                 }
