@@ -69,6 +69,20 @@ define([
             return defer.promise;
         }
 
+        //获取产品平台信息
+        getProductPlatform(req){
+            let self = this,
+                defer = self.$q.defer();
+
+            self.$usProductDetailService.getProductPlatform(req).then(res => {
+                defer.resolve(res);
+            }, res => {
+                defer.reject(res);
+            });
+
+            return defer.promise;
+        }
+
     }
 
     cms.service('detailDataService', DetailDataService);

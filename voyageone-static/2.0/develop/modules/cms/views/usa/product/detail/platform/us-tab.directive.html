@@ -1,4 +1,4 @@
-<div class="product-shema-detail">
+<div class="product-shema-detail" ng-init="ctrl.init()">
 
     <form class="form-horizontal" name="productFieldForm" novalidate>
         <div class="panel vo_panel tab_panel">
@@ -6,14 +6,32 @@
                 <div class="container-fluid" id="common">
 
                     <div class="row">
-                        <div class="col-sm-6">
+                        <div class="col-sm-8">
 
+                            <div class="row form-group">
+                                <label class="col-md-2 control-label"><strong>SneakerRx</strong></label>
+
+                                <div class="col-md-8">
+                                    <label class="label label-warning">DeList</label>
+                                </div>
+                            </div>
 
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_CODE"|translate}}</strong></label>
 
                                 <div class="col-md-8">
                                     <input class="form-control" ng-model="ctrl.vm.mastData.productCode" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row form-group">
+
+                                <button class="col-md-2 btn btn-default" ng-click="ctrl.categoryMapping()"
+                                        ng-disabled="ctrl.vm.mastData.isMain!= true"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
+                                </button>
+
+                                <div class="col-md-8">
+                                    <input class="form-control" ng-model="ctrl.vm.platform.pCatPath" readonly>
                                 </div>
 
                             </div>
@@ -24,27 +42,15 @@
                 </div>
                 <ng-form name="ctrl.schemaForm" novalidate>
 
-                    <!------------------------------------------------以下为商品Schema------------------------------------------------------->
-                    <div class="product-title">
-                        <h3><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;商品详情</h3>
-                    </div>
-                    <div class="container-fluid" id="item">
-                        <div class="row">
-                            <div class="col-sm-10">
-                                <schema data="ctrl.vm.platform.schemaFields.item"></schema>
-                            </div>
-                        </div>
-                        <br>
-                    </div>
 
                     <!------------------------------------------------以下为产品Schema------------------------------------------------------->
                     <div class="product-title">
-                        <h3><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;产品详情</h3>
+                        <h3><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;Platform Product Attribute</h3>
                     </div>
                     <div class="container-fluid" id="product">
                         <div class="row">
                             <div class="col-sm-10">
-                                <schema data="ctrl.vm.platform.schemaFields.product"></schema>
+                                <schema data="ctrl.platform.platformFields"></schema>
                             </div>
                         </div>
                         <br>

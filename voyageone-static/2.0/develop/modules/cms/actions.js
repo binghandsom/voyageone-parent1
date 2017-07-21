@@ -854,7 +854,8 @@ define(function () {
                 root: '/cms/usa/product',
                 getProductInfo: 'getProductInfo',
                 updateOnePrice:'updateOnePrice',
-                getAllPlatformsPrice:'getAllPlatformsPrice'
+                getAllPlatformsPrice:'getAllPlatformsPrice',
+                getProductPlatform:'getProductPlatform'
             }
         }
     };
