@@ -32,8 +32,8 @@ public class CmsBtProductUpdatePriceMQJobTest {
         Map<String, Object> paraMap = new HashMap<>();
         paraMap.put("changedPriceType","clientMsrpPrice");
         paraMap.put("basePriceType","clientMsrpPrice");
-        paraMap.put("optionType","/");
-        paraMap.put("value","10000");
+        paraMap.put("optionType","*");
+        paraMap.put("value","1000");
         paraMap.put("flag","1");
         map.setParams(paraMap);
         cmsBtProductUpdatePriceMQJob.onStartup(map);

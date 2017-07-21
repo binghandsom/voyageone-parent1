@@ -48,6 +48,14 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
             String channelId = messageBody.getChannelId();
             Map<String, Object> params = messageBody.getParams();
             String changedPriceType = (String) params.get("changedPriceType");
+            //设置最大最小值的类型
+            String minMaxChangedPriceType = null;
+            if ("clientMsrpPrice".equals(changedPriceType)){
+                minMaxChangedPriceType = "pPriceMsrp";
+            }else {
+                minMaxChangedPriceType = "pPriceRetail";
+            }
+
             String basePriceType = (String) params.get("basePriceType");
             String optionType = (String) params.get("optionType");
             Double value = Double.parseDouble((String) params.get("value"));
@@ -99,13 +107,62 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                                         jongoUpdate.setQueryParameters(skuCode);
                                         jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + ".skus.$." + changedPriceType + "\":#}}");
                                         jongoUpdate.setUpdateParameters(newPrice);
-                                        BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
-                                        System.out.println("修改结果:" + bulkWriteResult);
+                                        cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
                                         if ("Approve".equals(status)) {
                                             platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, sender);
                                         }
                                     }
                                 }
+                                //修改对应的最大值最小值
+                                Double stPrice = null;
+                                Double edPrice = null;
+                                if ("clientMsrpPrice".equals(changedPriceType)){
+                                    stPrice = platform.getpPriceMsrpSt();
+                                    edPrice = platform.getpPriceMsrpEd();
+
+                                }else {
+                                    stPrice = platform.getpPriceSaleSt();
+                                    edPrice = platform.getpPriceSaleEd();
+                                }
+                                Double newStPrice = null;
+                                Double newEdPrice = null;
+
+                                if ("clientMsrpPrice".equals(basePriceType) || "clientRetailPrice".equals(basePriceType)) {
+                                    if ("*".equals(optionType)) {
+                                        newStPrice = stPrice * value;
+                                        newEdPrice = edPrice * value;
+                                    }
+                                    if ("/".equals(optionType)) {
+                                        newStPrice = stPrice / value;
+                                        newEdPrice = edPrice / value;
+                                    }
+                                    if ("+".equals(optionType)) {
+                                        newStPrice = stPrice + value;
+                                        newEdPrice = edPrice + value;
+                                    }
+                                    if ("-".equals(optionType)) {
+                                        newStPrice = stPrice - value;
+                                        newEdPrice = edPrice - value;
+                                    }
+                                } else {
+                                    //固定值类型
+                                    newStPrice = value;
+                                    newEdPrice = value;
+                                }
+                                if (flag == "1") {
+                                    //将价格取整
+                                    Math.round(newStPrice);
+                                    Math.round(newEdPrice);
+                                }
+
+                                JongoUpdate jongoUpdate = new JongoUpdate();
+                                //通过code定位
+                                jongoUpdate.setQuery("{\"common.fields.code\":#}");
+                                jongoUpdate.setQueryParameters(productCode);
+                                jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "St\":#,\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "Ed\":#}}");
+                                jongoUpdate.setUpdateParameters(newStPrice,newEdPrice);
+                                cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+
                             }
                         } else {
                             //cartId=0,修改所有平台的价格
@@ -147,13 +204,70 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                                             jongoUpdate.setQueryParameters(skuCode);
                                             jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId2 + ".skus.$." + changedPriceType + "\":#}}");
                                             jongoUpdate.setUpdateParameters(newPrice);
-                                            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
-                                            System.out.println("修改结果:" + bulkWriteResult);
+                                            cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
                                             if ("Approve".equals(status)) {
                                                 platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId2, productCode, null, 0, sender);
                                             }
                                         }
                                     }
+
+                                    //修改对应的最大值最小值
+                                    Double stPrice = null;
+                                    Double edPrice = null;
+                                    if ("clientMsrpPrice".equals(changedPriceType)){
+                                        stPrice = platform.getpPriceMsrpSt();
+                                        edPrice = platform.getpPriceMsrpEd();
+
+                                    }else {
+                                        stPrice = platform.getpPriceSaleSt();
+                                        edPrice = platform.getpPriceSaleEd();
+                                    }
+                                    Double newStPrice = null;
+                                    Double newEdPrice = null;
+
+                                    if ("clientMsrpPrice".equals(basePriceType) || "clientRetailPrice".equals(basePriceType)) {
+                                        if ("*".equals(optionType)) {
+                                            newStPrice = stPrice * value;
+                                            newEdPrice = edPrice * value;
+                                        }
+                                        if ("/".equals(optionType)) {
+                                            newStPrice = stPrice / value;
+                                            newEdPrice = edPrice / value;
+                                        }
+                                        if ("+".equals(optionType)) {
+                                            newStPrice = stPrice + value;
+                                            newEdPrice = edPrice + value;
+                                        }
+                                        if ("-".equals(optionType)) {
+                                            newStPrice = stPrice - value;
+                                            newEdPrice = edPrice - value;
+                                        }
+                                    } else {
+                                        //固定值类型
+                                        newStPrice = value;
+                                        newEdPrice = value;
+                                    }
+                                    if (flag == "1") {
+                                        //将价格取整
+                                        Math.round(newStPrice);
+                                        Math.round(newEdPrice);
+                                    }
+                                    String changedPriceType1 = (String) params.get("changedPriceType");
+                                    //设置最大最小值的类型
+                                    String minMaxChangedPriceType1 = null;
+                                    if ("clientMsrpPrice".equals(changedPriceType)){
+                                        minMaxChangedPriceType1 = "pPriceMsrp";
+                                    }else {
+                                        minMaxChangedPriceType1 = "pPriceRetail";
+                                    }
+                                    JongoUpdate jongoUpdate = new JongoUpdate();
+                                    //通过code定位
+                                    jongoUpdate.setQuery("{\"common.fields.code\":#}");
+                                    jongoUpdate.setQueryParameters(productCode);
+                                    jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId2 + "." + minMaxChangedPriceType1 + "St\":#,\"usPlatforms.P" + cartId2 + "." + minMaxChangedPriceType1 + "Ed\":#}}");
+                                    jongoUpdate.setUpdateParameters(newStPrice,newEdPrice);
+                                    cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+
                                 }
                             });
                         }
