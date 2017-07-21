@@ -58,9 +58,11 @@ public class UsaCmsProductDetailController extends CmsController {
 
         String channelId = getUser().getSelChannelId();
 
-        Map<String, Object> productComm = (Map<String, Object>) requestMap.get("data");
+        Map<String, Object> dataMap = (Map<String, Object>) requestMap.get("data");
+        Map<String, Object> platform = (Map<String, Object>) dataMap.get("platform");
+        Map<String, Object> productComm = (Map<String, Object>) dataMap.get("productComm");
         usaProductDetailService.updateCommonProductInfo(channelId, prodId, productComm, getUser().getUserName());
-        usaProductDetailService.updateProductPlatform(channelId, prodId, productComm, getUser().getUserName());
+        usaProductDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName());
         return success(true);
     }
 

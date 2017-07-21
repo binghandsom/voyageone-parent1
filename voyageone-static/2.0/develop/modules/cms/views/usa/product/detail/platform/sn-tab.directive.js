@@ -14,9 +14,10 @@ define([
 
     class SnTabController{
 
-        constructor($scope,detailDataService){
+        constructor($scope,detailDataService,$usProductDetailService){
             this.$scope = $scope;
             this.detailDataService = detailDataService;
+            this.$usProductDetailService = $usProductDetailService;
         }
 
         init(){
@@ -45,7 +46,7 @@ define([
                     productComm:self.productComm
                 }
             };
-            this.detailDataService.updateCommonProductInfo(parameter).then(res => {
+            this.$usProductDetailService.updateCommonProductInfo(parameter).then(res => {
                 console.log(res.data);
             });
         }
