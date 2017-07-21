@@ -101,6 +101,9 @@
             <if test="_parameter.containsKey('activity_end') and activity_end != null and activity_end != ''">
                 and #{activity_end,jdbcType=VARCHAR} >= t.activity_end
             </if>
+            <if test="_parameter.containsKey('status') and status != null and status != ''">
+                and status = #{status}
+            </if>
             <if test="cartIds != null and cartIds.size > 0">
                 and t.cart_id in
                 <foreach collection="cartIds" item="item" index="index"

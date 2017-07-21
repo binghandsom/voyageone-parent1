@@ -1,20 +1,19 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
-import com.voyageone.common.configs.Carts;
-import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
+import com.voyageone.service.impl.cms.TaskService;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION.TASK.INDEX;
-import org.apache.commons.collections.map.HashedMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jonasvlag on 16/3/1.
@@ -27,7 +26,10 @@ import java.util.*;
 public class CmsTaskController extends BaseController {
 
     @Autowired
-    private CmsTaskService taskService;
+    private CmsTaskService cmsTaskService;
+
+    @Autowired
+    private TaskService taskService;
 
     /**
      * 这里暂时没实现分页, 临时使用全部
@@ -36,9 +38,19 @@ public class CmsTaskController extends BaseController {
     public AjaxResponse page(@RequestBody Map<String,Object> searchInfo) {
 
         searchInfo.put("channelId",getUser().getSelChannelId());
-        List<CmsBtTasksBean> models = taskService.getAllTasks(searchInfo);
+//        if (!StringUtils.isEmpty(String.valueOf(searchInfo.get("status"))))
+//            searchInfo.put("status", Integer.valueOf(String.valueOf(searchInfo.get("status"))));
+        List<CmsBtTasksBean> models = cmsTaskService.getAllTasks(searchInfo);
         if(models == null) models = new ArrayList<>();
         models.sort((o1, o2) -> o1.getActivityStart().compareTo(o2.getActivityStart())*-1);
         return success(models);
+    }
+
+    @RequestMapping(INDEX.UPDATE_STATUS)
+    public AjaxResponse updateStatus(@RequestBody Map<String, Object> updateInfo) {
+        Integer taskId = Integer.valueOf(updateInfo.get("taskId").toString());
+        Integer status = Integer.valueOf(updateInfo.get("status").toString());
+
+        return success(taskService.updateTaskStatus(taskId, status, getUser().getUserName()));
     }
 }

@@ -21,9 +21,11 @@ define([
             this.popups = popups;
             this.$translate = $translate;
             this.alert = alert;
-            this.searchInfo={};
+            this.searchInfo = {status: "0"};
 
-            this.taskType=[{"name":"特价宝","value":"0"},{"name":"价格披露","value":"1"},{"name":"库存隔离","value":"2"}];
+            this.taskType = [{"name": "特价宝", "value": "0"}, {"name": "价格披露", "value": "1"}, {"name": "库存隔离", "value": "2"}];
+            this.taskStatus = [{"name": "Open", "value": 0}, {"name": "Close", "value": 1}];
+
             this.datePicker = [];
 
             this.downloadUrl = urls.root + "/" + urls.exportErrorInfo;
@@ -76,6 +78,29 @@ define([
 
             clear: function(){
                 this.searchInfo={};
+            },
+
+            updateStatus: function (task, status) {
+                var self = this;
+                if (status == 1) {
+                    self.confirm("是否关闭活动%s".replace("%s", task.taskName)).then(function () {
+                        self.taskService.updateStatus({taskId: task.id, status: 1}).then(function (res) {
+                            task.status = 1;
+                            self.notify.success('TXT_MSG_SET_SUCCESS');
+                        });
+                    });
+                } else {
+                    self.confirm("是否打开任务%s".replace("%s", task.taskName)).then(function () {
+                        self.taskService.updateStatus({taskId: task.id, status: 0}).then(function (res) {
+                            task.status = 0;
+                            self.notify.success('TXT_MSG_SET_SUCCESS');
+                        });
+                    });
+                }
+
+                self.taskService.page(self.searchInfo).then(function (res) {
+                    self.tasks = res.data;
+                });
             },
 
             delete: function(task){
