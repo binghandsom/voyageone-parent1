@@ -94,8 +94,8 @@ public class UsaTagService extends BaseService {
                 CmsProductCodeListBean productCodeListBean = cmsProductSearchQueryService.getProductCodeList(searchInfo, channelId);
                 long total = productCodeListBean.getTotalCount();
                 if (total > 0) {
-                    int pageSize = 100;
-                    long pageNum = (total % 100 == 0 ? total / 100 : total / 100 + 1);
+                    int pageSize = 1000;
+                    long pageNum = (total % pageSize == 0 ? total / pageSize : total / pageSize + 1);
                     for (int i = 1; i <= pageNum; i++) {
                         searchInfo.setProductPageSize(pageSize);
                         searchInfo.setProductPageNum(i);

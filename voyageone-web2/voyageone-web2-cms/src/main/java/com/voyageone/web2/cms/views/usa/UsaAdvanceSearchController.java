@@ -19,7 +19,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
-import com.voyageone.web2.cms.views.search.CmsAdvSearchOtherService;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
@@ -50,8 +49,6 @@ public class UsaAdvanceSearchController extends CmsController {
     private CmsAdvanceSearchService searchIndexService;
     @Autowired
     private PlatformService platformService;
-    @Autowired
-    private CmsAdvSearchOtherService advSearchOtherService;
     @Autowired
     private UsaCustomColumnService usaCustomColumnService;
     @Autowired
