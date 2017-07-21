@@ -42,6 +42,20 @@ define([
         }
 
         //获取价格信息
+        getAllPlatformsPrice(req){
+            let self = this,
+                defer = self.$q.defer();
+
+            self.$usProductDetailService.getAllPlatformsPrice(req).then(res => {
+                defer.resolve(res);
+            }, res => {
+                defer.reject(res);
+            });
+
+            return defer.promise;
+        }
+
+        //更新价格
         updateOnePrice(req){
             let self = this,
                 defer = self.$q.defer();

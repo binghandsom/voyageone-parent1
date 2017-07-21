@@ -1,182 +1,30 @@
 <div class="product-shema-detail" id="skuPrice" ng-init = "ctrl.init()">
-    <div class="form-horizontal">
+    <div class="wrapper-md">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-8 form-group">
-                    <div class="form-group">
-                        <div class="btn-group m-l-xs" uib-dropdown ng-controller="popupCtrl">
-                            <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
-                                &nbsp;历史记录&nbsp;<span class="caret"></span>
-                            </button>
-                            <ul uib-dropdown-menu>
-                                <li>
-                                    <a href="javascript:void(0)"
-                                       ng-click="openHistoryPrice(productInfo.productComm.fields.code,productInfo.productComm.skus)">
-                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;价格历史
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+            <div class="table-responsive box box-body">
+                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                    <thead>
+                        <th class="text-center">Platform</th>
+                        <th class="text-right">Msrp($)</th>
+                        <th class="text-right">Sale Price($)</th>
+                        <th class="text-right">CN Msrp(¥)</th>
+                        <th class="text-right">CN Net Price(¥)</th>
+                        <th class="text-right">CN Sale Price(¥)</th>
+                        <th class="text-center">Action</th>
+                    </thead>
+                    <tbody>
+                    <tr>
+                       <td></td>
+                       <td></td>
+                       <td></td>
+                       <td></td>
+                       <td></td>
+                       <td></td>
+                       <td></td>
+                    </tr>
+                    </tbody>
+                </table>
 
-            </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="vo_prodGallery" style="border-bottom: 1px solid #ddd;">
-                        <div class="imageContainer">
-                            <div class="imageWrapper">
-                                <img class="imageWrapper" style="max-width: 330px; max-height: 200px;"
-                                     ng-src="http://image.voyageone.com.cn/is/image/sneakerhead/{{ctrl.vm.model.image1}}">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-5">
-                    <form class="form-horizontal m-t-md m-l-lg m-b-lg" novalidate>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Product Name</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" ng-model="ctrl.vm.model.productNameEn" readonly/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Brand</label>
-                            <div class="col-sm-6">
-                                <input type="text" class="form-control" ng-model="ctrl.vm.model.brand" readonly/>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <div class="panel panel-default m-t">
-                <div class="panel-heading ng-scope">
-                    <div class="row">
-                        <div class="col-sm-4 col-md-offset-8">
-                            <div class="row">
-                                <div class="col-md-3 text-right">
-                                    <button type="button" class="btn btn-default btn-pop"  ng-click="ctrl.calculateCartMsrpClick()">原始MSRP</button>
-                                </div>
-                                <div class="col-md-9">
-                                    <label class="col-md-4 control-label">
-                                        Sales/销量&emsp;
-                                    </label>
-                                    <div class="col-md-7">
-                                        <select class="form-control" ng-change="ctrl.selectSalesOnChange()"  ng-model="ctrl.vm.selectSales">
-                                            <option value="codeSumAll">Total</option>
-                                            <option value="codeSum7">7&nbsp;Days</option>
-                                            <option value="codeSum30">30&nbsp;Days</option>
-                                            <option value="codeSumYear">Yearly</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="row m-b-sm">
-                            <div class="col-md-5 col-md-offset-7">
-                                <div class="row">
-                                    <div class="col-md-5">
-                                        <label class="col-md-6 control-label">中国建议售价</label>
-                                        <div class="col-md-6">
-                                            <input type="number" class="form-control" placeholder="中国建议售价" scale="15,2" ng-model="ctrl.vm.priceMsrp">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-5">
-                                        <label class="col-md-6 control-label">中国最终售价</label>
-                                        <div class="col-md-6">
-                                            <input type="number" class="form-control" placeholder="中国最终售价" scale="15,2" ng-model="ctrl.vm.priceSale">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <button type="button" class="btn btn-success btn-pop" ng-disabled="!ctrl.vm.priceMsrp && !ctrl.vm.priceSale" ng-click="ctrl.setAllCartPrice()">价格设置</button>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="table-responsive">
-
-                        <table class="table table-hover-new table-hover" style="min-width:1400px">
-                            <thead>
-                            <tr>
-                                <th class="mfb-xt text-left">Live</th>
-                                <th class="mfb-xt text-center">Platform</th>
-                                <th class="mfb-xxt text-right">客户建议零售价</th>
-                                <th class="mfb-xxt text-right">客户成本价</th>
-                                <th class="mfb-xxt text-right">中国建议售价(当前)</th>
-                                <th class="mfb-xxt text-right">中国指导售价</th>
-                                <th class="mfb-xxt text-right">中国最终售价(当前)</th>
-                                <th class="mfb-xxt text-center">中国建议售价</th>
-                                <th class="mfb-xxt text-center">中国最终售价</th>
-                                <th class="mfb-xt text-center">操作</th>
-                                <th class="mfb-xt text-right">平台库存</th>
-                                <th class="mfb-xxt text-right">Sale QTY</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr  ng-repeat="item in ctrl.vm.productPriceList" >
-                                <td class="mfb-xt text-left">
-                                    <input style="margin: 0" type="checkbox"
-                                           ui-indeterminate="item.checked == 1"
-                                           ng-checked="item.checked == 2"
-                                           ng-model="item.isSale"  ng-change="ctrl.isSaleOnChange(item)" />
-                                </td>
-                                <td class="mfb-xxt text-center">
-                                    <a href="#/product/detail/{{productInfo.productId}}/{{item.cartId}}|skuModule" target="_blank">
-                                        <platform-status data="{
-                                            cartId: item.cartId,
-                                            cartName: item.cartName,
-                                            status: item.status,
-                                            pStatus: item.pStatus,
-                                            pReallyStatus: item.pReallyStatus,
-                                            pPublishError: item.pPublishError
-                                        }"></platform-status>
-                                    </a>
-                                </td>
-                                <td class="mfb-xxt text-right">{{item.clientMsrpPrice}}</td>
-                                <td class="mfb-xxt text-right">{{item.clientNetPrice}}</td>
-                                <td class="mfb-xxt text-right">
-                                    <price prices = "[item.priceMsrpSt,item.priceMsrpEd]"></price> &nbsp;&nbsp;
-                                    <span style="color: red"
-                                          ng-if="item.priceMsrp && item.priceMsrpSt != item.priceMsrp">
-                                        【{{item.priceMsrp}}】
-                                    </span>
-                                </td>
-                                <td class="mfb-xxt text-right">
-                                    <price prices = "[item.priceRetailSt,item.priceRetailEd]"></price>
-                                </td>
-                                <td class="mfb-xxt text-right">
-                                    <price prices = "[item.priceSaleSt,item.priceSaleEd]"></price>
-                                    <span style="color: red"
-                                          ng-if="item.priceSale && item.priceSaleSt != item.priceSale">
-                                        【{{item.priceSale}}】
-                                    </span>
-                                </td>
-                                <td class="mfb-xxt text-center">
-                                    <input type="number" class="form-control text-right" ng-disabled="item.autoSyncPriceMsrp == 1"  ng-model="item.priceMsrp"  placeholder="中国建议售价" scale="15,2"/>
-                                </td>
-                                <td class="mfb-xxt text-center">
-                                    <input type="number" class="form-control text-right"  ng-disabled="item.autoSyncPriceSale == 1" ng-model="item.priceSale" placeholder="中国最终售价" scale="15,2"/>
-                                </td>
-                                <td class="mfb-xt text-center">
-                                    <button class="btn btn-success btn-pop" ng-disabled="!(item.priceMsrp||item.priceSale)||(item.priceMsrp<=0&&item.priceSale<=0)"  ng-click="ctrl.saveCartSkuPriceClick(item)">价格保存</button>
-                                </td>
-                                <!--<td class="mfb-xt  text-right">{{ctrl.vm.model.quantity}}</td>-->
-                                <td class="mfb-xt  text-right">{{item.quantity}}</td>
-                                <td class="mfb-xxt text-right">{{item.saleQty}}</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

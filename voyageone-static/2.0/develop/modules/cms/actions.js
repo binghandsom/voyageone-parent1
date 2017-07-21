@@ -853,7 +853,8 @@ define(function () {
             $usProductDetailService: {
                 root: '/cms/usa/product',
                 getProductInfo: 'getProductInfo',
-                updateOnePrice:'updateOnePrice'
+                updateOnePrice:'updateOnePrice',
+                getAllPlatformsPrice:'getAllPlatformsPrice'
             }
         }
     };
