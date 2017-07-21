@@ -8,17 +8,16 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.PropService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsSaleDataStatisticsMQMessageBody;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +36,8 @@ public class UsaCustomColumnService extends BaseService {
     private PropService propService;
     @Autowired
     private CommonPropService commonPropService;
+    @Autowired
+    private CmsMqSenderService cmsMqSenderService;
 
     /**
      * 获取用户勾选的自定义列
@@ -268,6 +269,8 @@ public class UsaCustomColumnService extends BaseService {
             }
         }
         // 保存用户自定义列 --->>> usa_cms_cust_col_platform_sale
+        // 如果信息发生更改(从无到有, 或起始截止时间发生变化)
+        List<Map<String, Object>> platformSales = commonPropService.getMultiCustColumnsByUserId(userId, "usa_cms_cust_col_platform_sale");
         commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_platform_sale");
         if (CollectionUtils.isNotEmpty(selPlatformSales)) {
             for (Map<String, Object> cartMap : selPlatformSales) {
@@ -278,6 +281,27 @@ public class UsaCustomColumnService extends BaseService {
                     throw new BusinessException("Platform sale parameter invalid");
                 }
                 commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_platform_sale", JacksonUtil.bean2Json(cartMap), cartId);
+                boolean mqFlag = true;
+                if (CollectionUtils.isNotEmpty(platformSales)) {
+                    for (Map<String, Object> saleMap : platformSales) {
+                        if (cartId.equalsIgnoreCase((String) saleMap.get("cfg_val2"))) {
+                            Map<String, Object> cartTimeMap = JacksonUtil.jsonToMap((String) saleMap.get("cfg_val1"));
+                            if (cartTimeMap != null && beginTime.equals(cartTimeMap.get("beginTime")) && endTime.equals(cartTimeMap.get("endTime"))) {
+                                mqFlag = false;
+                            }
+                            break;
+                        }
+                    }
+                }
+                if (mqFlag) {
+                    CmsSaleDataStatisticsMQMessageBody mqMessageBody = new CmsSaleDataStatisticsMQMessageBody();
+                    mqMessageBody.setChannelId(channelId);
+                    mqMessageBody.setCartId(Integer.valueOf(cartId));
+                    mqMessageBody.setStartDate(beginTime);
+                    mqMessageBody.setEndDate(endTime);
+                    mqMessageBody.setSender(username);
+                    cmsMqSenderService.sendMessage(mqMessageBody);
+                }
             }
         }
     }
