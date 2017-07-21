@@ -233,13 +233,12 @@ define([
                             _.forEach(self.productList, function (product) {
                                 // 查询图片模板
 
-                                var imageUrl;
                                 if (product.synFlag == 30 || product.synFlag == 50 || product.synFlag == 70) {
-                                    imageUrl = self.beat_template.replace("{key}", product.imageName).replace("{price}", product.price);
+
+                                    _.extend(product, {imageUrl: product.imageName ?  self.beat_template.replace("{key}", product.imageName).replace("{price}", product.price) : ""});
                                 } else {
-                                    imageUrl = self.beat_template.replace(/%s/g, product.imageName);
+                                    _.extend(product, {imageUrl: product.imageName ? self.revert_template.replace(/%s/g, product.imageName) : ""});
                                 }
-                                _.extend(product, {imageUrl: imageUrl});
                                 var productUrl = cart.valueOf(self.task.cartId).pUrl + product.numIid;
                                 _.extend(product, {productUrl:productUrl});
                             });

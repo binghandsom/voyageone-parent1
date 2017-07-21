@@ -6,14 +6,12 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
-import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
 import com.voyageone.service.bean.cms.task.beat.CmsBtTaskJiagepiluBean;
 import com.voyageone.service.bean.cms.task.beat.SearchTaskJiagepiluBean;
 import com.voyageone.service.bean.cms.task.beat.SearchTaskJiagepiluResult;
 import com.voyageone.service.dao.cms.CmsBtTaskJiagepiluDao;
 import com.voyageone.service.dao.cms.CmsBtTaskJiagepiluImportInfoDao;
 import com.voyageone.service.dao.cms.CmsBtTasksDao;
-import com.voyageone.service.daoext.cms.CmsBtBeatInfoDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtTaskJiagepiluDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.CmsProperty;
@@ -26,7 +24,6 @@ import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -39,22 +36,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 
 import static com.voyageone.common.util.ExcelUtils.getString;
 
@@ -590,8 +573,12 @@ public class JiagepiluService extends BaseService {
     @VOTransactional
     public int reBeating(Integer taskId, BeatFlag flag, String username) {
         // 刷图成功或者还原失败的商品重启
-        if (flag.getFlag() == BeatFlag.FAIL.getFlag() || flag.getFlag() == BeatFlag.RE_FAIL.getFlag()) {
+        if (flag.getFlag() == BeatFlag.FAIL.getFlag()) {
+
             return cmsBtTaskJiagepiluDaoExt.rebeatFailFlags(taskId, flag.getFlag(), BeatFlag.BEATING.getFlag(), ImageStatus.None.getId(), username);
+        } else if (flag.getFlag() == BeatFlag.RE_FAIL.getFlag()) {
+
+            return cmsBtTaskJiagepiluDaoExt.rebeatFailFlags(taskId, flag.getFlag(), BeatFlag.REVERT.getFlag(), ImageStatus.None.getId(), username);
         }
         return 0;
     }
