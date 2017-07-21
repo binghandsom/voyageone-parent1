@@ -9,30 +9,21 @@ import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.CmsBtPromotion.EditCmsBtPromotionBean;
 import com.voyageone.service.bean.cms.CmsBtPromotion.SetPromotionStatusParameter;
 import com.voyageone.service.impl.CmsProperty;
-import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CmsBtPromotionExportTaskService;
-import com.voyageone.service.bean.cms.CmsBtPromotionBean;
 import com.voyageone.service.impl.cms.jumei.CmsBtJmPromotionService;
 import com.voyageone.service.impl.cms.promotion.CmsPromotionExportService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
-import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsSneakerHeadAddPromotionMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtPromotionExportTaskModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
 import com.voyageone.web2.core.bean.UserSessionBean;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -183,6 +174,8 @@ public class CmsPromotionIndexController extends CmsController {
             exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_JUHUASUAN_EXPORT_PATH);
         } else if (Objects.equals(taskModel.getTemplateType(), Integer.valueOf(2))) {
             exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_TMALL_EXPORT_PATH);
+        } else if (Objects.equals(taskModel.getTemplateType(), Integer.valueOf(3))) {
+            exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_NEW_EXPORT_PATH);
         }
         File pathFileObj = new File(exportPath);
         if (!pathFileObj.exists()) {
