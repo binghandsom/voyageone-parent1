@@ -12,12 +12,6 @@ define([
     '../detail.data.service'
 ], function (cms, carts) {
 
-    const mConfig = {
-        bigImageUrl: 'http://image.voyageone.com.cn/is/image/sneakerhead/✓?wid=2200&hei=2200',
-        newImageUrl: 'http://image.voyageone.com.cn/is/image/sneakerhead/✓?fmt=jpg&scl=1&qlt=100'
-    };
-
-
     class SnTabController{
 
         constructor($scope,detailDataService){
@@ -29,6 +23,8 @@ define([
             let self = this;
 
             self.detailDataService.getProductInfo({prodId:self.$scope.productInfo.productId}).then(res => {
+
+                console.log(res);
 
                 self.mastData = res.data.mastData;
                 self.platform = res.data.platform;

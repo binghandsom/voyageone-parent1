@@ -173,326 +173,36 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_reqfield">Name</label>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" name="name" ng-model="ctrl.feed.name" ng-change="ctrl.generateUrlKey()" required>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title"></label>
-                                        <div class="col-md-6">
-                                            <vo-message target="feedForm.name"></vo-message>
-                                        </div>
-                                    </div>
+                                    <hr>
                                 </div>
+
                                 <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_reqfield">Brand</label>
-                                        <div class="col-md-6">
-                                            <select class="form-control" name="brand" chosen search-contain="true"
-                                                    ng-options="brand.value as brand.name for brand in ctrl.brandList"
-                                                    ng-model="ctrl.feed.brand" required>
-                                            </select>
-                                        </div>
+
+                                    <div class="tab-title">
+                                        <h3 class="text-md">Common Schema</h3>
                                     </div>
+                                    <br>
+
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title"></label>
-                                        <div class="col-md-6">
-                                            <vo-message target="feedForm.brand"></vo-message>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_reqfield">Product Type</label>
-                                        <div class="col-md-6">
-                                            <select class="form-control" name="productType" chosen search-contain="true"
-                                                    ng-options="productType.value as productType.name for productType in ctrl.productTypeList"
-                                                    ng-model="ctrl.feed.productType" ng-change="ctrl.setSkuProperty(null,null,'1')" required>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title"></label>
-                                        <div class="col-md-6">
-                                            <vo-message target="feedForm.productType"></vo-message>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_reqfield">Size Type</label>
-                                        <div class="col-md-6">
-                                            <select class="form-control" name="sizeType"  chosen search-contain="true"
-                                                    ng-options="sizeType.value as sizeType.name for sizeType in ctrl.sizeTypeList"
-                                                    ng-model="ctrl.feed.sizeType" required>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title"></label>
-                                        <div class="col-md-6">
-                                            <vo-message target="feedForm.sizeType"></vo-message>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_reqfield">Material</label>
-                                        <div class="col-md-6">
-                                            <select class="form-control" name="material"  chosen search-contain="true"
-                                                    ng-options="material.value as material.name for material in ctrl.materialList"
-                                                    ng-model="ctrl.feed.material" required>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title"></label>
-                                        <div class="col-md-6">
-                                            <vo-message target="feedForm.material"></vo-message>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Made in</label>
-                                        <div class="col-md-6">
-                                            <select class="form-control" name="origin"  chosen search-contain="true"
-                                                    ng-options="origin.value as origin.name for origin in ctrl.originList"
-                                                    ng-model="ctrl.feed.origin">
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Color Map</label>
-                                        <div class="col-md-6">
-                                            <select class="form-control" name="origin" chosen search-contain="true"
-                                                    ng-options="color.value as color.name for color in ctrl.colorMap"
-                                                    ng-model="ctrl.feed.colorMap">
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Color</label>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.color">
+                                        <div class="col-md-10">
+                                            <schema data="ctrl.productComm.schemaFields"></schema>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Usage</label>
-                                        <div class="col-md-6">
-                                            <textarea class="form-control no-resize" ng-model="ctrl.feed.usageEn"></textarea>
-                                        </div>
+                                    <div class="tab-title">
+                                        <h3 class="text-md">Platform Schema</h3>
                                     </div>
-                                </div>
-                                <div class="form-group">
+                                    <br>
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Short Description</label>
-                                        <div class="col-md-6">
-                                            <textarea class="form-control no-resize" ng-model="ctrl.feed.shortDescription"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Long Description</label>
-                                        <div class="col-md-6">
-                                            <textarea class="form-control no-resize" ng-model="ctrl.feed.longDescription"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Order Limit Count</label>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.orderlimitcount">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">URL Key</label>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.urlkey" ng-disabled="ctrl.feed.urlkey">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Abstract</label>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.abstract">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Accessory</label>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.accessory">
-                                        </div>
-                                    </div>
-                                </div>
-
-
-
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Phone Order Only</label>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.phoneOrderOnly">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Title</label>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.seoTitle">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Description</label>
-                                        <div class="col-md-6">
-                                            <textarea class="form-control" ng-model="ctrl.feed.seoDescription"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">SEO Keywords</label>
-                                        <div class="col-md-6">
-                                            <textarea class="form-control" ng-model="ctrl.feed.seoKeywords"/>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!--特殊属性 Begin-->
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Free Shipping</label>
-                                        <div class="col-md-1">
-                                            <div class="onoffswitch" style="margin: 0px auto;">
-                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isFreeShipping"
-                                                       ng-true-value="'1'" ng-false-value="'0'"
-                                                       ng-model="ctrl.feed.freeShipping">
-                                                <label class="onoffswitch-label" for="isFreeShipping">
-                                                    <span class="onoffswitch-inner"></span>
-                                                    <span class="onoffswitch-switch"></span>
-                                                </label>
-                                            </div>
+                                        <div class="col-md-10">
+                                            <schema data="ctrl.platform.platformFields"></schema>
                                         </div>
 
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Reward Eligible</label>
-                                        <div class="col-md-1">
-                                            <div class="onoffswitch" style="margin: 0px auto;">
-                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isRewardEligible"
-                                                       ng-true-value="'1'" ng-false-value="'0'"
-                                                       ng-model="ctrl.feed.rewardEligible">
-                                                <label class="onoffswitch-label" for="isRewardEligible">
-                                                    <span class="onoffswitch-inner"></span>
-                                                    <span class="onoffswitch-switch"></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Discount Eligible</label>
-                                        <div class="col-md-1">
-                                            <div class="onoffswitch" style="margin: 0px auto;">
-                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isDiscountEligible"
-                                                       ng-true-value="'1'" ng-false-value="'0'"
-                                                       ng-model="ctrl.feed.discountEligible">
-                                                <label class="onoffswitch-label" for="isDiscountEligible">
-                                                    <span class="onoffswitch-inner"></span>
-                                                    <span class="onoffswitch-switch"></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Sneakerhead+</label>
-                                        <div class="col-md-1">
-                                            <div class="onoffswitch" style="margin: 0px auto;">
-                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isSneakerhead"
-                                                       ng-true-value="'1'" ng-false-value="'0'"
-                                                       ng-model="ctrl.feed.sneakerheadPlus">
-                                                <label class="onoffswitch-label" for="isSneakerhead">
-                                                    <span class="onoffswitch-inner"></span>
-                                                    <span class="onoffswitch-switch"></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is New Arrival</label>
-                                        <div class="col-md-1">
-                                            <div class="onoffswitch" style="margin: 0px auto;">
-                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isNewArrival"
-                                                       ng-true-value="'1'" ng-false-value="'0'"
-                                                       ng-model="ctrl.feed.newArrival">
-                                                <label class="onoffswitch-label" for="isNewArrival">
-                                                    <span class="onoffswitch-inner"></span>
-                                                    <span class="onoffswitch-switch"></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Is Taxable</label>
-                                        <div class="col-md-1">
-                                            <div class="onoffswitch" style="margin: 0px auto;">
-                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="isTaxable"
-                                                       ng-true-value="'1'" ng-false-value="'0'"
-                                                       ng-model="ctrl.feed.taxable">
-                                                <label class="onoffswitch-label" for="isTaxable">
-                                                    <span class="onoffswitch-inner"></span>
-                                                    <span class="onoffswitch-switch"></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--特殊属性 End-->
 
-                                <div class="form-group" ng-if="ctrl.feed.status!='New'">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Approve Pricing ?</label>
-                                        <div class="col-md-1">
-                                            <div class="onoffswitch" style="margin: 0px auto;">
-                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="approvePricing"
-                                                       ng-true-value="'1'" ng-false-value="'0'"
-                                                       ng-model="ctrl.feed.approvePricing">
-                                                <label class="onoffswitch-label" for="approvePricing">
-                                                    <span class="onoffswitch-inner"></span>
-                                                    <span class="onoffswitch-switch"></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="col-md-3">
