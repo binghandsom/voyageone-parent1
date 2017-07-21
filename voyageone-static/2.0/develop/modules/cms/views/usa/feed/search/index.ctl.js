@@ -18,7 +18,10 @@ define([
             self.feedListTotal = 0;
             self.paraMap = {
                 status: [],
-                approvePricing: []
+                approvePricing: [],
+                sortName:"created",
+                sortType:"-1"
+
             };
             self.updateMap = {};
             self.totalItems = false;

@@ -51,9 +51,9 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
             String changedPriceType = (String) params.get("changedPriceType");
             //设置最大最小值的类型
             String minMaxChangedPriceType = null;
-            if ("clientMsrpPrice".equals(changedPriceType)){
+            if ("clientMsrpPrice".equals(changedPriceType)) {
                 minMaxChangedPriceType = "pPriceMsrp";
-            }else {
+            } else {
                 minMaxChangedPriceType = "pPriceRetail";
             }
 
@@ -75,34 +75,16 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                             if (platform != null) {
                                 String status = platform.getStatus();
                                 List<BaseMongoMap<String, Object>> skus = platform.getSkus();
+
                                 if (skus != null) {
+                                    Double[] minMaxPrices = new Double[skus.size()];
+                                    int i = 0;
                                     for (BaseMongoMap<String, Object> sku : skus) {
                                         //获取到对应的skuCode
                                         String skuCode = (String) sku.get("skuCode");
                                         Double newPrice = null;
-                                        Double basePrice = null;
-                                        if ("clientMsrpPrice".equals(basePriceType) || "clientRetailPrice".equals(basePriceType)) {
-                                            basePrice = (Double) sku.get(basePriceType);
-                                            if ("*".equals(optionType)) {
-                                                newPrice = basePrice * value;
-                                            }
-                                            if ("/".equals(optionType)) {
-                                                newPrice = basePrice / value;
-                                            }
-                                            if ("+".equals(optionType)) {
-                                                newPrice = basePrice + value;
-                                            }
-                                            if ("-".equals(optionType)) {
-                                                newPrice = basePrice - value;
-                                            }
-                                        } else {
-                                            //固定值类型
-                                            newPrice = value;
-                                        }
-                                        if (flag == "1") {
-                                            //将价格取整
-                                            Math.round(newPrice);
-                                        }
+                                        newPrice = getNewPrice(basePriceType, optionType, value, flag, sku, newPrice);
+                                        minMaxPrices[i] = newPrice;
                                         JongoUpdate jongoUpdate = new JongoUpdate();
                                         jongoUpdate.setQuery("{\"usPlatforms.P" + cartId + ".skus.skuCode\":#}");
                                         jongoUpdate.setQueryParameters(skuCode);
@@ -112,153 +94,65 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                                         if (CmsConstants.ProductStatus.Approved.name().equals(status)) {
                                             platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, sender);
                                         }
+                                        i++;
                                     }
+                                    Double newStPrice = null;
+                                    Double newEdPrice = null;
+                                    Arrays.sort(minMaxPrices);
+                                    if (minMaxPrices.length != 0) {
+                                        newStPrice = minMaxPrices[0];
+                                        newEdPrice = minMaxPrices[minMaxPrices.length - 1];
+                                    }
+                                    JongoUpdate jongoUpdate = new JongoUpdate();
+                                    //通过code定位
+                                    jongoUpdate.setQuery("{\"common.fields.code\":#}");
+                                    jongoUpdate.setQueryParameters(productCode);
+                                    jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "St\":#,\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "Ed\":#}}");
+                                    jongoUpdate.setUpdateParameters(newStPrice, newEdPrice);
+                                    cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
                                 }
-                                //修改对应的最大值最小值
-                                Double stPrice = null;
-                                Double edPrice = null;
-                                if ("clientMsrpPrice".equals(changedPriceType)){
-                                    stPrice = platform.getpPriceMsrpSt();
-                                    edPrice = platform.getpPriceMsrpEd();
-
-                                }else {
-                                    stPrice = platform.getpPriceSaleSt();
-                                    edPrice = platform.getpPriceSaleEd();
-                                }
-                                Double newStPrice = null;
-                                Double newEdPrice = null;
-
-                                if ("clientMsrpPrice".equals(basePriceType) || "clientRetailPrice".equals(basePriceType)) {
-                                    if ("*".equals(optionType)) {
-                                        newStPrice = stPrice * value;
-                                        newEdPrice = edPrice * value;
-                                    }
-                                    if ("/".equals(optionType)) {
-                                        newStPrice = stPrice / value;
-                                        newEdPrice = edPrice / value;
-                                    }
-                                    if ("+".equals(optionType)) {
-                                        newStPrice = stPrice + value;
-                                        newEdPrice = edPrice + value;
-                                    }
-                                    if ("-".equals(optionType)) {
-                                        newStPrice = stPrice - value;
-                                        newEdPrice = edPrice - value;
-                                    }
-                                } else {
-                                    //固定值类型
-                                    newStPrice = value;
-                                    newEdPrice = value;
-                                }
-                                if (flag == "1") {
-                                    //将价格取整
-                                    Math.round(newStPrice);
-                                    Math.round(newEdPrice);
-                                }
-
-                                JongoUpdate jongoUpdate = new JongoUpdate();
-                                //通过code定位
-                                jongoUpdate.setQuery("{\"common.fields.code\":#}");
-                                jongoUpdate.setQueryParameters(productCode);
-                                jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "St\":#,\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "Ed\":#}}");
-                                jongoUpdate.setUpdateParameters(newStPrice,newEdPrice);
-                                cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
-
                             }
                         } else {
                             //cartId=0,修改所有平台的价格
                             usPlatforms.forEach((cartId1, platform) -> {
-                                Integer cartId2 = Integer.parseInt(cartId1.replace("P",""));
+                                Integer cartId2 = Integer.parseInt(cartId1.replace("P", ""));
                                 String status = platform.getStatus();
-                                if (platform != null) {
-                                    List<BaseMongoMap<String, Object>> skus = platform.getSkus();
-                                    if (skus != null) {
-                                        for (BaseMongoMap<String, Object> sku : skus) {
-                                            //获取到对应的skuCode
-                                            String skuCode = (String) sku.get("skuCode");
-                                            Double newPrice = null;
-                                            Double basePrice = null;
-                                            if ("clientMsrpPrice".equals(basePriceType) || "clientRetailPrice".equals(basePriceType)) {
-                                                basePrice = (Double) sku.get(basePriceType);
-                                                if ("*".equals(optionType)) {
-                                                    newPrice = basePrice * value;
-                                                }
-                                                if ("/".equals(optionType)) {
-                                                    newPrice = basePrice / value;
-                                                }
-                                                if ("+".equals(optionType)) {
-                                                    newPrice = basePrice + value;
-                                                }
-                                                if ("-".equals(optionType)) {
-                                                    newPrice = basePrice - value;
-                                                }
-                                            } else {
-                                                //固定值类型
-                                                newPrice = value;
-                                            }
-                                            if (flag == "1") {
-                                                //将价格取整
-                                                Math.round(newPrice);
-                                            }
-                                            JongoUpdate jongoUpdate = new JongoUpdate();
-                                            jongoUpdate.setQuery("{\"usPlatforms.P" + cartId2 + ".skus.skuCode\":#}");
-                                            jongoUpdate.setQueryParameters(skuCode);
-                                            jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId2 + ".skus.$." + changedPriceType + "\":#}}");
-                                            jongoUpdate.setUpdateParameters(newPrice);
-                                            cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
-                                            if ("Approve".equals(status)) {
-                                                platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId2, productCode, null, 0, sender);
-                                            }
+                                List<BaseMongoMap<String, Object>> skus = platform.getSkus();
+                                if (skus != null) {
+                                    Double[] minMaxPrices = new Double[skus.size()];
+                                    int i = 0;
+                                    for (BaseMongoMap<String, Object> sku : skus) {
+                                        //获取到对应的skuCode
+                                        String skuCode = (String) sku.get("skuCode");
+                                        Double newPrice = null;
+                                        //Double basePrice = null;
+                                        newPrice = getNewPrice(basePriceType, optionType, value, flag, sku, newPrice);
+                                        minMaxPrices[i] = newPrice;
+                                        JongoUpdate jongoUpdate = new JongoUpdate();
+                                        jongoUpdate.setQuery("{\"usPlatforms.P" + cartId2 + ".skus.skuCode\":#}");
+                                        jongoUpdate.setQueryParameters(skuCode);
+                                        jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId2 + ".skus.$." + changedPriceType + "\":#}}");
+                                        jongoUpdate.setUpdateParameters(newPrice);
+                                        cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+                                        if ("Approve".equals(status)) {
+                                            platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId2, productCode, null, 0, sender);
                                         }
+                                        i++;
                                     }
-
                                     //修改对应的最大值最小值
-                                    Double stPrice = null;
-                                    Double edPrice = null;
-                                    if ("clientMsrpPrice".equals(changedPriceType)){
-                                        stPrice = platform.getpPriceMsrpSt();
-                                        edPrice = platform.getpPriceMsrpEd();
-
-                                    }else {
-                                        stPrice = platform.getpPriceSaleSt();
-                                        edPrice = platform.getpPriceSaleEd();
-                                    }
                                     Double newStPrice = null;
                                     Double newEdPrice = null;
-
-                                    if ("clientMsrpPrice".equals(basePriceType) || "clientRetailPrice".equals(basePriceType)) {
-                                        if ("*".equals(optionType)) {
-                                            newStPrice = stPrice * value;
-                                            newEdPrice = edPrice * value;
-                                        }
-                                        if ("/".equals(optionType)) {
-                                            newStPrice = stPrice / value;
-                                            newEdPrice = edPrice / value;
-                                        }
-                                        if ("+".equals(optionType)) {
-                                            newStPrice = stPrice + value;
-                                            newEdPrice = edPrice + value;
-                                        }
-                                        if ("-".equals(optionType)) {
-                                            newStPrice = stPrice - value;
-                                            newEdPrice = edPrice - value;
-                                        }
-                                    } else {
-                                        //固定值类型
-                                        newStPrice = value;
-                                        newEdPrice = value;
-                                    }
-                                    if (flag == "1") {
-                                        //将价格取整
-                                        Math.round(newStPrice);
-                                        Math.round(newEdPrice);
+                                    Arrays.sort(minMaxPrices);
+                                    if (minMaxPrices.length != 0) {
+                                        newStPrice = minMaxPrices[0];
+                                        newEdPrice = minMaxPrices[minMaxPrices.length - 1];
                                     }
                                     String changedPriceType1 = (String) params.get("changedPriceType");
                                     //设置最大最小值的类型
                                     String minMaxChangedPriceType1 = null;
-                                    if ("clientMsrpPrice".equals(changedPriceType)){
+                                    if ("clientMsrpPrice".equals(changedPriceType)) {
                                         minMaxChangedPriceType1 = "pPriceMsrp";
-                                    }else {
+                                    } else {
                                         minMaxChangedPriceType1 = "pPriceRetail";
                                     }
                                     JongoUpdate jongoUpdate = new JongoUpdate();
@@ -266,9 +160,8 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                                     jongoUpdate.setQuery("{\"common.fields.code\":#}");
                                     jongoUpdate.setQueryParameters(productCode);
                                     jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId2 + "." + minMaxChangedPriceType1 + "St\":#,\"usPlatforms.P" + cartId2 + "." + minMaxChangedPriceType1 + "Ed\":#}}");
-                                    jongoUpdate.setUpdateParameters(newStPrice,newEdPrice);
+                                    jongoUpdate.setUpdateParameters(newStPrice, newEdPrice);
                                     cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
-
                                 }
                             });
                         }
@@ -277,6 +170,34 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                 }
             }
         }
+    }
+
+    private Double getNewPrice(String basePriceType, String optionType, Double value, String flag, BaseMongoMap<String, Object> sku, Double newPrice) {
+        Double basePrice;
+        if ("clientMsrpPrice".equals(basePriceType) || "clientRetailPrice".equals(basePriceType)) {
+            basePrice = (Double) sku.get(basePriceType);
+            if ("*".equals(optionType)) {
+                newPrice = basePrice * value;
+            }
+            if ("/".equals(optionType)) {
+                newPrice = basePrice / value;
+            }
+            if ("+".equals(optionType)) {
+                newPrice = basePrice + value;
+            }
+            if ("-".equals(optionType)) {
+                newPrice = basePrice - value;
+            }
+        } else {
+            //固定值类型
+            newPrice = value;
+        }
+        if ("1".equals(flag)) {
+            //将价格取整
+            Long round = Math.round(newPrice);
+            newPrice = round.doubleValue();
+        }
+        return newPrice;
     }
 }
 
