@@ -268,10 +268,16 @@ public class CmsProductSearchQueryService extends BaseService {
 
             // 平台SalePrice价格范围查询
             if (searchValue.getpSalePriceFrom() != null) {
-                criteria = criteria.and("P" + cartId + "_pPriceSaleSt").greaterThanEqual(searchValue.getpSalePriceFrom());
-            }
-            if (searchValue.getpSalePriceTo() != null) {
-                criteria = criteria.and("P" + cartId + "_pPriceSaleEd").lessThanEqual(searchValue.getpSalePriceTo());
+                if (searchValue.getpSalePriceTo() != null){
+                    criteria = criteria.and("P" + cartId + "_pPriceSaleSt").between(searchValue.getpSalePriceFrom(), searchValue.getpSalePriceTo());
+                    criteria = criteria.and("P" + cartId + "_pPriceSaleEd").between(searchValue.getpSalePriceFrom(), searchValue.getpSalePriceTo());
+                } else {
+                    criteria = criteria.and("P" + cartId + "_pPriceSaleSt").greaterThanEqual(searchValue.getpSalePriceFrom());
+                }
+            } else {
+                if (searchValue.getpSalePriceTo() != null) {
+                    criteria = criteria.and("P" + cartId + "_pPriceSaleEd").lessThanEqual(searchValue.getpSalePriceTo());
+                }
             }
             // 平台pPublishTime范围查询
             if (StringUtils.isNotEmpty(searchValue.getpPublishTimeFrom())) {
