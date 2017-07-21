@@ -25,6 +25,7 @@ define([
             let self = this;
             this.advanceSearch.getCustomColumns().then(res => {
                if (res.data) {
+                   console.log(res.data);
                    self.commonProps = res.data.commonProps == null ? [] : res.data.commonProps;
                    self.selCommonProps = res.data.selCommonProps == null ? [] : res.data.selCommonProps;
                    self.platformAttributes = res.data.platformAttributes == null ? [] : res.data.platformAttributes;
@@ -63,29 +64,34 @@ define([
 
         // 保存
         save() {
+            // 处理Common Attributes
             let self = this;
-            let commonProps = _.filter(self.commonProps, item => {
-                return item.checked;
-            });
-            let platformAttributes = _.filter(self.platformAttributes, item => {
-                return item.checked;
-            });
-            let platformSales = _.filter(self.platformSales, item => {
-                return item.checked;
-            });
-
             let selCommonProps = [];
-            _.each(commonProps, item => {
-                selCommonProps.push(item.propId);
+            _.each(self.commonProps, item => {
+                if (item.checked) {
+                    selCommonProps.push(item.propId);
+                }
             });
-            let selPlatformAttributes = [];
-            _.each(platformAttributes, item => {
-               selPlatformAttributes.push(item.value);
+            // 处理Platform Attributes
+            let selPlatformAttributes = {};
+            _.each(self.platformAttributes, item => {
+                if (item.checked) {
+                    let cartId = item.cartId;
+                    let cartVal = item.value;
+                    if (selPlatformAttributes[cartId]) {
+                        selPlatformAttributes[cartId].concat(cartVal.split(","));
+                    } else {
+                        selPlatformAttributes[cartId] = cartVal.split(",");
+                    }
+                }
             });
+            // 处理Platform Sales
             let selPlatformSales =[];
-            _.each(platformSales, item => {
-               let map = {cartId:item.cartId,beginTime:item.beginTime,endTime:item.endTime};
-               selPlatformSales.push(map);
+            _.each(self.platformSales, item => {
+                if (item.checked) {
+                    let map = {cartId:item.cartId,beginTime:item.beginTime,endTime:item.endTime};
+                    selPlatformSales.push(map);
+                }
             });
 
             let params = {
