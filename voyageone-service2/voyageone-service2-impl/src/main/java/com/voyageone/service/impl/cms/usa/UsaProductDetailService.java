@@ -691,25 +691,25 @@ public class UsaProductDetailService extends BaseService {
         List<BaseMongoMap<String, Object>> skus = usPlatform.getSkus();
 
         if (ListUtils.notNull(skus)){
-            Double[] clientMsrpMinMaxPrices = new Double[skus.size()];
-            Double[] clientRetailMinMaxPrices = new Double[skus.size()];
-            int i = 0;
+            Double msrpMin = Double.MAX_VALUE;
+            Double msrpMax = Double.MIN_VALUE;
+            Double retailMin = Double.MAX_VALUE;
+            Double retailMax = Double.MIN_VALUE;
+
             for (BaseMongoMap<String, Object> sku : skus) {
                 Double clientMsrpPrice = (Double) sku.get("clientMsrpPrice");
                 Double clientRetailPrice = (Double) sku.get("clientRetailPrice");
-                clientMsrpMinMaxPrices[i] = clientMsrpPrice;
-                clientRetailMinMaxPrices[i] = clientRetailPrice;
-                i++;
+                msrpMin = Double.min(msrpMin, clientMsrpPrice);
+                msrpMax = Double.max(msrpMax, clientMsrpPrice);
+                retailMin = Double.min(retailMin, clientRetailPrice);
+                retailMax = Double.max(retailMax, clientRetailPrice);
+
             }
-            Arrays.sort(clientMsrpMinMaxPrices);
-            Arrays.sort(clientRetailMinMaxPrices);
-            usPlatform.setpPriceMsrpSt(clientMsrpMinMaxPrices[0]);
-            usPlatform.setpPriceMsrpEd(clientMsrpMinMaxPrices[clientMsrpMinMaxPrices.length - 1]);
-            usPlatform.setpPriceRetailSt(clientRetailMinMaxPrices[0]);
-            usPlatform.setpPriceRetailEd(clientRetailMinMaxPrices[clientRetailMinMaxPrices.length -1]);
-
+            usPlatform.setpPriceMsrpSt(msrpMin);
+            usPlatform.setpPriceMsrpEd(msrpMax);
+            usPlatform.setpPriceRetailSt(retailMin);
+            usPlatform.setpPriceRetailEd(retailMax);
         }
-
         return usPlatform;
     }
 }
