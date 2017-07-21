@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.mqjob.usa;
 
 import com.voyageone.base.dao.mongodb.JongoUpdate;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
@@ -47,7 +48,7 @@ public class CmsBtProductUpdateListDelistStatusMQJob extends TBaseMQCmsService<C
                         if (usPlatform != null){
                             String status = usPlatform.getStatus();
                             //status为Approve状态才可以进行上下架
-                            if ("Approve".equals(status)) {
+                            if (CmsConstants.ProductStatus.Approved.name().equals(status)) {
 
                                 JongoUpdate jongoUpdate = new JongoUpdate();
                                 jongoUpdate.setQuery("{\"common.fields.code\":#}");
@@ -55,11 +56,11 @@ public class CmsBtProductUpdateListDelistStatusMQJob extends TBaseMQCmsService<C
                                 jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + ".pStatus\":#}}");
                                 if ("list".equals(activeStatus)) {
                                     //上架操作
-                                    jongoUpdate.setUpdateParameters("OnSale");
+                                    jongoUpdate.setUpdateParameters(CmsConstants.PlatformStatus.OnSale.name());
                                 }
                                 if ("deList".equals(activeStatus)) {
                                     //下架操作
-                                    jongoUpdate.setUpdateParameters("InStock");
+                                    jongoUpdate.setUpdateParameters(CmsConstants.PlatformStatus.InStock.name());
                                 }
                                 cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
 
