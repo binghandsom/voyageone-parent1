@@ -53,8 +53,6 @@ public class UsaAdvanceSearchController extends CmsController {
     @Autowired
     private CmsAdvSearchOtherService advSearchOtherService;
     @Autowired
-    private UsaAdvanceSearchService usaAdvanceSearchService;
-    @Autowired
     private UsaCustomColumnService usaCustomColumnService;
     @Autowired
     private UsaTagService usaTagService;
