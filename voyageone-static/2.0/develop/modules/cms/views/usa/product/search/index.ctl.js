@@ -307,7 +307,7 @@ define([
                 self.customColumnNames = {};
                 self.customColumns.selCommonProps = self.getSelectedProps(self.customColumns.commonProps,res.selCommonProps,'propId');
                 self.customColumns.selPlatformAttributes = self.getSelectedProps(self.customColumns.platformAttributes, res.selPlatformAttributes,'value');
-                self.customColumns.selPlatformSales = res.data.selPlatformSales;
+                self.customColumns.selPlatformSales = res.selPlatformSales;
             })
         }
 
