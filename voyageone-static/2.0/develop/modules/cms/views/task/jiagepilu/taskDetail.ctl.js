@@ -90,8 +90,9 @@ define([
                     if (resp.data && resp.data.task && resp.data.task.active == 1) {
                         self.task = resp.data.task;
                         if (self.task.config) {
-                            self.beat_template = self.task.config.beat_template;
-                            self.revert_template = self.task.config.revert_template;
+
+                            self.beat_template = JSON.parse(self.task.config).beat_template;
+                            self.revert_template = JSON.parse(self.task.config).revert_template;
                         }
 
                         var beatFlagArray = _.map(resp.data.beatFlags,function (element) {
@@ -232,8 +233,6 @@ define([
                             _.forEach(self.productList, function (product) {
                                 // 查询图片模板
 
-                                this.beat_template = null;
-                                this.revert_template = null;
                                 var imageUrl;
                                 if (product.synFlag == 30 || product.synFlag == 50 || product.synFlag == 70) {
                                     imageUrl = self.beat_template.replace("{key}", product.imageName).replace("{price}", product.price);
