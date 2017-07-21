@@ -23,31 +23,31 @@ define(['underscore'], function (_) {
         /**
          * Master
          */
-        MASTER:new Cart('MASTER' , 0 , '主数据',''),
+        MASTER: new Cart('MASTER', 0, '主数据', ''),
         /**
          * Feed
          */
-        FEED:new Cart('FEED' , 1 , 'Feed数据',''),
+        FEED: new Cart('FEED', 1, 'Feed数据', ''),
         /**
          * Feed
          */
-        FEED:new Cart('SN' , 1 , 'Sneakerhead',''),
+        FEED: new Cart('SN', 1, 'Sneakerhead', ''),
         /**
          * Feed
          */
-        FEED:new Cart('WS' , 3 , 'Sneakerhead WS',''),
+        FEED: new Cart('WS', 3, 'Sneakerhead WS', ''),
         /**
          * Feed
          */
-        FEED:new Cart('AM' , 5 , 'Amazon',''),
+        FEED: new Cart('AM', 5, 'Amazon', ''),
         /**
          * Feed
          */
-        FEED:new Cart('RX' , 7 , 'Sneaker RX',''),
+        FEED: new Cart('RX', 7, 'Sneaker RX', ''),
         /**
          * Feed
          */
-        FEED:new Cart('SM' , 9 , 'Sneakerhead Mobile',''),
+        FEED: new Cart('SM', 9, 'Sneakerhead Mobile', ''),
         /**
          * 天猫
          */
@@ -139,7 +139,7 @@ define(['underscore'], function (_) {
         /**
          * 考拉
          */
-        KAOLA: new Cart('KAOLA',34,'考拉海外购','http://www.kaola.com/product/'),
+        KAOLA: new Cart('KAOLA', 34, '考拉海外购', 'http://www.kaola.com/product/'),
 
         /**
          * Mini Mall
@@ -154,17 +154,32 @@ define(['underscore'], function (_) {
 
         SRX: new Cart('SRX', 7, 'Sneaker RX', ''),
 
-        SNM: new Cart('SNM', 9, 'Sneakerhead Mobile', ''),
+        military: new Cart('military', 7, 'military', ''),
+
+        Sneakerhead: new Cart('Sneakerhead', 8, 'Sneakerhead', ''),
+
+        mSneaker: new Cart('mSneaker', 9, 'mSneaker', ''),
+
+        xsneakers: new Cart('xsneakers', 12, 'xsneakers', ''),
+
+        AM: new Cart('AM', 5, 'Amazon', ''),
+
+        RX: new Cart('RX', 6, 'Sneaker RX', ''),
+
+        eBay: new Cart('eBay', 10, 'eBay', ''),
+
+        ikicks: new Cart('ikicks', 11, 'ikicks', ''),
+
 
         /**
          * 获取枚举, desc 不支持
          * @param {string|number} val
          */
-        valueOf: function(val) {
+        valueOf: function (val) {
 
             // 如果是数字,则默认按 id 查找
             if (_.isNumber(val)) {
-                return _.find(this, function(v) {
+                return _.find(this, function (v) {
                     if (_.isFunction(v)) return false;
                     return v.id === val;
                 });

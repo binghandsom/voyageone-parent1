@@ -4,9 +4,12 @@
  */
 define([
     'cms',
+    'modules/cms/enums/Carts',
     'modules/cms/directives/platFormStatus.directive',
     'modules/cms/directives/navBar.directive'
-], function (cms) {
+], function (cms,cartEntity) {
+
+    console.log('cartEntity',cartEntity);
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
@@ -48,6 +51,7 @@ define([
                 selPlatformSales:[]
             };
             self.columnArrow = {};
+            self.cartEntity = cartEntity;
         }
 
         init() {
@@ -79,7 +83,7 @@ define([
                     self.customColumns.platformSales = res.data.platformSales;
                     self.customColumns.selCommonProps = self.getSelectedProps(res.data.commonProps,res.data.selCommonProps,'propId');
                     self.customColumns.selPlatformAttributes = self.getSelectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
-                    self.customColumns.selPlatformSales = self.getSelectedProps(res.data.platformSales,res.data.selPlatformSales);
+                    self.customColumns.selPlatformSales = res.data.selPlatformSales;
                     console.log(res.data);
 
                 }
@@ -300,9 +304,10 @@ define([
         popCustomAttributes() {
             let self = this;
             self.popups.openCustomAttributes().then(res => {
+                self.customColumnNames = {};
                 self.customColumns.selCommonProps = self.getSelectedProps(self.customColumns.commonProps,res.selCommonProps,'propId');
                 self.customColumns.selPlatformAttributes = self.getSelectedProps(self.customColumns.platformAttributes, res.selPlatformAttributes,'value');
-                //self.customColumns.selPlatformSales = self.getSelectedProps(res.data.platformSales,res.data.selPlatformSales);
+                self.customColumns.selPlatformSales = res.data.selPlatformSales;
             })
         }
 
