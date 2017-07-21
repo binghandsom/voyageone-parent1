@@ -13,6 +13,7 @@ import com.voyageone.service.impl.cms.PlatformService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
 import com.voyageone.service.impl.cms.usa.UsaCustomColumnService;
+import com.voyageone.service.impl.cms.usa.UsaProductDetailService;
 import com.voyageone.service.impl.cms.usa.UsaTagService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -52,9 +53,13 @@ public class UsaAdvanceSearchController extends CmsController {
     @Autowired
     private CmsAdvSearchOtherService advSearchOtherService;
     @Autowired
+    private UsaAdvanceSearchService usaAdvanceSearchService;
+    @Autowired
     private UsaCustomColumnService usaCustomColumnService;
     @Autowired
     private UsaTagService usaTagService;
+    @Autowired
+    private UsaProductDetailService usaProductDetailService;
 
     /**
      * 统一的当前语言环境提供
@@ -216,18 +221,19 @@ public class UsaAdvanceSearchController extends CmsController {
     }
 
     //批量修改价格
-    @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.UPDATEPRICE)
+    @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.UPDATE_PRICE)
     public AjaxResponse updatePrice(@RequestBody Map params) {
         UserSessionBean user = getUser();
-        advSearchOtherService.updatePrice(params, user);
+        usaProductDetailService.updatePrice(params,user.getSelChannelId(),user.getUserName());
+
         // 返回用户信息
         return success(null);
     }
     //批量进行上下架操作
-    @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.LISTORDELIST)
+    @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.LIST_OR_DELIST)
     public AjaxResponse listOrDelist(@RequestBody Map params) {
         UserSessionBean user = getUser();
-        advSearchOtherService.listOrDelist(params, user);
+        usaProductDetailService.listOrDelist(params,user.getSelChannelId(),user.getUserName());
         // 返回用户信息
         return success(null);
     }

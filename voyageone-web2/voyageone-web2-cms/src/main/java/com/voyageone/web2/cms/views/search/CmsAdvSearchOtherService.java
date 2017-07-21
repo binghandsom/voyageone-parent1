@@ -1,11 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.mongodb.BulkWriteResult;
-import com.mongodb.bulk.WriteRequest;
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.base.dao.mongodb.JongoUpdate;
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
@@ -13,40 +8,25 @@ import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.util.BeanUtils;
-import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
-import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.prices.PriceService;
-import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
-import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
-import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
-import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdateListDelistStatusMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdatePriceMQMessageBody;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
-import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Edward
@@ -115,17 +95,10 @@ public class CmsAdvSearchOtherService extends BaseViewService {
     @Autowired
     private TagService tagService;
     @Autowired
-    private CmsMqSenderService cmsMqSenderService;
-    @Autowired
-    private CmsProductSearchQueryService cmsProductSearchQueryService;
-    @Autowired
-    private CmsAdvSearchQueryService advSearchQueryService;
-    @Autowired
     CmsBtProductDao cmsBtProductDao;
     @Autowired
     PriceService priceService;
-    @Autowired
-    private CmsBtPriceLogService cmsBtPriceLogService;
+
 
     /**
      * 取得当前主商品所在组的其他信息：所有商品的价格变动信息，子商品图片
@@ -545,290 +518,5 @@ public class CmsAdvSearchOtherService extends BaseViewService {
         }
 
         return dataSumList;
-    }
-
-    public String updatePrice(Map<String, Object> paraMap, UserSessionBean user) {
-        CmsBtProductUpdatePriceMQMessageBody mqMap = new CmsBtProductUpdatePriceMQMessageBody();
-        if (paraMap != null) {
-            String selAll = (String) paraMap.get("selAll");
-            List<String> codeList = (List<String>) paraMap.get("codeList");
-            //Integer cartId = (Integer) paraMap.get("cartId");
-            Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
-            mqMap.setCartId(cartId);
-            HashMap<String, Object> params = new HashMap<>();
-
-            String changedPriceType = (String) paraMap.get("changedPriceType");
-            String basePriceType = (String) paraMap.get("basePriceType");
-            String optionType = (String) paraMap.get("optionType");
-            // Double value = (Double) paraMap.get("value");
-            Double value = Double.parseDouble((String) paraMap.get("value"));
-            //"1":取整,"0":不取整
-            String flag = (String) paraMap.get("flag");
-            params.put("changedPriceType", changedPriceType);
-            params.put("basePriceType", basePriceType);
-            params.put("optionType", optionType);
-            params.put("value", value);
-            params.put("flag", flag);
-            mqMap.setParams(params);
-            if ("true".equals(selAll)) {
-                //勾选了全部,需要通过检索条件,查询出所有信息
-                Map<String, Object> map = (Map) paraMap.get("queryMap");
-                CmsSearchInfoBean2 queryParams = BeanUtils.toModel(map, CmsSearchInfoBean2.class);
-                CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId());
-                long productListTotal = cmsProductCodeListBean.getTotalCount();
-                //要根据查询出来的总页数设置分页
-                long pageNumber = 0;
-                if (productListTotal % 100 == 0) {
-                    //整除
-                    pageNumber = productListTotal / 100;
-                } else {
-                    //不整除
-                    pageNumber = (productListTotal / 100) + 1;
-                }
-
-                for (int i = 0; i < pageNumber; i++) {
-                    queryParams.setProductPageSize(100);
-                    queryParams.setProductPageNum(i + 1);
-                    CmsProductCodeListBean cmsProductCodeListBean1 = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId());
-                    List<String> productCodeList = cmsProductCodeListBean1.getProductCodeList();
-                    mqMap.setProductCodes(productCodeList);
-                    mqMap.setChannelId(user.getSelChannelId());
-                    mqMap.setSender(user.getUserName());
-                    cmsMqSenderService.sendMessage(mqMap);
-                }
-            } else {
-                //未勾选全部
-                mqMap.setProductCodes(codeList);
-                mqMap.setChannelId(user.getSelChannelId());
-                mqMap.setSender(user.getUserName());
-                cmsMqSenderService.sendMessage(mqMap);
-
-            }
-        }
-        return null;
-    }
-
-    //批量进行上下架操作
-    public String listOrDelist(Map<String, Object> paraMap, UserSessionBean user) {
-        CmsBtProductUpdateListDelistStatusMQMessageBody mqMap = new CmsBtProductUpdateListDelistStatusMQMessageBody();
-        if (paraMap != null) {
-            //boolean selAll = (boolean) paraMap.get("selAll");
-            String selAll = (String) paraMap.get("selAll");
-            List<String> codeList = (List<String>) paraMap.get("codeList");
-            //Integer cartId = (Integer) paraMap.get("cartId");
-            Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
-            mqMap.setCartId(cartId);
-            String activeStatus = (String) paraMap.get("activeStatus");
-            mqMap.setActiveStatus(activeStatus);
-            //Integer days = (Integer) paraMap.get("days");
-            Integer days = Integer.parseInt((String) paraMap.get("days"));
-            mqMap.setDays(days);
-            if ("true".equals(selAll)) {
-                //勾选了全部,需要通过检索条件,查询出所有信息
-                Map<String, Object> map = (Map) paraMap.get("queryMap");
-                CmsSearchInfoBean2 queryParams = BeanUtils.toModel(map, CmsSearchInfoBean2.class);
-                CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId());
-                long productListTotal = cmsProductCodeListBean.getTotalCount();
-                //要根据查询出来的总页数设置分页
-                long pageNumber = 0;
-                if (productListTotal % 100 == 0) {
-                    //整除
-                    pageNumber = productListTotal / 100;
-                } else {
-                    //不整除
-                    pageNumber = (productListTotal / 100) + 1;
-                }
-
-                for (int i = 0; i < pageNumber; i++) {
-                    queryParams.setProductPageSize(100);
-                    queryParams.setProductPageNum(i + 1);
-                    CmsProductCodeListBean cmsProductCodeListBean1 = cmsProductSearchQueryService.getProductCodeList(queryParams, user.getSelChannelId());
-                    List<String> productCodeList = cmsProductCodeListBean1.getProductCodeList();
-                    mqMap.setProductCodes(productCodeList);
-                    mqMap.setChannelId(user.getSelChannelId());
-                    mqMap.setSender(user.getUserName());
-                    cmsMqSenderService.sendMessage(mqMap);
-                }
-            } else {
-                //未勾选全部
-                mqMap.setProductCodes(codeList);
-                mqMap.setChannelId(user.getSelChannelId());
-                mqMap.setSender(user.getUserName());
-                cmsMqSenderService.sendMessage(mqMap);
-            }
-        }
-        return null;
-    }
-
-    //修改单条价格
-    public String updateOnePrice(Map<String, Object> paraMap, UserSessionBean user) {
-        //商品code
-        String code = (String) paraMap.get("code");
-        //同事传入portId更新价格履历
-        Long prodId = Long.parseLong((String) paraMap.get("prodId"));
-        //平台id
-        Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
-        Double clientMsrpPrice = null;
-        Double clientRetailPrice = null;
-        if (StringUtils.isNotEmpty((String) paraMap.get("clientMsrpPrice"))) {
-            clientMsrpPrice = Double.parseDouble((String) paraMap.get("clientMsrpPrice"));
-        }
-        if (StringUtils.isNotEmpty((String) paraMap.get("clientRetailPrice"))) {
-            clientRetailPrice = Double.parseDouble((String) paraMap.get("clientRetailPrice"));
-        }
-        CmsBtProductModel cmsBtProductModel = productService.getProductByCode(user.getSelChannelId(), code);
-        if (cmsBtProductModel != null) {
-            if (cartId < 20) {
-                //修改美国平台价格
-                Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
-                CmsBtProductModel_Platform_Cart usPlatform = usPlatforms.get("P" + cartId);
-                if (usPlatform != null) {
-                    List<BaseMongoMap<String, Object>> skus = usPlatform.getSkus();
-                    if (skus != null) {
-                        for (BaseMongoMap<String, Object> sku : skus) {
-                            //获取到对应的skuCode
-                            String skuCode = (String) sku.get("skuCode");
-                            //修改最大值最小值
-                            List<BulkUpdateModel> minMaxPrice = new ArrayList<>(1);
-                            HashMap<String, Object> minMaxPriceQueryMap = new HashMap<>();
-                            //设置查询条件,通过productCode进行定位
-                            minMaxPriceQueryMap.put("common.fields.code", code);
-                            HashMap<String, Object> minMaxPriceUpdateMap = new HashMap<>();
-
-                            List<BulkUpdateModel> bulkList = new ArrayList<>(1);
-                            HashMap<String, Object> updateMap = new HashMap<>();
-                            if (clientMsrpPrice != null) {
-                                updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientMsrpPrice", clientMsrpPrice);
-                                //修改最大值最小值
-                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceMsrpSt", clientMsrpPrice);
-                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceMsrpEd", clientMsrpPrice);
-                            }
-                            if (clientRetailPrice != null) {
-                                updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientRetailPrice", clientRetailPrice);
-                                updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientNetPrice", clientRetailPrice);
-                                //修改最大值最小值
-                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceRetailSt", clientRetailPrice);
-                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceRetailEd", clientRetailPrice);
-                            }
-                            HashMap<String, Object> queryMap = new HashMap<>();
-                            //设置查询条件
-                            queryMap.put("usPlatforms.P" + cartId + ".skus.skuCode", skuCode);
-                            BulkUpdateModel model = new BulkUpdateModel();
-                            model.setUpdateMap(updateMap);
-                            model.setQueryMap(queryMap);
-                            bulkList.add(model);
-                            productService.bulkUpdateWithMap(user.getSelChannelId(), bulkList, user.getUserName(), "$set");
-
-                            //修改最大值最小值
-                            BulkUpdateModel minMaxPriceModel = new BulkUpdateModel();
-                            minMaxPriceModel.setUpdateMap(minMaxPriceUpdateMap);
-                            minMaxPriceModel.setQueryMap(minMaxPriceQueryMap);
-                            minMaxPrice.add(minMaxPriceModel);
-                            productService.bulkUpdateWithMap(user.getSelChannelId(), minMaxPrice, user.getUserName(), "$set");
-
-
-                        }
-                    }
-                }
-            } else {
-                //修改中国平台价格
-                CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getPlatform(cartId);
-                if (platform != null) {
-                    List<BaseMongoMap<String, Object>> skus = platform.getSkus();
-                    if (skus != null) {
-                        for (BaseMongoMap<String, Object> sku : skus) {
-                            //获取到对应的skuCode
-                            String skuCode = (String) sku.get("skuCode");
-                            //修改最大值最小值
-                            List<BulkUpdateModel> minMaxPrice = new ArrayList<>(1);
-                            HashMap<String, Object> minMaxPriceQueryMap = new HashMap<>();
-
-                            List<BulkUpdateModel> bulkList = new ArrayList<>(1);
-                            HashMap<String, Object> updateMap = new HashMap<>();
-
-                            //设置查询条件,通过productCode进行定位
-                            minMaxPriceQueryMap.put("common.fields.code", code);
-                            HashMap<String, Object> minMaxPriceUpdateMap = new HashMap<>();
-
-                            if (clientMsrpPrice != null) {
-                                updateMap.put("platforms.P" + cartId + ".skus.$.priceMsrp", clientMsrpPrice);
-                                //修改最大值最小值
-                                minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceMsrpSt", clientMsrpPrice);
-                                minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceMsrpEd", clientMsrpPrice);
-                            }
-                            if (clientRetailPrice != null) {
-                                updateMap.put("platforms.P" + cartId + ".skus.$.priceRetail", clientRetailPrice);
-                                //修改priceDiffFlg
-                                //调用接口计算priceDiffFlg的值
-                                String priceDiffFlg = priceService.getPriceDiffFlg(user.getSelChannelId(), sku, cartId);
-                                updateMap.put("platforms.P" + cartId + ".skus.$.priceDiffFlg", priceDiffFlg);
-
-                                //修改最大值最小值
-                                minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceRetailSt", clientRetailPrice);
-                                minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceRetailEd", clientRetailPrice);
-                            }
-                            HashMap<String, Object> queryMap = new HashMap<>();
-                            //设置查询条件
-                            queryMap.put("platforms.P" + cartId + ".skus.skuCode", skuCode);
-                            BulkUpdateModel model = new BulkUpdateModel();
-                            model.setUpdateMap(updateMap);
-                            model.setQueryMap(queryMap);
-                            bulkList.add(model);
-                            productService.bulkUpdateWithMap(user.getSelChannelId(), bulkList, user.getUserName(), "$set");
-
-                            //修改最大值最小值
-                            BulkUpdateModel minMaxPriceModel = new BulkUpdateModel();
-                            minMaxPriceModel.setUpdateMap(minMaxPriceUpdateMap);
-                            minMaxPriceModel.setQueryMap(minMaxPriceQueryMap);
-                            minMaxPrice.add(minMaxPriceModel);
-                            productService.bulkUpdateWithMap(user.getSelChannelId(), minMaxPrice, user.getUserName(), "$set");
-
-                        }
-                        //更新价格履历
-                        List<String> skus1 = new ArrayList<>();
-                        skus.forEach(sku -> skus1.add(sku.getStringAttribute("skuCode")));
-                        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus1, user.getSelChannelId(), prodId, cartId, user.getUserName(), "产品编辑页面,手动修改价格");
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-
-    //根据productCode获取中国和美国的平台价格信息
-    public HashMap<String, Map<String, Double>> getAllPlatformsPrice(Long id, UserSessionBean user) {
-        HashMap<String, Map<String, Double>> priceList = new HashMap<>();
-        if (id != null) {
-            CmsBtProductModel cmsBtProductModel = productService.getProductById(user.getSelChannelId(), id);
-            if (cmsBtProductModel != null) {
-                //封装返回的价格map,cartId作为key,对应平台下价格的最大值最小值作为值
-
-                Map<String, CmsBtProductModel_Platform_Cart> platforms = cmsBtProductModel.getPlatforms();
-                Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
-                if (MapUtils.isNotEmpty(platforms)) {
-                    platforms.forEach((key, value) -> {
-                        HashMap<String, Double> priceMap = new HashMap<>();
-                        priceMap.put("priceMsrpSt", value.getpPriceMsrpSt());
-                        priceMap.put("priceMsrpEd", value.getpPriceMsrpEd());
-                        priceMap.put("priceRetailSt", value.getpPriceRetailSt());
-                        priceMap.put("priceRetailEd", value.getpPriceRetailEd());
-                        priceList.put(key.replace("P",""), priceMap);
-
-                    });
-                }
-                if (MapUtils.isNotEmpty(usPlatforms)) {
-                    usPlatforms.forEach((key, value) -> {
-                        HashMap<String, Double> priceMap = new HashMap<>();
-                        priceMap.put("priceMsrpSt", value.getpPriceMsrpSt());
-                        priceMap.put("priceMsrpEd", value.getpPriceMsrpEd());
-                        priceMap.put("priceRetailSt", value.getpPriceRetailSt());
-                        priceMap.put("priceRetailEd", value.getpPriceRetailEd());
-                        priceList.put(key.replace("P",""), priceMap);
-                    });
-                }
-            }
-        }
-        return priceList;
     }
 }

@@ -51,9 +51,9 @@ public class UsaCmsUrlConstants {
 
         String SEARCH = "search";
 
-        String UPDATEPRICE = "updatePrice";
+        String UPDATE_PRICE = "updatePrice";
 
-        String LISTORDELIST = "listOrDelist";
+        String LIST_OR_DELIST = "listOrDelist";
 
 
     }
@@ -70,9 +70,9 @@ public class UsaCmsUrlConstants {
 
         String UPDATE_COMMON_PRODUCT_INFO = "updateCommonProductInfo";
 
-        String GETALLPLATFORMSPRICE = "getAllPlatformsPrice";
+        String GET_ALL_PLATFORMS_PRICE = "getAllPlatformsPrice";
 
-        String UPDATEONEPRICE = "updateOnePrice";
+        String UPDATE_ONE_PRICE = "updateOnePrice";
 
     }
 
