@@ -853,6 +853,7 @@ define(function () {
             $usProductDetailService: {
                 root: '/cms/usa/product',
                 getProductInfo: 'getProductInfo',
+                updateCommonProductInfo:"updateCommonProductInfo",
                 updateOnePrice:'updateOnePrice',
                 getAllPlatformsPrice:'getAllPlatformsPrice',
                 getProductPlatform:'getProductPlatform'

@@ -259,7 +259,7 @@ public class UsaProductDetailService extends BaseService {
         HashMap<String, Object> updateMap = new HashMap<>();
 
         platformModel.setModified(DateTimeUtil.getNowTimeStamp());
-        updateMap.put("platforms.P" + platformModel.getCartId(), platformModel);
+        updateMap.put("usPlatforms.P" + platformModel.getCartId(), platformModel);
         BulkUpdateModel model = new BulkUpdateModel();
         model.setUpdateMap(updateMap);
         model.setQueryMap(queryMap);
@@ -663,6 +663,9 @@ public class UsaProductDetailService extends BaseService {
                         priceMap.put("priceMsrpEd", value.getpPriceMsrpEd());
                         priceMap.put("priceRetailSt", value.getpPriceRetailSt());
                         priceMap.put("priceRetailEd", value.getpPriceRetailEd());
+
+                        priceMap.put("priceSaleSt", value.getpPriceSaleSt());
+                        priceMap.put("priceSaleEd", value.getpPriceSaleEd());
                         priceList.put(key.replace("P",""), priceMap);
 
                     });
