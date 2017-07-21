@@ -286,8 +286,8 @@
                                     </th>
                                     <th class="text-center td-width-150 white-space-noWrap th-border-white" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes track by $index">
                                         {{prop.name}}
-                                        <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.sortName)">
-                                            <i class="fa fa-{{ctrl.getArrowName(prop.sortName)}}"></i>
+                                        <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.value)">
+                                            <i class="fa fa-{{ctrl.getArrowName(prop.value)}}"></i>
                                         </button>
                                     </th>
                                 </tr>

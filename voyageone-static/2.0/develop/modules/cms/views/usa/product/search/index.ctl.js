@@ -71,7 +71,9 @@ define([
                     _.each(res.data.freeTags,freeTag => {
                         self.masterData.freeTags[freeTag.tagPath] = freeTag;
                     });
+
                     // 用户自定义列
+                    self.customColumnNames = {};
                     self.customColumns.commonProps = res.data.commonProps;
                     self.customColumns.platformAttributes = res.data.platformAttributes;
                     self.customColumns.platformSales = res.data.platformSales;
@@ -131,7 +133,8 @@ define([
          * @returns {Array}
          */
         getSelectedProps(array,selectedArray,attrName){
-            let result = [];
+            let self = this,
+                result = [];
 
             if(!selectedArray || selectedArray.length === 0)
                 return result;
@@ -151,7 +154,14 @@ define([
 
                 });
 
-                result.push(obj);
+                if(attrName === 'value'){
+                    if(!self.customColumnNames[obj.name]){
+                        result.push(obj);
+                        self.customColumnNames[obj.name] = true;
+                    }
+                }else{
+                    result.push(obj);
+                }
 
             });
 
@@ -171,14 +181,14 @@ define([
             let valueStr = prop[attrName];
 
             if(valueStr.split(",").length === 2){
-                let _func1 = self.$parse(valueStr[0]),
-                     _func2 = self.$parse(valueStr[1]);
+                let _func1 = self.$parse(valueStr.split(",")[0]),
+                     _func2 = self.$parse(valueStr.split(",")[1]);
 
                 let priceSt = _func1(element) ? _func1(element) : '',
                     priceEd = _func2(element) ? _func2(element) : '';
 
                 if(priceSt === priceEd){
-                    return '';
+                    return priceSt;
                 }else{
                     return `${priceSt} ~ ${priceEd}`;
                 }
@@ -219,6 +229,23 @@ define([
             if(self.tempUpEntity.cidValueTmp)
                 _.extend(searchInfo, {shopCatType:1}); // 1 in, 2 not in
                 searchInfo.cidValue = _.pluck(self.tempUpEntity.cidValueTmp,'catId');
+
+            //价格范围排序修改
+            if(searchInfo.sortOneName && searchInfo.sortOneName.split(',').length === 2){
+                let _priceResult = '';
+
+                if(searchInfo.sortOneType === '1'){
+                    _priceResult = searchInfo.sortOneName.split(',')[0]
+                }else{
+                    _priceResult = searchInfo.sortOneName.split(',')[1];
+                }
+
+                _priceResult.replace(/P(\d)+([A-Z,a-z,\\.])+/g, function (match) {
+                    _priceResult = match;
+                });
+
+                searchInfo.sortOneName = _priceResult.replace('.','_');
+            }
 
             // 分页参数处理
             _.extend(searchInfo, {productPageNum:self.pageOption.curr, productPageSize:self.pageOption.size});
