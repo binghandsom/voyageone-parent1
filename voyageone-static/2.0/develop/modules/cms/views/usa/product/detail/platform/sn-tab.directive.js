@@ -33,6 +33,23 @@ define([
             });
         }
 
+        // Save
+        save() {
+            console.log("Save....");
+            let self = this;
+            let parameter = {
+                prodId:self.$scope.productInfo.productId,
+                data:{
+                    mastData:self.mastData,
+                    platform:self.platform,
+                    productComm:self.productComm
+                }
+            };
+            this.detailDataService.updateCommonProductInfo(parameter).then(res => {
+                console.log(res.data);
+            });
+        }
+
     }
 
     cms.directive('snTab', function () {
