@@ -77,7 +77,7 @@ define([
                     self.customColumns.platformSales = res.data.platformSales;
                     self.customColumns.selCommonProps = self.getSelectedProps(res.data.commonProps,res.data.selCommonProps,'propId');
                     self.customColumns.selPlatformAttributes = self.getSelectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
-                    //self.customColumns.selPlatformSales = self.getSelectedProps(res.data.platformSales,res.data.selPlatformSales);
+                    self.customColumns.selPlatformSales = self.getSelectedProps(res.data.platformSales,res.data.selPlatformSales);
                     console.log(res.data);
 
                 }
@@ -139,7 +139,16 @@ define([
             selectedArray.forEach(prop => {
 
                 let obj = array.find(item => {
-                    return item[attrName] === prop;
+                    if(attrName === 'value'){
+                        if(item.value.split(",").length === 2){
+                            return _.contains(item.value.split(","),prop.value);
+                        }else{
+                            return item.value === prop.value;
+                        }
+                    }else{
+                        return item[attrName] === prop;
+                    }
+
                 });
 
                 result.push(obj);
@@ -159,9 +168,26 @@ define([
             else
                 attrName = 'value';
 
-            let _func = self.$parse(prop[attrName]);
+            let valueStr = prop[attrName];
 
-            return _func(element) ? _func(element) : '';
+            if(valueStr.split(",").length === 2){
+                let _func1 = self.$parse(valueStr[0]),
+                     _func2 = self.$parse(valueStr[1]);
+
+                let priceSt = _func1(element) ? _func1(element) : '',
+                    priceEd = _func2(element) ? _func2(element) : '';
+
+                if(priceSt === priceEd){
+                    return '';
+                }else{
+                    return `${priceSt} ~ ${priceEd}`;
+                }
+
+            }else{
+                let _func = self.$parse(prop[attrName]);
+
+                return _func(element) ? _func(element) : '';
+            }
 
         }
 
