@@ -6,7 +6,8 @@ define([
     'cms',
     'modules/cms/controller/popup.ctl',
     './platform/sn-tab.directive',
-    './inventory/inventory.component.ctl'
+    './inventory/inventory.directive.ctl',
+    './price/price.directive.ctl'
 ],function (cms) {
 
     cms.controller('usProductDetailController',class UsProductDetailController{

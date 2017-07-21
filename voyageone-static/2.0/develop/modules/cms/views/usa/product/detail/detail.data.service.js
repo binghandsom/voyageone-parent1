@@ -37,6 +37,21 @@ define([
                 }, function (resp) {
                     defer.reject(resp)
                 });
+
+            return defer.promise;
+        }
+
+        //获取价格信息
+        updateOnePrice(req){
+            let self = this,
+                defer = self.$q.defer();
+
+            self.$usProductDetailService.updateOnePrice(req).then(res => {
+                defer.resolve(res);
+            }, res => {
+                defer.reject(res);
+            });
+
             return defer.promise;
         }
 

@@ -68,7 +68,7 @@ define([
             restrict: "E",
             controller: IntentoryController,
             controllerAs: 'ctrl',
-            templateUrl: "views/usa/product/detail/inventory/inventory.component.tpl.html",
+            templateUrl: "views/usa/product/detail/inventory/inventory.directive.tpl.html",
             scope: {productInfo: "=productInfo"}
         };
     });
