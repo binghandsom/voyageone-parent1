@@ -11,13 +11,15 @@
                 <tab-heading>Sneakerhead</tab-heading>
                 <sn-tab product-info="ctrl.product"></sn-tab>
             </uib-tab>
-            <uib-tab active="ctrl.price">
-                <tab-heading>Qty</tab-heading>
-                <price-schema product-info="ctrl.product"></price-schema>
-            </uib-tab>
+
             <uib-tab active="ctrl.sku">
+                <tab-heading>QTY</tab-heading>
+                <inventory-tab product-info="ctrl.product"></inventory-tab>
+            </uib-tab>
+
+            <uib-tab active="ctrl.price">
                 <tab-heading>Price</tab-heading>
-                <sku-schema product-info="ctrl.product"></sku-schema>
+                <price-tab product-info="ctrl.product"></price-tab>
             </uib-tab>
 
             <!---------------------------------------------------平台产品详情页面(不包含独立官网)---------------------------------->

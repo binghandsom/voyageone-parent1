@@ -797,10 +797,10 @@ public class CmsAdvSearchOtherService extends BaseViewService {
 
 
     //根据productCode获取中国和美国的平台价格信息
-    public HashMap<String, Map<String, Double>> getAllPlatformsPrice(String code, UserSessionBean user) {
+    public HashMap<String, Map<String, Double>> getAllPlatformsPrice(Long id, UserSessionBean user) {
         HashMap<String, Map<String, Double>> priceList = new HashMap<>();
-        if (StringUtils.isNotEmpty(code)) {
-            CmsBtProductModel cmsBtProductModel = productService.getProductByCode(user.getSelChannelId(), code);
+        if (id != null) {
+            CmsBtProductModel cmsBtProductModel = productService.getProductById(user.getSelChannelId(), id);
             if (cmsBtProductModel != null) {
                 //封装返回的价格map,cartId作为key,对应平台下价格的最大值最小值作为值
 

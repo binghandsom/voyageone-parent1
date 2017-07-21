@@ -67,7 +67,10 @@ define([
                     });
                     // 品牌列表
                     self.masterData.brandList = res.data.brandList;
-
+                    self.masterData.freeTags = {};
+                    _.each(res.data.freeTags,freeTag => {
+                        self.masterData.freeTags[freeTag.tagPath] = freeTag;
+                    });
                     // 用户自定义列
                     self.customColumns.commonProps = res.data.commonProps;
                     self.customColumns.platformAttributes = res.data.platformAttributes;
@@ -94,12 +97,32 @@ define([
                     self.pageOption.total = res.data.productListTotal;
 
                     self.searchResult.productList.forEach(productInfo => {
+                        self.setFreeTagList(productInfo);
                         self.srInstance.currPageRows({"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
                     });
 
                     self.productSelList = self.srInstance.selectRowsInfo;
                 }
             });
+        }
+
+        /**
+         * 获取自由标签tagName
+         * @param productInfo
+         */
+        setFreeTagList(productInfo){
+            let self = this,
+                _usFreeTags = [];
+
+            productInfo.usFreeTags.forEach(tag => {
+                let _tag = self.masterData.freeTags[tag];
+
+                _usFreeTags.push(_tag.tagName);
+            });
+
+            productInfo._usFreeTags = _usFreeTags;
+
+            console.log(productInfo);
         }
 
         /**

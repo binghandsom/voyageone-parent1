@@ -263,7 +263,7 @@ define([
 
         // 取得SKU的库存信息
         function getSkuStockInfo(req) {
-            var defer = $q.defer();
+            let defer = $q.defer();
             $productDetailService.getSkuStockInfo(req)
                 .then(function (resp) {
                     defer.resolve(resp);

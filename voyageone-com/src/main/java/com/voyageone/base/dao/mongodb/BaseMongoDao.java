@@ -1,9 +1,13 @@
 package com.voyageone.base.dao.mongodb;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -129,5 +133,9 @@ public abstract class BaseMongoDao<T> extends BaseJongoDao<T> {
     }
     public List<T> aggregateToObj(JongoAggregate... aggregates) {
         return aggregateToObj(entityClass, collectionName, aggregates);
+    }
+
+    public <I>  AggregationResults<I> aggregateToObj(Aggregation aggregates, Class<I> cls) {
+        return mongoTemplate.getMongoTemplate().aggregate(aggregates,collectionName,cls);
     }
 }

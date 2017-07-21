@@ -55,10 +55,6 @@ public class UsaCmsUrlConstants {
 
         String LISTORDELIST = "listOrDelist";
 
-        String UPDATEONEPRICE = "updateOnePrice";
-
-        String GETALLPLATFORMSPRICE = "getAllPlatformsPrice";
-
 
     }
 
@@ -68,7 +64,13 @@ public class UsaCmsUrlConstants {
     public interface  PRODUCT {
         String ROOT = "/cms/usa/product";
 
+        String GET_PRODUCT_PLATFORM = "getProductPlatform";
+
         String GET_PRODUCT_INFO = "getProductInfo";
+
+        String GETALLPLATFORMSPRICE = "getAllPlatformsPrice";
+
+        String UPDATEONEPRICE = "updateOnePrice";
 
     }
 

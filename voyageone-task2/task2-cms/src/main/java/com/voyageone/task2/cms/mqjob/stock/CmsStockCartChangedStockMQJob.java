@@ -40,6 +40,6 @@ public class CmsStockCartChangedStockMQJob extends TBaseMQCmsSubService<CmsStock
             cmsSuccessLog(messageBody, "WMS->CMS批量更新库存");
         } else {
             cmsSuccessIncludeFailLog(messageBody, "WMS->CMS批量更新库存", failList);
-        }
+    }
     }
 }

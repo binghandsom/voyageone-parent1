@@ -146,6 +146,10 @@ public class CmsMqRoutingKey {
 
     // wms new item
     public static final String CMS_USA_PRODUCT_ADD_UPDATE = "VOCmsUsaProductAddUpdateMQJobQueue";
+
+    // 自定义时间销量统计
+    public static final String CMS_SALE_DATA_STATISTICS = "VOCmsSaleDataStatisticsMQJobQueue";
+
     //CMS修改价格
     public static final String CMS_USA_PRODUCT_UPDATE_PRICE = "VoCmsUsaProductUpdatePriceMQJobQueue";
     //商品上下架
