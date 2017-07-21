@@ -232,8 +232,6 @@ define([
                             _.forEach(self.productList, function (product) {
                                 // 查询图片模板
 
-                                this.beat_template = null;
-                                this.revert_template = null;
                                 var imageUrl;
                                 if (product.synFlag == 30 || product.synFlag == 50 || product.synFlag == 70) {
                                     imageUrl = self.beat_template.replace("{key}", product.imageName).replace("{price}", product.price);
