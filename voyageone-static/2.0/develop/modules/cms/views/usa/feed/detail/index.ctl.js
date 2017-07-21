@@ -366,6 +366,7 @@ define([
             self.feed.attribute.taxable = [self.feed.taxable];
 
             let parameter = {feed: self.feed, flag: flag};
+
             self.itemDetailService.update(parameter).then((res) => {
                 if (res.data) {
                     self.notify.success("Operation succeeded.");
@@ -593,7 +594,6 @@ define([
         }
 
         goDetail(url) {
-            console.log(url);
             if (!url)
                 return;
 
