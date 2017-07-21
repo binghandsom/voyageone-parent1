@@ -286,7 +286,7 @@ public class UsaCustomColumnService extends BaseService {
                     for (Map<String, Object> saleMap : platformSales) {
                         if (cartId.equalsIgnoreCase((String) saleMap.get("cfg_val2"))) {
                             Map<String, Object> cartTimeMap = JacksonUtil.jsonToMap((String) saleMap.get("cfg_val1"));
-                            if (cartTimeMap != null && beginTime.equals(cartTimeMap.get("beginTime")) && endTime.equals(cartTimeMap.get("endTime"))) {
+                            if (cartTimeMap != null && beginTime.equals((String) cartTimeMap.get("beginTime")) && endTime.equals((String) cartTimeMap.get("endTime"))) {
                                 mqFlag = false;
                             }
                             break;
