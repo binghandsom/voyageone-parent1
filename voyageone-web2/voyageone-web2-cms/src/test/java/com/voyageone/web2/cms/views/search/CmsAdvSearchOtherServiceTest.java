@@ -40,6 +40,6 @@ public class CmsAdvSearchOtherServiceTest {
         UserSessionBean user = new UserSessionBean();
         user.setSelChannelId("001");
         user.setUserName("xusong");
-        cmsAdvSearchOtherService.getAllPlatformsPrice("609973-460",user);
+//        cmsAdvSearchOtherService.getAllPlatformsPrice("609973-460",user);
     }
 }

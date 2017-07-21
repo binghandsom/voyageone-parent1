@@ -122,7 +122,6 @@ define([
 
             productInfo._usFreeTags = _usFreeTags;
 
-            console.log(productInfo);
         }
 
         /**
@@ -161,8 +160,6 @@ define([
                 attrName = 'value';
 
             let _func = self.$parse(prop[attrName]);
-
-            //console.log('attr',);
 
             return _func(element) ? _func(element) : '';
 
@@ -315,8 +312,6 @@ define([
         batchCategory(){
             let self = this;
 
-            console.log(self.getSelectedProduct());
-
         }
 
         /**
@@ -359,7 +354,6 @@ define([
          * 检索列排序
          * */
         columnOrder (columnName) {
-            console.log(columnName);
             let self  = this,
                 column,
                 columnArrow = self.columnArrow;
@@ -407,27 +401,6 @@ define([
             searchInfo.sortOneType = sortOneType == 'sort-up' ? '1' : '-1';
 
             self.search();
-
-        }
-
-        /**
-         * 弹出批量修改产品标签
-         */
-        popUpdateFreeTags() {
-            let self = this;
-
-            self.$chkProductSel(0,(cartId,codeList) => {
-
-                self.popups.openUsFreeTag({
-                    orgFlg: '2',
-                    tagType: '6',
-                    selAllFlg: '0',
-                    selCodeList: codeList,
-                    searchInfo: self.handleQueryParams()
-                }).then(res => {
-                    console.log(res);
-                });
-            });
 
         }
 

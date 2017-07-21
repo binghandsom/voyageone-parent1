@@ -25,7 +25,6 @@ define([
             let self = this;
             this.advanceSearch.getCustomColumns().then(res => {
                if (res.data) {
-                   console.log(res.data);
                    self.commonProps = res.data.commonProps == null ? [] : res.data.commonProps;
                    self.selCommonProps = res.data.selCommonProps == null ? [] : res.data.selCommonProps;
                    self.platformAttributes = res.data.platformAttributes == null ? [] : res.data.platformAttributes;
@@ -44,7 +43,14 @@ define([
                    });
                    _.each(self.platformAttributes, item => {
                        let selOne = _.find(self.selPlatformAttributes, selItem => {
-                           return item.value == selItem;
+                           let flag = item.cartId = selItem.cartId && item.value == selItem.value;
+                           if (!flag) {
+                               let index = item.value.indexOf(selItem.value);
+                               if (index != -1) {
+                                   flag = true;
+                               }
+                           }
+                           return flag;
                        });
                        if (selOne) {
                            _.extend(item, {checked:true});
@@ -78,8 +84,9 @@ define([
                 if (item.checked) {
                     let cartId = item.cartId;
                     let cartVal = item.value;
+                    let currCartAttrs = selPlatformAttributes[cartId];
                     if (selPlatformAttributes[cartId]) {
-                        selPlatformAttributes[cartId].concat(cartVal.split(","));
+                        selPlatformAttributes[cartId] = currCartAttrs.concat(cartVal.split(","));
                     } else {
                         selPlatformAttributes[cartId] = cartVal.split(",");
                     }
