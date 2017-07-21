@@ -128,6 +128,8 @@ public class CmsPromotionExportService extends BaseService {
             exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_JUHUASUAN_EXPORT_PATH);
         } else if (Objects.equals(templateType, Integer.valueOf(2))) {
             exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_TMALL_EXPORT_PATH);
+        } else if (Objects.equals(templateType, Integer.valueOf(3))) {
+            exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_NEW_EXPORT_PATH);
         }
         File pathFileObj = new File(exportPath);
         if (StringUtils.isBlank(exportPath) || !(pathFileObj = new File(exportPath)).exists()) {
@@ -158,6 +160,10 @@ public class CmsPromotionExportService extends BaseService {
                 // 模板是xls，后缀格式必须统一，否则打不开
                 filename = filename.replace("xlsx", "xls");
                 book = createTmallExportFile(cmsBtPromotionModel);
+            } else if (Objects.equals(templateType, Integer.valueOf(3))) {
+                // 模板是xls，后缀格式必须统一，否则打不开
+                filename = filename.replace("xlsx", "xls");
+                book = createNewExportFile(cmsBtPromotionModel);
             }
 
             outputStream = new FileOutputStream(exportPath + filename);
@@ -554,4 +560,38 @@ public class CmsPromotionExportService extends BaseService {
         return book;
     }
     // =========================================按官方活动(A类)模板导出================================================
+
+    /**
+     * 按照上新模板进行导出
+     * @param promotionModel 活动对象
+     * @return
+     * @throws Exception
+     */
+    private Workbook createNewExportFile(CmsBtPromotionModel promotionModel) throws Exception {
+        String templatePath = Properties.readValue(CmsProperty.Props.CMS_PROMOTION_EXPORT_NEW);
+        InputStream inputStream = new FileInputStream(templatePath);
+        Workbook book = WorkbookFactory.create(inputStream);
+
+        Map<String, List<CmsBtPromotionCodesBean>> groups = getPromotionInfo(promotionModel.getId(), promotionModel.getChannelId());
+        Sheet sheet = book.getSheetAt(0);
+        Row styleRow = FileUtils.row(sheet, 1);
+        CellStyle unlock = styleRow.getRowStyle();
+        int rowIndex = 1;
+        for (Map.Entry<String, List<CmsBtPromotionCodesBean>> entry : groups.entrySet()) {
+            for (CmsBtPromotionCodesBean item:entry.getValue()) {
+                Row row = FileUtils.row(sheet, rowIndex);
+
+                FileUtils.cell(row, 0, unlock).setCellValue(entry.getKey());
+                FileUtils.cell(row, 1, unlock).setCellValue(item.getProductCode());
+                FileUtils.cell(row, 2, unlock).setCellValue(item.getPromotionPrice());
+                FileUtils.cell(row, 3, unlock).setCellValue(item.getImage_url_1());
+                rowIndex++;
+            }
+
+        }
+
+
+        return book;
+    }
+
 }
