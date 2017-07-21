@@ -684,4 +684,32 @@ public class UsaProductDetailService extends BaseService {
         }
         return priceList;
     }
+
+    //同步美国平台最大最小值
+    public CmsBtProductModel_Platform_Cart updateUsPlatformMinAndMaxPrice(CmsBtProductModel_Platform_Cart usPlatform) {
+
+        List<BaseMongoMap<String, Object>> skus = usPlatform.getSkus();
+
+        if (ListUtils.notNull(skus)){
+            Double[] clientMsrpMinMaxPrices = new Double[skus.size()];
+            Double[] clientRetailMinMaxPrices = new Double[skus.size()];
+            int i = 0;
+            for (BaseMongoMap<String, Object> sku : skus) {
+                Double clientMsrpPrice = (Double) sku.get("clientMsrpPrice");
+                Double clientRetailPrice = (Double) sku.get("clientRetailPrice");
+                clientMsrpMinMaxPrices[i] = clientMsrpPrice;
+                clientRetailMinMaxPrices[i] = clientRetailPrice;
+                i++;
+            }
+            Arrays.sort(clientMsrpMinMaxPrices);
+            Arrays.sort(clientRetailMinMaxPrices);
+            usPlatform.setpPriceMsrpSt(clientMsrpMinMaxPrices[0]);
+            usPlatform.setpPriceMsrpEd(clientMsrpMinMaxPrices[clientMsrpMinMaxPrices.length - 1]);
+            usPlatform.setpPriceRetailSt(clientRetailMinMaxPrices[0]);
+            usPlatform.setpPriceRetailEd(clientRetailMinMaxPrices[clientRetailMinMaxPrices.length -1]);
+
+        }
+
+        return usPlatform;
+    }
 }
