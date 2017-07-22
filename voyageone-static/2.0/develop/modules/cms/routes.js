@@ -483,35 +483,41 @@ define(function () {
             "templateUrl": "views/bi_report/bi_report_list.tpl.html",
             "controllerUrl": "modules/cms/views/bi_report/bi_report_list.ctl"
         },
-        "us-home": {
+        us_home: {
             hash: "/usa/home",
             templateUrl: "views/usa/home/welcome/index.tpl.html",
             controllerUrl: "modules/cms/views/usa/home/welcome/index.ctl",
             controller: 'usaDatachartController as ctrl'
         },
-        "us-feed":{
+        us_feed:{
             hash: "/feed/usa/search",
             templateUrl: "views/usa/feed/search/index.tpl.html",
             controllerUrl: "modules/cms/views/usa/feed/search/index.ctl",
             controller: 'feedSearchController as ctrl'
         },
-        "us-itemDetail":{
+        us_itemDetail:{
             hash: "/feed/detail/:id?",
             templateUrl: "views/usa/feed/detail/index.tpl.html",
             controllerUrl: "modules/cms/views/usa/feed/detail/index.ctl",
             controller: 'feedDetailController as ctrl'
         },
-        "us-product/search":{
+        us_product_search:{
             hash: "/product/usa/search/:code?",
             templateUrl: "views/usa/product/search/index.tpl.html",
             controllerUrl: "modules/cms/views/usa/product/search/index.ctl",
             controller: 'usProductSearchController as ctrl'
         },
-        "us-product/detail":{
+        us_product_detail:{
             hash: "/product/usa/detail/:prodId?",
             templateUrl: "views/usa/product/detail/index.tpl.html",
             controllerUrl: "modules/cms/views/usa/product/detail/index.ctl",
             controller: 'usProductDetailController as ctrl'
+        },
+        us_channel_category:{
+            hash: "/channel/usa/category",
+            templateUrl: "views/usa/channel/category/index.tpl.html",
+            controllerUrl: "modules/cms/views/usa/channel/category/index.ctl",
+            controller: 'usCategoryController as ctrl'
         }
     };
 });
