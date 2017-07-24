@@ -205,15 +205,18 @@ public class ProductStockService extends BaseService {
                                         for (String code : codes) {
                                             CmsBtProductModel product = productMap.get(code);
                                             CmsBtProductModel_Platform_Cart pform = product.getPlatform(cartId);
-                                            pform.setpIsMain(0);
-                                            pform.setMainProductCode(newMastCode);
-                                            productPlatformService.updateProductPlatformWithSx(channelId, product.getProdId(), pform, modifier, "切换主商品", false);
 
-                                            comment = "WMS->CMS推送平台库存 切换同Group对应平台主商品：" + newMastCode;
-                                            productStatusHistoryService.insert(channelId, code, pform.getStatus(), cartId, EnumProductOperationType.ChangeMastProduct, comment, modifier);
+                                            if (!newMastCode.equalsIgnoreCase(pform.getMainProductCode())) {
+                                                comment = "WMS->CMS推送平台库存 切换同Group对应平台主商品：" + newMastCode;
 
-                                            $info(String.format("(Code=%s, CartId=%d切换同Group商品对应平台主商品(原%s->新%s))",
-                                                    code, cartId, StringUtils.isBlank(pform.getMainProductCode()) ? " " : platform.getMainProductCode(), newMastCode));
+                                                pform.setpIsMain(0);
+                                                pform.setMainProductCode(newMastCode);
+                                                productPlatformService.updateProductPlatform(channelId, product.getProdId(), pform,
+                                                        modifier, false, EnumProductOperationType.ChangeMastProduct, comment, false, 1);
+
+                                                $info(String.format("(Code=%s, CartId=%d切换同Group商品对应平台主商品(原%s->新%s))",
+                                                        code, cartId, StringUtils.isBlank(pform.getMainProductCode()) ? " " : platform.getMainProductCode(), newMastCode));
+                                            }
                                         }
                                     }
                                 }
