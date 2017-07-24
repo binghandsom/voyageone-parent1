@@ -86,9 +86,12 @@ define([
         }
 
         // Save
-        save() {
+        save(status) {
             let self = this;
             let platform = angular.copy(self.platform);
+            if (status) {
+                platform.pStatus = status;
+            }
             let productComm = angular.copy(self.productComm);
             productComm.fields.images1 = self.imageView.images;
             productComm.fields.images2 = self.imageView.boxImages;
@@ -103,6 +106,7 @@ define([
             this.$usProductDetailService.updateCommonProductInfo(parameter).then(res => {
                 if (res.data) {
                     self.notify.success("Save success.");
+                    self.platform.pStatus = status;
                 }
             });
         }

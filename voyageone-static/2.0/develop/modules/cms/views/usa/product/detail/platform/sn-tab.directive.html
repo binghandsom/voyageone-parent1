@@ -13,7 +13,7 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_unreqfield">Sneakerhead</label>
                                         <label class="col-md-6" style="padding-top:4px">
-                                            <strong class="text-u-l"></strong>
+                                            <strong class="text-u-l">{{ctrl.platform.pStatus}}</strong>
                                         </label>
                                     </div>
                                 </div>
@@ -412,15 +412,15 @@
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Save
                     </button>
                 </li>
-                <li class="text-center" style="margin: 7px">
+                <li class="text-center" style="margin: 7px" ng-if="ctrl.platform.pStatus=='Pending' || ctrl.platform.pStatus=='InStock'">
                     <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
-                            ng-disabled="productForm.$invalid" ng-click="ctrl.list('0')">
+                            ng-disabled="productForm.$invalid" ng-click="ctrl.save('OnSale')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;List
                     </button>
                 </li>
-                <li class="text-center" style="margin: 7px">
+                <li class="text-center" style="margin: 7px" ng-if="ctrl.platform.pStatus=='OnSale'">
                     <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
-                            ng-disabled="productForm.$invalid" ng-click="ctrl.delist('0')">
+                            ng-disabled="productForm.$invalid" ng-click="ctrl.save('InStock')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Delist
                     </button>
                 </li>
