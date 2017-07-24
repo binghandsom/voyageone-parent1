@@ -501,8 +501,6 @@ public class UsaProductDetailService extends BaseService {
 
     //修改单条价格
     public String updateOnePrice(Map<String, Object> paraMap, String channelId,String userName) {
-        //商品code
-        String code = (String) paraMap.get("code");
         //同事传入portId更新价格履历
         Long prodId = Long.parseLong((String) paraMap.get("prodId"));
         //平台id
@@ -515,7 +513,9 @@ public class UsaProductDetailService extends BaseService {
         if (StringUtils.isNotEmpty((String) paraMap.get("clientRetailPrice"))) {
             clientRetailPrice = Double.parseDouble((String) paraMap.get("clientRetailPrice"));
         }
-        CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, code);
+        CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);
+        //获取商品code
+        String code = cmsBtProductModel.getCommonNotNull().getFieldsNotNull().getCode();
         if (cmsBtProductModel != null) {
             if (cartId < 20) {
                 //修改美国平台价格

@@ -16,16 +16,39 @@ define([
             this.productInfo = $scope.productInfo;
             this.usPriceList = {};
             this.priceList = {};
+            //定义修改价格参数
+            this.saveParam = {
+                cartId:"",
+                prodId:"",
+                clientMsrpPrice:"",
+                clientRetailPrice:""
+            };
         }
 
         init(){
+            this.getData();
+        }
+        getData(){
             let self = this;
-
             self.detailDataService.getAllPlatformsPrice(self.productInfo.productId).then(res => {
                 //中国平台
                 self.usPriceList = res.data.allUsPriceList;
                 self.priceList = res.data.allPriceList;
             });
+        }
+        //修改价格
+        save(cartId,priceMsrpSt,priceRetailSt){
+            let self = this;
+            self.saveParam.cartId = cartId + "";
+            self.saveParam.prodId = self.productInfo.productId + "";
+            self.saveParam.clientMsrpPrice = priceMsrpSt + "";
+            self.saveParam.clientRetailPrice = priceRetailSt + "";
+            self.detailDataService.updateOnePrice(self.saveParam).then(res =>{
+
+            });
+            //刷新页面
+            self.getData();
+
         }
 
     }

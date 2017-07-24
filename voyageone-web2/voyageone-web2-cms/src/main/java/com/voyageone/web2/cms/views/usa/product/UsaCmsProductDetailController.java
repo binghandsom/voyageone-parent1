@@ -112,7 +112,7 @@ public class UsaCmsProductDetailController extends CmsController {
     @RequestMapping(value = UsaCmsUrlConstants.PRODUCT.UPDATE_ONE_PRICE)
     public AjaxResponse updateOnePrice(@RequestBody Map params) {
         UserSessionBean user = getUser();
-        usaProductDetailService.updatePrice(params,user.getSelChannelId(),user.getUserName());
+        usaProductDetailService.updateOnePrice(params,user.getSelChannelId(),user.getUserName());
         // 返回用户信息
         return success(null);
     }

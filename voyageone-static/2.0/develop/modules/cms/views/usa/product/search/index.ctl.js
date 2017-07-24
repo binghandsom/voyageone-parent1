@@ -332,6 +332,11 @@ define([
                 cartId:cartId? cartId :0
             }).then(res => {
                 //根据返回参数确定勾选状态,"1",需要清除勾选状态,"0"不需要清除勾选状态
+                if(res.success == "1"){
+                    //需要清除勾选状态
+                    self.clearSelList();
+                    self._selall = 0;
+                }
             });
         }
 
@@ -415,7 +420,11 @@ define([
                 activeStatus:activeStatus,
                 usPlatformName:usPlatformName
             }).then(res => {
-
+                if(res.success == "1"){
+                    //需要清除勾选状态
+                    self.clearSelList();
+                    self._selall = 0;
+                }
             });
         }
 
