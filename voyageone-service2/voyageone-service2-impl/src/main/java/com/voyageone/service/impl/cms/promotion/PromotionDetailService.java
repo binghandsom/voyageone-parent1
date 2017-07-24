@@ -178,6 +178,7 @@ public class PromotionDetailService extends BaseService {
         List<CmsBtPromotionSkuBean> listPromotionSku = loadPromotionSkus(bean, productInfo, groupModel, promotionId, modifier, isUpdatePromotionPrice);
         if(ListUtils.isNull(listPromotionSku)){
             $info(String.format("添加活动产品出错 可能平台的sku 与code 不一致 channel:%s code:%s", channelId, productInfo.getCommonNotNull().getFieldsNotNull().getCode()));
+            return;
         }
 
         //计算PromotionSku活动价
