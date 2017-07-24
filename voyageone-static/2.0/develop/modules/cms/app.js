@@ -516,7 +516,7 @@ define([
                         }));
                     break;
                 case "MS":
-                    $location.path(cRoutes.us_channel_category.hash + angular.toJson({
+                    $location.path(cRoutes.us_channel_category.url + angular.toJson({
                             catPath: catPath,
                             catId: catId
                         }));
