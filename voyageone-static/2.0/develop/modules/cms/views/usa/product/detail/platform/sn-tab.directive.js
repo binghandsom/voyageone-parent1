@@ -33,6 +33,7 @@ define([
                 currBoxImage:{image2:""},
                 urlkey:""
             };
+            this.showModel = true;
             // SKU
             this.selAllSkuFlag = false;
         }
