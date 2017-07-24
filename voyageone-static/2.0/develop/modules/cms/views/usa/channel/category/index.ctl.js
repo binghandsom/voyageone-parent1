@@ -21,7 +21,8 @@ define([
             self.catInfo = angular.fromJson(this.$routeParams.category);
             self.popups = popups;
             self.searchInfo = {
-                cartId:8
+                cartId:8,
+                codeList:''
             };
             self.paging = {
                 curr: 1, total: 0, size: 10, fetch: function () {
@@ -58,10 +59,15 @@ define([
             let self = this,
                 upEntity = angular.copy(self.searchInfo);
 
-            upEntity.cartId = this.routeParams.cartId;
-            upEntity.sellerCatId = this.routeParams.catId;
-            upEntity.sellerCatPath = this.routeParams.catPath;
-            upEntity.codeList = self.codeStr.split("\n");
+            upEntity.sellerCatId = self.catInfo.catId;
+            upEntity.sellerCatPath = self.catInfo.catPath;
+            upEntity.codeList = upEntity.codeList.split("\n");
+            upEntity.platformStatus = _.chain(upEntity.platformStatus).map((value,key) => {
+                if(value)
+                    return key;
+            }).filter(item => {return item}).value();
+
+            console.log('upEntity',upEntity);
 
             return upEntity;
         }
@@ -79,13 +85,10 @@ define([
             }
 
             self.productTopService.getPage(_.extend(paging, data)).then(function (res) {
-                if(res.data.length == 0 && self.paging.curr > 1){
-                    self.paging.curr = self.paging.curr - 1;
-                    self.search();
-                    return;
-                }
 
                 self.modelList = res.data;
+
+                console.log(self.modelList);
             });
 
             productTopService.getCount(self.getSearchInfo()).then(function (res) {
