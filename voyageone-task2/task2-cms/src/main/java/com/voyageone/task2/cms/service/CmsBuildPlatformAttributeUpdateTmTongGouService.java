@@ -485,7 +485,7 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         // 先临时这样处理
         String errorWord_desc = getConditionPropValue(sxData, "updateErrorWord_Desc", shop);
         if (!StringUtils.isEmpty(errorWord_desc) && !StringUtils.isEmpty(valDescription)) {
-                sxProductService.deleteErrorWord(valDescription, errorWord_desc);
+            valDescription = sxProductService.deleteErrorWord(valDescription, errorWord_desc);
         }
         // 店铺级标题禁用词 20161216 tom END
         productInfoMap.put(PlatformWorkloadAttribute.DESCRIPTION.getValue(), valDescription);
