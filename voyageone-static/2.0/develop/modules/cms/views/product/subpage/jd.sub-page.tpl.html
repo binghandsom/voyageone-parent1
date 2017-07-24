@@ -298,13 +298,12 @@
                                                 <strong class="main" ng-if="image.isMain"><span
                                                         class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img-by-name name="image.imageName" class="thumb-group"
-                                                                    title="{{image.productCode}}"></img-by-name>
-                                                <img class="thumb-group"
-                                                     src="http://image.voyageone.com.cn/is/image/sneakerhead/{{image.imageName}}"
-                                                     title="{{image.productCode}}" ng-if="ctrl.vm.platform.fields.mainImageTemplate == null || ctrl.vm.platform.fields.mainImageTemplate == ''">
+                                                             ng-if="ctrl.vm.platform.fields.mainImageTemplate == null || ctrl.vm.platform.fields.mainImageTemplate == ''"
+                                                             title="{{image.productCode}}"></img-by-name>
                                                 <img class="thumb-group"
                                                      src="{{ctrl.vm.platform.fields.mainImageTemplate.replace('%s',image.imageName)}}"
-                                                     title="{{image.productCode}}" ng-if="ctrl.vm.platform.fields.mainImageTemplate != null && ctrl.vm.platform.fields.mainImageTemplate != ''">
+                                                     title="{{image.productCode}}"
+                                                     ng-if="ctrl.vm.platform.fields.mainImageTemplate != null && ctrl.vm.platform.fields.mainImageTemplate != ''">
                                             </a>
                                             <div class="thumbInfo">
                                                 <div class="row">

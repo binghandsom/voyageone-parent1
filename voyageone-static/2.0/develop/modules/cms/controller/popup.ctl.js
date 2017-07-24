@@ -456,7 +456,7 @@ define([
             "imagedetail": {
                 "templateUrl": "views/pop/search/imagedetail.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/search/imagedetail.ctl",
-                "controller": 'popImageDetailCtl'
+                "controller": 'popImageDetailCtl as imageDetail'
             },
             "codeDetail": {
                 "templateUrl": "views/pop/search/codeDetail.tpl.html",
@@ -1138,7 +1138,8 @@ define([
 
         /**
          * 新增feed查询页图片弹出
-         * */
+         * @param context {{host: Number, search: String, mainPic: String, picList: Array<String>}}
+         */
         $scope.openImagedetail = function openImagedetail(context) {
             return openModal(popActions.search.imagedetail, context);
         };

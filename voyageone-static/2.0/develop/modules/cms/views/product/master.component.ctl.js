@@ -10,12 +10,8 @@ define([
     'modules/cms/directives/contextMenu.directive'
 ], function (cms, carts) {
 
-    var mConfig = {
-        bigImageUrl: 'http://image.voyageone.com.cn/is/image/sneakerhead/✓?wid=2200&hei=2200',
-        newImageUrl: 'http://image.voyageone.com.cn/is/image/sneakerhead/✓?fmt=jpg&scl=1&qlt=100'
-    };
-
-    cms.directive("masterSchema", function (productDetailService, sizeChartService, $rootScope, systemCategoryService, alert, notify, confirm, $localStorage) {
+    cms.directive("masterSchema", function (productDetailService, sizeChartService, $rootScope, systemCategoryService,
+                                            imageDirectiveService, alert, notify, confirm, $localStorage) {
         return {
             restrict: "E",
             templateUrl: "views/product/master.component.tpl.html",
@@ -88,6 +84,7 @@ define([
                 scope.copyToOtherImg = copyToOtherImg;
 
                 initialize();
+
                 /**
                  * 获取京东页面初始化数据
                  */
@@ -424,20 +421,29 @@ define([
                     if (args.length == 0)
                         return;
 
-                    window.open(mConfig.bigImageUrl.replace("✓", args[args.length - 1]));
-
+                    var imageName = args[args.length - 1];
+                    var imageUrl = imageDirectiveService.getImageUrlByName(imageName) + '?wid=2200&hei=2200';
+                    window.open(imageUrl);
                 }
+
+                //
+                // var mConfig = {
+                //     bigImageUrl: 'http://image.voyageone.com.cn/is/image/sneakerhead/✓?',
+                //     newImageUrl: 'http://image.voyageone.com.cn/is/image/sneakerhead/✓?'
+                // };
 
                 function simpleImgDown(imgName, templateFlag, $event) {
                     var jq = angular.element,
                         _aTag;
 
+                    var imageUrl = imageDirectiveService.getImageUrlByName(imgName);
+
                     if (templateFlag == 0) {
-                        imgName = mConfig.bigImageUrl.replace("✓", imgName);
+                        imageUrl += '?wid=2200&hei=2200';
                     } else {
-                        imgName = mConfig.newImageUrl.replace("✓", imgName);
+                        imageUrl += '?fmt=jpg&scl=1&qlt=100';
                     }
-                    _aTag = jq('<a download>').attr({'href': imgName});
+                    _aTag = jq('<a download>').attr({'href': imageUrl});
 
                     jq('body').append(_aTag);
                     _aTag[0].click();
@@ -495,7 +501,7 @@ define([
                     $event.stopPropagation();
                 }
 
-                function copyToOtherImg(image,orgImgName, targetImg) {
+                function copyToOtherImg(image, orgImgName, targetImg) {
                     var imageType = Object.keys(image)[0];
 
                     confirm("您确认要复制到【" + targetImg.name + "】吗?").then(function () {
@@ -504,19 +510,19 @@ define([
                         var orgModel = searchField(orgImgName, schemaData);
                         var targetModel = searchField(targetImg.name, schemaData);
 
-                        var orgComplexValue = _.find(orgModel.complexValues,function(_element){
+                        var orgComplexValue = _.find(orgModel.complexValues, function (_element) {
                             var _fieldMap = _element.fieldMap;
                             return _fieldMap[Object.keys(_fieldMap)[0]].value === image[imageType];
                         });
 
-                        var jsonStr = angular.toJson(orgComplexValue).replace(/image\d{1}/g,targetImg.value);
+                        var jsonStr = angular.toJson(orgComplexValue).replace(/image\d{1}/g, targetImg.value);
 
-                        var isExit = _.some(targetModel.complexValues,function(item){
+                        var isExit = _.some(targetModel.complexValues, function (item) {
                             var _fieldMap = item.fieldMap;
                             return _fieldMap[Object.keys(_fieldMap)[0]].value === image[imageType];
                         });
 
-                        if(isExit){
+                        if (isExit) {
                             alert(targetImg.name + "上已经存在该图片。");
                             return;
                         }
@@ -524,7 +530,7 @@ define([
                         targetModel.complexValues.push(angular.fromJson(jsonStr));
 
                         //调用保存接口
-                        callSaveProduct().then(function(){
+                        callSaveProduct().then(function () {
                             initialize();
                         });
 

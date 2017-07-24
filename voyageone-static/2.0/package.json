@@ -3,8 +3,8 @@
   "version": "2.0.0",
   "description": "VoyageOne Front Project v2",
   "scripts": {
-    "pkg-ng": "node node_scripts/npm/package-ng.js",
-    "build-css-pkg": "node node_scripts/npm-build-css-package.js",
+    "pkg:ng": "node node_scripts/npm/package-ng.js",
+    "pkg:css": "node node_scripts/npm-build-css-package.js",
     "i-server": "npm i morgan http-proxy-middleware browser-sync",
     "start": "browser-sync start -c bs-config.js"
   },

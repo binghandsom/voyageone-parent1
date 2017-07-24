@@ -229,25 +229,25 @@
                                             <a href="javascript:void(0)" class="thumbnail current clear-margin-bottom" ng-if="image.productCode == productInfo.masterField.code" style="height: 115px;">
                                                 <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img-by-name name="image.imageName" class="thumb-group"
-                                                                    title="{{image.productCode}}"></img-by-name>
-                                                <img class="thumb-group"
-                                                     src="http://image.voyageone.com.cn/is/image/sneakerhead/{{image.imageName}}"
-                                                     title="{{image.productCode}}" ng-if="ctrl.vm.platform.fields.mainImageTemplate == null || ctrl.vm.platform.fields.mainImageTemplate == ''">
+                                                             ng-if="ctrl.vm.platform.fields.mainImageTemplate == null || ctrl.vm.platform.fields.mainImageTemplate == ''"
+                                                             title="{{::image.productCode}}"></img-by-name>
                                                 <img class="thumb-group"
                                                      src="{{ctrl.vm.platform.fields.mainImageTemplate.replace('%s',image.imageName)}}"
-                                                     title="{{image.productCode}}" ng-if="ctrl.vm.platform.fields.mainImageTemplate != null && ctrl.vm.platform.fields.mainImageTemplate != ''">
+                                                     title="{{::image.productCode}}"
+                                                     ng-if="ctrl.vm.platform.fields.mainImageTemplate != null && ctrl.vm.platform.fields.mainImageTemplate != ''">
                                             </a>
                                             <!--不是当前商品的话可以跳转到图片对应产品详情页-->
-                                            <a ng-href="#/product/detail/{{image.prodId}}" class="thumbnail clear-margin-bottom" ng-if="image.productCode != productInfo.masterField.code" target="_blank" style="height: 115px;">
+                                            <a ng-href="#/product/detail/{{image.prodId}}" class="thumbnail clear-margin-bottom"
+                                               ng-if="image.productCode != productInfo.masterField.code" target="_blank"
+                                               style="height: 115px;">
                                                 <strong class="main" ng-if="image.isMain == true"><span class="label label-danger">&nbsp;M&nbsp;</span></strong>
                                                 <img-by-name name="image.imageName" class="thumb-group"
-                                                                    title="{{image.productCode}}"></img-by-name>
-                                                <img class="thumb-group"
-                                                     src="http://image.voyageone.com.cn/is/image/sneakerhead/{{image.imageName}}"
-                                                     title="{{image.productCode}}" ng-if="ctrl.vm.platform.fields.mainImageTemplate == null || ctrl.vm.platform.fields.mainImageTemplate == ''">
+                                                             ng-if="ctrl.vm.platform.fields.mainImageTemplate == null || ctrl.vm.platform.fields.mainImageTemplate == ''"
+                                                             title="{{::image.productCode}}"></img-by-name>
                                                 <img class="thumb-group"
                                                      src="{{ctrl.vm.platform.fields.mainImageTemplate.replace('%s',image.imageName)}}"
-                                                     title="{{image.productCode}}" ng-if="ctrl.vm.platform.fields.mainImageTemplate != null && ctrl.vm.platform.fields.mainImageTemplate != ''">
+                                                     title="{{image.productCode}}"
+                                                     ng-if="ctrl.vm.platform.fields.mainImageTemplate != null && ctrl.vm.platform.fields.mainImageTemplate != ''">
                                             </a>
                                             <div class="thumbInfo">
                                                 <div class="row">
