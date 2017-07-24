@@ -470,6 +470,10 @@ define([
                 $scope.menuInfo.isminimall = data.isminimall;
                 $scope.menuInfo.only4jumei = data.only4jumei;
             });
+
+            if(!$scope.isCn){
+                selectPlatformType({add_name2:"MS",value:8});
+            }
         }
 
         /**
@@ -509,6 +513,12 @@ define([
                             catPath: catPath,
                             catId: catId,
                             cartId: $rootScope.platformType.cartId
+                        }));
+                    break;
+                case "MS":
+                    $location.path(cRoutes.us_channel_category.hash + angular.toJson({
+                            catPath: catPath,
+                            catId: catId
                         }));
                     break;
                 default:
