@@ -14,11 +14,23 @@ define([
 
     class SnTabController{
 
-        constructor($scope,detailDataService,$usProductDetailService,notify){
+        constructor($scope,detailDataService,$usProductDetailService,notify,$rootScope){
             this.$scope = $scope;
             this.detailDataService = detailDataService;
             this.$usProductDetailService = $usProductDetailService;
             this.notify = notify;
+            this.$rootScope = $rootScope;
+            console.log($rootScope);
+
+            this.imageView = {
+                imageNum:0,
+                images:[],
+                boxImageNum:0,
+                boxImages:[],
+                imageUrl: $rootScope.imageUrl,
+                currImage:{},
+                currBoxImage:{}
+            };
         }
 
         init(){
@@ -26,11 +38,25 @@ define([
 
             self.detailDataService.getProductInfo({prodId:self.$scope.productInfo.productId}).then(res => {
 
-                console.log(res);
+                // console.log(res);
 
                 self.mastData = res.data.mastData;
                 self.platform = res.data.platform;
                 self.productComm = res.data.productComm;
+
+                // 图片
+                let images1 = self.productComm.fields.images1;
+                if (images1 && _.size(images1) > 0) {
+                    self.imageView.images = images1;
+                    self.imageView.imageNum = _.size(images1);
+                }
+                let images2 = self.productComm.fields.images2;
+                if (images2 && _.size(images2) > 0) {
+                    self.imageView.boxImages = images2;
+                    self.imageView.boxImageNum = _.size(images2);
+                }
+
+                console.log(self.imageView);
 
             });
         }
@@ -91,6 +117,31 @@ define([
                 }
 
             });
+        }
+
+        /**全schema中通过name递归查找field*/
+        searchField(fieldId, schema) {
+            let self = this;
+
+            let result = null;
+
+            _.find(schema, function (field) {
+
+                if (field.id === fieldId) {
+                    result = field;
+                    return true;
+                }
+
+                if (field.fields && field.fields.length) {
+                    result = self.searchField(fieldId, field.fields);
+                    if (result)
+                        return true;
+                }
+
+                return false;
+            });
+
+            return result;
         }
 
     }

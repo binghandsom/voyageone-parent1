@@ -226,11 +226,13 @@
                                                 <div>
                                                     <div class="tab-pane active">
                                                         <div class="row">
-                                                            <div class="col-md-3" ng-repeat="image in ctrl.feed.image track by $index">
+                                                            <div class="col-md-3" ng-repeat="image in ctrl.imageView.images track by $index">
                                                                 <a href="javascript:void(0)"
                                                                    class="thumbnail clear-margin-bottom img-auto-fix" ng-click="ctrl.currentFeedImage = image"
                                                                    ng-class="active" style="height: 88px;padding: 0px">
-                                                                    <img class="thumb-group" style="max-height: 80px;max-width: 45px" src="{{image}}" align="bottom">
+                                                                    <img class="thumb-group" style="max-height: 80px;max-width: 45px"
+                                                                         ng-src="{{ctrl.imageView.imageUrl.replace('%s', image.image1)}}"
+                                                                         align="bottom">
                                                                 </a>
                                                             </div>
                                                             <div class="col-md-3 text-center m-t-md">
@@ -249,7 +251,7 @@
                                                             <div class="row">
                                                                 <label class="col-md-6 query-title">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
-                                                                    <input type="text" class="form-control" ng-model="ctrl.feed.imageNum" ng-enter="ctrl.initImage(ctrl.feed.imageNum)">
+                                                                    <input type="text" class="form-control" ng-model="ctrl.imageView.imageNum" ng-enter="ctrl.initImage(ctrl.feed.imageNum)">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -258,10 +260,12 @@
 
 
                                                 <ul class="list-group">
-                                                    <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.image track by $index">
+                                                    <li class="list-group-item text-wrap" ng-repeat="image in ctrl.imageView.images track by $index">
                                                         <div class="row">
                                                             <div class="col-md-10">
-                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-change="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
+                                                                <textarea class="form-control no-resize"
+                                                                          ng-model="image.image1" rows="3"
+                                                                          ng-change="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
                                                             </div>
                                                             <div class="col-md-2">
                                                                 <button type="button" class="btn btn-default" ng-click="ctrl.deleteImage($index)"><i class="fa fa-trash"></i></button>
@@ -292,7 +296,7 @@
                                                 <div>
                                                     <div class="tab-pane active">
                                                         <div class="row">
-                                                            <div class="col-md-3" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
+                                                            <div class="col-md-3" ng-repeat="image in ctrl.imageView.images2 track by $index">
                                                                 <a href="javascript:void(0)" class="thumbnail clear-margin-bottom img-auto-fix"
                                                                    ng-click="ctrl.currentBoxImage = image"
                                                                    ng-class="active" style="height: 80px">
@@ -315,7 +319,7 @@
                                                             <div class="row">
                                                                 <label class="col-md-6 query-title">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
-                                                                    <input type="text" class="form-control" ng-model="ctrl.feed.boxImageNum" ng-keyup="ctrl.initBoxImage(ctrl.feed.boxImageNum)">
+                                                                    <input type="text" class="form-control" ng-model="ctrl.imageView.boxImageNum" ng-keyup="ctrl.initBoxImage(ctrl.feed.boxImageNum)">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -324,7 +328,7 @@
 
 
                                                 <ul class="list-group">
-                                                    <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.attribute.boximages track by $index">
+                                                    <li class="list-group-item text-wrap" ng-repeat="image in ctrl.imageView.images2 track by $index">
                                                         <div class="row">
                                                             <div class="col-md-10">
                                                                 <textarea class="form-control no-resize" ng-model="image" rows="3" ng-change="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
