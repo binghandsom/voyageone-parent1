@@ -173,13 +173,10 @@
                         <div class="form-group">
                             <div class="col-sm-3"></div>
                             <div class="col-sm-8">
-                                <div class="input-group">
-                                    <select multiple chosen width="'100%'" class="form-control"
-                                            ng-model="ctrl.searchInfo.brandList" search-contains = "true"
-                                            ng-options="brand.value as brand.name for brand in ctrl.brandList">
-                                    </select>
-                                    <span class="input-group-addon cur-p" ng-click="dismiss('brandList')">reset</span>
-                                </div>
+                                <select multiple chosen width="'100%'" class="form-control"
+                                        ng-model="ctrl.searchInfo.brandList" search-contains = "true"
+                                        ng-options="brand.value as brand.name for brand in ctrl.brandList">
+                                </select>
                             </div>
                         </div>
 
