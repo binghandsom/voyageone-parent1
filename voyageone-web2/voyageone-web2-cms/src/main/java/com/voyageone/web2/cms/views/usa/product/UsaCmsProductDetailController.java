@@ -1,5 +1,8 @@
 package com.voyageone.web2.cms.views.usa.product;
 
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.impl.cms.usa.UsaProductDetailService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -85,9 +89,11 @@ public class UsaCmsProductDetailController extends CmsController {
     @RequestMapping(value = UsaCmsUrlConstants.PRODUCT.GET_ALL_PLATFORMS_PRICE)
     public AjaxResponse getAllPlatformsPrice(@RequestBody Long prodId) {
         UserSessionBean user = getUser();
-        HashMap<String, Map<String, Double>> allPlatformsPrice = usaProductDetailService.getAllPlatformsPrice(prodId, user.getSelChannelId());
+       /* HashMap<String, Object> data = new HashMap<>();*/
+
+        HashMap<String, Object> data = usaProductDetailService.getAllPlatformsPrice(prodId, user.getSelChannelId());
         // 返回用户信息
-        return success(allPlatformsPrice);
+        return success(data);
     }
 
     //单个修改价格
