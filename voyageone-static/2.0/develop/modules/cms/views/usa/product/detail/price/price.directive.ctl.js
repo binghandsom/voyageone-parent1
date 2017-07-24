@@ -14,13 +14,17 @@ define([
             this.$scope = $scope;
             this.detailDataService = detailDataService;
             this.productInfo = $scope.productInfo;
+            this.usPriceList = {};
+            this.priceList = {};
         }
 
         init(){
             let self = this;
 
             self.detailDataService.getAllPlatformsPrice(self.productInfo.productId).then(res => {
-                //console.log(res);
+                //中国平台
+                self.usPriceList = res.data.allUsPriceList;
+                self.priceList = res.data.allPriceList;
             });
         }
 

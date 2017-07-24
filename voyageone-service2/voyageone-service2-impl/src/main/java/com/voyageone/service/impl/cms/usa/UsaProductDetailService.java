@@ -634,8 +634,23 @@ public class UsaProductDetailService extends BaseService {
 
 
     //根据productCode获取中国和美国的平台价格信息
-    public HashMap<String, Map<String, Double>> getAllPlatformsPrice(Long id,String channelId) {
-        HashMap<String, Map<String, Double>> priceList = new HashMap<>();
+    public HashMap<String, Object> getAllPlatformsPrice(Long id,String channelId) {
+        HashMap<String, Object> data = new HashMap<>();
+
+        List<TypeChannelBean> platformsNames = TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, "en");
+
+        HashMap<String, String> namesMap = new HashMap<>();
+        if (ListUtils.notNull(platformsNames)){
+            for (TypeChannelBean platformsName : platformsNames) {
+
+                if (Integer.parseInt(platformsName.getValue()) > 0 && Integer.parseInt(platformsName.getValue()) < 20 ){
+                    namesMap.put(platformsName.getValue(),platformsName.getName());
+                }else {
+                    namesMap.put(platformsName.getValue(),platformsName.getAdd_name2());
+                }
+
+            }
+        }
         if (id != null) {
             CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, id);
             if (cmsBtProductModel != null) {
@@ -643,33 +658,48 @@ public class UsaProductDetailService extends BaseService {
 
                 Map<String, CmsBtProductModel_Platform_Cart> platforms = cmsBtProductModel.getPlatforms();
                 Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
-                if (MapUtils.isNotEmpty(platforms)) {
-                    platforms.forEach((key, value) -> {
-                        HashMap<String, Double> priceMap = new HashMap<>();
-                        priceMap.put("priceMsrpSt", value.getpPriceMsrpSt());
-                        priceMap.put("priceMsrpEd", value.getpPriceMsrpEd());
-                        priceMap.put("priceRetailSt", value.getpPriceRetailSt());
-                        priceMap.put("priceRetailEd", value.getpPriceRetailEd());
-
-                        priceMap.put("priceSaleSt", value.getpPriceSaleSt());
-                        priceMap.put("priceSaleEd", value.getpPriceSaleEd());
-                        priceList.put(key.replace("P",""), priceMap);
-
-                    });
-                }
+                //美国平台参数
                 if (MapUtils.isNotEmpty(usPlatforms)) {
-                    usPlatforms.forEach((key, value) -> {
-                        HashMap<String, Double> priceMap = new HashMap<>();
-                        priceMap.put("priceMsrpSt", value.getpPriceMsrpSt());
-                        priceMap.put("priceMsrpEd", value.getpPriceMsrpEd());
-                        priceMap.put("priceRetailSt", value.getpPriceRetailSt());
-                        priceMap.put("priceRetailEd", value.getpPriceRetailEd());
-                        priceList.put(key.replace("P",""), priceMap);
-                    });
+                    HashMap<String, Map<String, String>> allUsPriceList = new HashMap<>();
+                    for (Map.Entry entry:usPlatforms.entrySet()){
+                        String key = (String) entry.getKey();
+                        CmsBtProductModel_Platform_Cart value = (CmsBtProductModel_Platform_Cart) entry.getValue();
+
+                        HashMap<String, String> priceMap = new HashMap<>();
+                        priceMap.put("priceMsrpSt", value.getpPriceMsrpSt().toString());
+                        priceMap.put("priceMsrpEd", value.getpPriceMsrpEd().toString());
+                        priceMap.put("priceRetailSt", value.getpPriceRetailSt().toString());
+                        priceMap.put("priceRetailEd", value.getpPriceRetailEd().toString());
+                        priceMap.put(key.replace("P",""), namesMap.get(key.replace("P","")));
+                        allUsPriceList.put(key.replace("P",""), priceMap);
+                    }
+                    data.put("allUsPriceList",allUsPriceList);
+                }
+                //中国平台参数
+                if (MapUtils.isNotEmpty(platforms)) {
+                    HashMap<String, Map<String, String>> allPriceList = new HashMap<>();
+                    for (Map.Entry entry:platforms.entrySet()){
+                        String key = (String) entry.getKey();
+                        CmsBtProductModel_Platform_Cart value = (CmsBtProductModel_Platform_Cart) entry.getValue();
+                        if (!"0".equals(key.replace("P",""))){
+                            HashMap<String, String> priceMap = new HashMap<>();
+                            priceMap.put("priceMsrpSt", value.getpPriceMsrpSt().toString());
+                            priceMap.put("priceMsrpEd", value.getpPriceMsrpEd().toString());
+                            priceMap.put("priceRetailSt", value.getpPriceRetailSt().toString());
+                            priceMap.put("priceRetailEd", value.getpPriceRetailEd().toString());
+
+                            priceMap.put("priceSaleSt", value.getpPriceSaleSt().toString());
+                            priceMap.put("priceSaleEd", value.getpPriceSaleEd().toString());
+
+                            priceMap.put(key.replace("P",""), namesMap.get(key.replace("P","")));
+                            allPriceList.put(key.replace("P",""), priceMap);
+                        }
+                    }
+                    data.put("allPriceList",allPriceList);
                 }
             }
         }
-        return priceList;
+        return data;
     }
 
     //同步美国平台最大最小值

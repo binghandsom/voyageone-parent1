@@ -13,14 +13,23 @@
                         <th class="text-center">Action</th>
                     </thead>
                     <tbody>
-                    <tr>
-                       <td></td>
-                       <td></td>
-                       <td></td>
-                       <td></td>
-                       <td></td>
-                       <td></td>
-                       <td></td>
+                    <tr ng-repeat="(key,platform) in ctrl.usPriceList">
+                       <td>{{platform[key]}}</td>
+                       <td>{{platform.priceMsrpSt}}</td>
+                       <td>{{platform.priceRetailSt}}</td>
+                       <td>-</td>
+                       <td>-</td>
+                       <td>-</td>
+                       <td><button>save</button></td>
+                    </tr>
+                    <tr ng-repeat="(key,platform) in ctrl.priceList">
+                        <td>{{platform[key]}}</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>{{platform.priceMsrpSt}}</td>
+                        <td>{{platform.priceRetailSt}}</td>
+                        <td>{{platform.priceSaleSt}}</td>
+                        <td><button>save</button></td>
                     </tr>
                     </tbody>
                 </table>
