@@ -63,16 +63,16 @@ define([
                     self.brandList = resp.data.brandList;
                     self.productTypeList = resp.data.productTypeList;
                     self.sizeTypeList = resp.data.sizeTypeList;
-
                     self.materialList = resp.data.materialList;
                     self.originList = resp.data.originList;
                     self.colorMap = resp.data.colorMap;
-                    if (self.feed && _.size(self.feed.image) > 0) {
+
+                    if (_.size(self.feed.image) > 0) {
                         self.currentFeedImage = self.feed.image[0];
                         _.extend(self.feed, {imageNum: _.size(self.feed.image)});
                     }
 
-                    if (self.feed && self.feed.attribute.boximages && _.size(self.feed.attribute.boximages) > 0) {
+                    if (self.feed.attribute.boximages && _.size(self.feed.attribute.boximages) > 0) {
                         self.currentBoxImage = self.feed.attribute.boximages[0];
                         _.extend(self.feed, {boxImageNum: _.size(self.feed.attribute.boximages)});
                     }
@@ -418,8 +418,9 @@ define([
         initImage(num) {
             let self = this;
             if (num <= 0) {
-                self.currentFeedImage = "";
                 self.feed.image = [];
+                self.feed.imageNum = 0;
+                self.currentFeedImage = "";
             } else {
                 if (self.feed.urlkey) {
                     if (!self.feed.image) {
@@ -436,8 +437,9 @@ define([
                             self.feed.image.splice(add);
                         }
 
-                        if (self.currentFeedImage === "")
+                        if (self.currentFeedImage === "") {
                             self.currentFeedImage = self.feed.image[0];
+                        }
                     }
                 }
             }
@@ -451,8 +453,9 @@ define([
             self.feed.image.push("");
             self.feed.imageNum = _.size(self.feed.image);
 
-            if (self.currentFeedImage === "")
+            if (self.currentFeedImage === "") {
                 self.currentFeedImage = self.feed.image[0];
+            }
         }
 
         deleteImage(index) {
@@ -470,8 +473,9 @@ define([
         initBoxImage(num) {
             let self = this;
             if (!num || num <= 0) {
-                self.currentBoxImage = "";
                 self.feed.attribute.boximages = [];
+                self.feed.boxImageNum = 0;
+                self.currentBoxImage = "";
             } else {
                 if (!!self.feed.urlkey) {
                     if (!self.feed.attribute.boximages) {
@@ -488,8 +492,9 @@ define([
                             self.feed.attribute.boximages.splice(add);
                         }
 
-                        if (self.currentBoxImage === "")
+                        if (self.currentBoxImage === "") {
                             self.currentBoxImage = self.feed.attribute.boximages[0];
+                        }
                     }
                 }
             }
@@ -502,6 +507,9 @@ define([
             }
             self.feed.attribute.boximages.push("");
             self.feed.boxImageNum = _.size(self.feed.attribute.boximages);
+            if (self.currentBoxImage === "") {
+                self.currentBoxImage = self.feed.attribute.boximages[0];
+            }
         }
 
         deleteBoxImage(index) {
