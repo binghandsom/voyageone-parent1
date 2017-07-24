@@ -200,7 +200,10 @@ public class UsaProductDetailService extends BaseService {
         List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) commInfo.get("schemaFields"));
         commInfo.remove("schemaFields");
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
-        commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
+        Map<String, Object> fields = FieldUtil.getFieldsValueToMap(masterFields);
+        fields.put("images1", ((Map<String, Object>)commInfo.get("fields")).get("images1"));
+        fields.put("images6", ((Map<String, Object>)commInfo.get("fields")).get("images6"));
+        commonModel.put("fields", fields);
 
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
@@ -241,7 +244,9 @@ public class UsaProductDetailService extends BaseService {
             platform.remove("platformFields");
         }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
-
+        if(ListUtils.isNull(platformModel.getSkus())){
+            return;
+        }
         // 价格类型处理,String -> Double
         for (BaseMongoMap<String, Object> sku : platformModel.getSkus()) {
             sku.setAttribute("clientMsrpPrice", sku.getDoubleAttribute("clientMsrpPrice"));
