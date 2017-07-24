@@ -4,6 +4,7 @@ import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtTasksModel;
 
 import java.util.Date;
 
@@ -24,6 +25,11 @@ public class TaskBean {
     private int promotionId;
 
     private String channelId;
+
+    /**
+     * 价格披露和Promotion解耦没关系了，绑定平台ID
+     */
+    private Integer cartId;
 
     private String activityStart;
 
@@ -52,6 +58,7 @@ public class TaskBean {
         setTaskType(PromotionTypeEnums.Type.valueOf(taskModel.getTaskType()));
         setPromotionId(taskModel.getPromotionId());
         setChannelId(taskModel.getChannelId());
+        setCartId(taskModel.getCartId());
         setActivityStart(taskModel.getActivityStart());
         setActivityEnd(taskModel.getActivityEnd());
         setConfig(JacksonUtil.json2Bean(taskModel.getConfig(), ConfigBean.class));
@@ -60,6 +67,24 @@ public class TaskBean {
         setModified(taskModel.getModified());
         setModifier(taskModel.getModifier());
         setPromotion(taskModel.getPromotion());
+
+        setConfig(JacksonUtil.json2Bean(taskModel.getConfig(), ConfigBean.class));
+    }
+
+    public TaskBean(CmsBtTasksModel taskModel) {
+        setId(taskModel.getId());
+        setTaskName(taskModel.getTaskName());
+        setTaskType(PromotionTypeEnums.Type.valueOf(taskModel.getTaskType()));
+        setPromotionId(taskModel.getPromotionId());
+        setChannelId(taskModel.getChannelId());
+        setCartId(taskModel.getCartId());
+        setActivityStart(taskModel.getActivityStart());
+        setActivityEnd(taskModel.getActivityEnd());
+        setConfig(JacksonUtil.json2Bean(taskModel.getConfig(), ConfigBean.class));
+        setCreated(taskModel.getCreated());
+        setCreater(taskModel.getCreater());
+        setModified(taskModel.getModified());
+        setModifier(taskModel.getModifier());
 
         setConfig(JacksonUtil.json2Bean(taskModel.getConfig(), ConfigBean.class));
     }
@@ -169,6 +194,7 @@ public class TaskBean {
         taskModel.setTaskType(getTaskType().getTypeId());
         taskModel.setPromotionId(getPromotionId());
         taskModel.setChannelId(getChannelId());
+        taskModel.setCartId(getCartId());
         taskModel.setActivityStart(getActivityStart());
         taskModel.setActivityEnd(getActivityEnd());
         taskModel.setConfig(JacksonUtil.bean2Json(getConfig()));
@@ -186,6 +212,14 @@ public class TaskBean {
 
     public void setChannelId(String channelId) {
         this.channelId = channelId;
+    }
+
+    public Integer getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 
     public Boolean getUpdate() {

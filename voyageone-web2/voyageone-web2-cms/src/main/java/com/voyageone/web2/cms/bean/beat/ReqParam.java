@@ -33,6 +33,8 @@ public class ReqParam {
 
     private String searchKey;
 
+    private Integer cartId;
+
     public int getOffset() {
         return offset;
     }
@@ -119,5 +121,13 @@ public class ReqParam {
 
     public void setSearchKey(String searchKey) {
         this.searchKey = searchKey;
+    }
+
+    public Integer getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 }

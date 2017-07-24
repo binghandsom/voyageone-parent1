@@ -475,3 +475,23 @@ vpagination button.btn-default {
 #contextmenu > ul li:hover ul {
     display: block
 }
+
+/**jquery-autocomplete*/
+.autocomplete-suggestions{
+    max-width: 400px;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.075);
+    box-shadow: 0 1px 2px rgba(0,0,0,.075);
+    padding-left: 0;
+}
+
+.autocomplete-suggestions .autocomplete-suggestion{
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    word-break: break-all;
+}

@@ -7,6 +7,7 @@ import com.taobao.api.domain.PictureCategory;
 import com.taobao.api.response.PictureCategoryAddResponse;
 import com.taobao.api.response.PictureCategoryGetResponse;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.ListUtils;
@@ -53,6 +54,9 @@ public class ImageCategoryService extends VOAbsLoggable {
             imageCategoryDao.delete(categoryModel.getCategory_id());
         }
 
+        if(shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
+            return createJdImageCategory(shopBean, type, "ImageCategoryService#getCategory");
+        }
         return createImageCategory(shopBean, type, "ImageCategoryService#getCategory");
     }
 

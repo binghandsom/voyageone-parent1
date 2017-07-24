@@ -39,26 +39,7 @@ public class PriceServiceTest {
     @Test
     public void testSystemPriceSetter() throws Exception {
 
-        CmsBtProductModel product = productService.getProductById("012", 3098402);
-
-//        List<BaseMongoMap<String, Object>> skus = product.getPlatform(31).getSkus();
-
-//        Map<String, CmsBtProductModel_Sku> commonSkuMap = product.getCommon().getSkus().stream().collect(toMap(CmsBtProductModel_Sku::getSkuCode, sku -> sku));
-//
-//        // 记录老价格
-//
-//        Map<String, List<String>> lastPriceListMap = skus.stream().collect(toMap(sku -> sku.getStringAttribute(skuCode.name()), sku -> new ArrayList<String>() {
-//            {
-//                CmsBtProductModel_Sku sku1 = commonSkuMap.get(sku.getStringAttribute(skuCode.name()));
-//
-//                add(sku1.getClientNetPrice().toString() + " -> " + sku.getStringAttribute(priceRetail.name()));
-//                add(sku1.getClientMsrpPrice().toString() + " -> " + sku.getStringAttribute(originalPriceMsrp.name()));
-//                add("     -> " + sku.getStringAttribute(priceMsrp.name()));
-//                add("     -> " + sku.getStringAttribute(priceMsrpFlg.name()));
-//                add("     -> " + sku.getStringAttribute(priceSale.name()));
-//
-//            }
-//        }));
+        CmsBtProductModel product = productService.getProductByCode("007", "54413");
 
         // 测试计算
 
@@ -67,19 +48,6 @@ public class PriceServiceTest {
         // 输出结果
 
         System.out.println("\n\n");
-
-//        for (BaseMongoMap<String, Object> sku : skus) {
-//
-//            String skuCodeValue = sku.getStringAttribute(skuCode.name());
-//
-//            List<String> list = lastPriceListMap.get(skuCodeValue);
-//
-//            System.out.println(String.format("%s, \t\t%s -> %s", "priceRetail", list.get(0), sku.getDoubleAttribute(priceRetail.name())));
-//            System.out.println(String.format("%s, \t%s -> %s", "originalPriceMsrp", list.get(1), sku.getDoubleAttribute(originalPriceMsrp.name())));
-//            System.out.println(String.format("%s, \t\t\t%s -> %s", "priceMsrp", list.get(2), sku.getDoubleAttribute(priceMsrp.name())));
-//            System.out.println(String.format("%s, \t%s -> %s", "priceMsrpFlg", list.get(3), sku.getStringAttribute(priceMsrpFlg.name())));
-//            System.out.println(String.format("%s, \t\t\t%s -> %s", "priceSale", list.get(4), sku.getDoubleAttribute(priceSale.name())));
-//        }
 
         System.out.println("\n\n");
     }
