@@ -723,6 +723,14 @@ define([
                         "controller": 'batchPriceController as ctrl',
                         "size": 'md'
                     }
+                },
+                detail: {
+                    moveModel: {
+                        "templateUrl": "views/pop/usa/product/detail/moveModel/index.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/usa/product/detail/moveModel/index.ctl",
+                        "controller": 'ProductModelMoveController as ctrl',
+                        "size": 'md'
+                    }
                 }
             }
 
@@ -1634,6 +1642,10 @@ define([
 
         $scope.openUsList = function (context) {
             return openModal(popActions.us.product.search.list, context);
+        };
+
+        $scope.openMoveModel = function (context) {
+            return openModal(popActions.us.product.detail.moveModel, context);
         }
 
     }).factory('popups', function ($controller, $rootScope) {

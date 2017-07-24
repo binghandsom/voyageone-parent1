@@ -38,9 +38,7 @@
                                             <input type="text" class="form-control" name="model" ng-model="ctrl.productComm.fields.model" required>
                                         </div>
                                         <div class="col-md-1">
-                                            <button type="button" class="btn btn-default" ng-click="ctrl.getTopModel(5)">
-                                                <i ng-class="{'fa-angle-double-down':!ctrl.isShowModal,'fa-angle-double-up':ctrl.isShowModal}" class="fa" style="font-size: 16px;"></i>
-                                            </button>
+                                            <button type="button" class="btn btn-info text-black" ng-click="ctrl.moveModel()">Move</button>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -79,19 +77,19 @@
                                     <div class="row">
                                         <div class="col-md-4 text-right vo_reqfield">
                                             <button type="button" class="btn btn-info btn-pop"
-                                                    ng-click="ctrl.popUsCategory({cartId:1,from:ctrl.feed.category})">
+                                                    ng-click="ctrl.popUsCategory({cartId:1,from:ctrl.platform.pCatPath})">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;SN Primary Category
                                             </button>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" title="{{ctrl.feed.category}}"
-                                                   name="category" ng-model="ctrl.feed.category"  readonly>
+                                            <input type="text" class="form-control" title="{{ctrl.platform.pCatPath}}"
+                                                   name="pCatPath" ng-model="ctrl.platform.pCatPath" required readonly>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title"></label>
                                         <div class="col-md-6">
-                                            <vo-message target="productForm.category"></vo-message>
+                                            <vo-message target="productForm.pCatPath"></vo-message>
                                         </div>
                                     </div>
                                 </div>
@@ -99,7 +97,7 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-4 text-right vo_unreqfield">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory({cartId:1,froms:ctrl.feed.categoriesTree,muiti:true})">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory({cartId:1,froms:ctrl.platform.sellerCats,muiti:true})">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;SN Other Category
                                             </button>
                                         </div>
@@ -217,7 +215,8 @@
                                                 <div class="imageContainer">
                                                     <div class="imageWrapper">
                                                         <img  class="imageWrapper" style="cursor: pointer;max-width: 200px; max-height: 170px;"
-                                                              src="{{ctrl.currentFeedImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentFeedImage)">
+                                                              ng-src="{{ctrl.imageView.imageUrl.replace('%s', ctrl.imageView.currImage.image1)}}"
+                                                              title="【click me】" ng-click="ctrl.goDetail(ctrl.currentFeedImage)">
                                                     </div>
                                                 </div>
                                             </div>
@@ -228,7 +227,7 @@
                                                         <div class="row">
                                                             <div class="col-md-3" ng-repeat="image in ctrl.imageView.images track by $index">
                                                                 <a href="javascript:void(0)"
-                                                                   class="thumbnail clear-margin-bottom img-auto-fix" ng-click="ctrl.currentFeedImage = image"
+                                                                   class="thumbnail clear-margin-bottom img-auto-fix" ng-click="ctrl.imageView.currImage = image"
                                                                    ng-class="active" style="height: 88px;padding: 0px">
                                                                     <img class="thumb-group" style="max-height: 80px;max-width: 45px"
                                                                          ng-src="{{ctrl.imageView.imageUrl.replace('%s', image.image1)}}"
@@ -251,7 +250,7 @@
                                                             <div class="row">
                                                                 <label class="col-md-6 query-title">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
-                                                                    <input type="text" class="form-control" ng-model="ctrl.imageView.imageNum" ng-enter="ctrl.initImage(ctrl.feed.imageNum)">
+                                                                    <input type="text" class="form-control" ng-model="ctrl.imageView.imageNum" ng-enter="ctrl.initImage(ctrl.imageView.imageNum)">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -265,7 +264,7 @@
                                                             <div class="col-md-10">
                                                                 <textarea class="form-control no-resize"
                                                                           ng-model="image.image1" rows="3"
-                                                                          ng-change="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
+                                                                          ng-change="ctrl.changeImages($index,image,ctrl.imageView.images)"></textarea>
                                                             </div>
                                                             <div class="col-md-2">
                                                                 <button type="button" class="btn btn-default" ng-click="ctrl.deleteImage($index)"><i class="fa fa-trash"></i></button>
@@ -296,11 +295,12 @@
                                                 <div>
                                                     <div class="tab-pane active">
                                                         <div class="row">
-                                                            <div class="col-md-3" ng-repeat="image in ctrl.imageView.images2 track by $index">
+                                                            <div class="col-md-3" ng-repeat="image in ctrl.imageView.boxImages track by $index">
                                                                 <a href="javascript:void(0)" class="thumbnail clear-margin-bottom img-auto-fix"
                                                                    ng-click="ctrl.currentBoxImage = image"
                                                                    ng-class="active" style="height: 80px">
-                                                                    <img style="max-height: 80px;max-width: 45px" class="thumb-group pos-abt" src="{{image}}">
+                                                                    <img style="max-height: 80px;max-width: 45px" class="thumb-group pos-abt"
+                                                                         ng-src="{{ctrl.imageView.imageUrl.replace('%s', ctrl.imageView.currBoxImage.image2)}}">
                                                                 </a>
                                                             </div>
                                                             <div class="col-md-3 text-center m-t-md">
@@ -319,7 +319,8 @@
                                                             <div class="row">
                                                                 <label class="col-md-6 query-title">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
-                                                                    <input type="text" class="form-control" ng-model="ctrl.imageView.boxImageNum" ng-keyup="ctrl.initBoxImage(ctrl.feed.boxImageNum)">
+                                                                    <input type="text" class="form-control" ng-model="ctrl.imageView.boxImageNum"
+                                                                           ng-enter="ctrl.initBoxImage(ctrl.imageView.boxImageNum)">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -328,10 +329,11 @@
 
 
                                                 <ul class="list-group">
-                                                    <li class="list-group-item text-wrap" ng-repeat="image in ctrl.imageView.images2 track by $index">
+                                                    <li class="list-group-item text-wrap" ng-repeat="image in ctrl.imageView.boxImages track by $index">
                                                         <div class="row">
                                                             <div class="col-md-10">
-                                                                <textarea class="form-control no-resize" ng-model="image" rows="3" ng-change="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
+                                                                <textarea class="form-control no-resize" ng-model="image.image2" rows="3"
+                                                                          ng-change="ctrl.changeImages($index,image,ctrl.imageView.boxImages)"></textarea>
                                                             </div>
                                                             <div class="col-md-2">
                                                                 <button type="button" class="btn btn-default" ng-click="ctrl.deleteBoxImage($index)"><i class="fa fa-trash"></i></button>
@@ -358,6 +360,7 @@
                             <div class="table-responsive box box-body">
                                 <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
                                     <thead>
+                                        <th class="text-center"><input type="checkbox" ng-model="ctrl.selAllSkuFlag" ng-change="ctrl.selAllSku()"></th>
                                         <th class="text-left">Size</th>
                                         <th class="text-left">Sku</th>
                                         <th class="text-left">Upc</th>
@@ -366,19 +369,24 @@
                                         <th class="text-center">Weitch Unit</th>
                                         <th class="text-right">Msrp($)</th>
                                         <th class="text-right">price($)</th>
-                                        <th class="text-right">price($)</th>
                                     </thead>
                                     <tbody>
-                                        <tr ng-repeat="sku in ctrl.productComm.skus">
+                                        <tr ng-repeat="sku in ctrl.platform.skus">
+                                            <td class="text-center">
+                                                <input type="checkbox" ng-model="sku.isSale">
+                                            </td>
                                             <td class="text-left">{{sku.size}}</td>
                                             <td class="text-left">{{sku.skuCode}}</td>
                                             <td class="text-left">{{sku.barcode}}</td>
                                             <td class="text-center">{{sku.qty}}</td>
                                             <td class="text-center">{{sku.weight}}</td>
                                             <td class="text-center">{{sku.weightUnit}}</td>
-                                            <td class="text-right">{{sku.clientMsrpPrice}}</td>
-                                            <td class="text-right">{{sku.clientNetPrice}}</td>
-                                            <td class="text-right">{{sku.clientRetailPrice}}</td>
+                                            <td class="text-right">
+                                                <input type="number" class="form-control text-right" ng-model="sku.clientMsrpPrice"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <input type="number" class="form-control text-right" ng-model="sku.clientNetPrice"/>
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>

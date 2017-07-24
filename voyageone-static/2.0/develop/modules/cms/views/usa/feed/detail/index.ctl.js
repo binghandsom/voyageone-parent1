@@ -437,7 +437,7 @@ define([
                             self.feed.image.splice(add);
                         }
 
-                        if (self.currentFeedImage === "" && self.feed.image.length > 0)
+                        if (self.currentFeedImage === "")
                             self.currentFeedImage = self.feed.image[0];
                     }
                 }
@@ -452,7 +452,7 @@ define([
             self.feed.image.push("");
             self.feed.imageNum = _.size(self.feed.image);
 
-            if (self.currentFeedImage === "" && self.feed.image.length > 0)
+            if (self.currentFeedImage === "")
                 self.currentFeedImage = self.feed.image[0];
         }
 
@@ -489,7 +489,7 @@ define([
                             self.feed.attribute.boximages.splice(add);
                         }
 
-                        if (self.currentBoxImage === "" && self.feed.attribute.boximages.length > 0)
+                        if (self.currentBoxImage === "")
                             self.currentBoxImage = self.feed.attribute.boximages[0];
                     }
                 }

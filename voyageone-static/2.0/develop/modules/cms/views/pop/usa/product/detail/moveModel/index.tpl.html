@@ -1,0 +1,66 @@
+<div class="vo_modal"  ng-init="initialize()">
+    <form role="form" class="form-horizontal" name="feedForm" novalidate>
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-pencil"></i>&nbsp;Update Price</h5>
+    </div>
+    <div class="modal-body">
+
+       <div class="container-fluid">
+           <div class="row">
+               <div class="col-md-3">
+                   <select class="form-control" ng-model="ctrl.paraMap.changedPriceType" required>
+                       <option value="clientRetailPrice">Sale Price</option>
+                       <option value="clientMsrpPrice">Msrp</option>
+                   </select>
+               </div>
+               <div class="col-md-1 text-center">=</div>
+               <div class="col-md-3">
+                   <select class="form-control" ng-model="ctrl.paraMap.basePriceType" required>
+                       <option value="clientRetailPrice">Sale Price</option>
+                       <option value="clientMsrpPrice">Msrp</option>
+                       <option value="fixedValue">Fixed value</option>
+                   </select>
+               </div>
+               <div class="col-md-2">
+                   <select class="form-control" ng-model="ctrl.paraMap.optionType" required>
+                       <option value="*" ng-if="ctrl.paraMap.basePriceType != 'fixedValue'">*</option>
+                       <option value="/" ng-if="ctrl.paraMap.basePriceType != 'fixedValue'">/</option>
+                       <option value="+" ng-if="ctrl.paraMap.basePriceType != 'fixedValue'">+</option>
+                       <option value="-" ng-if="ctrl.paraMap.basePriceType != 'fixedValue'">-</option>
+                       <option value="=" ng-if="ctrl.paraMap.basePriceType == 'fixedValue'">=</option>
+                   </select>
+               </div>
+               <div class="col-md-3">
+                   <input type="number" class="form-control" ng-model="ctrl.paraMap.value" required>
+               </div>
+           </div>
+           <div class="row">
+               <div class="tab-title" style="width: 200px;">
+                   <h3 class="text-md">Select calculation rule</h3>
+               </div>
+               
+               <div class="row checkbox">
+                   <label style="margin-left: 17px;">
+                       <input type="radio" ng-model="ctrl.paraMap.flag" value="1">&nbsp;Decimal rounding up
+                   </label>&emsp;
+                   <label>
+                       <input type="radio" ng-model="ctrl.paraMap.flag" value="0">&nbsp;No special calculation
+                   </label>
+               </div>
+           </div>
+           <div class="row">
+               <div class="text-warnings">
+                   <i class="fa fa-bell-o"></i>&nbsp;The new sale price will approve for all US Platform!
+               </div>
+           </div>
+       </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> CANCLE</button>
+        <button class="btn btn-vo" ng-click="ctrl.updatePrice('1')"  ng-disabled="feedForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE</button>
+        <button class="btn btn-vo" ng-click="ctrl.updatePrice('0')"  ng-disabled="feedForm.$invalid"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE&CONTINUE</button>
+    </div>
+    </form>
+</div>
