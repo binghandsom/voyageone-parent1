@@ -229,30 +229,25 @@ angular.module("voyageone.angular.directives").directive("autoComplete", functio
         },
         link: function (scope, element, attrs, ngModelCtl) {
 
-            scope.$parent.$watch(scope.matchArrays,function (newValue) {
+            scope.$parent.$watch(scope.matchArrays, function (newValue) {
 
                 var _copyArray = angular.copy(newValue);
 
                 element.autocomplete({
-                    lookup: _.map(_copyArray,function (str) {
-                        return {value:str};
+                    lookup: _.map(_copyArray, function (str) {
+                        return { value: str };
                     }),
-                    minChars:0,
+                    minChars: 0,
                     onSelect: function (suggestion) {
                         ngModelCtl.$setViewValue(suggestion.value);
                     }
                 }).focus(function () {
                     element.autocomplete("search");
                 });
-
             });
-
         }
     };
 });
-
-
-/*****************************/
 
 /**
  * @Date: 2016-06-22 15:59:47
@@ -546,11 +541,17 @@ const imageDirectiveService = ['$localStorage', class ImageDirectiveService {
         this.userInfo = $localStorage.user;
         this.selectedChannel = this.userInfo.channel;
     }
+
+    getImageUrlByName(name, channel = this.selectedChannel) {
+        return this.imageUrlTemplate.replace('{channel}', channel).replace('{image_name}', name);
+    }
 }];
 
 //noinspection JSUnusedGlobalSymbols
 const imgByName = ['imageDirectiveService', function imgByNameFactory(imageDirectiveService) {
-    const srcBindTemplate = imageDirectiveService.imageUrlTemplate.replace('{channel}', '{{channel || selectedChannel}}').replace('{image_name}', '{{name}}{{::s7Options?\'?\'+s7Options:\'\'}}');
+
+    const srcBindTemplate = imageDirectiveService.getImageUrlByName('{{name}}{{::s7Options?\'?\'+s7Options:\'\'}}', '{{channel || selectedChannel}}');
+
     return {
         restrict: 'E',
         replace: true,
@@ -569,18 +570,20 @@ const imgByName = ['imageDirectiveService', function imgByNameFactory(imageDirec
 //noinspection JSUnusedGlobalSymbols
 const aProductImg = ['imageDirectiveService', function aProductImgFactory(imageDirectiveService) {
 
-    const hrefBindTemplate = imageDirectiveService.imageUrlTemplate.replace('{channel}', '{{channel || selectedChannel}}').replace('{image_name}', '{{name}}?wid=500&hei=245&r={{::r}}');
+    const hrefBindTemplate = imageDirectiveService.getImageUrlByName('{{name}}?{{::r}}&{{::s7Options}}', '{{channel || selectedChannel}}');
 
-    const textBindTemplate = imageDirectiveService.imageUrlTemplate.replace('{channel}', '{{channel || selectedChannel}}').replace('{image_name}', '{{name}}?wid=500&hei=245');
+    const textBindTemplate = imageDirectiveService.getImageUrlByName('{{name}}?{{::s7Options}}', '{{channel || selectedChannel}}');
 
     return {
         restrict: 'E',
         replace: true,
+        transclude: true,
         scope: {
             name: '=',
-            channel: '='
+            channel: '=',
+            s7Options: '@'
         },
-        template: `<a ng-href="${hrefBindTemplate}">${textBindTemplate}</a>`,
+        template: `<a ng-href="${hrefBindTemplate}"><ng-transclude>${textBindTemplate}</ng-transclude></a>`,
         link: function ($scope) {
             $scope.r = Math.random();
             $scope.selectedChannel = imageDirectiveService.selectedChannel;

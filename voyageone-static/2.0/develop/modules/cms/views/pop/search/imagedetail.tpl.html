@@ -3,33 +3,33 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"  ng-click="$dismiss()">
             <span aria-hidden="true"><i class="fa fa-close"></i></span>
         </button>
-        <h5 class="modal-title" ng-if="vm.picInfo.search != 'jmpromlist'">{{'TXT_PRODUCT_IMAGE' | translate}}</h5>
-        <h5 class="modal-title" ng-if="vm.picInfo.search == 'jmpromlist'">频道页入口图</h5>
+        <h5 class="modal-title" ng-if="imageDetail.search != 'jmpromlist'">{{'TXT_PRODUCT_IMAGE' | translate}}</h5>
+        <h5 class="modal-title" ng-if="imageDetail.search == 'jmpromlist'">频道页入口图</h5>
     </div>
     <div class="modal-body wrapper">
         <div class="bg-light vo_prodDetailPanel">
             <div id="vo_fixProdPanel">
                 <!-- product photos -->
-                <div class="vo_prodGallery" ng-if="vm.picInfo.search != 'jmpromlist'">
+                <div class="vo_prodGallery" ng-if="imageDetail.search != 'jmpromlist'">
                     <div class="imageContainer" >
-                        <img class="imageWrapper" style="margin:0 auto;cursor: pointer; max-width: 460px; height: auto" ng-src="{{!vm.currentImage ? vm.picInfo.mainPic : vm.currentImage}}" title="【click me】" ng-click="goDetail()">
+                        <img class="imageWrapper" style="margin:0 auto;cursor: pointer; max-width: 460px; height: auto" ng-src="{{imageDetail.currentImage}}" title="【click me】" ng-click="goDetail()">
                     </div>
                 </div>
-                <div class="vo_prodGallery" ng-if="vm.picInfo.search == 'jmpromlist'">
+                <div class="vo_prodGallery" ng-if="imageDetail.search == 'jmpromlist'">
                     <div class="imageContainer">
-                        <img class="imageWrapper" style="margin:0 auto;max-width:460px; height: auto" ng-src="{{vm.picInfo.mainPic}}" title="" alt="">
+                        <img class="imageWrapper" style="margin:0 auto;max-width:460px; height: auto" ng-src="{{imageDetail.currentImage}}" title="" alt="">
                     </div>
                 </div>
-                <uib-tabset class="tab-container vo_nav-tabs" ng-if="vm.picInfo.search != 'jmpromlist'">
+                <uib-tabset class="tab-container vo_nav-tabs" ng-if="imageDetail.search != 'jmpromlist'">
 
                     <uib-tab>
-                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>品牌方商品图</tab-heading>
+                        <tab-heading><i class="text-default"></i>品牌方商品图</tab-heading>
                         <div class="tab-content" style="border-top: 1px solid silver;">
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[0] | limitTo: 10" class="thumbnail" ng-if="image != ''"
-                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in imageDetail.picList[0] | limitTo: 10" class="thumbnail" ng-if="image != ''"
+                                             ng-class="{'active':imageDetail.currentImage == image}"  ng-click="imageDetail.currentImage = image"
                                               ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
@@ -38,15 +38,15 @@
                         </div>
                     </uib-tab>
 
-                    <uib-tab ng-if="vm.picInfo.search == 'master'">
-                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>PC端自拍商品图</tab-heading>
+                    <uib-tab ng-if="imageDetail.search == 'master'">
+                        <tab-heading><i class="text-default"></i>PC端自拍商品图</tab-heading>
                         <div class="tab-content" style="border-top: 1px solid silver;">
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
 
-                                        <div ng-repeat="image in vm.picInfo.picList[5] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
-                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in imageDetail.picList[5] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':imageDetail.currentImage == image}"  ng-click="imageDetail.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
 
                                         </div>
@@ -56,14 +56,14 @@
                         </div>
                     </uib-tab>
 
-                    <uib-tab ng-if="vm.picInfo.search == 'master'">
-                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>APP端自拍商品图</tab-heading>
+                    <uib-tab ng-if="imageDetail.search == 'master'">
+                        <tab-heading><i class="text-default"></i>APP端自拍商品图</tab-heading>
                         <div class="tab-content" style="border-top: 1px solid silver;">
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[6] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
-                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in imageDetail.picList[6] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':imageDetail.currentImage == image}"  ng-click="imageDetail.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
@@ -72,14 +72,14 @@
                         </div>
                     </uib-tab>
 
-                    <uib-tab ng-if="vm.picInfo.search == 'master'">
-                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>包装图</tab-heading>
+                    <uib-tab ng-if="imageDetail.search == 'master'">
+                        <tab-heading><i class="text-default"></i>包装图</tab-heading>
                         <div class="tab-content" style="border-top: 1px solid silver;">
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[1] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
-                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in imageDetail.picList[1] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':imageDetail.currentImage == image}"  ng-click="imageDetail.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
@@ -88,14 +88,14 @@
                         </div>
                     </uib-tab>
 
-                    <uib-tab ng-if="vm.picInfo.search == 'master'">
-                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>角度图</tab-heading>
+                    <uib-tab ng-if="imageDetail.search == 'master'">
+                        <tab-heading><i class="text-default"></i>角度图</tab-heading>
                         <div class="tab-content" style="border-top: 1px solid silver;">
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[2] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
-                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in imageDetail.picList[2] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':imageDetail.currentImage == image}"  ng-click="imageDetail.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
@@ -104,14 +104,14 @@
                         </div>
                     </uib-tab>
 
-                    <uib-tab ng-if="vm.picInfo.search == 'master'">
-                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>PC端自定义图</tab-heading>
+                    <uib-tab ng-if="imageDetail.search == 'master'">
+                        <tab-heading><i class="text-default"></i>PC端自定义图</tab-heading>
                         <div class="tab-content" style="border-top: 1px solid silver;">
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[3] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
-                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in imageDetail.picList[3] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':imageDetail.currentImage == image}"  ng-click="imageDetail.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
@@ -120,14 +120,14 @@
                         </div>
                     </uib-tab>
 
-                    <uib-tab ng-if="vm.picInfo.search == 'master'">
-                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>APP端自定义图</tab-heading>
+                    <uib-tab ng-if="imageDetail.search == 'master'">
+                        <tab-heading><i class="text-default"></i>APP端自定义图</tab-heading>
                         <div class="tab-content" style="border-top: 1px solid silver;">
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[4] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
-                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in imageDetail.picList[4] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':imageDetail.currentImage == image}"  ng-click="imageDetail.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
@@ -136,14 +136,14 @@
                         </div>
                     </uib-tab>
 
-                    <uib-tab ng-if="vm.picInfo.search == 'master'">
-                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>吊牌图</tab-heading>
+                    <uib-tab ng-if="imageDetail.search == 'master'">
+                        <tab-heading><i class="text-default"></i>吊牌图</tab-heading>
                         <div class="tab-content" style="border-top: 1px solid silver;">
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[7] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
-                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in imageDetail.picList[7] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':imageDetail.currentImage == image}"  ng-click="imageDetail.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
@@ -152,14 +152,14 @@
                         </div>
                     </uib-tab>
 
-                    <uib-tab ng-if="vm.picInfo.search == 'master'">
-                        <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>耐久性标签图</tab-heading>
+                    <uib-tab ng-if="imageDetail.search == 'master'">
+                        <tab-heading><i class="text-default"></i>耐久性标签图</tab-heading>
                         <div class="tab-content" style="border-top: 1px solid silver;">
                             <div class="tab-pane ng-scope active">
                                 <div class="vo_prodGallery">
                                     <div class="thumbnailWrapper">
-                                        <div ng-repeat="image in vm.picInfo.picList[8] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
-                                             ng-class="{'active':vm.currentImage == image}"  ng-click="vm.currentImage = image"
+                                        <div ng-repeat="image in imageDetail.picList[8] | limitTo: 10" class="thumbnail"  ng-if="image != ''"
+                                             ng-class="{'active':imageDetail.currentImage == image}"  ng-click="imageDetail.currentImage = image"
                                              ng-style="{'background-image' : 'url(' + image + ')'}">
                                         </div>
                                     </div>
