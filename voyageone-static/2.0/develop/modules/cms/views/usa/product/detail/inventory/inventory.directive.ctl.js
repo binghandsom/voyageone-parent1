@@ -15,6 +15,7 @@ define([
             this.$scope = $scope;
             this.detailDataService = detailDataService;
             this.productInfo = $scope.productInfo;
+            this.data = {};
         }
 
         init() {
@@ -24,6 +25,7 @@ define([
             self.noStock = false;
             self.noStockSkus = [];
             self.tblData = {};
+
 
             /*设置海外库存表头宽度*/
             self.foreign = '1';
@@ -37,6 +39,7 @@ define([
                         self.store = resp.data.excute.data.header.store;
                         self.base = resp.data.excute.data.header.base;
                         self.stocks = resp.data.excute.data.stocks;
+                        self.data = resp.data;
 
                         let noStockSkuData = resp.data.noStockSkus;
                         if (noStockSkuData && noStockSkuData.length > 0) {
