@@ -1,0 +1,435 @@
+<div class="wrapper-md" id="newCategory">
+    <div class="panel panel-vo">
+        <div class="panel-heading">
+            <h4 class="panel-title"><i class="fa fa-list"></i>&nbsp;<span>类目</span></h4>
+        </div>
+        <div class="panel-body">
+            <div class="row form-horizontal">
+                <div class="col-md-6 form-group">
+                    <label class="col-md-2 control-label"><strong>当前类目</strong></label>
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" ng-model="ctrl.routeParams.catPath" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <uib-tabset class="tab-container vo_nav-tabs">
+
+        <uib-tab>
+            <tab-heading>置顶商品区</tab-heading>
+
+            <div class="container-fluid">
+                <div class="row form-horizontal">
+                    <div class="col-md-2 form-group">
+                        <label class="control-label">&emsp;<strong>当前置顶区商品数:</strong>&emsp;{{ctrl.topList.length}}&nbsp;个</label>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-default btn-pop" ng-click="ctrl.clearTopProduct()" ><i class="glyphicon glyphicon-trash"></i>&nbsp;置顶区清空</button>&emsp;
+                        <button class="btn btn-success btn-pop" ng-click="ctrl.saveTopProduct()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-8">
+                        <span class="text-warnings">
+                            <i class="icon fa fa-bell-o"></i>&nbsp;按住鼠标拖拽更改排序&nbsp;,&nbsp;删除/移动后请点击【保存】来保存调整后的结果。&nbsp;<i class="glyphicon glyphicon-hand-up"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default m-t-md" id="topProducts">
+                <div class="panel-body top-area">
+                    <ul class="list-inline" sv-root sv-part="ctrl.topList">
+                        <li class="jm-sortable-product top-element" ng-repeat="product in ctrl.topList" sv-element="{containment:'#topProducts'}">
+                            <div class="jm-sortable-product-handle cur-m" style="min-height: 180px">
+                                <div class="row" style="height: 24px">
+                                    <div class="col-sm-8">
+                                        <strong>code:</strong> <span class="ng-binding">{{product.code}}</span>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <button type="button" class="close" ng-click="ctrl.remove($index, product)"><i class="fa fa-close"></i></button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-5">
+                                        <img class="thumb fix-img" image="{{product.image1}}">
+                                    </div>
+                                    <div class="col-sm-7">
+                                        <div class="row">
+                                            <label class="col-md-3"><strong>品牌</strong></label>
+                                            <label class="col-md-9"><span title="{{product.brand}}">{{product.brand}}</span></label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-md-3"><strong>库存</strong></label>
+                                            <label class="col-md-9">{{product.quantity}}</label>
+                                        </div>
+                                        <div class="row">
+                                            <label class="col-md-5"><strong>创建时间</strong></label>
+                                            <label class="col-md-7">{{product.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div>
+                                            <strong>¥</strong> <label class="label label-danger" title="中国最终售价">{{ctrl.showPriceSale(product.pPriceSaleSt,product.pPriceSaleEd)}}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row m-t-tx">
+                                    <ul class="col-sm-6 col-md-offset-6 list-inline text-right arrow-button">
+                                        <li>
+                                            <button class="opacityBtn" ng-click="ctrl.moveProduct($index, ctrl.moveKeys.upToTop)" ng-disabled="$first" disabled="disabled"><i class="fa fa-fast-backward"></i></button>
+                                        </li>
+                                        <li>
+                                            <button class="opacityBtn" ng-click="ctrl.moveProduct($index, ctrl.moveKeys.up)" ng-disabled="$first" disabled="disabled"><i class="fa fa-backward"></i></button>
+                                        </li>
+                                        <li>
+                                            <button class="opacityBtn" ng-click="ctrl.moveProduct($index, ctrl.moveKeys.down)" ng-disabled="$last" disabled="disabled"><i class="fa fa-forward"></i></button>
+                                        </li>
+                                        <li>
+                                            <button class="opacityBtn" ng-click="ctrl.moveProduct($index, ctrl.moveKeys.downToLast)" ng-disabled="$last" disabled="disabled"><i class="fa fa-fast-forward"></i></button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </uib-tab>
+
+        <uib-tab active="true">
+            <tab-heading>普通商品区</tab-heading>
+
+            <div class="container-fluid">
+
+                <div class="tab-title">
+                    <h3 class="text-md">Common Attribute</h3>
+                </div>
+                <div class="row form-horizontal">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label query-title text-wrap">SKU/Barcode/Code/Model</label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control inherited no-resize" rows="3" ng-model="ctrl.searchInfo.codeList" ></textarea>
+                            </div>
+                        </div>
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label query-title">Name</label>
+                                <div class="col-sm-8">
+                                    <textarea class="form-control no-resize" rows="2" ng-model="ctrl.searchInfo.fuzzyStr"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label query-title" translate="TXT_BRAND"></label>
+                            <div class="col-sm-8">
+                                <label class="checkbox-inline c-radio">
+                                    <input type="radio" name="brandSelOperation" value="1" ng-model="ctrl.searchInfo.brandSelType"><span class="fa fa-check" ></span> include
+                                </label>
+                                <label class="checkbox-inline c-radio">
+                                    <input type="radio" name="brandSelOperation" value="2" ng-model="ctrl.searchInfo.brandSelType"><span class="fa fa-check"></span> not include
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <select multiple chosen width="'100%'" class="form-control"
+                                            ng-model="ctrl.searchInfo.brandList" search-contains = "true"
+                                            ng-options="brand.value as brand.name for brand in ctrl.masterData.brandList">
+                                    </select>
+                                    <span class="input-group-addon cur-p" ng-click="dismiss('brandList')">reset</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group"><!-- 查询标签 -->
+                            <div class="col-sm-3 text-right">
+                                <!--4 是标签-->
+                                <button class="btn btn-pop btn-vo" ng-click="ctrl.popUsFreeTag()">
+                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;Tag
+                                </button>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <select multiple chosen width="'100%'" class="form-control"
+                                            ng-model="ctrl.searchInfo.usFreeTags"
+                                            ng-options="tag for tag in ctrl.searchInfo.usFreeTags ">
+                                    </select>
+                                    <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('usFreeTags')">reset</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group"><!-- 查询创建时间 -->
+                            <label class="col-sm-3 control-label query-title">Last Received Time</label>
+                            <div class="col-sm-9 form-inline">
+                                <div class="col-sm-5 input-group">
+                                    <input type="text" class="form-control" uib-datepicker-popup
+                                           ng-model="ctrl.searchInfo.lastReceivedOnFrom" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                           date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePickerLr1" close-text="Close"/>
+                                    <span class="input-group-btn">
+                                                        <button type="button" class="btn btn-default" ng-click="datePickerLr1 = !datePickerLr1"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                      </span>
+                                </div>
+                                &nbsp;~&nbsp;
+                                <div class="col-sm-5 input-group">
+                                    <input type="text" class="form-control" uib-datepicker-popup
+                                           ng-model="ctrl.searchInfo.lastReceivedOnTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                           date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.createTimeStart" is-open="datePickerLr2" close-text="Close"/>
+                                    <span class="input-group-btn">
+                                                        <button type="button" class="btn btn-default" ng-click="datePickerLr2 = !datePickerLr2"><i class="glyphicon glyphicon-calendar"></i></button>
+                                                      </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+
+                            <label class="col-sm-3 control-label query-title">Total Qty</label>
+                            <div class="col-sm-9 form-inline">
+                                <div class="col-sm-5 input-group">
+                                    <input type="number" min="1" max="ctrl.searchInfo.inventoryTo" class="form-control" ng-model="ctrl.searchInfo.inventoryFrom">
+                                </div>
+                                &nbsp;~&nbsp;
+                                <div class="col-sm-5 input-group">
+                                    <input type="number" max="ctrl.searchInfo.inventoryFrom" class="form-control" ng-model="ctrl.searchInfo.inventoryTo">
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="tab-title">
+                    <h3 class="text-md text-md">Platform Attribute</h3>
+                </div>
+                <div class="row form-horizontal">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label query-title">Platform</label>
+                            <div class="col-sm-8 checkbox">
+                                <label ng-repeat="platform in ctrl.masterData.usPlatforms" style="min-width: 120px;">
+                                    <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp&nbsp;{{platform.name}}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-8 col-lg-offset-3 checkbox">
+                                <label ng-repeat="platform in ctrl.masterData.platforms" style="min-width: 60px;">
+                                    <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;&nbsp;{{platform.add_name2}}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label query-title">status</label>
+                            <div class="col-sm-8 checkbox">
+                                <label ng-repeat="platform in ctrl.masterData.platformStatus">
+                                    <input type="checkbox" ng-disabled="!ctrl.searchInfo.cartId" ng-model="ctrl.searchInfo.platformStatus[platform.status]">{{platform.display}}&emsp;
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="col-sm-3 text-right">
+                                <button class="btn btn-pop btn-vo" ng-click="ctrl.popCategory()" ng-disabled="ctrl.canCategory()">
+                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;Category
+                                </button>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="input-group" ng-if="ctrl.searchInfo.cartId == 5">
+                                    <select multiple chosen width="'100%'" class="form-control"
+                                            ng-model="ctrl.tempUpEntity.pCatPathListTmp"
+                                            ng-options="category as category.catPath for category in ctrl.tempUpEntity.pCatPathListTmp">
+                                    </select>
+                                    <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('pCatPathList')">reset</span>
+                                </div>
+                                <div class="input-group" ng-if="ctrl.searchInfo.cartId != 5">
+                                    <select multiple chosen width="'100%'" class="form-control"
+                                            ng-model="ctrl.tempUpEntity.cidValueTmp"
+                                            ng-options="category as category.catPath for category in ctrl.tempUpEntity.cidValueTmp">
+                                    </select>
+                                    <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('cidValue')">reset</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group"><!-- 查询创建时间 -->
+                            <label class="col-sm-3 control-label query-title">Create Time</label>
+                            <div class="col-sm-9 form-inline">
+                                <div class="col-sm-5 input-group">
+                                    <input type="text" class="form-control" uib-datepicker-popup
+                                           ng-model="ctrl.searchInfo.pPublishTimeFrom"
+                                           onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                           date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.pPublishTimeTo" is-open="datePickerCt1"
+                                           ng-disabled="!ctrl.searchInfo.cartId"
+                                           close-text="Close"/>
+                                    <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="datePickerCt1 = !datePickerCt1"><i class="glyphicon glyphicon-calendar"></i></button>
+                                        </span>
+                                </div>
+                                &nbsp;~&nbsp;
+                                <div class="col-sm-5 input-group">
+                                    <input type="text" class="form-control" uib-datepicker-popup
+                                           ng-model="ctrl.searchInfo.pPublishTimeTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))"
+                                           onpaste="return false" maxlength="10"
+                                           date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.pPublishTimeFrom" is-open="datePickerCt2"
+                                           ng-disabled="!ctrl.searchInfo.cartId"
+                                           close-text="Close"/>
+                                    <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="datePickerCt2 = !datePickerCt2"><i class="glyphicon glyphicon-calendar"></i></button>
+                                        </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <lable class="col-sm-3 control-label query-title">Sale Price</lable>
+                            <div class="col-sm-9 form-inline">
+                                <div class="col-sm-5 input-group">
+                                    <input type="number" class="form-control" ng-model="ctrl.searchInfo.pSalePriceFrom" ng-disabled="!ctrl.searchInfo.cartId">
+                                </div>
+                                <!--<div class="col-sm-1 text-center">-->
+                                &nbsp;~&nbsp;
+                                <!--</div>-->
+                                <div class="col-sm-5 input-group">
+                                    <input type="text" class="form-control" ng-model="ctrl.searchInfo.pSalePriceTo" ng-disabled="!ctrl.searchInfo.cartId">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row text-center">
+                    <button class="btn btn-default btn-pop" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
+                    <button class="btn btn-success btn-pop" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;检索</button>
+                </div>
+            </div>
+
+            <div class="panel panel-default m-t-md">
+                <div class="panel-heading">
+                    <div class="row" style="padding: 4px">
+                        <div class="col-md-4">
+                            <input type="checkbox" class="v-top" ng-true-value="true" ng-false-value="false" ng-model="ctrl.isSeachAdd" >&nbsp;<label class="label label-success">检索全量</label>
+                        </div>
+                        <div class="col-md-3 col-md-offset-5 text-right">
+                                <button class="btn btn-default btn-pop" ng-click="ctrl.addTopProductClick()"><i class="glyphicon glyphicon-plane"></i>&nbsp;移入置顶区</button>&emsp;
+                                <div class="btn-group" uib-dropdown style="margin-right: 80px">
+                                    <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
+                                        &nbsp;<span ng-if="ctrl.sort.sName">{{ctrl.sort.sName}}{{ctrl.sort.sortType == 1 ? '升序'  :'降序'}}</span>
+                                              <span ng-if="!ctrl.sort.sName">排序</span>&nbsp;<span class="caret"></span>
+                                    </button>
+                                    <ul uib-dropdown-menu>
+                                        <li>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('created',1)" >时间升序&nbsp;</button>
+                                        </li>
+                                        <li>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('created',-1)" >时间降序&nbsp;</button>
+                                        </li>
+                                        <li>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('platforms.P✓.pPriceSaleEd',1)" >售价升序&nbsp;</button>
+                                        </li>
+                                        <li>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('platforms.P✓.pPriceSaleEd',-1)" >售价降序&nbsp;</button>
+                                        </li>
+                                        <li>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('common.fields.quantity',-1)" >库存降序&nbsp;</button>
+                                        </li>
+                                        <li>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSum7.cartId✓',-1)" >7天销售降序&nbsp;</button>
+                                        </li>
+                                        <li>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSum30.cartId✓',-1)" >30天销售降序&nbsp;</button>
+                                        </li>
+                                        <li>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSumYear.cartId✓',-1)" >年销售降序&nbsp;</button>
+                                        </li>
+                                        <li>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSumAll.cartId✓',-1)" >总销售降序&nbsp;</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover-new table-hover" style="min-width:1200px">
+                            <thead>
+                                <tr>
+                                    <th class="text-center v-middle"><input type="checkbox" ng-model="ctrl.selAll" ng-click="ctrl.selectAll()" class="v-sub">&nbsp;全选</th>
+                                    <th class="text-center v-middle">图片</th>
+                                    <th class="text-center v-middle">平台状态</th>
+                                    <th class="text-left v-middle">款号</th>
+                                    <th class="text-left v-middle">商品名称</th>
+                                    <th class="text-left v-middle">品牌</th>
+                                    <th class="text-left v-middle">Code</th>
+                                    <th class="text-right v-middle">中国最终售价</th>
+                                    <th class="text-center v-middle">库存</th>
+                                    <th class="text-center v-middle">sku数</th>
+                                    <th class="text-center v-middle">7天销量</th>
+                                    <th class="text-center v-middle">30天销量</th>
+                                    <th class="text-center v-middle">年销量</th>
+                                    <th class="text-center v-middle">总销量</th>
+                                    <th class="text-center v-middle">创建时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="item in ctrl.modelList">
+                                    <td class="mfb-xt text-center v-middle"><input type="checkbox" ng-true-value="true"
+                                                                                          ng-false-value="false"
+                                                                                          ng-model="item.isChecked" class="v-sub" /> </td>
+                                    <td class="mfb-xxt text-center v-middle">
+                                        <img class="thumb-sm-search" image="{{item.image1}}"  />
+                                    </td>
+                                    <td class="text-center v-middle">
+                                        <platform-status data="{cartId: ctrl.routeParams.cartId,
+                                                       status: item.status,
+                                                       pStatus: item.pStatus,
+                                                       pIsMain: item.isMain,
+                                                       pReallyStatus: item.pReallyStatus,
+                                                       pPublishError: item.pPublishError,
+                                                       pNumIId: item.pNumIId}"></platform-status>
+                                    </td>
+                                    <td class="text-left v-middle">{{item.model}}</td>
+                                    <td class="text-left v-middle cur-p"><popover-text content="item.productName" direct="left" size="20"></popover-text></td>
+                                    <td class="text-left v-middle cur-p"><popover-text content="item.brand" direct="left" size="20"></popover-text></td>
+                                    <td class="text-left v-middle">{{item.code}}</td>
+                                    <td class="text-right v-middle">{{ctrl.showPriceSale(item.pPriceSaleSt,item.pPriceSaleEd)}}</td>
+                                    <td class="text-center v-middle">{{item.quantity}}</td>
+                                    <td class="text-center v-middle">{{item.skuCount}}</td>
+                                    <td class="text-center v-middle">{{item.salesSum7}}</td>
+                                    <td class="text-center v-middle">{{item.salesSum30}}</td>
+                                    <td class="text-center v-middle">{{item.salesSumYear}}</td>
+                                    <td class="text-center v-middle">{{item.salesSumAll}}</td>
+                                    <td class="text-center v-middle">{{item.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <vpagination config="ctrl.paging"></vpagination>
+                </div>
+            </div>
+
+        </uib-tab>
+
+
+    </uib-tabset>
+
+</div>
