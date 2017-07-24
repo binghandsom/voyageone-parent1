@@ -28,6 +28,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
@@ -75,6 +76,8 @@ public class UsaProductDetailService extends BaseService {
     private CmsProductSearchQueryService cmsProductSearchQueryService;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
+    @Autowired
+    private PlatformProductUploadService platformProductUploadService;
 
     @Autowired
     public UsaProductDetailService(ProductService productService, CommonSchemaService commonSchemaService, PlatformCategoryService platformCategoryService, TagService tagService) {
@@ -197,7 +200,10 @@ public class UsaProductDetailService extends BaseService {
         List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) commInfo.get("schemaFields"));
         commInfo.remove("schemaFields");
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
-        commonModel.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
+        Map<String, Object> fields = FieldUtil.getFieldsValueToMap(masterFields);
+        fields.put("images1", ((Map<String, Object>)commInfo.get("fields")).get("images1"));
+        fields.put("images6", ((Map<String, Object>)commInfo.get("fields")).get("images6"));
+        commonModel.put("fields", fields);
 
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
@@ -238,7 +244,9 @@ public class UsaProductDetailService extends BaseService {
             platform.remove("platformFields");
         }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
-
+        if(ListUtils.isNull(platformModel.getSkus())){
+            return;
+        }
         // 价格类型处理,String -> Double
         for (BaseMongoMap<String, Object> sku : platformModel.getSkus()) {
             sku.setAttribute("clientMsrpPrice", sku.getDoubleAttribute("clientMsrpPrice"));
@@ -261,6 +269,12 @@ public class UsaProductDetailService extends BaseService {
         bulkList.add(model);
 
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+
+        CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);
+
+        if(CmsConstants.ProductStatus.Approved.name().equals(platformModel.getStatus())) {
+            platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode(), null, 0, modifier);
+        }
     }
 
     private List<Field> buildMasterFields(List<Map<String, Object>> masterFieldsList) {
