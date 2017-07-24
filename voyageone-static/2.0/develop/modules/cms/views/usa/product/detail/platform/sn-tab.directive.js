@@ -53,6 +53,46 @@ define([
             });
         }
 
+        /**
+         * Pop category
+         * @param option
+         * @param attr
+         */
+        popUsCategory(option, attr) {
+            let self = this;
+
+            self.popups.openUsCategory(option).then(context => {
+                if(option.muiti){
+                    let categories = _.pluck(context, "catPath");
+                    _.extend(self.feed.attribute, {categories:categories});
+                    _.extend(self.feed, {categoriesTree:context});
+                }else{
+                    _.extend(self.feed, {category: context.catPath, categoryCatId:context.catId});
+                    if (!!context.mapping) {
+                        let seoInfo = {};
+                        if (!!context.mapping.seoTitle) {
+                            _.extend(seoInfo, {seoTitle: context.mapping.seoTitle});
+                        }
+                        if (!!context.mapping.seoKeywords) {
+                            _.extend(seoInfo, {seoKeywords: context.mapping.seoKeywords});
+                        }
+                        if (!!context.mapping.seoDescription) {
+                            _.extend(seoInfo, {seoDescription: context.mapping.seoDescription});
+                        }
+                        // amazon、googleCategory、googleDepartment、priceGrabber
+                        let category = {
+                            amazonBrowseTree:context.mapping.amazon,
+                            googleCategory:context.mapping.googleCategory,
+                            googleDepartment:context.mapping.googleDepartment,
+                            priceGrabberCategory:context.mapping.priceGrabber};
+                        _.extend(self.feed, category);
+                        _.extend(self.feed, seoInfo);
+                    }
+                }
+
+            });
+        }
+
     }
 
     cms.directive('snTab', function () {
