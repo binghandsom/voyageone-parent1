@@ -29,7 +29,14 @@ define([
             self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
                 self.search();
             }};
-            self.searchInfo = {}; // 检索条件
+
+            // 检索条件
+            self.searchInfo = {
+                brandSelType:1,
+                pCatPathType:1,
+                shopCatType:1
+            };
+            // 检索结果
             self.searchResult = {
                 productList: []
             };
@@ -228,10 +235,10 @@ define([
 
             //处理类目和店铺内分类
             if(self.tempUpEntity.pCatPathListTmp)
-                _.extend(searchInfo, {pCatPathType:1}); // 1 in, 2 not in
+                // _.extend(searchInfo, {pCatPathType:1}); // 1 in, 2 not in
                 searchInfo.pCatPathList = _.pluck(self.tempUpEntity.pCatPathListTmp,'catPath');
             if(self.tempUpEntity.cidValueTmp)
-                _.extend(searchInfo, {shopCatType:1}); // 1 in, 2 not in
+                // _.extend(searchInfo, {shopCatType:1}); // 1 in, 2 not in
                 searchInfo.cidValue = _.pluck(self.tempUpEntity.cidValueTmp,'catId');
 
             //价格范围排序修改
@@ -258,7 +265,11 @@ define([
 
         clear() {
             let self = this;
-            self.searchInfo = {};
+            self.searchInfo = {
+                brandSelType:1,
+                pCatPathType:1,
+                shopCatType:1
+            };
         }
 
         dismiss(attrName){
