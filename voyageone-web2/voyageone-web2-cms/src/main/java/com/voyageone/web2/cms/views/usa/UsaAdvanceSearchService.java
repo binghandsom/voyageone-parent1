@@ -32,20 +32,22 @@ public class UsaAdvanceSearchService extends BaseViewService {
     public List<CmsBtProductBean> saleDataSort(CmsSearchInfoBean2 params, UserSessionBean userInfo) {
         int pageNum = params.getProductPageNum();
         int pageSize = params.getProductPageSize();
+        String cartId = params.getSortOneName();
+        params.setSortOneName(null);
         CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId(), userInfo.getUserId(), userInfo.getUserName());
         List<String> productCodeList = new ArrayList<>();
         long productListTotal = cmsProductCodeListBean.getTotalCount();
         //要根据查询出来的总页数设置分页
         long pageNumber = 0;
-        if (productListTotal % 100 == 0) {
+        if (productListTotal % 10000 == 0) {
             //整除
-            pageNumber = productListTotal / 100;
+            pageNumber = productListTotal / 10000;
         } else {
             //不整除
-            pageNumber = (productListTotal / 100) + 1;
+            pageNumber = (productListTotal / 10000) + 1;
         }
         for (int i = 0; i < pageNumber; i++) {
-            params.setProductPageSize(100);
+            params.setProductPageSize(10000);
             params.setProductPageNum(i + 1);
             CmsProductCodeListBean cmsProductCodeListBean1 = cmsProductSearchQueryService.getProductCodeList(params, userInfo.getSelChannelId());
             if (cmsProductCodeListBean1.getProductCodeList() != null) {
@@ -58,7 +60,7 @@ public class UsaAdvanceSearchService extends BaseViewService {
         queryObject.setSkip((pageNum - 1) * pageSize);
         queryObject.setLimit(pageSize);
 
-        queryObject.setSort(String.format("{'sales.P%s':%s}", params.getSortOneName(), params.getSortOneType()));
+        queryObject.setSort(String.format("{'sales.P%s':%s}", cartId, params.getSortOneType()));
         return productService.getBeanList(userInfo.getSelChannelId(), queryObject);
     }
 }
