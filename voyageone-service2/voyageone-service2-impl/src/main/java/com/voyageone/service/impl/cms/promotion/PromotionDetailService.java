@@ -167,6 +167,7 @@ public class PromotionDetailService extends BaseService {
         CmsBtProductModel productInfo=bean.getProductInfo();   //check方法  已经初始化
         CmsBtProductGroupModel groupModel=bean.getGroupModel();//check方法  已经初始化
 
+        $info(String.format("添加活动产品channel:%s code:%s"));
         String numIId = groupModel == null ? null : groupModel.getNumIId();
         // 插入cms_bt_promotion_model表
         CmsBtPromotionGroupsBean cmsBtPromotionGroupsBean = new CmsBtPromotionGroupsBean(productInfo, groupModel, promotionId, modifier);
