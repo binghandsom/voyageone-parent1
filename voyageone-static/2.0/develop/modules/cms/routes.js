@@ -514,7 +514,8 @@ define(function () {
             controller: 'usProductDetailController as ctrl'
         },
         us_channel_category:{
-            hash: "/channel/usa/category",
+            url:'/channel/usa/category/',
+            hash: "/channel/usa/category/:category?",
             templateUrl: "views/usa/channel/category/index.tpl.html",
             controllerUrl: "modules/cms/views/usa/channel/category/index.ctl",
             controller: 'usCategoryController as ctrl'

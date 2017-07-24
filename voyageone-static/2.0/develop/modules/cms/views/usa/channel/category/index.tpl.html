@@ -1,13 +1,13 @@
-<div class="wrapper-md" id="newCategory">
+<div class="wrapper-md" id="SneakerCategory" ng-init="ctrl.init()">
     <div class="panel panel-vo">
         <div class="panel-heading">
-            <h4 class="panel-title"><i class="fa fa-list"></i>&nbsp;<span>类目</span></h4>
+            <h4 class="panel-title"><i class="fa fa-list"></i>&nbsp;<span>Sneakerhead Category</span></h4>
         </div>
         <div class="panel-body">
             <div class="row form-horizontal">
                 <div class="col-md-6 form-group">
-                    <label class="col-md-2 control-label"><strong>当前类目</strong></label>
-                    <div class="col-md-4">
+                    <label class="col-md-3 control-label"><strong>Current Category</strong></label>
+                    <div class="col-md-8">
                         <input type="text" class="form-control" ng-model="ctrl.routeParams.catPath" readonly>
                     </div>
                 </div>
@@ -18,26 +18,18 @@
     <uib-tabset class="tab-container vo_nav-tabs">
 
         <uib-tab>
-            <tab-heading>置顶商品区</tab-heading>
+            <tab-heading>Top 50</tab-heading>
 
             <div class="container-fluid">
                 <div class="row form-horizontal">
-                    <div class="col-md-2 form-group">
-                        <label class="control-label">&emsp;<strong>当前置顶区商品数:</strong>&emsp;{{ctrl.topList.length}}&nbsp;个</label>
-                    </div>
+
                     <div class="col-md-3">
-                        <button class="btn btn-default btn-pop" ng-click="ctrl.clearTopProduct()" ><i class="glyphicon glyphicon-trash"></i>&nbsp;置顶区清空</button>&emsp;
-                        <button class="btn btn-success btn-pop" ng-click="ctrl.saveTopProduct()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
+                        <button class="btn btn-default btn-pop" ng-click="ctrl.clearTopProduct()" ><i class="glyphicon glyphicon-trash"></i>&nbsp;clear all</button>&emsp;
+                        <button class="btn btn-success btn-pop" ng-click="ctrl.saveTopProduct()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Sync To SN</button>
                     </div>
 
                 </div>
-                <div class="row">
-                    <div class="col-md-8">
-                        <span class="text-warnings">
-                            <i class="icon fa fa-bell-o"></i>&nbsp;按住鼠标拖拽更改排序&nbsp;,&nbsp;删除/移动后请点击【保存】来保存调整后的结果。&nbsp;<i class="glyphicon glyphicon-hand-up"></i>
-                        </span>
-                    </div>
-                </div>
+
             </div>
 
             <div class="panel panel-default m-t-md" id="topProducts">
@@ -104,7 +96,7 @@
         </uib-tab>
 
         <uib-tab active="true">
-            <tab-heading>普通商品区</tab-heading>
+            <tab-heading>Product List</tab-heading>
 
             <div class="container-fluid">
 

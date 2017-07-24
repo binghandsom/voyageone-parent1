@@ -9,6 +9,16 @@ define([
 
     cms.controller('usCategoryController',class UsCategoryController{
 
+        constructor($routeParams){
+            this.$routeParams = $routeParams;
+        }
+
+        init(){
+            let self = this;
+
+            console.log(self.$routeParams.category);
+        }
+
     });
 
 });

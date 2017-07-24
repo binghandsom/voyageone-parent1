@@ -72,6 +72,8 @@ public class UsaCmsUrlConstants {
 
         String UPDATE_PRODUCT_PLATFORM = "updateProductPlatform";
 
+        String UPDATE_CHANGE_MODEL = "updateChangeModel";
+
         String GET_ALL_PLATFORMS_PRICE = "getAllPlatformsPrice";
 
         String UPDATE_ONE_PRICE = "updateOnePrice";

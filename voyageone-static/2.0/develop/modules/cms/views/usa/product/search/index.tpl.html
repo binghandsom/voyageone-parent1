@@ -364,7 +364,7 @@
                                         <td class="text-center">{{productInfo.common.fields.translateTime}}</td>
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selCommonProps">{{ctrl.getProductValue(productInfo,prop)}}</td>
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes track by $index">{{ctrl.getProductValue(productInfo,prop)}}</td>
-                                        <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformSales track by $index"></td>
+                                        <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformSales track by $index">{{productInfo.sales["P"+prop.cartId]?productInfo.sales["P"+prop.cartId]:0}}</td>
 
                                     </tr>
                                 </tbody>

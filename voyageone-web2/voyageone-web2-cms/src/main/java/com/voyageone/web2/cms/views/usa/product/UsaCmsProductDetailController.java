@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.usa.product;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.service.impl.cms.usa.UsaProductDetailService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -83,7 +84,19 @@ public class UsaCmsProductDetailController extends CmsController {
         return success(true);
     }
 
+    @RequestMapping(UsaCmsUrlConstants.PRODUCT.UPDATE_CHANGE_MODEL)
+    public AjaxResponse doChangeModel(@RequestBody Map requestMap) {
 
+        Long prodId = Long.parseLong(String.valueOf(requestMap.get("prodId")));
+
+        String channelId = getUser().getSelChannelId();
+        String model = (String) requestMap.get("model");
+        if(!StringUtil.isEmpty(model)){
+            model = model.toLowerCase();
+            return success(usaProductDetailService.changeModel(getUser().getSelChannelId(), prodId, model));
+        }
+        return success(false);
+    }
 
     //根据productCode获取中国和美国的平台价格信息
     @RequestMapping(value = UsaCmsUrlConstants.PRODUCT.GET_ALL_PLATFORMS_PRICE)
@@ -100,7 +113,7 @@ public class UsaCmsProductDetailController extends CmsController {
     @RequestMapping(value = UsaCmsUrlConstants.PRODUCT.UPDATE_ONE_PRICE)
     public AjaxResponse updateOnePrice(@RequestBody Map params) {
         UserSessionBean user = getUser();
-        usaProductDetailService.updatePrice(params,user.getSelChannelId(),user.getUserName());
+        usaProductDetailService.updateOnePrice(params,user.getSelChannelId(),user.getUserName());
         // 返回用户信息
         return success(null);
     }

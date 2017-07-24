@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.usa;
 
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
@@ -500,8 +501,6 @@ public class UsaProductDetailService extends BaseService {
 
     //修改单条价格
     public String updateOnePrice(Map<String, Object> paraMap, String channelId,String userName) {
-        //商品code
-        String code = (String) paraMap.get("code");
         //同事传入portId更新价格履历
         Long prodId = Long.parseLong((String) paraMap.get("prodId"));
         //平台id
@@ -514,7 +513,9 @@ public class UsaProductDetailService extends BaseService {
         if (StringUtils.isNotEmpty((String) paraMap.get("clientRetailPrice"))) {
             clientRetailPrice = Double.parseDouble((String) paraMap.get("clientRetailPrice"));
         }
-        CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, code);
+        CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);
+        //获取商品code
+        String code = cmsBtProductModel.getCommonNotNull().getFieldsNotNull().getCode();
         if (cmsBtProductModel != null) {
             if (cartId < 20) {
                 //修改美国平台价格
@@ -728,5 +729,38 @@ public class UsaProductDetailService extends BaseService {
             usPlatform.setpPriceRetailSt(retailMin);
             usPlatform.setpPriceRetailEd(retailMax);
         }
+    }
+
+    public List<Map<String, Object>> changeModel(String channelId, Long prodId, String model) {
+
+        JongoUpdate jongoUpdate = new JongoUpdate();
+
+        jongoUpdate.setQuery("{\"prodId\":#}");
+        jongoUpdate.setQueryParameters(prodId);
+        jongoUpdate.setUpdate("{$set:{\"common.fields.model\":#}}");
+        jongoUpdate.setUpdateParameters(model);
+        cmsBtProductDao.updateFirst(jongoUpdate, channelId);
+
+        List<CmsBtProductModel> cmsBtProductGroup = productService.getProductListByModel(channelId, model);
+        List<Map<String, Object>> images = new ArrayList<>();
+        cmsBtProductGroup.forEach(product -> {
+            if (product != null) {
+                Map<String, Object> image = new HashMap<>();
+                image.put("productCode", product.getCommonNotNull().getFields().getCode());
+                String imageName = "";
+
+                if (!ListUtils.isNull(product.getCommon().getFields().getImages1()) && product.getCommon().getFields().getImages1().get(0).size() > 0) {
+                    imageName = (String) product.getCommon().getFields().getImages1().get(0).get("image1");
+                }
+                if (StringUtil.isEmpty(imageName) && !ListUtils.isNull(product.getCommon().getFields().getImages6()) && product.getCommon().getFields().getImages6().get(0).size() > 0) {
+                    imageName = (String) product.getCommon().getFields().getImages6().get(0).get("image6");
+                }
+                image.put("imageName", imageName);
+                image.put("prodId", product.getProdId());
+                image.put("qty", product.getCommon().getFields().getQuantity());
+                images.add(image);
+            }
+        });
+        return images;
     }
 }
