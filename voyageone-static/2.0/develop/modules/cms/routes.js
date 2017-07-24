@@ -328,11 +328,6 @@ define(function () {
             "templateUrl": "views/channel/common/attribute.tpl.html",
             "controllerUrl": "modules/cms/views/channel/common/attribute.ctl"
         },
-        "channel_feedImportRule_feedImportRuleList": {
-            "hash": "/channel/feedImportRule/feedImportRuleList",
-            "templateUrl": "views/channel/feedImportRule/feedImportRuleList.tpl.html",
-            "controllerUrl": "modules/cms/views/channel/feedImportRule/feedImportRuleList.ctl"
-        },
         "channel_authority": {
             "hash": "/channel/authority",
             "templateUrl": "views/channel/authority/authority.tpl.html",
