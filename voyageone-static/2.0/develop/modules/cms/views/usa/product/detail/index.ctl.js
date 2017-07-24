@@ -32,6 +32,11 @@ define([
                 autoApprovePrice: null,
                 productComm: null
             };
+            this.platformStatus = [
+                {status:'Pending',display:'Pending'},
+                {status:'OnSale', display:'List'},
+                {status:'InStock', display:'Delist'}
+            ]
         }
 
         init(){

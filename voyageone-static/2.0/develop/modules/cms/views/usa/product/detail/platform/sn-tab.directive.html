@@ -54,7 +54,7 @@
                                     </div>
 
                                 </div>
-                                <div class="form-group" ng-if="ctrl.showModel">
+                                <div class="form-group" ng-show="ctrl.showModel">
                                     <div class="row">
                                         <div class="col-md-8 col-md-offset-4" ng-if="ctrl.mastData.images.length > 0">
                                             <div class="col-xs-6 col-md-2" ng-repeat="image in ctrl.mastData.images">
@@ -71,6 +71,19 @@
                                                 <span class="sr-only">Warning:</span>
                                                 no query data
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-4 text-right vo_unreqfield">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.addFreeTag()">
+                                                <i class="fa fa-arrow-right"></i>&nbsp;Tag
+                                            </button>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="usFreeTags" ng-model="ctrl.feed.amazonBrowseTree" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -107,25 +120,6 @@
                                             <select name="categories" chosen multiple width="'100%'"
                                                     ng-options="cat as cat.catPath for cat in ctrl.feed.categoriesTree"
                                                     ng-model="ctrl.feed.categoriesTree"></select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-4 text-right vo_reqfield">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.popCategory({cartId:5},'amazonBrowseTree')">
-                                                <i class="fa fa-arrow-right"></i>&nbsp;Amazon Browse Tree
-                                            </button>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" name="amazonBrowseTree" ng-model="ctrl.feed.amazonBrowseTree" readonly>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title"></label>
-                                        <div class="col-md-6">
-                                            <vo-message target="productForm.amazonBrowseTree"></vo-message>
                                         </div>
                                     </div>
                                 </div>

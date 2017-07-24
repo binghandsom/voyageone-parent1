@@ -140,7 +140,7 @@ public class UsaProductDetailService extends BaseService {
 
 
         //freeTag
-        List<String> tagPathList = cmsBtProduct.getFreeTags();
+        List<String> tagPathList = cmsBtProduct.getUsFreeTags();
         if (tagPathList != null && tagPathList.size() > 0) {
             List<CmsBtTagBean> tagModelList = new ArrayList<>();
             List<String> temp = new ArrayList<>();
@@ -202,7 +202,7 @@ public class UsaProductDetailService extends BaseService {
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
         Map<String, Object> fields = FieldUtil.getFieldsValueToMap(masterFields);
         fields.put("images1", ((Map<String, Object>)commInfo.get("fields")).get("images1"));
-        fields.put("images6", ((Map<String, Object>)commInfo.get("fields")).get("images6"));
+        fields.put("images2", ((Map<String, Object>)commInfo.get("fields")).get("images2"));
         commonModel.put("fields", fields);
 
         HashMap<String, Object> queryMap = new HashMap<>();

@@ -77,17 +77,17 @@ define([
                 self.selAllSkuFlag = flag;
 
                 console.log(res.data);
-                _.each(self.productComm.schemaFields, item => {
-                    if (item.id =='images1' || item.id =='images2') {
-
-                        console.log(item);
-                    }
-                });
+                // _.each(self.productComm.schemaFields, item => {
+                //     if (item.id =='images1' || item.id =='images2') {
+                //         console.log(item);
+                //     }
+                // });
             });
         }
 
         // Save
         save(status) {
+            console.log(status);
             let self = this;
             let platform = angular.copy(self.platform);
             if (status) {
@@ -303,12 +303,49 @@ define([
                 model:model.value
             };
             self.popups.openMoveModel(parameter).then(res => {
-                console.log(res);
                 model.value = res.model;
-                console.log(self.searchField("model", self.productComm.schemaFields).value);
+                self.productComm.fields.model = res.model;
                 self.mastData.images = res.data;
             });
         }
+
+        /**
+         * 添加产品到指定自由标签
+         */
+        addFreeTag () {
+            let self = this;
+            let params = {
+                orgFlg: '0',
+                selTagType: '6',
+                selAllFlg: 0
+                // selCodeList: self.getSelectedProduct('code'),
+                // searchInfo: self.handleQueryParams()
+            };
+            self.popups.openUsFreeTag(params).then(res => {
+                console.log(res);
+                let freeTags = _.chain(res.selectdTagList).map(function (key, value) {
+                    return key.tagPath;
+                }).value();
+                console.log(freeTags);
+                self.confirm(msg)
+                    .then(function () {
+                        var data = {
+                            "type":"usa",
+                            "tagPathList": freeTags,
+                            "prodIdList": selCodeList,
+                            "isSelAll": self._selall ? 1 : 0,
+                            "orgDispTagList": res.orgDispTagList,
+                            'searchInfo': self.handleQueryParams()
+                        };
+                        self.$searchAdvanceService2.addFreeTag(data).then(function () {
+                            // notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
+                            self.notify.success("Set free tags succeeded.");
+                            self.clearSelList();
+                            self.search();
+                        })
+                    });
+            });
+        };
     }
 
     cms.directive('snTab', function () {
