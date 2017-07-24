@@ -122,7 +122,7 @@ public class FeedToCmsService extends BaseService {
 
                     String category = product.getCategory();
                     if (!chkCategoryPathValid(category)) {
-                        throw new BusinessException("category 不合法：" + category);
+                        throw new BusinessException("category 不合法：" + category + "channelId: " + product.getChannelId() + "  code:" + product.getCode());
                     }
 
                     // 判断是否追加一个新的类目
