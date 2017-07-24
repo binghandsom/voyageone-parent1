@@ -11,7 +11,6 @@ define(function () {
         "TXT_FEED_PRODUCT_LIST": "Feed商品一览",
         "TXT_FEED_CATEGORY_LIST": "Feed类目一览",
         "TXT_FEED_BRAND_LIST": "Feed品牌一览",
-        "TXT_FEED_CATEGORY": "Feed分类",
         "TXT_CATEGORY_MANAGER": "商品管理",
         "TXT_PROMOTION_MANAGER": "活动管理",
         "TXT_PROMOTION_LIST": "活动一览",
@@ -118,7 +117,6 @@ define(function () {
         "TXT_COLOR": "颜色",
         "TXT_FUZZY_SEARCH": "模糊查询",
         "TXT_GROUP_LIST": "GROUP一览",
-        "TXT_PRODUCT_LIST": "PRODUCT一览",
         "TXT_EXPORT_LIST": "Export 一览",
         "TXT_SELECT_ALL": "全选",
         "TXT_SALE_PRICE": "最终售价",
@@ -800,7 +798,6 @@ define(function () {
         "TXT_MASTER_MAPPING_SUATUS": "Master品牌匹配情况",
         "TXT_FEED_BRAND": "Feed品牌",
         "TXT_MASTER_MAPPING_APPLICATION": "Master品牌申请中",
-        "TXT_FEED_BRAND":"Feed品牌",
         "TXT_MASTER_BRAND": "Master品牌",
         "TXT_PLATFORM_BRAND": "平台品牌",
         "TXT_REGET_PLATFORM_BRANDS": "重新获取平台品牌",
@@ -816,7 +813,6 @@ define(function () {
         "TXT_PRICE_CONFIRM_HISTORY": "价格确认历史一览",
         "TXT_CONFIRM_STATUS": "确认状态",
         "TXT_CONFIRM_PRICE": "确认指导价",
-        "TXT_FLOATING_RATE": "价格波动",
         "TXT_TASK_LIST": "任务一览",
         "TXT_FLOATING_RATE": "价格波动",
 
@@ -873,10 +869,8 @@ define(function () {
         "TXT_MOVE_CONFIRM": "确定移动",
         "TXT_NO_CHECK_SKU": "请选择要移动的Sku",
         "TXT_CHECK_ALL_SKU": "不能移动Code下的所有Sku,如果需要移动所有Sku,请到平台Tab页进行\"移动到其他Group\"操作",
-        "TXT_CODE": "Code",
         "TXT_GROUP_NUMIID": "NumIID",
         /**货架模板*/
-        "TXT_SHELVES_TEMPLATE_MANAGEMENT" : "刷图模板管理",
         "TXT_SHELVES_TEMPLATE_TYPE" : "模板类型",
         "TXT_SHELVES_TEMPLATE_NAME" : "模板名称",
         "TXT_SHELVES_TEMPLATE_NEW" : "新建模板",
@@ -923,13 +917,10 @@ define(function () {
         "TXT_CHANGE_PASS": "修改密码",
         "TXT_TRANSLATION_DATE": "翻译时间",
 
-        "TXT_TEMPLATE_TYPE":"模板类型",
-        "TXT_BATCH_UPDATE_TAG":"批量修改tag"
+        "TXT_BATCH_UPDATE_TAG":"批量修改tag",
 
-        "TXT_TASK_NAME":"任务名称",
         "TXT_TASK_STATUS":"任务状态",
         "TXT_CODE_OR_NUMIID":"Code / Number ID",
-        "TXT_ERROR_MESSAGE":"错误信息",
         "TXT_SINGLE_CODE_STATUS":"单品状态",
         "TXT_SINGLE_EXIST_IMAGE":"单品是否有图",
         "BTN_TASK_EDIT": "编辑任务",
