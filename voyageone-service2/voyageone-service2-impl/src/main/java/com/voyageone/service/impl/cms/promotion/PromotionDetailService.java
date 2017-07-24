@@ -9,10 +9,7 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.ConvertUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.DateTimeUtilBeijing;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
@@ -172,16 +169,19 @@ public class PromotionDetailService extends BaseService {
         // 插入cms_bt_promotion_model表
         CmsBtPromotionGroupsBean cmsBtPromotionGroupsBean = new CmsBtPromotionGroupsBean(productInfo, groupModel, promotionId, modifier);
         cmsBtPromotionGroupsBean.setNumIid(numIId);
-        cmsPromotionModelDao.insertPromotionModel(cmsBtPromotionGroupsBean);
+
 
         //初始化PromotionCode
         CmsBtPromotionCodesModel codesModel = loadCmsBtPromotionCodesModel(productInfo, groupModel, promotionId, modifier, cartId);
 
         //初始化PromotionSku
         List<CmsBtPromotionSkuBean> listPromotionSku = loadPromotionSkus(bean, productInfo, groupModel, promotionId, modifier, isUpdatePromotionPrice);
+        $info(JacksonUtil.bean2Json(listPromotionSku));
 
         //计算PromotionSku活动价
         promotionSkuService.loadSkuPrice(listPromotionSku, bean.getAddProductSaveParameter());
+
+        cmsPromotionModelDao.insertPromotionModel(cmsBtPromotionGroupsBean);
 
         //保存sku
         listPromotionSku.forEach(cmsBtPromotionSkuModelBean -> {
