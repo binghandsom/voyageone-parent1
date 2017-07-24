@@ -72,6 +72,15 @@ public class GetStoreStockDetailData2 {
             private String origSize;
             private String sku;
             private String saleSize;
+            private String barCode;
+
+            public String getBarCode() {
+                return barCode;
+            }
+
+            public void setBarCode(String barCode) {
+                this.barCode = barCode;
+            }
 
             public List<Integer> getTotal() {
                 return total;

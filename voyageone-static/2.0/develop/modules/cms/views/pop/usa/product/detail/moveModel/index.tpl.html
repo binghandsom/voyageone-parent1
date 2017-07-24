@@ -1,0 +1,22 @@
+<div class="vo_modal"  ng-init="initialize()">
+    <form role="form" class="form-horizontal" name="feedForm" novalidate>
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-pencil"></i>&nbsp;Move Model</h5>
+    </div>
+    <div class="modal-body">
+       <div class="container-fluid">
+
+           <div class="row">
+               <label class="">Move To Model</label>
+               <input type="text" ng-model="ctrl.newModel">
+           </div>
+       </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> CANCLE</button>
+        <button class="btn btn-vo" ng-click="ctrl.moveModel()"  ng-disabled="!ctrl.newModel"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE</button>
+    </div>
+    </form>
+</div>

@@ -8,7 +8,7 @@
                 <div class="col-md-6 form-group">
                     <label class="col-md-3 control-label"><strong>Current Category</strong></label>
                     <div class="col-md-8">
-                        <input type="text" class="form-control" ng-model="ctrl.routeParams.catPath" readonly>
+                        <input type="text" class="form-control" ng-model="ctrl.catInfo.catPath" readonly>
                     </div>
                 </div>
             </div>
@@ -24,7 +24,6 @@
                 <div class="row form-horizontal">
 
                     <div class="col-md-3">
-                        <button class="btn btn-default btn-pop" ng-click="ctrl.clearTopProduct()" ><i class="glyphicon glyphicon-trash"></i>&nbsp;clear all</button>&emsp;
                         <button class="btn btn-success btn-pop" ng-click="ctrl.saveTopProduct()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Sync To SN</button>
                     </div>
 
@@ -119,29 +118,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label query-title" translate="TXT_BRAND"></label>
-                            <div class="col-sm-8">
-                                <label class="checkbox-inline c-radio">
-                                    <input type="radio" name="brandSelOperation" value="1" ng-model="ctrl.searchInfo.brandSelType"><span class="fa fa-check" ></span> include
-                                </label>
-                                <label class="checkbox-inline c-radio">
-                                    <input type="radio" name="brandSelOperation" value="2" ng-model="ctrl.searchInfo.brandSelType"><span class="fa fa-check"></span> not include
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-3"></div>
-                            <div class="col-sm-8">
-                                <div class="input-group">
-                                    <select multiple chosen width="'100%'" class="form-control"
-                                            ng-model="ctrl.searchInfo.brandList" search-contains = "true"
-                                            ng-options="brand.value as brand.name for brand in ctrl.masterData.brandList">
-                                    </select>
-                                    <span class="input-group-addon cur-p" ng-click="dismiss('brandList')">reset</span>
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
                     <div class="col-md-6">
                         <div class="form-group"><!-- 查询标签 -->
@@ -152,13 +129,10 @@
                                 </button>
                             </div>
                             <div class="col-sm-8">
-                                <div class="input-group">
-                                    <select multiple chosen width="'100%'" class="form-control"
-                                            ng-model="ctrl.searchInfo.usFreeTags"
-                                            ng-options="tag for tag in ctrl.searchInfo.usFreeTags ">
-                                    </select>
-                                    <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('usFreeTags')">reset</span>
-                                </div>
+                                <select multiple chosen width="'100%'" class="form-control"
+                                        ng-model="ctrl.searchInfo.usFreeTags"
+                                        ng-options="tag for tag in ctrl.searchInfo.usFreeTags ">
+                                </select>
                             </div>
                         </div>
 
@@ -186,20 +160,26 @@
                         </div>
 
                         <div class="form-group">
-
-                            <label class="col-sm-3 control-label query-title">Total Qty</label>
-                            <div class="col-sm-9 form-inline">
-                                <div class="col-sm-5 input-group">
-                                    <input type="number" min="1" max="ctrl.searchInfo.inventoryTo" class="form-control" ng-model="ctrl.searchInfo.inventoryFrom">
-                                </div>
-                                &nbsp;~&nbsp;
-                                <div class="col-sm-5 input-group">
-                                    <input type="number" max="ctrl.searchInfo.inventoryFrom" class="form-control" ng-model="ctrl.searchInfo.inventoryTo">
-                                </div>
+                            <label class="col-sm-3 control-label query-title" translate="TXT_BRAND"></label>
+                            <div class="col-sm-8">
+                                <label class="checkbox-inline c-radio">
+                                    <input type="radio" name="brandSelOperation" value="1" ng-model="ctrl.searchInfo.brandSelType"><span class="fa fa-check" ></span> include
+                                </label>
+                                <label class="checkbox-inline c-radio">
+                                    <input type="radio" name="brandSelOperation" value="2" ng-model="ctrl.searchInfo.brandSelType"><span class="fa fa-check"></span> not include
+                                </label>
                             </div>
-
-
                         </div>
+                        <div class="form-group">
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-8">
+                                <select multiple chosen width="'100%'" class="form-control"
+                                        ng-model="ctrl.searchInfo.brandList" search-contains = "true"
+                                        ng-options="brand.value as brand.name for brand in ctrl.brandList">
+                                </select>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -212,16 +192,8 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label query-title">Platform</label>
                             <div class="col-sm-8 checkbox">
-                                <label ng-repeat="platform in ctrl.masterData.usPlatforms" style="min-width: 120px;">
-                                    <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp&nbsp;{{platform.name}}
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="col-md-8 col-lg-offset-3 checkbox">
-                                <label ng-repeat="platform in ctrl.masterData.platforms" style="min-width: 60px;">
-                                    <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;&nbsp;{{platform.add_name2}}
+                                <label>
+                                    <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="8" readonly>&nbsp&nbsp;Sneakerhead
                                 </label>
                             </div>
                         </div>
@@ -229,66 +201,20 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label query-title">status</label>
                             <div class="col-sm-8 checkbox">
-                                <label ng-repeat="platform in ctrl.masterData.platformStatus">
-                                    <input type="checkbox" ng-disabled="!ctrl.searchInfo.cartId" ng-model="ctrl.searchInfo.platformStatus[platform.status]">{{platform.display}}&emsp;
+                                <label>
+                                    <input type="checkbox" ng-model="ctrl.searchInfo.platformStatus['Pending']">Pending&emsp;
+                                </label>
+                                <label>
+                                    <input type="checkbox" ng-model="ctrl.searchInfo.platformStatus['OnSale']">List&emsp;
+                                </label>
+                                <label>
+                                    <input type="checkbox" ng-model="ctrl.searchInfo.platformStatus['InStock']">Delist&emsp;
                                 </label>
                             </div>
                         </div>
 
                     </div>
                     <div class="col-md-6">
-                        <div class="form-group">
-                            <div class="col-sm-3 text-right">
-                                <button class="btn btn-pop btn-vo" ng-click="ctrl.popCategory()" ng-disabled="ctrl.canCategory()">
-                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;Category
-                                </button>
-                            </div>
-                            <div class="col-sm-8">
-                                <div class="input-group" ng-if="ctrl.searchInfo.cartId == 5">
-                                    <select multiple chosen width="'100%'" class="form-control"
-                                            ng-model="ctrl.tempUpEntity.pCatPathListTmp"
-                                            ng-options="category as category.catPath for category in ctrl.tempUpEntity.pCatPathListTmp">
-                                    </select>
-                                    <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('pCatPathList')">reset</span>
-                                </div>
-                                <div class="input-group" ng-if="ctrl.searchInfo.cartId != 5">
-                                    <select multiple chosen width="'100%'" class="form-control"
-                                            ng-model="ctrl.tempUpEntity.cidValueTmp"
-                                            ng-options="category as category.catPath for category in ctrl.tempUpEntity.cidValueTmp">
-                                    </select>
-                                    <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('cidValue')">reset</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group"><!-- 查询创建时间 -->
-                            <label class="col-sm-3 control-label query-title">Create Time</label>
-                            <div class="col-sm-9 form-inline">
-                                <div class="col-sm-5 input-group">
-                                    <input type="text" class="form-control" uib-datepicker-popup
-                                           ng-model="ctrl.searchInfo.pPublishTimeFrom"
-                                           onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                           date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.pPublishTimeTo" is-open="datePickerCt1"
-                                           ng-disabled="!ctrl.searchInfo.cartId"
-                                           close-text="Close"/>
-                                    <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default" ng-click="datePickerCt1 = !datePickerCt1"><i class="glyphicon glyphicon-calendar"></i></button>
-                                        </span>
-                                </div>
-                                &nbsp;~&nbsp;
-                                <div class="col-sm-5 input-group">
-                                    <input type="text" class="form-control" uib-datepicker-popup
-                                           ng-model="ctrl.searchInfo.pPublishTimeTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))"
-                                           onpaste="return false" maxlength="10"
-                                           date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.pPublishTimeFrom" is-open="datePickerCt2"
-                                           ng-disabled="!ctrl.searchInfo.cartId"
-                                           close-text="Close"/>
-                                    <span class="input-group-btn">
-                                            <button type="button" class="btn btn-default" ng-click="datePickerCt2 = !datePickerCt2"><i class="glyphicon glyphicon-calendar"></i></button>
-                                        </span>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="form-group">
                             <lable class="col-sm-3 control-label query-title">Sale Price</lable>
@@ -296,126 +222,215 @@
                                 <div class="col-sm-5 input-group">
                                     <input type="number" class="form-control" ng-model="ctrl.searchInfo.pSalePriceFrom" ng-disabled="!ctrl.searchInfo.cartId">
                                 </div>
-                                <!--<div class="col-sm-1 text-center">-->
                                 &nbsp;~&nbsp;
-                                <!--</div>-->
                                 <div class="col-sm-5 input-group">
                                     <input type="text" class="form-control" ng-model="ctrl.searchInfo.pSalePriceTo" ng-disabled="!ctrl.searchInfo.cartId">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-3">
+                                <select class="form-control" chosen>
+                                    <option value="">Total Qty</option>
+                                    <option value="">LA Qty</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-9 form-inline">
+                                <div class="col-sm-5 input-group">
+                                    <input type="number" min="1" max="ctrl.searchInfo.inventoryTo" class="form-control" ng-model="ctrl.searchInfo.inventoryFrom">
+                                </div>
+                                &nbsp;~&nbsp;
+                                <div class="col-sm-5 input-group">
+                                    <input type="number" max="ctrl.searchInfo.inventoryFrom" class="form-control" ng-model="ctrl.searchInfo.inventoryTo">
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="row text-center">
-                    <button class="btn btn-default btn-pop" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
-                    <button class="btn btn-success btn-pop" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;检索</button>
+                <div class="row text-center" style="margin-top: 10px">
+                    <button class="btn btn-default btn-pop" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;CLEAR</button>&emsp;
+                    <button class="btn btn-success btn-pop" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;SEARCH</button>
                 </div>
             </div>
 
             <div class="panel panel-default m-t-md">
                 <div class="panel-heading">
-                    <div class="row" style="padding: 4px">
+                    <div class="row" style="padding: 2px">
                         <div class="col-md-4">
-                            <input type="checkbox" class="v-top" ng-true-value="true" ng-false-value="false" ng-model="ctrl.isSeachAdd" >&nbsp;<label class="label label-success">检索全量</label>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-true-value="true" ng-false-value="false" ng-model="ctrl.isSeachAdd" >&nbsp;
+                                    Select All Items By Query Terms
+                                </label>
+                            </div>
+
                         </div>
-                        <div class="col-md-3 col-md-offset-5 text-right">
-                                <button class="btn btn-default btn-pop" ng-click="ctrl.addTopProductClick()"><i class="glyphicon glyphicon-plane"></i>&nbsp;移入置顶区</button>&emsp;
-                                <div class="btn-group" uib-dropdown style="margin-right: 80px">
+                        <div class="col-md-4 col-md-offset-4 text-right">
+                                <div class="btn-group" uib-dropdown style="margin-top: 7px">
                                     <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
                                         &nbsp;<span ng-if="ctrl.sort.sName">{{ctrl.sort.sName}}{{ctrl.sort.sortType == 1 ? '升序'  :'降序'}}</span>
-                                              <span ng-if="!ctrl.sort.sName">排序</span>&nbsp;<span class="caret"></span>
-                                    </button>
+                                              <span ng-if="!ctrl.sort.sName">Newest</span>&nbsp;<span class="caret"></span>
+                                    </button>&emsp;
                                     <ul uib-dropdown-menu>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('created',1)" >时间升序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('created',1)" >Newest</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('created',-1)" >时间降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('created',-1)" >Name(A~Z)</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('platforms.P✓.pPriceSaleEd',1)" >售价升序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('platforms.P✓.pPriceSaleEd',1)" >Name(Z~A)</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('platforms.P✓.pPriceSaleEd',-1)" >售价降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('platforms.P✓.pPriceSaleEd',-1)" >Highest Price</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('common.fields.quantity',-1)" >库存降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('common.fields.quantity',-1)" >Lowest Price</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSum7.cartId✓',-1)" >7天销售降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSum7.cartId✓',-1)" >Highest Qty</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSum30.cartId✓',-1)" >30天销售降序&nbsp;</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSum30.cartId✓',-1)" >Lowest Qty</button>
                                         </li>
-                                        <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSumYear.cartId✓',-1)" >年销售降序&nbsp;</button>
-                                        </li>
-                                        <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSumAll.cartId✓',-1)" >总销售降序&nbsp;</button>
-                                        </li>
+
                                     </ul>
+                                    <button class="btn btn-default btn-pop" ng-click="ctrl.addTopProductClick()" style="margin-left: 10px"><i class="glyphicon glyphicon-plane"></i>&nbsp;SORT SAVE</button>&emsp;
                                 </div>
+
                         </div>
                     </div>
                 </div>
                 <div class="panel-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover-new table-hover" style="min-width:1200px">
+                    <div class="table-responsive box-body">
+                        <table class="vo_table vo_models dropdown_table_bk font-bold" style="min-width:100%;">
                             <thead>
-                                <tr>
-                                    <th class="text-center v-middle"><input type="checkbox" ng-model="ctrl.selAll" ng-click="ctrl.selectAll()" class="v-sub">&nbsp;全选</th>
-                                    <th class="text-center v-middle">图片</th>
-                                    <th class="text-center v-middle">平台状态</th>
-                                    <th class="text-left v-middle">款号</th>
-                                    <th class="text-left v-middle">商品名称</th>
-                                    <th class="text-left v-middle">品牌</th>
-                                    <th class="text-left v-middle">Code</th>
-                                    <th class="text-right v-middle">中国最终售价</th>
-                                    <th class="text-center v-middle">库存</th>
-                                    <th class="text-center v-middle">sku数</th>
-                                    <th class="text-center v-middle">7天销量</th>
-                                    <th class="text-center v-middle">30天销量</th>
-                                    <th class="text-center v-middle">年销量</th>
-                                    <th class="text-center v-middle">总销量</th>
-                                    <th class="text-center v-middle">创建时间</th>
-                                </tr>
+                            <tr style="background:#e67e22;color: #fff">
+                                <th class="checkbox text-center white-space-noWrap">
+                                    <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
+                                        <input type="checkbox" ng-click="selectAll(ctrl.productSelList)"
+                                               ng-checked="isAllSelected(ctrl.productSelList)"
+                                               ng-disabled="!ctrl.searchResult.productList.length">
+                                        <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;
+                                    </label>
+                                </th>
+                                <th class="text-center td-width-100 white-space-noWrap th-border-white">IMG</th>
+                                <th class="text-left td-width-100 white-space-noWrap th-border-white">Code</th>
+                                <th class="text-left td-width-150 white-space-noWrap th-border-white">Name</th>
+                                <th class="text-left td-width-100 white-space-noWrap th-border-white">ProductType</th>
+                                <th class="text-left td-width-100 white-space-noWrap th-border-white">Brand
+                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('brand')">
+                                        <i class="fa fa-{{ctrl.getArrowName('brand')}}"></i>
+                                    </button>
+                                </th>
+                                <th class="text-right td-width-100 white-space-noWrap th-border-white">Total Qty
+                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('quantity')">
+                                        <i class="fa fa-{{ctrl.getArrowName('quantity')}}"></i>
+                                    </button>
+                                </th>
+                                <th class="text-center td-width-100 white-space-noWrap th-border-white">Last Received
+                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('lastReceivedOn')">
+                                        <i class="fa fa-{{ctrl.getArrowName('lastReceivedOn')}}"></i>
+                                    </button>
+                                </th>
+                                <th class="text-left td-width-100 white-space-noWrap th-border-white">Sneakerhead Qty
+                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('brand')">
+                                        <i class="fa fa-{{ctrl.getArrowName('brand')}}"></i>
+                                    </button>
+                                </th>
+                                <th class="text-left td-width-100 white-space-noWrap th-border-white">Sneakerhead Sale Price
+                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('brand')">
+                                        <i class="fa fa-{{ctrl.getArrowName('brand')}}"></i>
+                                    </button>
+                                </th>
+                                <th class="text-left td-width-100 white-space-noWrap th-border-white">Sneakerhead Sales(30)
+                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('brand')">
+                                        <i class="fa fa-{{ctrl.getArrowName('brand')}}"></i>
+                                    </button>
+                                </th>
+                            </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="item in ctrl.modelList">
-                                    <td class="mfb-xt text-center v-middle"><input type="checkbox" ng-true-value="true"
-                                                                                          ng-false-value="false"
-                                                                                          ng-model="item.isChecked" class="v-sub" /> </td>
-                                    <td class="mfb-xxt text-center v-middle">
-                                        <img class="thumb-sm-search" image="{{item.image1}}"  />
-                                    </td>
-                                    <td class="text-center v-middle">
-                                        <platform-status data="{cartId: ctrl.routeParams.cartId,
-                                                       status: item.status,
-                                                       pStatus: item.pStatus,
-                                                       pIsMain: item.isMain,
-                                                       pReallyStatus: item.pReallyStatus,
-                                                       pPublishError: item.pPublishError,
-                                                       pNumIId: item.pNumIId}"></platform-status>
-                                    </td>
-                                    <td class="text-left v-middle">{{item.model}}</td>
-                                    <td class="text-left v-middle cur-p"><popover-text content="item.productName" direct="left" size="20"></popover-text></td>
-                                    <td class="text-left v-middle cur-p"><popover-text content="item.brand" direct="left" size="20"></popover-text></td>
-                                    <td class="text-left v-middle">{{item.code}}</td>
-                                    <td class="text-right v-middle">{{ctrl.showPriceSale(item.pPriceSaleSt,item.pPriceSaleEd)}}</td>
-                                    <td class="text-center v-middle">{{item.quantity}}</td>
-                                    <td class="text-center v-middle">{{item.skuCount}}</td>
-                                    <td class="text-center v-middle">{{item.salesSum7}}</td>
-                                    <td class="text-center v-middle">{{item.salesSum30}}</td>
-                                    <td class="text-center v-middle">{{item.salesSumYear}}</td>
-                                    <td class="text-center v-middle">{{item.salesSumAll}}</td>
-                                    <td class="text-center v-middle">{{item.created | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
-                                </tr>
+                            <tr><td colspan="14" if-no-rows="ctrl.searchResult.productList.length"></td></tr>
+                            </tbody>
+                            <tbody class="box-body" ng-repeat="productInfo in ctrl.searchResult.productList" style="border-bottom: 1px solid #ddd; height: 80px;">
+                            <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;height: 40px;">
+                                <td class="text-center" rowspan="2">
+                                    <label class="checkbox-inline c-checkbox" style="padding-top:4px">
+                                        <input ng-model="ctrl.productSelList.selFlag[productInfo.prodId]" type="checkbox"
+                                               ng-controller="selectRowsCtrl"
+                                               ng-click="selectOne(productInfo.prodId, ctrl.productSelList)">
+                                        <span class="fa fa-check"></span>
+                                    </label>
+                                </td>
+                                <td rowspan="2">
+                                    <a href="javascript:void(0)" ng-click="openAdvanceImagedetail(productInfo)">
+                                        <img image="{{productInfo.common.fields.images6 && productInfo.common.fields.images6[0].image6?productInfo.common.fields.images6[0].image6:productInfo.common.fields.images1[0].image1}}" alt="{{productInfo.common.fields.code}}" class="thumb-sm-search"/>
+                                    </a>
+                                </td>
+                                <td colspan="{{ctrl.customColumns.selCommonProps.length  + ctrl.customColumns.selPlatformAttributes.length + ctrl.customColumns.selPlatformSales.length + 6}}"
+                                    class="control-label text-left form-inline" style="height:27px; ">
+                                    <!--Todo  显示商品numid  -->
+                                    <span class="m-r-sm" ng-if="!!productInfo.groupBean.numIId&&!!vm.productUrl">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
+                                                    <a target="_blank" ng-bind="productInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId!=27"></a>
+                                                    <a target="_blank" ng-bind="productInfo.groupBean.platformMallId" ng-if="vm.searchInfo.cartId == 27"></a>
+                                                </span>
+                                    <!-- Todo 商品平台状态-->
+                                    <span class="label m-l-sm" ng-if="productInfo.platforms">
+                                                    <span ng-repeat='entity in productInfo.platforms' ng-if="entity.cartId > 0">
+                                                           <platform-status data="entity"></platform-status>
+                                                    </span>
+                                                </span>
+                                    <!-- Todo 美国商品平台状态 -->
+                                    <span ng-if="productInfo.usPlatforms">
+                                                    <span class="m-t-xs"  ng-repeat="usPlatform in productInfo.usPlatforms">
+                                                        <platform-status data="{cartId:usPlatform.cartId,
+                                                           status:'Approved',
+                                                           pStatus:usPlatform.status}">
+                                                        </platform-status>&nbsp;&nbsp;
+                                                    </span>
+                                                </span>
+                                    <span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall==1&&productInfo._prodOrgChaName">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>&nbsp;
+                                    <!-- Todo 标签 -->
+                                    <span>&nbsp;&nbsp;
+                                                <button ng-if="productInfo.usFreeTags != null && productInfo.usFreeTags.length > 0"
+                                                        ng-controller="showPopoverCtrl" popover-html="showInfo(productInfo._usFreeTags)"
+                                                        popover-title="tags" type="button" popover-placement="left" class="btn btn-warning btn-xs">tag</button>
+
+                                            </span>
+
+                                    <span class="label m-t-xs m-r-sm m-l-sm" style="font-size:12px;background-color:black;" ng-if="productInfo.lock == 1">&nbsp;锁定&nbsp;</span>
+                                    <span class="text-right">
+                                                    <span class="pull-right" style="margin-right:10px">{{'TXT_MATER_CATEGORY_WITH_COLON' | translate}}&nbsp;{{productInfo.common.catPath}}</span>
+                                            </span>
+                                </td>
+                            </tr>
+                            <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="height: 66px">
+                                <td class="text-left">
+                                    <a href="#/product/usa/detail/{{productInfo.prodId}}" target="_blank" >{{productInfo.common.fields.code}}</a>
+                                </td>
+                                <td class="text-left">{{productInfo.common.fields.productNameEn}}</td>
+                                <td class="text-left">{{productInfo.common.fields.productType}}</td>
+                                <td class="text-left">{{productInfo.common.fields.brand}}</td>
+                                <td class="text-right">{{productInfo.common.fields.quantity}}</td>
+                                <td class="text-center">{{productInfo.common.fields.translateTime}}</td>
+                                <td class="text-center"></td>
+                                <td class="text-center"></td>
+                                <td class="text-center"></td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-empty"><i class="fa fa-long-arrow-up"></i></button>&emsp;
+                                    <button type="button" class="btn btn-empty"><i class="fa fa-long-arrow-down"></i></button>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
-                    </div>
 
-                    <vpagination config="ctrl.paging"></vpagination>
+                    </div>
+                    <div class="col-sm-12 m-t-lg m-b-lg">
+                        <vpagination config="ctrl.paging"></vpagination>
+                    </div>
                 </div>
             </div>
 
