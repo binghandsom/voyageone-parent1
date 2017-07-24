@@ -1,16 +1,11 @@
 package com.voyageone.service.impl.cms.usa;
 
-import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.Constants;
-import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
-import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -26,27 +21,20 @@ import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
-import com.voyageone.service.bean.cms.product.CmsMtBrandsMappingBean;
-import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
-import com.voyageone.service.impl.cms.PlatformSchemaService;
 import com.voyageone.service.impl.cms.TagService;
-import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
-import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.product.search.CmsAdvSearchQueryService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdateListDelistStatusMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdatePriceMQMessageBody;
-import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.apache.commons.collections.MapUtils;
@@ -56,9 +44,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR;
-import static com.voyageone.common.CmsConstants.ChannelConfig.PRICE_CALCULATOR_FORMULA;
 
 /**
  * Created by james on 2017/7/18.
@@ -128,7 +113,7 @@ public class UsaProductDetailService extends BaseService {
         });
 
         List<Field> cmsMtCommonFields = commonSchemaService.getComUsSchemaModel().getFields();
-        fillFieldOptions(cmsMtCommonFields, channelId, "en");
+        fillFieldOptions(cmsMtCommonFields, channelId);
         CmsBtProductModel_Common productComm = cmsBtProduct.getCommon();
 
         String productType = productComm.getFields().getProductType();
@@ -242,7 +227,7 @@ public class UsaProductDetailService extends BaseService {
 
     // 更新自由标签
     public void updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier) {
-        /**保存类型*/
+        /* 保存类型 */
 
         if (platform.get("platformFields") != null) {
             List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) platform.get("platformFields"));
@@ -251,6 +236,8 @@ public class UsaProductDetailService extends BaseService {
             platform.remove("platformFields");
         }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
+
+        updateUsPlatformMinAndMaxPrice(platformModel);
 
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("prodId", prodId);
@@ -340,7 +327,7 @@ public class UsaProductDetailService extends BaseService {
     /**
      * 填充field选项值.
      */
-    private static void fillFieldOptions(List<Field> fields, String channelId, String language) {
+    private static void fillFieldOptions(List<Field> fields, String channelId) {
 
         for (Field field : fields) {
 
@@ -357,8 +344,8 @@ public class UsaProductDetailService extends BaseService {
                     case SINGLECHECK:
                     case MULTICHECK:
                         if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
-                            List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);
-
+                            List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), "en");
+                            if(typeBeanList == null) return;
                             // 替换成field需要的样式
                             List<Option> options = new ArrayList<>();
                             for (TypeBean typeBean : typeBeanList) {
@@ -373,7 +360,7 @@ public class UsaProductDetailService extends BaseService {
                         } else if (CmsConstants.OptionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
                             // 获取type channel bean
                             List<TypeChannelBean> typeChannelBeanList;
-                            typeChannelBeanList = TypeChannels.getTypeWithLang(field.getId(), channelId, language);
+                            typeChannelBeanList = TypeChannels.getTypeWithLang(field.getId(), channelId, "en");
 
                             // 替换成field需要的样式
                             List<Option> options = new ArrayList<>();
@@ -686,7 +673,7 @@ public class UsaProductDetailService extends BaseService {
     }
 
     //同步美国平台最大最小值
-    public CmsBtProductModel_Platform_Cart updateUsPlatformMinAndMaxPrice(CmsBtProductModel_Platform_Cart usPlatform) {
+    public void updateUsPlatformMinAndMaxPrice(CmsBtProductModel_Platform_Cart usPlatform) {
 
         List<BaseMongoMap<String, Object>> skus = usPlatform.getSkus();
 
@@ -710,6 +697,5 @@ public class UsaProductDetailService extends BaseService {
             usPlatform.setpPriceRetailSt(retailMin);
             usPlatform.setpPriceRetailEd(retailMax);
         }
-        return usPlatform;
     }
 }
