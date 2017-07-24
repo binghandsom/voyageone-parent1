@@ -46,6 +46,7 @@ define([
         self.$fieldEditService = $fieldEditService;
         self.$document = $document;
         self.$templateRequest = $templateRequest;
+        self.flag = false;
         self.vm = {
             productDetails: null,
             productCode: "",
@@ -63,10 +64,25 @@ define([
             sellerCats: [],
             productUrl: "",
             preStatus: null,
-            noMaterMsg: null
+            noMaterMsg: null,
+            sxImageTemplates:[]
         };
         self.panelShow = true;
     }
+
+    /*xu*/
+    SpTmController.prototype.change = function(){
+        var self = this;
+        if(self.vm.platform.fields.mainImageTemplate == "true"){
+            self.vm.platform.fields.mainImageTemplate='';
+            if(self.flag == false){
+                self.flag = true;
+            }else {
+                self.flag = false;
+            }
+
+        }
+    };
 
     SpTmController.prototype.init = function (element) {
         var self = this,
@@ -104,6 +120,7 @@ define([
         }).then(function (resp) {
             vm.mastData = resp.data.mastData;
             vm.platform = resp.data.platform;
+            vm.sxImageTemplates = resp.data.sxImageTemplates;
             vm.publishEnabled = resp.data.channelConfig.publishEnabledChannels.length > 0;
 
             if (vm.platform) {

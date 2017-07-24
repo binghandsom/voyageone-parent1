@@ -3,12 +3,14 @@ package com.voyageone.web2.cms.views.product;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SaveCartSkuPriceParameter;
 import com.voyageone.service.bean.cms.CmsProductPlatformDetail.SetCartSkuIsSaleParameter;
+import com.voyageone.service.impl.cms.CmsMtPlatformSxImageTemplateService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
 import com.voyageone.service.impl.cms.prices.IllegalPriceConfigException;
 import com.voyageone.service.impl.cms.prices.PriceCalculateException;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceConfirmLogService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformSxImageTemplateModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -49,6 +51,9 @@ public class CmsProductPlatformDetailController extends CmsController {
     @Autowired
     private PriceService priceService;
 
+    @Autowired
+    private CmsMtPlatformSxImageTemplateService cmsMtPlatformSxImageTemplateService;
+
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.SaveCartSkuPrice)
     public AjaxResponse saveCartSkuPrice(@RequestBody SaveCartSkuPriceParameter parameter) {
         UserSessionBean userSessionBean = getUser();
@@ -87,6 +92,8 @@ public class CmsProductPlatformDetailController extends CmsController {
         result.put("channelConfig", cmsAdvanceSearchService.getChannelConfig(channelId, cartId, getLang()));
         result.put("autoSyncPriceMsrp", priceService.getAutoSyncPriceMsrpOption(channelId, cartId).getConfigValue1());
         result.put("autoSyncPriceSale", priceService.getAutoSyncPriceSaleOption(channelId, cartId).getConfigValue1());
+        List<CmsMtPlatformSxImageTemplateModel> sxImageTemplates = cmsMtPlatformSxImageTemplateService.getSxImageTemplateByChannelAndCart(channelId, cartId);
+        result.put("sxImageTemplates",sxImageTemplates);
 
         return success(result);
     }

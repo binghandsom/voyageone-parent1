@@ -78,6 +78,15 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String, Object
         setStringAttribute("pCatId", pCatId);
     }
 
+    /*xu*/
+    public String getMainImageTemplate() {
+        return getStringAttribute("mainImageTemplate");
+    }
+    public void setMainImageTemplate(String mainImageTemplate) {
+        setStringAttribute("mainImageTemplate", mainImageTemplate);
+    }
+    /*xu*/
+
     //pCatPath
     public String getpCatPath() {
         return getStringAttribute("pCatPath");

@@ -26,6 +26,7 @@ define([
             self.$fieldEditService = $fieldEditService;
             self.$document = $document;
             self.$templateRequest = $templateRequest;
+            self.flag = false;
             self.vm = {
                 productDetails: null,
                 productCode: "",
@@ -33,10 +34,25 @@ define([
                 platform: null,
                 sellerCats: [],
                 productUrl: "",
-                noMaterMsg: null
+                noMaterMsg: null,
+                sxImageTemplates:[]
             };
             self.panelShow = true;
         }
+
+        /*xu*/
+        EditGroupCtl.prototype.change = function(){
+            var self = this;
+            if(self.vm.platform.fields.mainImageTemplate == "true"){
+                self.vm.platform.fields.mainImageTemplate='';
+                if(self.flag == false){
+                    self.flag = true;
+                }else {
+                    self.flag = false;
+                }
+
+            }
+        };
 
         EditGroupCtl.prototype.init = function () {
             this.getPlatformData();
@@ -56,6 +72,7 @@ define([
             }).then(function (resp) {
                 vm.mastData = resp.data.mastData;
                 vm.platform = resp.data.platform;
+                vm.sxImageTemplates = resp.data.sxImageTemplates;
 
                 //不显示SKU
                 if (vm.platform && vm.platform.schemaFields && vm.platform.schemaFields.item) {
