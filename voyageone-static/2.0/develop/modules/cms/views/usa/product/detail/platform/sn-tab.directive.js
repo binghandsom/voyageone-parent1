@@ -76,9 +76,12 @@ define([
                 self.selAllSkuFlag = flag;
 
                 console.log(res.data);
-                // _.each(self.productComm.schemaFields, item => {
-                //     console.log(item.id);
-                // });
+                _.each(self.productComm.schemaFields, item => {
+                    if (item.id =='images1' || item.id =='images2') {
+
+                        console.log(item);
+                    }
+                });
             });
         }
 
@@ -86,23 +89,15 @@ define([
         save() {
             let self = this;
             let platform = angular.copy(self.platform);
-            _.each(platform.skus, sku => {
-                let clientMsrpPrice = sku.clientMsrpPrice + "";
-                if (clientMsrpPrice.indexOf(".") == -1) {
-                    sku.clientMsrpPrice = parseFloat(clientMsrpPrice + ".0");
-                }
-                let clientRetailPrice = sku.clientRetailPrice + "";
-                if (clientRetailPrice.indexOf(".") == -1) {
-                    sku.clientRetailPrice = parseFloat(clientRetailPrice + ".0");
-                }
-                console.log(parseFloat("5.00"));
-            });
+            let productComm = angular.copy(self.productComm);
+            productComm.fields.images1 = self.imageView.images;
+            productComm.fields.images2 = self.imageView.boxImages;
             let parameter = {
                 prodId:self.$scope.productInfo.productId,
                 data:{
                     mastData:self.mastData,
                     platform:platform,
-                    productComm:self.productComm
+                    productComm:productComm
                 }
             };
             this.$usProductDetailService.updateCommonProductInfo(parameter).then(res => {

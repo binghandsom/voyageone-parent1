@@ -239,6 +239,12 @@ public class UsaProductDetailService extends BaseService {
         }
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
 
+        // 价格类型处理,String -> Double
+        for (BaseMongoMap<String, Object> sku : platformModel.getSkus()) {
+            sku.setAttribute("clientMsrpPrice", sku.getDoubleAttribute("clientMsrpPrice"));
+            sku.setAttribute("clientNetPrice", sku.getDoubleAttribute("clientNetPrice"));
+            sku.setAttribute("clientRetailPrice", sku.getDoubleAttribute("clientRetailPrice"));
+        }
         updateUsPlatformMinAndMaxPrice(platformModel);
 
         HashMap<String, Object> queryMap = new HashMap<>();
