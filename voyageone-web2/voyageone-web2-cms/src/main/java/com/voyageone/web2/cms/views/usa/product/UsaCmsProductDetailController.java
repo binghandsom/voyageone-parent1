@@ -92,6 +92,7 @@ public class UsaCmsProductDetailController extends CmsController {
         String channelId = getUser().getSelChannelId();
         String model = (String) requestMap.get("model");
         if(!StringUtil.isEmpty(model)){
+            model = model.toLowerCase();
             return success(usaProductDetailService.changeModel(getUser().getSelChannelId(), prodId, model));
         }
         return success(false);
