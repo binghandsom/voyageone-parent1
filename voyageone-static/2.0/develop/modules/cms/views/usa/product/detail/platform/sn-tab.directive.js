@@ -46,6 +46,12 @@ define([
                 self.mastData = res.data.mastData;
                 self.platform = res.data.platform;
                 self.productComm = res.data.productComm;
+                self.freeTagList = res.data.freeTagList;
+                let freeTags = [];
+                _.each(self.freeTagList, tag => {
+                    freeTags.push(tag.tagPath);
+                });
+                self.freeTags = freeTags;
 
                 // 图片
                 let images1 = self.productComm.fields.images1;
@@ -101,7 +107,8 @@ define([
                 data:{
                     mastData:self.mastData,
                     platform:platform,
-                    productComm:productComm
+                    productComm:productComm,
+                    freeTags:self.freeTags
                 }
             };
             this.$usProductDetailService.updateCommonProductInfo(parameter).then(res => {
@@ -310,40 +317,25 @@ define([
         }
 
         /**
-         * 添加产品到指定自由标签
+         * 选择自由标签
          */
-        addFreeTag () {
+        setFreeTag () {
             let self = this;
             let params = {
                 orgFlg: '0',
                 selTagType: '6',
                 selAllFlg: 0
-                // selCodeList: self.getSelectedProduct('code'),
-                // searchInfo: self.handleQueryParams()
             };
             self.popups.openUsFreeTag(params).then(res => {
-                console.log(res);
-                let freeTags = _.chain(res.selectdTagList).map(function (key, value) {
-                    return key.tagPath;
-                }).value();
-                console.log(freeTags);
-                self.confirm(msg)
-                    .then(function () {
-                        var data = {
-                            "type":"usa",
-                            "tagPathList": freeTags,
-                            "prodIdList": selCodeList,
-                            "isSelAll": self._selall ? 1 : 0,
-                            "orgDispTagList": res.orgDispTagList,
-                            'searchInfo': self.handleQueryParams()
-                        };
-                        self.$searchAdvanceService2.addFreeTag(data).then(function () {
-                            // notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
-                            self.notify.success("Set free tags succeeded.");
-                            self.clearSelList();
-                            self.search();
-                        })
-                    });
+                // console.log(res);
+                self.freeTagList = res.selectdTagList == null ? [] : res.selectdTagList;
+                let freeTags = [];
+                if (_.size(self.freeTagList) > 0) {
+                    freeTags = _.chain(self.freeTagList).map(function (key, value) {
+                        return key.tagPath;
+                    }).value();
+                }
+                self.freeTags = freeTags;
             });
         };
     }

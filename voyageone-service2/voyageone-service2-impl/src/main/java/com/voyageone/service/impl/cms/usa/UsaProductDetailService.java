@@ -41,6 +41,7 @@ import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdate
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -157,7 +158,7 @@ public class UsaProductDetailService extends BaseService {
                         item.put("tagPathName", t.getTagPathName());
                         freeTags.add(item);
                     });
-                    result.put("freeTag", freeTags);
+                    result.put("freeTagList", freeTags);
                 }
             }
         }
@@ -218,19 +219,19 @@ public class UsaProductDetailService extends BaseService {
     }
 
     // 更新自由标签
-    public void updateFreeTag(String channelId, Long prodId, List<Map<String, String>> freeTag) {
-
-        List<String> usFreeTags = freeTag.stream().map(item->item.get("tagPath")).collect(Collectors.toList());
-        HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("prodId", prodId);
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-        HashMap<String, Object> updateMap = new HashMap<>();
-        updateMap.put("usFreeTags", usFreeTags);
-        BulkUpdateModel model = new BulkUpdateModel();
-        model.setUpdateMap(updateMap);
-        model.setQueryMap(queryMap);
-        bulkList.add(model);
-        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+    public void updateFreeTag(String channelId, Long prodId, List<String> freeTags) {
+        if (CollectionUtils.isNotEmpty(freeTags)) {
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("prodId", prodId);
+            List<BulkUpdateModel> bulkList = new ArrayList<>();
+            HashMap<String, Object> updateMap = new HashMap<>();
+            updateMap.put("usFreeTags", freeTags);
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+        }
     }
 
     // 更新自由标签

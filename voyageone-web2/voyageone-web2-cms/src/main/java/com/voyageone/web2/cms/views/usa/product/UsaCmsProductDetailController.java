@@ -69,7 +69,7 @@ public class UsaCmsProductDetailController extends CmsController {
         usaProductDetailService.updateCommonProductInfo(channelId, prodId, productComm, getUser().getUserName());
         usaProductDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName());
 
-        usaProductDetailService.updateFreeTag(channelId, prodId, (List<Map<String, String>>) dataMap.get("freeTag"));
+        usaProductDetailService.updateFreeTag(channelId, prodId, (List<String>) dataMap.get("freeTags"));
         return success(true);
     }
 

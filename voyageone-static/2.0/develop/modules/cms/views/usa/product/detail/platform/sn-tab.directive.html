@@ -78,12 +78,15 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-4 text-right vo_unreqfield">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.addFreeTag()">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.setFreeTag()">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;Tag
                                             </button>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" name="usFreeTags" ng-model="ctrl.feed.amazonBrowseTree" readonly>
+                                            <select multiple chosen width="'100%'" class="form-control"
+                                                    ng-model="ctrl.freeTags"
+                                                    ng-options="tag.tagPath as tag.tagPathName for tag in ctrl.freeTagList">
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
