@@ -28,6 +28,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CommonSchemaService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.cms.PlatformProductUploadService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
@@ -75,6 +76,8 @@ public class UsaProductDetailService extends BaseService {
     private CmsProductSearchQueryService cmsProductSearchQueryService;
     @Autowired
     private CmsBtPriceLogService cmsBtPriceLogService;
+    @Autowired
+    private PlatformProductUploadService platformProductUploadService;
 
     @Autowired
     public UsaProductDetailService(ProductService productService, CommonSchemaService commonSchemaService, PlatformCategoryService platformCategoryService, TagService tagService) {
@@ -255,6 +258,12 @@ public class UsaProductDetailService extends BaseService {
         bulkList.add(model);
 
         cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+
+        CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);
+
+        if(CmsConstants.ProductStatus.Approved.name().equals(platformModel.getStatus())) {
+            platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode(), null, 0, modifier);
+        }
     }
 
     private List<Field> buildMasterFields(List<Map<String, Object>> masterFieldsList) {
