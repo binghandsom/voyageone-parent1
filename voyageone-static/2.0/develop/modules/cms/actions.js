@@ -856,7 +856,8 @@ define(function () {
                 updateCommonProductInfo:"updateCommonProductInfo",
                 updateOnePrice:'updateOnePrice',
                 getAllPlatformsPrice:'getAllPlatformsPrice',
-                getProductPlatform:'getProductPlatform'
+                getProductPlatform:'getProductPlatform',
+                updateChangeModel:"updateChangeModel"
             }
         }
     };

@@ -42,8 +42,6 @@ define([
 
             self.detailDataService.getProductInfo({prodId:self.$scope.productInfo.productId}).then(res => {
 
-                console.log(res.data);
-
                 self.mastData = res.data.mastData;
                 self.platform = res.data.platform;
                 self.productComm = res.data.productComm;
@@ -77,8 +75,9 @@ define([
                 });
                 self.selAllSkuFlag = flag;
 
+                console.log(res.data);
                 // _.each(self.productComm.schemaFields, item => {
-                //     console.log(item);
+                //     console.log(item.id);
                 // });
             });
         }
@@ -86,11 +85,23 @@ define([
         // Save
         save() {
             let self = this;
+            let platform = angular.copy(self.platform);
+            _.each(platform.skus, sku => {
+                let clientMsrpPrice = sku.clientMsrpPrice + "";
+                if (clientMsrpPrice.indexOf(".") == -1) {
+                    sku.clientMsrpPrice = parseFloat(clientMsrpPrice + ".0");
+                }
+                let clientRetailPrice = sku.clientRetailPrice + "";
+                if (clientRetailPrice.indexOf(".") == -1) {
+                    sku.clientRetailPrice = parseFloat(clientRetailPrice + ".0");
+                }
+                console.log(parseFloat("5.00"));
+            });
             let parameter = {
                 prodId:self.$scope.productInfo.productId,
                 data:{
                     mastData:self.mastData,
-                    platform:self.platform,
+                    platform:platform,
                     productComm:self.productComm
                 }
             };
@@ -283,11 +294,21 @@ define([
         // Move model
         moveModel() {
             let self = this;
-            self.popups.openMoveModel().then(res => {
-
+            let prodId = self.searchField("prodId", self.productComm.schemaFields);
+            let code = self.searchField("code", self.productComm.schemaFields);
+            let model = self.searchField("model", self.productComm.schemaFields);
+            let parameter = {
+                prodId:self.$scope.productInfo.productId,
+                code:code.value,
+                model:model.value
+            };
+            self.popups.openMoveModel(parameter).then(res => {
+                console.log(res);
+                model.value = res.model;
+                console.log(self.searchField("model", self.productComm.schemaFields).value);
+                self.mastData.images = res.data;
             });
         }
-
     }
 
     cms.directive('snTab', function () {
