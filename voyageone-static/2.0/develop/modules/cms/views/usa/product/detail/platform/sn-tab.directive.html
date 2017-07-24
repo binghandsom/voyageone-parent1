@@ -23,6 +23,9 @@
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" name="code" ng-model="ctrl.productComm.fields.code" required readonly>
                                         </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-info text-black" ng-click="ctrl.moveModel()">Move</button>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title"></label>
@@ -38,7 +41,9 @@
                                             <input type="text" class="form-control" name="model" ng-model="ctrl.productComm.fields.model" required>
                                         </div>
                                         <div class="col-md-1">
-                                            <button type="button" class="btn btn-info text-black" ng-click="ctrl.moveModel()">Move</button>
+                                            <button type="button" class="btn btn-default" ng-click="ctrl.getTopModel(5)">
+                                                <i ng-class="{'fa-angle-double-down':!ctrl.isShowModal,'fa-angle-double-up':ctrl.isShowModal}" class="fa fa-angle-double-down" style="font-size: 16px;"></i>
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -49,18 +54,15 @@
                                     </div>
 
                                 </div>
-                                <div class="form-group" ng-if="ctrl.isShowModal">
+                                <div class="form-group" ng-if="true">
                                     <div class="row">
-                                        <div class="col-md-8 col-md-offset-4" ng-if="ctrl.topFeedList.length > 0">
-                                            <div class="col-xs-6 col-md-2" ng-repeat="item in ctrl.topFeedList">
+                                        <div class="col-md-8 col-md-offset-4" ng-if="ctrl.mastData.images.length > 0">
+                                            <div class="col-xs-6 col-md-2" ng-repeat="image in ctrl.mastData.images">
                                                 <a href="javascript:void(0);" class="thumbnail pos-relative" style="height: 88px;padding: 0px"
                                                    ng-class="{'active':item.status=='Approved'}">
-                                                    <img class="thumb-sm-search" src="{{item.image[0]}}">
-                                                    <button type="button" class="btn btn-primary pos-absolute-right" ng-click="ctrl.copyAttr(item)">
-                                                        <i class="fa fa-copy"></i>
-                                                    </button>
+                                                    <img class="thumb-sm-search" ng-src="{{ctrl.imageView.imageUrl.replace('%s', image.imageName)}}">
                                                 </a>
-                                                <span class="text-wrap"><strong>{{item.code}}</strong></span>
+                                                <span class="text-wrap"><strong>{{image.productCode}}</strong></span>
                                             </div>
                                         </div>
                                         <div class="col-md-6 col-md-offset-4" ng-if="ctrl.topFeedList.length == 0">
@@ -382,10 +384,10 @@
                                             <td class="text-center">{{sku.weight}}</td>
                                             <td class="text-center">{{sku.weightUnit}}</td>
                                             <td class="text-right">
-                                                <input type="number" class="form-control text-right" ng-model="sku.clientMsrpPrice"/>
+                                                <input type="number" scale="15,2" class="form-control text-right" ng-model="sku.clientMsrpPrice"/>
                                             </td>
                                             <td class="text-right">
-                                                <input type="number" class="form-control text-right" ng-model="sku.clientNetPrice"/>
+                                                <input type="number" scale="15,2" class="form-control text-right" ng-model="sku.clientNetPrice"/>
                                             </td>
                                         </tr>
                                     </tbody>
