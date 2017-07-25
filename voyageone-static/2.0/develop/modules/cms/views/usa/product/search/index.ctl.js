@@ -37,18 +37,6 @@ define([
                 pCatPathType:1,
                 shopCatType:1
             };
-            if (self.$routeParams.code) {
-                let routePrams = eval('(' + self.$routeParams.code + ')');
-                let cartId = routePrams.cartId;
-                let platformStatus = routePrams.platformStatus;
-                if (cartId && platformStatus) {
-                    self.searchInfo.cartId = cartId;
-                    if (!self.searchInfo.platformStatus) {
-                        self.searchInfo.platformStatus = {};
-                    }
-                    self.searchInfo.platformStatus[platformStatus] = true;
-                }
-            }
             // 检索结果
             self.searchResult = {
                 productList: []
@@ -72,6 +60,30 @@ define([
             };
             self.columnArrow = {};
             self.cartEntity = cartEntity;
+
+            if (self.$routeParams.code) {
+                let routePrams = eval('(' + self.$routeParams.code + ')');
+                let cartId = routePrams.cartId;
+                let platformStatus = routePrams.platformStatus;
+                if (cartId && platformStatus) {
+                    self.searchInfo.cartId = cartId;
+                    if (!self.searchInfo.platformStatus) {
+                        self.searchInfo.platformStatus = {};
+                    }
+                    // 如果状态在self.masterData不存在(all)则默认查询平台下所有状态数据
+                    let platformStatusObj = _.find(self.masterData.platformStatus, item => {
+                        return platformStatus === item.status;
+                    });
+                    if (!platformStatusObj) {
+                        _.each(self.masterData.platformStatus, item => {
+                            let tempPlatformStatus = item.status;
+                            self.searchInfo.platformStatus[tempPlatformStatus] = true;
+                        });
+                    } else {
+                        self.searchInfo.platformStatus[platformStatus] = true;
+                    }
+                }
+            }
         }
 
         init() {
@@ -106,10 +118,9 @@ define([
                     self.customColumns.selPlatformSales = res.data.selPlatformSales;
                     // console.log(res.data);
 
+                    self.search();
                 }
             });
-
-            this.search();
         }
 
         search() {
@@ -350,6 +361,7 @@ define([
                     self.clearSelList();
                     self._selall = 0;
                 }
+                self.notify.success('Update Success');
             });
         }
 
@@ -438,6 +450,7 @@ define([
                     self.clearSelList();
                     self._selall = 0;
                 }
+                self.notify.success('Update Success');
             });
         }
 

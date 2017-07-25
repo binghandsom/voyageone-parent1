@@ -2,11 +2,13 @@ package com.voyageone.service.impl.cms.usa;
 
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumDataAmountType;
+import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumPlatformInfoSum;
 import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtDataAmountModel;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +54,25 @@ public class UsaDataAmountService extends BaseService {
                 }
             }
         }
+
+        // 为每个cart 增加一个All Items, 懒得在js中写
+        for (Map.Entry<Integer, Map<String, CmsBtDataAmountModel>> entry : platformMap.entrySet()) {
+            Integer cartId = entry.getKey();
+            Map<String, CmsBtDataAmountModel> valueMap = entry.getValue();
+            CmsBtDataAmountModel allDataAmount = new CmsBtDataAmountModel();
+            allDataAmount.setCartId(cartId);
+            allDataAmount.setAmountName("All Items");
+            int total = 0;
+            for (CmsBtDataAmountModel item : valueMap.values()) {
+                total += Integer.valueOf(StringUtils.defaultString(item.getAmountVal(), "0"));
+                allDataAmount.setLinkUrl(item.getLinkUrl());
+            }
+            allDataAmount.setAmountVal(String.valueOf(total));
+            allDataAmount.setLinkParameter(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getLinkParameter(), String.valueOf(cartId), "all"));
+            valueMap.put("All Items", allDataAmount);
+
+        }
+
         homeDataMap.put("platformInfo", platformMap);
         return homeDataMap;
 

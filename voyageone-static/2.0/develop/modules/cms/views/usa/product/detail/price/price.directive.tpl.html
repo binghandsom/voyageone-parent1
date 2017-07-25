@@ -26,8 +26,6 @@
                     <tbody>
                         <tr ng-repeat="(key,platform) in ctrl.usPriceList">
                            <td class="text-center">{{platform[key]}}</td>
-                           <td class="text-right">
-                               <price prices = "[platform.priceMsrpSt,platform.priceMsrpEd]"></price>
                            <td class="text-center">
                                <span ng-if="platform.priceMsrpSt != platform.priceMsrpEd">
                                     {{platform.priceMsrpSt}}~{{platform.priceMsrpEd}}
@@ -35,8 +33,6 @@
                                <input type="text" ng-if="platform.priceMsrpSt == platform.priceMsrpEd" value="{{platform.priceMsrpSt}}"
                                       ng-model="platform.priceMsrpSt" ng-change="platform.priceMsrpEd = platform.priceMsrpSt ;platform.flag=false">
                            </td>
-                           <td class="text-right">
-                               <price prices = "[platform.priceRetailSt,platform.priceRetailEd]"></price>
                            <td class="text-center">
                                <span ng-if="platform.priceRetailSt != platform.priceRetailEd">
                                     {{platform.priceRetailSt}}~{{platform.priceRetailEd}}
@@ -72,17 +68,17 @@
                                 <span ng-if="platform.priceMsrpSt != platform.priceMsrpEd">
                                     {{platform.priceMsrpSt}}~{{platform.priceMsrpEd}}
                                 </span>
-                                <input type="text" class="form-control" ng-if="platform.priceMsrpSt == platform.priceMsrpEd"
-                                       ng-model="platform.priceMsrpSt" ng-change="platform.priceMsrpEd = platform.priceMsrpSt">
+                                <input type="text" ng-if="platform.priceMsrpSt == platform.priceMsrpEd" value="{{platform.priceMsrpSt}}"
+                                       ng-model="platform.priceMsrpSt" ng-change="platform.priceMsrpEd = platform.priceMsrpSt;platform.flag=false">
                             </td>
                             <td class="text-center">
                                 <span  ng-if="platform.priceRetailSt != platform.priceRetailEd">
                                     {{platform.priceRetailSt}}~{{platform.priceRetailEd}}
                                 </span>
-                                <input type="text" class="form-control" value="{{platform.priceRetailSt}}" ng-if="platform.priceRetailSt == platform.priceRetailEd"
-                                       ng-model="platform.priceRetailSt" ng-change="platform.priceRetailEd = platform.priceRetailSt">
+                                <input type="text"  ng-if="platform.priceRetailSt == platform.priceRetailEd" value="{{platform.priceRetailSt}}"
+                                       ng-model="platform.priceRetailSt" ng-change="platform.priceRetailEd = platform.priceRetailSt ;platform.flag=false">
                             </td>
-                            <td class="text-right">
+                            <td class="text-center">
                                 <span  ng-if="platform.priceSaleSt != platform.priceSaleEd">
                                     {{platform.priceSaleSt}}~{{platform.priceSaleEd}}
                                 </span>
@@ -90,7 +86,7 @@
                                     {{platform.priceSaleSt}}
                                 </span>
                             <td class="text-center">
-                                <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.save(key,platform.priceMsrpSt,platform.priceRetailSt)">save</button>
+                                <button type="button" class="btn btn-info btn-pop" ng-click="platform.flag=true ;ctrl.save(key,platform.priceMsrpSt,platform.priceRetailSt)" ng-disabled="platform.flag">save</button>
                             </td>
                         </tr>
                     </tbody>
