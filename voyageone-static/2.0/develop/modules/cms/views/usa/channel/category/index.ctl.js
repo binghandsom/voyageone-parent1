@@ -4,12 +4,13 @@
  */
 define([
     'cms',
+    'modules/cms/enums/Carts',
     './sortEnum'
-], function (cms, sortEnum) {
+], function (cms, carts, sortEnum) {
 
     cms.controller('usCategoryController',class UsCategoryController{
 
-        constructor($routeParams, productTopService, alert, notify, confirm, $filter,popups){
+        constructor($routeParams,advanceSearch, productTopService, alert, notify, confirm, $filter,popups){
             let self = this;
 
             self.$routeParams = $routeParams;
@@ -18,10 +19,12 @@ define([
             self.notify = notify;
             self.confirm = confirm;
             self.$filter = $filter;
+            self.advanceSearch = advanceSearch;
+            self.searchResult = {};
             self.catInfo = angular.fromJson(this.$routeParams.category);
             self.popups = popups;
             self.searchInfo = {
-                cartId:8,
+                cartId:carts.Sneakerhead.id,
                 codeList:''
             };
             self.paging = {
@@ -35,6 +38,9 @@ define([
                 down: 'down',
                 downToLast: 'downToLast'
             };
+            self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
+                self.search();
+            }};
         }
 
         init(){
@@ -59,14 +65,15 @@ define([
             let self = this,
                 upEntity = angular.copy(self.searchInfo);
 
-            upEntity.sellerCatId = self.catInfo.catId;
-            upEntity.sellerCatPath = self.catInfo.catPath;
+            upEntity.cidValue = [self.catInfo.catId];
+            upEntity.shopCatType = 1;
             upEntity.codeList = upEntity.codeList.split("\n");
             upEntity.platformStatus = _.chain(upEntity.platformStatus).map((value,key) => {
                 if(value)
                     return key;
             }).filter(item => {return item}).value();
 
+            _.extend(upEntity, {productPageNum:self.pageOption.curr, productPageSize:self.pageOption.size});
             console.log('upEntity',upEntity);
 
             return upEntity;
@@ -84,48 +91,49 @@ define([
                 data.sortType = sort.sortType;
             }
 
-            self.productTopService.getPage(_.extend(paging, data)).then(function (res) {
+            self.advanceSearch.search(data).then(res => {
+                if (res.data) {
+                    self.searchResult.productList = res.data.productList;
+                    self.pageOption.total = res.data.productListTotal;
 
-                self.modelList = res.data;
+                    self.searchResult.productList.forEach(productInfo => {
+                        self.setFreeTagList(productInfo);
+                        self.srInstance.currPageRows({"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
+                    });
 
-                console.log(self.modelList);
+                    // self.productSelList = self.srInstance.selectRowsInfo;
+                }
             });
 
-            productTopService.getCount(self.getSearchInfo()).then(function (res) {
-                self.paging.total = res.data;
-            });
+            // self.productTopService.getPage(_.extend(paging, data)).then(function (res) {
+            //
+            //     self.modelList = res.data;
+            //
+            //     console.log(self.modelList);
+            // });
+            //
+            // productTopService.getCount(self.getSearchInfo()).then(function (res) {
+            //     self.paging.total = res.data;
+            // });
 
             this.selAll = false;
         }
-
-        addTopProductClick() {
-            let self = this,
-                routeParams = self.routeParams,
-                confirm = self.confirm,
-                parameter = {};
-
-            if (self.isSeachAdd) {
-                //全量加入
-                parameter.isSeachAdd = self.isSeachAdd;
-                parameter.searchParameter = self.getSearchInfo();
-            } else {
-                let codeList = self.getSelectedCodeList();
-                if (codeList.length == 0) {
-                    self.alert("请选择商品");
-                    return;
+        getTopList(){
+            let self = this;
+            self.productTopService.getTopList({"cartId":carts.Sneakerhead.id,"sellerCatId":self.catInfo.catId}).then(res => {
+                if (res.data) {
+                    self.topList = res.data;
                 }
-                parameter.codeList = codeList;
-            }
+            });
+        }
+        addTopProductClick(productInfo) {
+            let self = this,
+                parameter = {};
+                parameter.codeList = [productInfo.common.fields.code];
 
-            parameter.cartId = routeParams.cartId;
-            parameter.sellerCatId = routeParams.catId;
-
-            if (self.isSeachAdd) {
-                confirm("您是否要全量移入置顶区").then(function () {
-                    self.callAddTopProduct(parameter);
-                });
-            } else
-                self.callAddTopProduct(parameter);
+            parameter.cartId = carts.Sneakerhead.id;
+            parameter.sellerCatId = self.catInfo.catId;
+            self.callAddTopProduct(parameter);
         };
 
         callAddTopProduct(para) {

@@ -5,6 +5,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.producttop.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductTopDao;
@@ -198,18 +199,12 @@ public class ProductTopService extends BaseService {
         JongoQuery queryObject = new JongoQuery();
 
         //平台cartId
-        Criteria criteria = new Criteria("platforms.P" + param.getCartId()).exists(true);
-        // 获取code list用于检索code
-        if (topModel.getProductCodeList() != null
-                && topModel.getProductCodeList().size() > 0) {
-            List<String> inputCodeList = topModel.getProductCodeList();
-            inputCodeList = inputCodeList.stream().map(inputCode -> StringUtils.trimToEmpty(inputCode)).filter(inputCode -> !inputCode.isEmpty()).collect(Collectors.toList());
-            if (inputCodeList.size() > 0) {
-                criteria.and("common.fields.code").in(inputCodeList);
-            }
+        if(ListUtils.notNull(topModel.getProductCodeList())){
+            Criteria criteria = new Criteria("common.fields.code").in(topModel.getProductCodeList());
+            queryObject.setQuery(criteria);
+            return queryObject;
         }
-        queryObject.setQuery(criteria);
-        return queryObject;
+        return null;
     }
 
 

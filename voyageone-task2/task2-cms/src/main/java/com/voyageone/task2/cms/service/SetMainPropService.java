@@ -177,6 +177,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
     @Autowired
     UsaNewArrivalService usaNewArrivalService;
 
+    @Autowired
+    PlatformProductUploadService platformProductUploadService;
+
 
     /**
      * 按渠道进行设置
@@ -203,6 +206,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         // 自动同步对象平台列表(ALL:所有平台，也可具体指定需要同步的平台id,用逗号分隔(如:"28,29"))
         String ccAutoSyncCarts = "";
         List<String> ccAutoSyncCartList = null;
+
+        List<String> ccUsAutoSyncCartList = null;
         // 是否从feed导入产品分类
         String productTypeFromFeedFlg = "0";    // 0：不从feed导入运营手动添加产品分类
         // 是否从feed导入适用人群
@@ -357,6 +362,13 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
             }
 
+            CmsChannelConfigBean cmsUsChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(usjoi ? "928" : channelId,
+                    CmsConstants.ChannelConfig.AUTO_SYNC_US_CARTS);
+            if (cmsUsChannelConfigBean != null && !StringUtils.isEmpty(cmsUsChannelConfigBean.getConfigValue1())) {
+                String strAutoSyncCarts = cmsUsChannelConfigBean.getConfigValue1().trim();
+                // 取得自动同步指定平台列表
+                ccUsAutoSyncCartList = Arrays.asList(strAutoSyncCarts.split(","));
+            }
             // 从cms_mt_channel_config表从取得产品分类是否从feed导入flg,默认为0：不从feed导入运营手动添加
             CmsChannelConfigBean productTypeChannelConfigBean = CmsChannelConfigs.getConfigBeanNoCode(usjoi ? "928" : channelId,
                     CmsConstants.ChannelConfig.PRODUCT_TYPE_FROM_FEED_FLG);
@@ -959,7 +971,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                         // 插入上新表，可用于向USJOI主店同步价格变更
                         // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
-                        insertWorkload(cmsProduct);
+                        insertWorkload(cmsProduct, feed);
 
                         // 更新成功数
                         updateCnt++;
@@ -1048,7 +1060,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     // 设置sku数
                     cmsProduct.getCommon().getFields().setSkuCnt(cmsProduct.getCommon().getSkus().size());
 
-                    doCreateUsaPlatform(cmsProduct, feed);
+//                    doCreateUsaPlatform(cmsProduct, feed);
 
                     // productService.updateProduct(channelId, requestModel);
                     // 更新产品并记录商品价格表动履历，并向Mq发送消息同步sku,code,group价格范围
@@ -1141,7 +1153,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 // 插入尺码表
                 insertCmsBtFeedImportSize(usjoi ? "928" : channelId, cmsProduct);
 
-                insertWorkload(cmsProduct);
+                insertWorkload(cmsProduct, feed);
 
                 // add desmond 2016/07/07 start
                 if (blnProductExist) {
@@ -1281,7 +1293,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         // 店铺内分类设置
                         List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
                         catPath.forEach(cat -> {
-                            CmsBtProductModel_SellerCat sellerCat = getSellerCat(feed.getChannelId(), SN.getValue(), cat);
+                            CmsBtProductModel_SellerCat sellerCat = sellerCatService.getSellerCat(feed.getChannelId(), SN.getValue(), cat);
                             if (sellerCat != null) {
                                 sellerCats.add(sellerCat);
                             }
@@ -1334,16 +1346,16 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 if(feed.getApproveInfo() != null && !feed.getApproveInfo().containsKey(iCartId)){
                     platform.setLock("1");
                     platform.setIsSale("0");
+                    platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
                 }else{
                     platform.setLock("0");
                     platform.setIsSale("1");
+                    platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
                 }
                 // 商品状态
-                if(ccAutoSyncCartList != null && ccAutoSyncCartList.contains(iCartId+"") && "1".equals(platform.getIsSale())){
-                    platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
+                if(ccUsAutoSyncCartList != null && ccUsAutoSyncCartList.contains(iCartId+"") && "1".equals(platform.getIsSale())){
                     platform.setpStatus(CmsConstants.PlatformStatus.OnSale.toString());
                 }else{
-                    platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
                     platform.setpStatus(CmsConstants.ProductStatus.Pending.toString());
                 }
 
@@ -1352,23 +1364,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             cmsProduct.setUsPlatforms(usPlatforms);
         }
 
-
-        private CmsBtProductModel_SellerCat getSellerCat(String channelId, Integer cartId, String category){
-            CmsBtProductModel_SellerCat sellerCat = new CmsBtProductModel_SellerCat();
-            List<CmsBtSellerCatModel> sellerCatModels = sellerCatService.findNode(channelId, cartId, category);
-            if(ListUtils.isNull(sellerCatModels)) return null;
-            sellerCat.setcId(sellerCatModels.get(sellerCatModels.size() - 1).getCatId());
-            sellerCat.setcName(sellerCatModels.get(sellerCatModels.size() - 1).getCatName());
-            List<String> cIds = new ArrayList<>(sellerCatModels.size());
-            List<String> cNames = new ArrayList<>(sellerCatModels.size());
-            sellerCatModels.forEach(item -> {
-                cIds.add(item.getCatId());
-                cNames.add(item.getCatName());
-            });
-            sellerCat.setcIds(cIds);
-            sellerCat.setcNames(cNames);
-            return sellerCat;
-        }
         private void checkProduct(CmsBtProductModel cmsProduct) {
             if (usjoi) {
                 if (StringUtil.isEmpty(cmsProduct.getCommonNotNull().getCatPath())) {
@@ -1989,6 +1984,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
 
                 platform.setSkus(skuList);
+                if(feed.getApproveInfo() != null && !feed.getApproveInfo().containsKey(iCartId)){
+                    platform.setLock("1");
+                    platform.setIsSale("0");
+                }
                 platforms.put("P" + typeChannelBean.getValue(), platform);
             }
             product.setPlatforms(platforms);
@@ -3185,7 +3184,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         }
 
 
-        private void insertWorkload(CmsBtProductModel cmsProduct) {
+        private void insertWorkload(CmsBtProductModel cmsProduct, CmsBtFeedInfoModel feed) {
 
             // 变更自动同步到全部平台("ALL")或者自动同步到指定平台(用逗号分隔 如:"28,29"),没有配置时不插入workload表
             // 当该产品未被锁定且已批准的时候，往workload表里面插入一条上新数据，并逻辑清空相应的business_log
@@ -3195,6 +3194,24 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             } else if (ListUtils.notNull(ccAutoSyncCartList)) {
                 // 变更自动同步到指定平台(用逗号分隔 如:"28,29")时
                 sxProductService.insertSxWorkLoad(cmsProduct, ccAutoSyncCartList, getTaskName());
+            }
+
+            if(ListUtils.notNull(ccUsAutoSyncCartList)){
+                ccUsAutoSyncCartList.forEach(cartId->{
+                    CmsBtProductModel_Platform_Cart platform = cmsProduct.getUsPlatform(Integer.parseInt(cartId));
+                    if(platform != null && CmsConstants.ProductStatus.Approved.toString().equals(platform.getStatus())){
+                        Integer publishTime = feed.getApproveInfo().get(Integer.parseInt(cartId));
+                        if(publishTime == null) publishTime = 0;
+                        if(publishTime == 0){
+                            platformProductUploadService.saveCmsBtUsWorkloadModel(cmsProduct.getChannelId(), Integer.parseInt(cartId), cmsProduct.getCommon().getFields().getCode(), null, 0, getTaskName());
+                        }else{
+                            Calendar calendar = new GregorianCalendar();
+                            calendar.setTime(new Date());
+                            calendar.add(Calendar.DATE, publishTime);
+                            platformProductUploadService.saveCmsBtUsWorkloadModel(cmsProduct.getChannelId(), Integer.parseInt(cartId), cmsProduct.getCommon().getFields().getCode(), calendar.getTime(), 0, getTaskName());
+                        }
+                    }
+                });
             }
         }
 

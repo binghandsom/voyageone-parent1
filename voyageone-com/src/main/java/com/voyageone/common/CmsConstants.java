@@ -86,6 +86,9 @@ public class CmsConstants {
         // Feed导入Master时变更需要自动同步的平台列表
         String AUTO_SYNC_CARTS = "AUTO_SYNC_CARTS";
 
+        // Feed导入Master时变更需要自动同步的平台列表
+        String AUTO_SYNC_US_CARTS = "AUTO_SYNC_US_CARTS";
+
         // 全店操作配置最小间隔时间
         String STORE_OPERATION_INTERVAL_TIME = "STORE_OPERATION_INTERVAL_TIME";
 
