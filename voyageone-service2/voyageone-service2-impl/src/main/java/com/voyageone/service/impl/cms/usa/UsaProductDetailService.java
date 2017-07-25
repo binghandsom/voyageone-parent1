@@ -220,18 +220,16 @@ public class UsaProductDetailService extends BaseService {
 
     // 更新自由标签
     public void updateFreeTag(String channelId, Long prodId, List<String> freeTags) {
-        if (CollectionUtils.isNotEmpty(freeTags)) {
-            HashMap<String, Object> queryMap = new HashMap<>();
-            queryMap.put("prodId", prodId);
-            List<BulkUpdateModel> bulkList = new ArrayList<>();
-            HashMap<String, Object> updateMap = new HashMap<>();
-            updateMap.put("usFreeTags", freeTags);
-            BulkUpdateModel model = new BulkUpdateModel();
-            model.setUpdateMap(updateMap);
-            model.setQueryMap(queryMap);
-            bulkList.add(model);
-            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
-        }
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("prodId", prodId);
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("usFreeTags", freeTags);
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
     }
 
     // 更新自由标签
