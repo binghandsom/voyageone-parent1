@@ -404,8 +404,7 @@ define([
 
         canCategory() {
             const arr = ['8', '12', '6', '11', '5'];
-
-            return arr.indexOf(this.searchInfo.cartId) < 0;
+            return arr.indexOf(this.searchInfo.cartId + "") < 0;
         }
 
         batchCategory(){
