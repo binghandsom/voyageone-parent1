@@ -26,10 +26,7 @@ import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
-import com.voyageone.service.impl.cms.CommonSchemaService;
-import com.voyageone.service.impl.cms.PlatformCategoryService;
-import com.voyageone.service.impl.cms.PlatformProductUploadService;
-import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -48,6 +45,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.voyageone.common.configs.Enums.CartEnums.Cart.SN;
 
 /**
  * Created by james on 2017/7/18.
@@ -79,6 +78,8 @@ public class UsaProductDetailService extends BaseService {
     private CmsBtPriceLogService cmsBtPriceLogService;
     @Autowired
     private PlatformProductUploadService platformProductUploadService;
+    @Autowired
+    private SellerCatService sellerCatService;
 
     @Autowired
     public UsaProductDetailService(ProductService productService, CommonSchemaService commonSchemaService, PlatformCategoryService platformCategoryService, TagService tagService) {
@@ -250,7 +251,7 @@ public class UsaProductDetailService extends BaseService {
     }
 
     // 更新自由标签
-    public void updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, String modifier) {
+    public void updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, List<Map<String, String>>sellers, String modifier) {
         /* 保存类型 */
 
         if (platform.get("platformFields") != null) {
@@ -263,6 +264,27 @@ public class UsaProductDetailService extends BaseService {
         if (ListUtils.isNull(platformModel.getSkus())) {
             return;
         }
+
+        // 店铺内分类设置
+        List<String> sellerPaths = new ArrayList<>();
+        if(!StringUtil.isEmpty(platformModel.getpCatPath())) {
+            sellerPaths.add(platformModel.getpCatPath());
+        }
+        if(ListUtils.notNull(sellers)){
+            for(Map<String, String> item : sellers){
+                sellerPaths.add(item.get("catPath"));
+            }
+            sellerPaths = sellerPaths.stream().distinct().collect(Collectors.toList());
+            List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
+            sellerPaths.forEach(cat -> {
+                CmsBtProductModel_SellerCat sellerCat = sellerCatService.getSellerCat(channelId, platformModel.getCartId(), cat);
+                if (sellerCat != null) {
+                    sellerCats.add(sellerCat);
+                }
+            });
+            platformModel.setSellerCats(sellerCats);
+        }
+
         // 价格类型处理,String -> Double
         for (BaseMongoMap<String, Object> sku : platformModel.getSkus()) {
             sku.setAttribute("clientMsrpPrice", sku.getDoubleAttribute("clientMsrpPrice"));

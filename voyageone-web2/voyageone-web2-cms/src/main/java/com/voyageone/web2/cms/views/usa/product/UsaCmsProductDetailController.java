@@ -67,7 +67,7 @@ public class UsaCmsProductDetailController extends CmsController {
         Map<String, Object> platform = (Map<String, Object>) dataMap.get("platform");
         Map<String, Object> productComm = (Map<String, Object>) dataMap.get("productComm");
         usaProductDetailService.updateCommonProductInfo(channelId, prodId, productComm, getUser().getUserName());
-        usaProductDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName());
+        usaProductDetailService.updateProductPlatform(channelId, prodId, (Map<String, Object>) platform.get("platform"), (List<Map<String, String>>) platform.get("sellerCarts"), getUser().getUserName());
 
         usaProductDetailService.updateFreeTag(channelId, prodId, (List<String>) dataMap.get("freeTags"));
         return success(true);
@@ -82,7 +82,7 @@ public class UsaCmsProductDetailController extends CmsController {
 
         Map<String, Object> dataMap = (Map<String, Object>) requestMap.get("data");
         Map<String, Object> platform = (Map<String, Object>) dataMap.get("platform");
-        usaProductDetailService.updateProductPlatform(channelId, prodId, platform, getUser().getUserName());
+        usaProductDetailService.updateProductPlatform(channelId, prodId, platform, (List<Map<String, String>>) platform.get("sellerCarts"), getUser().getUserName());
         return success(true);
     }
 
