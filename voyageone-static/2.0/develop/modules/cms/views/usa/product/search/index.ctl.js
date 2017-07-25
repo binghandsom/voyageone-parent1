@@ -348,7 +348,10 @@ define([
 
         popBatchPrice(cartId) {
             let self = this;
-
+            if(self.getSelectedProduct('code').length == 0){
+                self.alert("please choose at least one!!!");
+                return;
+            }
             self.popups.openBatchPrice({
                 selAll:self._selall,
                 codeList:self.getSelectedProduct('code'),
@@ -362,7 +365,9 @@ define([
                     self._selall = 0;
                 }
                 if(res.type == 1){
-
+                    self.notify.success('Update Success');
+                }else {
+                    self.alert('Update Defeated');
                 }
             });
         }
@@ -436,7 +441,10 @@ define([
         //进行上下架操作
         batchList(cartId,activeStatus,usPlatformName){
             let self = this;
-
+            if(self.getSelectedProduct('code').length == 0){
+                self.alert("please choose at least one!!!");
+                return;
+            }
             self.popups.openUsList({
                 selAll:self._selall,
                 codeList:self.getSelectedProduct('code'),
@@ -451,9 +459,7 @@ define([
                     self.clearSelList();
                     self._selall = 0;
                 }
-                if(res.type == 1){
-
-                }
+                    self.notify.success('Update Success');
             });
         }
 
