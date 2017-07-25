@@ -128,7 +128,9 @@ define([
             this.$usProductDetailService.updateCommonProductInfo(parameter).then(res => {
                 if (res.data) {
                     self.notify.success("Save success.");
-                    self.platform.pStatus = status;
+                    if (status) {
+                        self.platform.platform.pStatus = status;
+                    }
                 }
             });
         }
