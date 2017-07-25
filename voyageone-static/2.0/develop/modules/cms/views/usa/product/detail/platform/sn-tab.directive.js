@@ -135,7 +135,7 @@ define([
          * @param option
          * @param attr
          */
-        popUsCategory(option, attr) {
+        popUsCategory(option) {
             let self = this;
 
             self.popups.openUsCategory(option).then(context => {
