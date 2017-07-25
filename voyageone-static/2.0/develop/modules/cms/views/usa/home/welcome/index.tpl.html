@@ -47,23 +47,18 @@
                     <thead>
                         <tr>
                             <th>Platform</th>
-                            <th>Pending Items</th>
-                            <th>Listing Items</th>
-                            <th>Delisting Items</th>
-                            <th>Delisting Items<br>(with Inventory)</th>
-                            <th>All Items</th>
+                            <th ng-repeat="(key,value) in ctrl.platformHeader">{{key}}</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="(key,value) in ctrl.platformInfo">
-                            <td>{{key}}</td>
-                            <td ng-repeat="platformAmount in value">{{platformAmount.amountVal}}</td>
-                            <td>12</td>
-                            <td>12</td>
+                            <td>{{ctrl.usPlatforms[key]}}</td>
+                            <th ng-repeat="(key1,value1) in ctrl.platformHeader">
+                                <a href="javascript:void(0);" ng-click="ctrl.linkToSearch(value[value1])">{{value[value1].amountVal || 0}}</a>
+                            </th>
                         </tr>
                     </tbody>
                 </table>
-
             </div>
         </div>
     </div>

@@ -7,6 +7,8 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.components.solr.query.SimpleQueryBean;
+import com.voyageone.components.solr.service.CmsProductSearchService;
 import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumDataAmountType;
 import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumFeedSum;
 import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumPlatformInfoSum;
@@ -21,6 +23,9 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.solr.core.query.Criteria;
+import org.springframework.data.solr.core.query.Join;
+import org.springframework.data.solr.core.query.SolrDataQuery;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -44,6 +49,8 @@ public class UsaCmsDataAmountJobService extends BaseCronTaskService {
     private CmsBtDataAmountDao cmsBtDataAmountDao;
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
+    @Autowired
+    CmsProductSearchService cmsProductSearchService;
 
     /**
      * 获取子系统
@@ -76,6 +83,11 @@ public class UsaCmsDataAmountJobService extends BaseCronTaskService {
         feedStatusList.add(CmsConstants.UsaFeedStatus.New);
         feedStatusList.add(CmsConstants.UsaFeedStatus.Pending);
         feedStatusList.add(CmsConstants.UsaFeedStatus.Ready);
+        // 待统计的Product平台状态
+        List<CmsConstants.PlatformStatus> platformStatusList = new ArrayList<>();
+        platformStatusList.add(CmsConstants.PlatformStatus.Pending);
+        platformStatusList.add(CmsConstants.PlatformStatus.OnSale);
+        platformStatusList.add(CmsConstants.PlatformStatus.InStock);
 
         // 首先汇总Feed信息, 各状态<New,Pending,Ready> items count
         List<JongoAggregate> aggregateList = new ArrayList<>();
@@ -114,11 +126,10 @@ public class UsaCmsDataAmountJobService extends BaseCronTaskService {
         List<TypeChannelBean> cartsBeanList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, "en");
         // 过滤到美国平台, cartId<20
         List<TypeChannelBean> usaCartBeanList = cartsBeanList.stream().filter(
-                cart -> StringUtils.isNotBlank(cart.getValue()) && Integer.valueOf(cart.getValue()) < 20).collect(Collectors.toList());
+                cart -> StringUtils.isNotBlank(cart.getValue()) && Integer.valueOf(cart.getValue()) > 0 && Integer.valueOf(cart.getValue()) < 20).collect(Collectors.toList());
         if (CollectionUtils.isNotEmpty(usaCartBeanList)) {
             for (TypeChannelBean usaCart : usaCartBeanList) {
-                // 统计各平台各状态商品数
-                List<JongoAggregate> productAggregateList = new ArrayList<>();
+                /*List<JongoAggregate> productAggregateList = new ArrayList<>();
                 productAggregateList.add(new JongoAggregate(
                         String.format("{$match:{\"channelId\":#,\"usPlatforms.P%s\":{$exists:true},\"usPlatforms.P%s.status\":{$exists:true}}}", usaCart.getValue(), usaCart.getValue()),
                         channelId));
@@ -130,11 +141,11 @@ public class UsaCmsDataAmountJobService extends BaseCronTaskService {
 
                     System.out.println(String.format("平台%s状态: %s, 总条数: %s", usaCart.getName(), pStatus, pStatusCount));
 
-//                    CmsConstants.ProductStatus productStatus = CmsConstants.ProductStatus.valueOf(pStatus);
-//                    // 找不到平台状态枚举值则直接跳过
-//                    if (productStatus == null) {
-//                        continue;
-//                    }
+                    CmsConstants.ProductStatus productStatus = CmsConstants.ProductStatus.valueOf(pStatus);
+                    // 找不到平台状态枚举值则直接跳过
+                    if (productStatus == null) {
+                        continue;
+                    }
 
                     // insert or update 各平台各状态商品的统计数
                     CmsBtDataAmountModel platformAmountQueryModel = new CmsBtDataAmountModel();
@@ -160,6 +171,46 @@ public class UsaCmsDataAmountJobService extends BaseCronTaskService {
                         updateModel.setAmountName(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getAmountName(), pStatus));
                         updateModel.setAmountVal(String.valueOf(pStatusCount));
                         updateModel.setComment(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getComment(), usaCart.getName()));
+                        updateModel.setModifier(getTaskName());
+                        updateModel.setModified(new Date());
+                        cmsBtDataAmountDao.update(updateModel);
+                    }
+                }*/
+
+                // 统计各状态Product数目
+                for (CmsConstants.PlatformStatus platformStatus : platformStatusList) {
+                    Criteria criteria = new Criteria("productChannel").is(channelId);
+                    criteria = criteria.and("P" + usaCart.getValue() + "_pStatus").is(platformStatus.name());
+                    long total = cmsProductSearchService.countByQuery(new SimpleQueryBean(criteria));
+
+                    // insert or update 各平台各状态商品的统计数
+                    CmsBtDataAmountModel platformAmountQueryModel = new CmsBtDataAmountModel();
+                    platformAmountQueryModel.setChannelId(channelId);
+                    platformAmountQueryModel.setCartId(Integer.valueOf(usaCart.getValue()));
+                    platformAmountQueryModel.setAmountName(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getAmountName(), platformStatus.name()));
+
+                    CmsBtDataAmountModel platformAmountModel = cmsBtDataAmountDao.selectOne(platformAmountQueryModel);
+                    if (platformAmountModel == null) {
+                        platformAmountModel = new CmsBtDataAmountModel();
+                        platformAmountModel.setChannelId(channelId);
+                        platformAmountModel.setCartId(Integer.valueOf(usaCart.getValue()));
+                        platformAmountModel.setAmountName(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getAmountName(), platformStatus.name()));
+                        platformAmountModel.setAmountVal(String.valueOf(total));
+                        platformAmountModel.setComment(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getComment(), usaCart.getName()));
+                        platformAmountModel.setDataAmountTypeId(EnumDataAmountType.UsaPlatformSum.getId());
+                        platformAmountModel.setLinkUrl(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getLinkUrl());
+                        platformAmountModel.setLinkParameter(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getLinkParameter(), usaCart.getValue(), platformStatus.name()));
+                        platformAmountModel.setCreater(getTaskName());
+                        platformAmountModel.setCreated(new Date());
+                        cmsBtDataAmountDao.insert(platformAmountModel);
+                    } else {
+                        CmsBtDataAmountModel updateModel = new CmsBtDataAmountModel();
+                        updateModel.setId(platformAmountModel.getId());
+                        updateModel.setAmountName(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getAmountName(), platformStatus.name()));
+                        updateModel.setAmountVal(String.valueOf(total));
+                        updateModel.setComment(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getComment(), usaCart.getName()));
+                        updateModel.setLinkUrl(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getLinkUrl());
+                        updateModel.setLinkParameter(String.format(EnumPlatformInfoSum.USA_CMS_PLATFORMS_AMOUNT.getLinkParameter(), usaCart.getValue(), platformStatus.name()));
                         updateModel.setModifier(getTaskName());
                         updateModel.setModified(new Date());
                         cmsBtDataAmountDao.update(updateModel);

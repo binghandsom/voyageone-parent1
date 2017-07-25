@@ -18,6 +18,7 @@ import org.bson.Document;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.solr.core.query.Query;
+import org.springframework.data.solr.core.query.SolrDataQuery;
 import org.springframework.data.solr.core.query.result.Cursor;
 import org.springframework.data.solr.core.query.result.SolrResultPage;
 import org.springframework.stereotype.Service;
@@ -389,5 +390,9 @@ public class CmsProductSearchService extends BaseSearchService {
     <T> SolrResultPage<T> queryForSolrResultPage(Query query, final Class<T> clazz) {
         //noinspection unchecked
         return (SolrResultPage) getSolrTemplate().queryForPage(query, clazz);
+    }
+
+    public long countByQuery(SolrDataQuery query) {
+        return getSolrTemplate().count(query);
     }
 }

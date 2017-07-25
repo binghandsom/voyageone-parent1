@@ -45,7 +45,7 @@ public enum EnumPlatformInfoSum implements IEnumDataAmountSum {
     // =============================================================================================
     // =====================================美国CMS2 常量定义=========================================
     //==============================================================================================
-    USA_CMS_PLATFORMS_AMOUNT("%s Items", "", "", "", "Total product int Platform(%s)");
+    USA_CMS_PLATFORMS_AMOUNT("%s Items", "", "/product/usa/search", "{cartId:%s,platformStatus:'%s'}", "Total product int Platform(%s)");
 
 
     EnumPlatformInfoSum(String amountName, String strQuery, String linkUrl, String linkParameter, String comment) {
