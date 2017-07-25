@@ -1,0 +1,17 @@
+<div>
+    <script type="text/ng-template" id="priceTemplate.html">
+        <div class="panel panel-default">
+            <div class="panel-heading">{{ctrl.dynamicPopover.title}}</div>
+            <div class="panel-body">
+                <input type="number" class="form-control" ng-blur="ctrl.delivery()"
+                          ng-model="ctrl.price" >
+            </div>
+        </div>
+
+    </script>
+    <button uib-popover-template="ctrl.dynamicPopover.templateUrl"
+            popover-is-open="ctrl.isOpen" type="button" class="btn btn-default"
+            title="{{ctrl.$scope.data.common.fields.originalTitleCn}}"
+            ng-transclude>
+    </button>
+</div>
