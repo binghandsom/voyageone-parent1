@@ -13,6 +13,9 @@ define([
             this.productInfo = $scope.productInfo;
             this.cartInfo = $scope.cartInfo;
             this.platform = {};
+
+            // 平台状态
+            this.platformStatus = this.detailDataService.platformStatus;
         }
 
         init() {

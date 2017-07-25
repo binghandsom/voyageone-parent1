@@ -36,6 +36,8 @@ define([
             this.showModel = true;
             // SKU
             this.selAllSkuFlag = false;
+            // 平台状态
+            this.platformStatus = this.detailDataService.platformStatus;
         }
 
         init(){

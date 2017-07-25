@@ -11,6 +11,13 @@ define([
             this.$usProductDetailService = $usProductDetailService;
             this.$productDetailService = $productDetailService;
             this.$q = $q;
+
+            // 美国各平台状态
+            this.platformStatus = {
+                Pending:"Pending",
+                OnSale:"List",
+                InStock:"Delist"
+            };
         }
 
         getProductInfo(upEntity) {
