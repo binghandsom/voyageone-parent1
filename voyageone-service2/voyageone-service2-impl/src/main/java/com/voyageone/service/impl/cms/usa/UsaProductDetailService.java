@@ -174,6 +174,7 @@ public class UsaProductDetailService extends BaseService {
      * @return 产品平台信息
      */
     public Map<String, Object> getProductPlatform(String channelId, Long prodId, Integer cartId) {
+        Map<String, Object> result = new HashMap<>();
         CmsBtProductModel cmsBtProduct = productService.getProductById(channelId, prodId);
         CmsBtProductModel_Platform_Cart platformCart = cmsBtProduct.getUsPlatform(cartId);
         if (platformCart == null) {
@@ -190,8 +191,10 @@ public class UsaProductDetailService extends BaseService {
         FieldUtil.setFieldsValueFromMap(listItemField, platformCart.getFields());
         // added by morse.lu 2016/09/13 end
         platformCart.put("platformFields", listItemField);
+        result.put("platform", platformCart);
+        result.put("productComm", cmsBtProduct.getCommon());
 
-        return platformCart;
+        return result;
     }
 
 

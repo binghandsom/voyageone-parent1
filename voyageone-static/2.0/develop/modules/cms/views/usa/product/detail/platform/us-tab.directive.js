@@ -35,7 +35,8 @@ define([
             }).then(res => {
 
                 if (res.data) {
-                    self.platform = res.data;
+                    self.platform = res.data.platform;
+                    self.productComm = res.data.productComm;
 
                     // SKU 是否全选
                     let flag = true;
