@@ -361,7 +361,9 @@ define([
                     self.clearSelList();
                     self._selall = 0;
                 }
-                self.notify.success('Update Success');
+                if(res.type == 1){
+
+                }
             });
         }
 
@@ -449,7 +451,9 @@ define([
                     self.clearSelList();
                     self._selall = 0;
                 }
-                self.notify.success('Update Success');
+                if(res.type == 1){
+
+                }
             });
         }
 
