@@ -33,6 +33,9 @@ define([
                 currBoxImage:{image2:""},
                 urlkey:""
             };
+
+            //平台类目
+            this.categorys = {};
             this.showModel = true;
             // SKU
             this.selAllSkuFlag = false;
@@ -87,6 +90,19 @@ define([
 
                 console.log(res.data);
 
+
+                self.categorys.priceGrabberCategory = self.searchField("priceGrabberCategory", self.productComm.schemaFields);
+                self.categorys.googleDepartment = self.searchField("googleDepartment", self.productComm.schemaFields);
+                self.categorys.googleCategory = self.searchField("googleCategory", self.productComm.schemaFields);
+
+            });
+        }
+
+        popCategory(option, attrName) {
+            let self = this;
+
+            self.popups.openAmazonCategory(option).then(res => {
+                self.categorys[attrName].value = res.catPath;
             });
         }
 
