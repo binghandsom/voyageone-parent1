@@ -2,7 +2,8 @@
  * @description 美国各平台详情页
  */
 define([
-    'cms'
+    'cms',
+    'modules/cms/directives/platFormStatus.directive'
 ], function (cms) {
 
     class usTabController {
@@ -50,6 +51,8 @@ define([
                 }
 
                 self.selAllSkuFlag = flag;
+
+                console.log(res);
 
             })
         }
