@@ -27,7 +27,7 @@ define([
                 "Pending Items":"Pending Items",
                 "Listing Items":"OnSale Items",
                 "Delisting Items":"InStock Items",
-                "Delisting Items(with Inventory)":"InStock Items(with Inventory)",
+                // "Delisting Items(with Inventory)":"InStock Items(with Inventory)",
                 "All Items":"All Items"
             };
 
