@@ -33,6 +33,9 @@ define([
                 currBoxImage:{image2:""},
                 urlkey:""
             };
+
+            //平台类目
+            this.categorys = {};
             this.showModel = true;
             // SKU
             this.selAllSkuFlag = false;
@@ -49,6 +52,7 @@ define([
                 self.platform = res.data.platform;
                 self.productComm = res.data.productComm;
                 self.freeTagList = res.data.freeTagList;
+
                 let freeTags = [];
                 _.each(self.freeTagList, tag => {
                     freeTags.push(tag.tagPath);
@@ -85,11 +89,20 @@ define([
                 self.selAllSkuFlag = flag;
 
                 console.log(res.data);
-                // _.each(self.productComm.schemaFields, item => {
-                //     if (item.id =='images1' || item.id =='images2') {
-                //         console.log(item);
-                //     }
-                // });
+
+
+                self.categorys.priceGrabberCategory = self.searchField("priceGrabberCategory", self.productComm.schemaFields);
+                self.categorys.googleDepartment = self.searchField("googleDepartment", self.productComm.schemaFields);
+                self.categorys.googleCategory = self.searchField("googleCategory", self.productComm.schemaFields);
+
+            });
+        }
+
+        popCategory(option, attrName) {
+            let self = this;
+
+            self.popups.openAmazonCategory(option).then(res => {
+                self.categorys[attrName].value = res.catPath;
             });
         }
 
@@ -130,35 +143,12 @@ define([
 
             self.popups.openUsCategory(option).then(context => {
                 if(option.muiti){
-                    let categories = _.pluck(context, "catPath");
-                    _.extend(self.feed.attribute, {categories:categories});
-                    _.extend(self.feed, {categoriesTree:context});
+                    self.platform.sellerCarts = context;
                 }else{
 
                     let selNode = {pCatId:context.catId, pCatPath:context.catPath};
                     _.extend(self.platform, selNode);
-                    console.log(context);
-                    // _.extend(self.feed, {category: context.catPath, categoryCatId:context.catId});
-                    // if (!!context.mapping) {
-                    //     let seoInfo = {};
-                    //     if (!!context.mapping.seoTitle) {
-                    //         _.extend(seoInfo, {seoTitle: context.mapping.seoTitle});
-                    //     }
-                    //     if (!!context.mapping.seoKeywords) {
-                    //         _.extend(seoInfo, {seoKeywords: context.mapping.seoKeywords});
-                    //     }
-                    //     if (!!context.mapping.seoDescription) {
-                    //         _.extend(seoInfo, {seoDescription: context.mapping.seoDescription});
-                    //     }
-                    //     // amazon、googleCategory、googleDepartment、priceGrabber
-                    //     let category = {
-                    //         amazonBrowseTree:context.mapping.amazon,
-                    //         googleCategory:context.mapping.googleCategory,
-                    //         googleDepartment:context.mapping.googleDepartment,
-                    //         priceGrabberCategory:context.mapping.priceGrabber};
-                    //     _.extend(self.feed, category);
-                    //     _.extend(self.feed, seoInfo);
-                    // }
+
                 }
 
             });

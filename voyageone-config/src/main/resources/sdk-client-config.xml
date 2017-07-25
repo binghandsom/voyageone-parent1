@@ -10,7 +10,7 @@
         <constructor-arg ref="restTemplate"/>
         <!--<constructor-arg name="serverUrl" value="http://119.9.106.21:28080/rest"/>-->
         <constructor-arg name="serverUrl" value="http://localhost:8080/rest"/>
-        <!--<constructor-arg name="serverUrl" value="http://121.41.58.229:8081/rest"/>-->
+        <!--<constructor-arg name="serverUrl" value="http://10.0.1.68:8080/rest"/>-->
         <constructor-arg name="connectTimeout" value="3000"/>
         <!-- ms -->
         <constructor-arg name="readTimeout" value="60000"/>

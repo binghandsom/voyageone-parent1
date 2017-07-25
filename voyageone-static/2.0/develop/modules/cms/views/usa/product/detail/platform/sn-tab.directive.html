@@ -95,13 +95,13 @@
                                     <div class="row">
                                         <div class="col-md-4 text-right vo_reqfield">
                                             <button type="button" class="btn btn-info btn-pop"
-                                                    ng-click="ctrl.popUsCategory({cartId:1,from:ctrl.platform.pCatPath})">
+                                                    ng-click="ctrl.popUsCategory({cartId:8,from:ctrl.platform.platform.pCatPath})">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;SN Primary Category
                                             </button>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" title="{{ctrl.platform.pCatPath}}"
-                                                   name="pCatPath" ng-model="ctrl.platform.pCatPath" required readonly>
+                                            <input type="text" class="form-control" title="{{ctrl.platform.platform.pCatPath}}"
+                                                   name="pCatPath" ng-model="ctrl.platform.platform.pCatPath" required readonly>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -115,14 +115,14 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-4 text-right vo_unreqfield">
-                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory({cartId:1,froms:ctrl.platform.sellerCats,muiti:true})">
+                                            <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory({cartId:8,froms:ctrl.platform.sellerCarts,muiti:true})">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;SN Other Category
                                             </button>
                                         </div>
                                         <div class="col-md-6">
                                             <select name="categories" chosen multiple width="'100%'"
-                                                    ng-options="cat as cat.catPath for cat in ctrl.feed.categoriesTree"
-                                                    ng-model="ctrl.feed.categoriesTree"></select>
+                                                    ng-options="cat as cat.catPath for cat in ctrl.platform.sellerCarts"
+                                                    ng-model="ctrl.platform.sellerCarts"></select>
                                         </div>
                                     </div>
                                 </div>
@@ -135,8 +135,8 @@
                                             </button>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" title="{{ctrl.feed.googleCategory}}"
-                                                   name="googleCategory" ng-model="ctrl.feed.googleCategory" readonly>
+                                            <input type="text" class="form-control" title="{{ctrl.categorys.googleCategory.value}}"
+                                                   name="googleCategory" ng-model="ctrl.categorys.googleCategory.value" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -149,8 +149,8 @@
                                             </button>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" title="{{ctrl.feed.googleDepartment}}"
-                                                   name="googleDepartment" ng-model="ctrl.feed.googleDepartment" readonly>
+                                            <input type="text" class="form-control" title="{{ctrl.categorys.googleDepartment.value}}"
+                                                   name="googleDepartment" ng-model="ctrl.categorys.googleDepartment.value" readonly>
                                         </div>
                                     </div>
                                 </div>
@@ -163,8 +163,8 @@
                                             </button>
                                         </div>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" title="{{ctrl.feed.priceGrabberCategory}}"
-                                                   name="priceGrabberCategory" ng-model="ctrl.feed.priceGrabberCategory" readonly>
+                                            <input type="text" class="form-control" title="{{ctrl.categorys.priceGrabberCategory.value}}"
+                                                   name="priceGrabberCategory" ng-model="ctrl.categorys.priceGrabberCategory.value" readonly>
                                         </div>
                                     </div>
                                 </div>
