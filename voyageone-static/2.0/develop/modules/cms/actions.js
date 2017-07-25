@@ -854,6 +854,7 @@ define(function () {
                 root: '/cms/usa/product',
                 getProductInfo: 'getProductInfo',
                 updateCommonProductInfo:"updateCommonProductInfo",
+                updateProductPlatform:"updateProductPlatform",
                 updateOnePrice:'updateOnePrice',
                 getAllPlatformsPrice:'getAllPlatformsPrice',
                 getProductPlatform:'getProductPlatform',

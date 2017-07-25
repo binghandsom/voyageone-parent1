@@ -7,9 +7,11 @@ define([
 
     class usTabController {
 
-        constructor($scope,detailDataService) {
+        constructor($scope,detailDataService,$usProductDetailService,notify) {
             this.$scope = $scope;
             this.detailDataService = detailDataService;
+            this.$usProductDetailService = $usProductDetailService;
+            this.notify = notify;
             this.productInfo = $scope.productInfo;
             this.cartInfo = $scope.cartInfo;
 
@@ -44,10 +46,7 @@ define([
                         }
                     });
                     self.selAllSkuFlag = flag;
-                    console.log(self.platform);
                 }
-                // self.platform.platformFields = res.data.platformFields;
-                // self.platform.fields = res.data.fields;
             })
         }
 
@@ -78,19 +77,13 @@ define([
             if (status) {
                 platform.pStatus = status;
             }
-            let productComm = angular.copy(self.productComm);
-            productComm.fields.images1 = self.imageView.images;
-            productComm.fields.images2 = self.imageView.boxImages;
             let parameter = {
                 prodId:self.$scope.productInfo.productId,
                 data:{
-                    mastData:self.mastData,
-                    platform:platform,
-                    productComm:productComm,
-                    freeTags:self.freeTags
+                    platform:platform
                 }
             };
-            this.$usProductDetailService.updateCommonProductInfo(parameter).then(res => {
+            this.$usProductDetailService.updateProductPlatform(parameter).then(res => {
                 if (res.data) {
                     self.notify.success("Save success.");
                     self.platform.pStatus = status;
