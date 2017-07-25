@@ -25,7 +25,7 @@
                            <td class="text-right">-</td>
                            <td class="text-right">-</td>
                            <td class="text-center">
-                               <button type="button" class="btn btn-info btn-pop">save</button>
+                               <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.save(key,platform)">save</button>
                            </td>
                         </tr>
                     </tbody>
@@ -49,7 +49,7 @@
                                 <span ng-if="platform.priceMsrpSt != platform.priceMsrpEd">
                                     {{platform.priceMsrpSt}}~{{platform.priceMsrpEd}}
                                 </span>
-                                <input type="number" class="form-control" value="{{platform.priceMsrpSt}}" ng-if="latform.priceMsrpSt == platform.priceMsrpEd"
+                                <input type="number" class="form-control" ng-if="platform.priceMsrpSt == platform.priceMsrpEd"
                                        ng-model="platform.priceMsrpSt" ng-change="platform.priceMsrpEd = platform.priceMsrpSt">
                             </td>
                             <td class="text-center">
@@ -62,7 +62,7 @@
                             <td class="text-right">
                                 <price prices = "[platform.priceSaleSt,platform.priceSaleEd]"></price>
                             <td class="text-center">
-                                <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.save(key,platform.priceMsrpSt,platform.priceRetailSt)">save</button>
+                                <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.save(key,platform)">save</button>
                             </td>
                         </tr>
                     </tbody>
