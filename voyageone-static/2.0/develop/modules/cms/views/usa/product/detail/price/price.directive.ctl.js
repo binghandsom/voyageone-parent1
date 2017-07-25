@@ -8,46 +8,43 @@ define([
     'modules/cms/directives/platFormStatus.directive'
 ], function (cms) {
 
-    class PriceTabController{
+    class PriceTabController {
 
-        constructor($scope, detailDataService){
+        constructor($scope, detailDataService, notify) {
             this.$scope = $scope;
             this.detailDataService = detailDataService;
             this.productInfo = $scope.productInfo;
             this.usPriceList = {};
             this.priceList = {};
-            //定义修改价格参数
-            this.saveParam = {
-                cartId:"",
-                prodId:"",
-                clientMsrpPrice:"",
-                clientRetailPrice:""
-            };
+            this.notify = notify;
         }
 
-        init(){
+        init() {
             this.getData();
         }
-        getData(){
+
+        getData() {
             let self = this;
             self.detailDataService.getAllPlatformsPrice(self.productInfo.productId).then(res => {
-                //中国平台
                 self.usPriceList = res.data.allUsPriceList;
                 self.priceList = res.data.allPriceList;
             });
         }
-        //修改价格
-        save(cartId,priceMsrpSt,priceRetailSt){
-            let self = this;
-            self.saveParam.cartId = cartId + "";
-            self.saveParam.prodId = self.productInfo.productId + "";
-            self.saveParam.clientMsrpPrice = priceMsrpSt + "";
-            self.saveParam.clientRetailPrice = priceRetailSt + "";
-            self.detailDataService.updateOnePrice(self.saveParam).then(res =>{
 
+        //修改价格
+        save(cartId, platform) {
+            let self = this;
+
+            self.detailDataService.updateOnePrice({
+                cartId: cartId + "",
+                prodId: self.productInfo.productId + "",
+                clientMsrpPrice: platform.priceMsrpSt + "",
+                clientRetailPrice: platform.priceRetailSt + ""
+            }).then(res => {
+                self.success('Update Success');
+                //刷新页面
+                self.getData();
             });
-            //刷新页面
-            self.getData();
 
         }
 
