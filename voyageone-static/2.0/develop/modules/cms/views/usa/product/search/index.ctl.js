@@ -118,10 +118,9 @@ define([
                     self.customColumns.selPlatformSales = res.data.selPlatformSales;
                     // console.log(res.data);
 
+                    self.search();
                 }
             });
-
-            this.search();
         }
 
         search() {
@@ -405,8 +404,7 @@ define([
 
         canCategory() {
             const arr = ['8', '12', '6', '11', '5'];
-
-            return arr.indexOf(this.searchInfo.cartId) < 0;
+            return arr.indexOf(this.searchInfo.cartId + "") < 0;
         }
 
         batchCategory(){
@@ -550,6 +548,7 @@ define([
                             // notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
                             self.notify.success("Set free tags succeeded.");
                             self.clearSelList();
+                            self._selall = false;
                             self.search();
                         })
                     });
