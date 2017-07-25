@@ -9,11 +9,11 @@ define([
     'modules/cms/directives/navBar.directive'
 ], function (cms,cartEntity) {
 
-    console.log('cartEntity',cartEntity);
+    // console.log('cartEntity',cartEntity);
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2,notify) {
+        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2,notify,$routeParams) {
             let self = this;
 
             self.popups = popups;
@@ -25,6 +25,7 @@ define([
             self.advanceSearch = advanceSearch;
             self.$searchAdvanceService2 = $searchAdvanceService2;
             self.notify = notify;
+            self.$routeParams = $routeParams;
 
             self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
                 self.search();
@@ -36,6 +37,18 @@ define([
                 pCatPathType:1,
                 shopCatType:1
             };
+            if (self.$routeParams.code) {
+                let routePrams = eval('(' + self.$routeParams.code + ')');
+                let cartId = routePrams.cartId;
+                let platformStatus = routePrams.platformStatus;
+                if (cartId && platformStatus) {
+                    self.searchInfo.cartId = cartId;
+                    if (!self.searchInfo.platformStatus) {
+                        self.searchInfo.platformStatus = {};
+                    }
+                    self.searchInfo.platformStatus[platformStatus] = true;
+                }
+            }
             // 检索结果
             self.searchResult = {
                 productList: []
@@ -91,7 +104,7 @@ define([
                     self.customColumns.selCommonProps = self.getSelectedProps(res.data.commonProps,res.data.selCommonProps,'propId');
                     self.customColumns.selPlatformAttributes = self.getSelectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
                     self.customColumns.selPlatformSales = res.data.selPlatformSales;
-                    console.log(res.data);
+                    // console.log(res.data);
 
                 }
             });
