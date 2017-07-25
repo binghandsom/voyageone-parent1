@@ -95,7 +95,6 @@ define([
 
         // Save
         save(status) {
-            console.log(status);
             let self = this;
             let platform = angular.copy(self.platform);
             if (status) {

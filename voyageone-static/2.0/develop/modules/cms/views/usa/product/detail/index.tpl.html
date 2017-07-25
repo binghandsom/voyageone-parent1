@@ -23,9 +23,9 @@
             </uib-tab>
 
             <!---------------------------------------------------平台产品详情页面(不包含独立官网)---------------------------------->
-            <uib-tab ng-repeat="platformType in ctrl.platformTypes"
+            <uib-tab ng-repeat="platformType in ctrl.platformTypes" ng-if="platformType.value != ctrl.mainCartId"
                      ng-init="$active = (platformType.value == ctrl.defaultCartId)" active="$active">
-                <tab-heading>{{platformType.name}}详情</tab-heading>
+                <tab-heading>{{platformType.name}}</tab-heading>
 
                 <div>
                     <us-tab product-info="ctrl.product" cart-info="platformType"></us-tab>

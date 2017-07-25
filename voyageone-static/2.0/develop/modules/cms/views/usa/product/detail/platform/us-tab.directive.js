@@ -13,8 +13,6 @@ define([
             this.productInfo = $scope.productInfo;
             this.cartInfo = $scope.cartInfo;
 
-            console.log(this.cartInfo);
-
             // 平台信息
             this.platform = {};
 
@@ -71,6 +69,33 @@ define([
                 });
                 self.selAllSkuFlag = !notSelOne;
             }
+        }
+
+        // Save
+        save(status) {
+            let self = this;
+            let platform = angular.copy(self.platform);
+            if (status) {
+                platform.pStatus = status;
+            }
+            let productComm = angular.copy(self.productComm);
+            productComm.fields.images1 = self.imageView.images;
+            productComm.fields.images2 = self.imageView.boxImages;
+            let parameter = {
+                prodId:self.$scope.productInfo.productId,
+                data:{
+                    mastData:self.mastData,
+                    platform:platform,
+                    productComm:productComm,
+                    freeTags:self.freeTags
+                }
+            };
+            this.$usProductDetailService.updateCommonProductInfo(parameter).then(res => {
+                if (res.data) {
+                    self.notify.success("Save success.");
+                    self.platform.pStatus = status;
+                }
+            });
         }
 
     }
