@@ -53,14 +53,14 @@ define([
         }
 
         //修改价格
-        save(cartId, platform) {
+        save(cartId, priceMsrpSt,priceRetailSt) {
             let self = this;
             self.saveParam.cartId = cartId + "";
             self.saveParam.prodId = self.productInfo.productId + "";
             self.saveParam.clientMsrpPrice = priceMsrpSt + "";
             self.saveParam.clientRetailPrice = priceRetailSt + "";
             self.detailDataService.updateOnePrice([self.saveParam]).then(res =>{
-                self.success('Update Success');
+                self.notify.success('Update Success');
                 self.getData();
             });
             //刷新页面
@@ -97,40 +97,10 @@ define([
                 self.manySalePrice = "";
                 self.manyUsMsrp = "";
                 self.manyUsNetPrice = "";
-                self.success('Update Success');
+                self.notify.success('Update Success');
                 self.getData();
             });
         }
-
-        //批量编辑
-       /* changeAll(type,value){
-            let self = this;
-            if(type == "manyMsrp"){
-                _.each(self.usPriceList, item => {
-                    item.priceMsrpSt = value;
-                    item.priceMsrpEd = value;
-                });
-            }
-            if(type == "manySalePrice"){
-                _.each(self.usPriceList, item => {
-                    item.priceRetailSt = value;
-                    item.priceRetailEd = value;
-                });
-            }
-            if(type == "manyUsMsrp"){
-                _.each(self.priceList, item => {
-                    item.priceMsrpSt = value;
-                    item.priceMsrpEd = value;
-                });
-            }
-            if(type == "manyUsNetPrice"){
-                _.each(self.priceList, item => {
-                    item.priceRetailSt = value;
-                    item.priceRetailEd = value;
-                });
-            }
-        }*/
-
 
     }
 
