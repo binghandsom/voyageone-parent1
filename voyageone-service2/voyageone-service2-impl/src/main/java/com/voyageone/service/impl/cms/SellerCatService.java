@@ -14,6 +14,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdShopService;
 import com.voyageone.components.tmall.service.TbItemSchema;
@@ -30,6 +31,7 @@ import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -489,6 +491,23 @@ public class SellerCatService extends BaseService {
     public CmsBtSellerCatModel findNode(List<CmsBtSellerCatModel> tree, String catName){
         if(tree == null) return null;
         return tree.stream().filter(item->item.getCatName().equals(catName)).findFirst().orElse(null);
+    }
+
+    public CmsBtProductModel_SellerCat getSellerCat(String channelId, Integer cartId, String category){
+        CmsBtProductModel_SellerCat sellerCat = new CmsBtProductModel_SellerCat();
+        List<CmsBtSellerCatModel> sellerCatModels = findNode(channelId, cartId, category);
+        if(ListUtils.isNull(sellerCatModels)) return null;
+        sellerCat.setcId(sellerCatModels.get(sellerCatModels.size() - 1).getCatId());
+        sellerCat.setcName(sellerCatModels.get(sellerCatModels.size() - 1).getCatName());
+        List<String> cIds = new ArrayList<>(sellerCatModels.size());
+        List<String> cNames = new ArrayList<>(sellerCatModels.size());
+        sellerCatModels.forEach(item -> {
+            cIds.add(item.getCatId());
+            cNames.add(item.getCatName());
+        });
+        sellerCat.setcIds(cIds);
+        sellerCat.setcNames(cNames);
+        return sellerCat;
     }
 
     /**
