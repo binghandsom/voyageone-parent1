@@ -1250,7 +1250,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     case SN:
                     case MSN:
                     case military:
-                        platform.setpCatId(feed.getCategoryCatId());
+                        CmsBtProductModel_SellerCat seller = sellerCatService.getSellerCat(feed.getChannelId(), SN.getValue(), feed.getCategory());
+                        if(seller != null){
+                            platform.setpCatId(seller.getcId());
+                        }
                         platform.setpCatPath(feed.getCategory());
                         platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
                         platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
