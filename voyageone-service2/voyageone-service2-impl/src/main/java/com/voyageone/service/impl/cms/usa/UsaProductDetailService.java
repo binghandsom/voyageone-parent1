@@ -196,14 +196,16 @@ public class UsaProductDetailService extends BaseService {
 
         List<Map<String, String>> sellers = new ArrayList<>();
         String pCatId = platformCart.getpCatId();
-        platformCart.getSellerCats().forEach(seller->{
-            if(seller.getcId().equals(pCatId)) {
-                Map<String, String> item = new HashMap<String, String>();
-                item.put("catId", seller.getcIds().stream().collect(Collectors.joining(">")));
-                item.put("catPath", seller.getcNames().stream().collect(Collectors.joining(">")));
-                sellers.add(item);
-            }
-        });
+        if(platformCart.getSellerCats() != null) {
+            platformCart.getSellerCats().forEach(seller -> {
+                if (!seller.getcId().equals(pCatId)) {
+                    Map<String, String> item = new HashMap<String, String>();
+                    item.put("catId", seller.getcIds().stream().collect(Collectors.joining(">")));
+                    item.put("catPath", seller.getcNames().stream().collect(Collectors.joining(">")));
+                    sellers.add(item);
+                }
+            });
+        }
         result.put("sellerCarts", sellers);
 
         return result;
