@@ -52,8 +52,6 @@ define([
 
                 self.selAllSkuFlag = flag;
 
-                console.log(res);
-
             })
         }
 

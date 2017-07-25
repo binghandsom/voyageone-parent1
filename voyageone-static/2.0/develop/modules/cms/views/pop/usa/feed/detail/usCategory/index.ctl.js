@@ -68,13 +68,17 @@ define([
                     return;
 
                 self.context.from.split(">").forEach((catPath, index) => {
-                    totalCategory[index].children.forEach((item) => {
-                        if (item.catName === catPath) {
-                            totalCategory[index].selectedCat = item;
-                            if (item.children.length > 0)
-                                totalCategory.push({index: totalCategory.length, children: item.children});
-                        }
-                    });
+
+                    if(totalCategory[index] && totalCategory[index].children){
+                        totalCategory[index].children.forEach((item) => {
+                            if (item.catName === catPath) {
+                                totalCategory[index].selectedCat = item;
+                                if (item.children.length > 0)
+                                    totalCategory.push({index: totalCategory.length, children: item.children});
+                            }
+                        });
+                    }
+
                 });
             }
 
