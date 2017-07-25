@@ -118,10 +118,9 @@ define([
                     self.customColumns.selPlatformSales = res.data.selPlatformSales;
                     // console.log(res.data);
 
+                    self.search();
                 }
             });
-
-            this.search();
         }
 
         search() {
