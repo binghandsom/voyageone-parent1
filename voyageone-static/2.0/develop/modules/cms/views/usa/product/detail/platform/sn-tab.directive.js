@@ -88,9 +88,6 @@ define([
                 });
                 self.selAllSkuFlag = flag;
 
-                console.log(res.data);
-
-
                 self.categorys.priceGrabberCategory = self.searchField("priceGrabberCategory", self.productComm.schemaFields);
                 self.categorys.googleDepartment = self.searchField("googleDepartment", self.productComm.schemaFields);
                 self.categorys.googleCategory = self.searchField("googleCategory", self.productComm.schemaFields);
