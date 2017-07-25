@@ -733,16 +733,16 @@ public class UsaProductDetailService extends BaseService {
                 Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
                 //美国平台参数
                 if (MapUtils.isNotEmpty(usPlatforms)) {
-                    HashMap<String, Map<String, String>> allUsPriceList = new HashMap<>();
+                    HashMap<String, Map<String, Object>> allUsPriceList = new HashMap<>();
                     for (Map.Entry entry : usPlatforms.entrySet()) {
                         String key = (String) entry.getKey();
                         CmsBtProductModel_Platform_Cart value = (CmsBtProductModel_Platform_Cart) entry.getValue();
 
-                        HashMap<String, String> priceMap = new HashMap<>();
-                        priceMap.put("priceMsrpSt", value.getpPriceMsrpSt().toString());
-                        priceMap.put("priceMsrpEd", value.getpPriceMsrpEd().toString());
-                        priceMap.put("priceRetailSt", value.getpPriceRetailSt().toString());
-                        priceMap.put("priceRetailEd", value.getpPriceRetailEd().toString());
+                        HashMap<String, Object> priceMap = new HashMap<>();
+                        priceMap.put("priceMsrpSt", value.getpPriceMsrpSt());
+                        priceMap.put("priceMsrpEd", value.getpPriceMsrpEd());
+                        priceMap.put("priceRetailSt", value.getpPriceRetailSt());
+                        priceMap.put("priceRetailEd", value.getpPriceRetailEd());
                         priceMap.put(key.replace("P", ""), namesMap.get(key.replace("P", "")));
 
                         priceMap.put("cartName",namesMap.get(key.replace("P", "")));
@@ -757,19 +757,19 @@ public class UsaProductDetailService extends BaseService {
                 }
                 //中国平台参数
                 if (MapUtils.isNotEmpty(platforms)) {
-                    HashMap<String, Map<String, String>> allPriceList = new HashMap<>();
+                    HashMap<String, Map<String, Object>> allPriceList = new HashMap<>();
                     for (Map.Entry entry : platforms.entrySet()) {
                         String key = (String) entry.getKey();
                         CmsBtProductModel_Platform_Cart value = (CmsBtProductModel_Platform_Cart) entry.getValue();
                         if (!"0".equals(key.replace("P", ""))) {
-                            HashMap<String, String> priceMap = new HashMap<>();
-                            priceMap.put("priceMsrpSt", value.getpPriceMsrpSt().toString());
-                            priceMap.put("priceMsrpEd", value.getpPriceMsrpEd().toString());
-                            priceMap.put("priceRetailSt", value.getpPriceRetailSt().toString());
-                            priceMap.put("priceRetailEd", value.getpPriceRetailEd().toString());
+                            HashMap<String, Object> priceMap = new HashMap<>();
+                            priceMap.put("priceMsrpSt", value.getpPriceMsrpSt());
+                            priceMap.put("priceMsrpEd", value.getpPriceMsrpEd());
+                            priceMap.put("priceRetailSt", value.getpPriceRetailSt());
+                            priceMap.put("priceRetailEd", value.getpPriceRetailEd());
 
-                            priceMap.put("priceSaleSt", value.getpPriceSaleSt().toString());
-                            priceMap.put("priceSaleEd", value.getpPriceSaleEd().toString());
+                            priceMap.put("priceSaleSt", value.getpPriceSaleSt());
+                            priceMap.put("priceSaleEd", value.getpPriceSaleEd());
 
                             priceMap.put(key.replace("P", ""), namesMap.get(key.replace("P", "")));
 

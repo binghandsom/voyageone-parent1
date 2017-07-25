@@ -23,7 +23,7 @@ define([
                 basePriceType: "",
                 //操作类型+-*/=,平台点进去才能选=?
                 optionType: "",
-                value: "",
+                value:1,
                 //是否取整"1":是,"0":否,默认为取整
                 flag: "1",
                 //默认不全选,"1"为全选,"0"为不全选
@@ -48,17 +48,17 @@ define([
             self.paraMap.value += "";
             if(self.paraMap.codeList.length == 0){
                 self.alert("please choose at least one!!!");
-                self.$modalInstance.close({success: value});
+                self.$modalInstance.close({success: value,type:1});
                 return;
             }
             if(self.paraMap.changedPriceType == ""||self.paraMap.basePriceType == "" ||self.paraMap.optionType == "" || self.paraMap.value == ""){
                 self.alert("some value is empty!!!");
-                self.$modalInstance.close({success: value});
+                self.$modalInstance.close({success: value,type:1});
                 return;
             }else {
                 self.advanceSearch.updatePrice(self.paraMap).then((res) => {
                     //"1",需要清除勾选状态,"0"不需要清除勾选状态
-                    self.$modalInstance.close({success: value});
+                    self.$modalInstance.close({success: value,type:1});
                 });
             }
         }

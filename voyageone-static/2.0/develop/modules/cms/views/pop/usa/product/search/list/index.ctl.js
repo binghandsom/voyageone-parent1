@@ -45,12 +45,12 @@ define([
             self.paraMap.days += "";
             if(self.paraMap.codeList.length == 0){
                 self.alert("please choose at least one!!!");
-                self.$modalInstance.close({success: value});
+                self.$modalInstance.close({success: value,type:1});
                 return;
             }
             self.advanceSearch.listOrDelist(self.paraMap).then((res) => {
                 //"1",需要清除勾选状态,"0"不需要清除勾选状态
-                self.$modalInstance.close({success: value});
+                self.$modalInstance.close({success: value,type:1});
             });
         }
 
