@@ -370,7 +370,7 @@
                                         <th class="text-right">price($)</th>
                                     </thead>
                                     <tbody>
-                                        <tr ng-repeat="sku in ctrl.platform.skus">
+                                        <tr ng-repeat="sku in ctrl.platform.platform.skus">
                                             <td class="text-center">
                                                 <input type="checkbox" ng-model="sku.isSale" ng-change="ctrl.checkSelAllSku(sku)">
                                             </td>

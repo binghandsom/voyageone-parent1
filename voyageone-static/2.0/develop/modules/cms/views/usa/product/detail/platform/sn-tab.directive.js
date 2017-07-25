@@ -86,6 +86,9 @@ define([
                         flag = false;
                     }
                 });
+
+
+
                 self.selAllSkuFlag = flag;
 
                 self.categorys.priceGrabberCategory = self.searchField("priceGrabberCategory", self.productComm.schemaFields);

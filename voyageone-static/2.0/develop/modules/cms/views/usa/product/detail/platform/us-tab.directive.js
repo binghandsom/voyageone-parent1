@@ -7,11 +7,12 @@ define([
 
     class usTabController {
 
-        constructor($scope,detailDataService,$usProductDetailService,notify) {
+        constructor($scope,detailDataService,$usProductDetailService,notify,popups) {
             this.$scope = $scope;
             this.detailDataService = detailDataService;
             this.$usProductDetailService = $usProductDetailService;
             this.notify = notify;
+            this.popups = popups;
             this.productInfo = $scope.productInfo;
             this.cartInfo = $scope.cartInfo;
 
@@ -34,24 +35,39 @@ define([
                 prodId: self.productInfo.productId
             }).then(res => {
 
-                if (res.data) {
-                    self.platform = res.data.platform;
-                    self.productComm = res.data.productComm;
+                self.platform = res.data.platform;
+                self.productComm = res.data.productComm;
 
-                    // SKU 是否全选
-                    let flag = true;
-                    if(self.platform && self.platform.skus.length > 0){
-                        _.each(self.platform.skus, sku => {
-                            let isSale = sku.isSale;
-                            if (!isSale) {
-                                flag = false;
-                            }
-                        });
-                    }
-
-                    self.selAllSkuFlag = flag;
+                // SKU 是否全选
+                let flag = true;
+                if(self.platform && self.platform.skus.length > 0){
+                    _.each(self.platform.skus, sku => {
+                        let isSale = sku.isSale;
+                        if (!isSale) {
+                            flag = false;
+                        }
+                    });
                 }
+
+                self.selAllSkuFlag = flag;
+
             })
+        }
+
+        /**
+         * ctrl.popUsCategory({cartId:8,from:ctrl.platform.platform.pCatPath})
+         * @param option
+         */
+        popUsCategory() {
+            let self = this;
+
+            self.popups.openUsCategory({
+                cartId:self.cartInfo.value,
+                from:self.platform.pCatPath
+            }).then(res => {
+                self.platform.pCatPath = res.catPath;
+                self.platform.pCatId = res.catId;
+            });
         }
 
         // SKU可售选择
