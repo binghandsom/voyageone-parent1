@@ -297,6 +297,18 @@ define([
                 sku.isSale = self.selAllSkuFlag;
             });
         }
+        checkSelAllSku(sku) {
+            let self = this;
+            let isSale = sku.isSale;
+            if (!isSale) {
+                self.selAllSkuFlag = false;
+            } else {
+                let notSelOne = _.find(self.platform.skus, sku => {
+                    return !sku.isSale;
+                });
+                self.selAllSkuFlag = !notSelOne;
+            }
+        }
 
         // Move model
         moveModel() {
