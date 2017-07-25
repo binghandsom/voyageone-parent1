@@ -23,13 +23,13 @@ define([
                 basePriceType: "",
                 //操作类型+-*/=,平台点进去才能选=?
                 optionType: "",
-                value:1,
+                /*value:null,*/
                 //是否取整"1":是,"0":否,默认为取整
                 flag: "1",
                 //默认不全选,"1"为全选,"0"为不全选
                 selAll:"",
                 queryMap: {},
-                codeList: {},
+                codeList: [],
                 cartId: ""
             };
         }
@@ -37,26 +37,24 @@ define([
         //修改价格
         updatePrice(value) {
             let self = this;
+            let paraMap1 = angular.copy(self.paraMap);
+
             //如果选择固定值,默认操作为=
-            if (self.paraMap.basePriceType == "fixedValue") {
-                self.paraMap.optionType = "=";
+            if (paraMap1.basePriceType == "fixedValue") {
+                paraMap1.optionType = "=";
             }
-            self.paraMap.selAll = self.context.selAll + "";
-            self.paraMap.queryMap = self.context.queryMap;
-            self.paraMap.codeList = self.context.codeList;
-            self.paraMap.cartId = self.context.cartId + "";
-            self.paraMap.value += "";
-            if(self.paraMap.codeList.length == 0){
-                self.alert("please choose at least one!!!");
-                self.$modalInstance.close({success: value,type:1});
-                return;
-            }
-            if(self.paraMap.changedPriceType == ""||self.paraMap.basePriceType == "" ||self.paraMap.optionType == "" || self.paraMap.value == ""){
+            paraMap1.selAll = self.context.selAll + "";
+            paraMap1.queryMap = self.context.queryMap;
+            paraMap1.codeList = self.context.codeList;
+            paraMap1.cartId = self.context.cartId + "";
+            paraMap1.value += "";
+
+            if(paraMap1.changedPriceType == ""||paraMap1.basePriceType == "" ||paraMap1.optionType == "" || paraMap1.value == ""){
                 self.alert("some value is empty!!!");
-                self.$modalInstance.close({success: value,type:1});
+                self.$modalInstance.close({success: value,type:0});
                 return;
             }else {
-                self.advanceSearch.updatePrice(self.paraMap).then((res) => {
+                self.advanceSearch.updatePrice(paraMap1).then((res) => {
                     //"1",需要清除勾选状态,"0"不需要清除勾选状态
                     self.$modalInstance.close({success: value,type:1});
                 });
