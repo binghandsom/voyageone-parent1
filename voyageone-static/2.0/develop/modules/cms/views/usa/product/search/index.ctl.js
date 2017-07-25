@@ -524,6 +524,10 @@ define([
         addFreeTag () {
             let self = this;
             let selCodeList = self.getSelectedProduct('code');
+            if (!self._selall && _.size(selCodeList) == 0) {
+                self.alert("Please select at least one record.");
+                return;
+            }
             let params = {
                 orgFlg: '2',
                 selTagType: '6',
