@@ -40,12 +40,15 @@ define([
 
                     // SKU 是否全选
                     let flag = true;
-                    _.each(self.platform.skus, sku => {
-                        let isSale = sku.isSale;
-                        if (!isSale) {
-                            flag = false;
-                        }
-                    });
+                    if(self.platform && self.platform.skus.length > 0){
+                        _.each(self.platform.skus, sku => {
+                            let isSale = sku.isSale;
+                            if (!isSale) {
+                                flag = false;
+                            }
+                        });
+                    }
+
                     self.selAllSkuFlag = flag;
                 }
             })
