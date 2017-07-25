@@ -113,9 +113,9 @@ public class UsaCmsProductDetailController extends CmsController {
 
     //单个修改价格
     @RequestMapping(value = UsaCmsUrlConstants.PRODUCT.UPDATE_ONE_PRICE)
-    public AjaxResponse updateOnePrice(@RequestBody Map params) {
+    public AjaxResponse updateOnePrice(@RequestBody List<Map<String, Object>> lists) {
         UserSessionBean user = getUser();
-        usaProductDetailService.updateOnePrice(params,user.getSelChannelId(),user.getUserName());
+        usaProductDetailService.updateOnePrice(lists,user.getSelChannelId(),user.getUserName());
         // 返回用户信息
         return success(null);
     }
