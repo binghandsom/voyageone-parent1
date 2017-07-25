@@ -193,7 +193,7 @@
         <task:scheduled ref="CmsCheckProductIsRightJob" method="run" cron="0 30 20 * * ?"/>
 
         <!-- 美国CMS2 Home页汇总分类信息Job -->
-        <task:scheduled ref="UsaCmsDataAmountJob" method="run" cron="0 0/1 * * * ?"/>
+        <task:scheduled ref="UsaCmsDataAmountJob" method="run" cron="0 0 0/1 * * ?"/>
 
     </task:scheduled-tasks>
 
