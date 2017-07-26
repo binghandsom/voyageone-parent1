@@ -34,7 +34,7 @@
             <div class="panel panel-default m-t-md" id="topProducts">
                 <div class="panel-body top-area">
                     <ul class="list-inline" sv-root sv-part="ctrl.topList">
-                        <li class="jm-sortable-product top-element" ng-repeat="product in ctrl.topList" sv-element="{containment:'#topProducts'}">
+                        <li class="jm-sortable-product top-element" ng-repeat="product in ctrl.topList" sv-element="{containment:'#topProducts'}" style="width: 250px;">
                             <div class="jm-sortable-product-handle cur-m" style="min-height: 180px">
                                 <div class="row" style="height: 24px">
                                     <div class="col-sm-8">
@@ -71,7 +71,7 @@
                                     </div>
                                 </div>
                                 <div class="row m-t-tx">
-                                    <ul class="col-sm-6 col-md-offset-6 list-inline text-right arrow-button">
+                                    <ul class="col-sm-8 col-md-offset-4 list-inline text-right arrow-button">
                                         <li>
                                             <button class="opacityBtn" ng-click="ctrl.moveProduct($index, ctrl.moveKeys.upToTop)" ng-disabled="$first" disabled="disabled"><i class="fa fa-fast-backward"></i></button>
                                         </li>
