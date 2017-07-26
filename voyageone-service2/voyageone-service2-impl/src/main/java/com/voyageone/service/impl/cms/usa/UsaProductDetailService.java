@@ -654,6 +654,7 @@ public class UsaProductDetailService extends BaseService {
                                 updateMap.put("platforms.P" + cartId + ".skus.$.priceRetail", clientRetailPrice);
                                 //修改priceDiffFlg
                                 //调用接口计算priceDiffFlg的值
+                                sku.setAttribute("priceRetail", clientRetailPrice);
                                 String priceDiffFlg = priceService.getPriceDiffFlg(channelId, sku, cartId);
                                 updateMap.put("platforms.P" + cartId + ".skus.$.priceDiffFlg", priceDiffFlg);
 
