@@ -682,7 +682,7 @@ public class UsaProductDetailService extends BaseService {
                         //更新价格履历
                         List<String> skus1 = new ArrayList<>();
                         skus.forEach(sku -> skus1.add(sku.getStringAttribute("skuCode")));
-                        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus1, channelId, prodId, cartId, userName, "产品编辑页面,手动修改价格");
+                        cmsBtPriceLogService.addLogForSkuListAndCallSyncPriceJob(skus1, channelId, prodId, cartId, userName, "新版CMS,美国平台,产品编辑页面,手动修改价格");
                     }
                 }
             }
