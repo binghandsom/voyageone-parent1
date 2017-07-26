@@ -80,14 +80,12 @@ define([
 
                 // SKU 是否全选
                 let flag = true;
-                _.each(self.platform.skus, sku => {
+                _.each(self.platform.platform.skus, sku => {
                     let isSale = sku.isSale;
                     if (!isSale) {
                         flag = false;
                     }
                 });
-
-
 
                 self.selAllSkuFlag = flag;
 
