@@ -1345,8 +1345,8 @@ public class CmsProductDetailService extends BaseViewService {
         storeStockDetailRequest.setSubChannelId(productInfo.getOrgChannelId());
         storeStockDetailRequest.setItemCode(code);
         /*调用wms接口,获取库存详情*/
-        GetStoreStockDetailResponse stockDetail = voApiClient.execute(storeStockDetailRequest);
-        //GetStoreStockDetailResponse stockDetail = null;
+        //GetStoreStockDetailResponse stockDetail = voApiClient.execute(storeStockDetailRequest);
+        GetStoreStockDetailResponse stockDetail = null;
         Map<String, String> sizeMap;
         try {
             sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(),
@@ -1362,10 +1362,10 @@ public class CmsProductDetailService extends BaseViewService {
        // getStoreStockDetailRequest2.setItemCode(code);
         //getStoreStockDetailRequest2.setIncludeAllStores(true);
         getStoreStockDetailRequest2.setSkuList(skuList);
-        /*String json = "{\"code\":\"0\",\"message\":null,\"data\":{\"header\":{\"supplier\":[\"total\",\"usa\"],\"store\":[\"LA\",\"SH\"],\"base\":[\"sku\",\"origSize\",\"saleSize\",\"total\"]},\"stocks\":[{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[5,5]},\"base\":{\"total\":[5,5],\"origSize\":\"5.5\",\"sku\":\"001001B07-BLK-5.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[1,1]},\"base\":{\"total\":[1,1],\"origSize\":\"8.5\",\"sku\":\"001001b07-blk-8.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"SH\":[0,1]},\"base\":{\"total\":[0,1],\"origSize\":\"5\",\"sku\":\"001001b07-blk-5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[2,2]},\"base\":{\"total\":[2,2],\"origSize\":\"5\",\"sku\":\"001001B07-BLK-5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[6,6]},\"base\":{\"total\":[6,6],\"origSize\":\"6\",\"sku\":\"001001B07-BLK-6\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[6,7]},\"base\":{\"total\":[6,7],\"origSize\":\"7\",\"sku\":\"001001B07-BLK-7\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[13,13]},\"base\":{\"total\":[13,13],\"origSize\":\"6.5\",\"sku\":\"001001B07-BLK-6.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[2084,2084]},\"base\":{\"total\":[2084,2084],\"origSize\":\"7.5\",\"sku\":\"001001B07-BLK-7.5\",\"saleSize\":\"\"}}]}}";
-        GetStoreStockDetailResponse2 execute = JacksonUtil.json2Bean(json, GetStoreStockDetailResponse2.class);*/
+        String json = "{\"code\":\"0\",\"message\":null,\"data\":{\"header\":{\"supplier\":[\"total\",\"usa\"],\"store\":[\"LA\",\"SH\"],\"base\":[\"sku\",\"origSize\",\"saleSize\",\"total\"]},\"stocks\":[{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[5,5]},\"base\":{\"total\":[5,5],\"origSize\":\"5.5\",\"sku\":\"001001B07-BLK-5.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[1,1]},\"base\":{\"total\":[1,1],\"origSize\":\"8.5\",\"sku\":\"001001b07-blk-8.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"SH\":[0,1]},\"base\":{\"total\":[0,1],\"origSize\":\"5\",\"sku\":\"001001b07-blk-5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[2,2]},\"base\":{\"total\":[2,2],\"origSize\":\"5\",\"sku\":\"001001B07-BLK-5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[6,6]},\"base\":{\"total\":[6,6],\"origSize\":\"6\",\"sku\":\"001001B07-BLK-6\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[6,7]},\"base\":{\"total\":[6,7],\"origSize\":\"7\",\"sku\":\"001001B07-BLK-7\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[13,13]},\"base\":{\"total\":[13,13],\"origSize\":\"6.5\",\"sku\":\"001001B07-BLK-6.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[2084,2084]},\"base\":{\"total\":[2084,2084],\"origSize\":\"7.5\",\"sku\":\"001001B07-BLK-7.5\",\"saleSize\":\"\"}}]}}";
+        GetStoreStockDetailResponse2 execute = JacksonUtil.json2Bean(json, GetStoreStockDetailResponse2.class);
 
-        GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
+        //GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
         //求和
         if (execute != null && execute.getData() != null && execute.getData().getHeader() != null &&CollectionUtils.isNotEmpty(execute.getData().getStocks())){
             //获取到的参数不为空

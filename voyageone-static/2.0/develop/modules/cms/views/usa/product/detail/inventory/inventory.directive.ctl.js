@@ -15,6 +15,7 @@ define([
             this.$scope = $scope;
             this.detailDataService = detailDataService;
             this.productInfo = $scope.productInfo;
+            this.data = {};
         }
 
         init() {
@@ -34,14 +35,12 @@ define([
 
                     } else {
                         self.noStock = resp.data.nostock;
-                        if(!resp.data.excute.data.header){
-                            self.supplier = resp.data.excute.data.header.supplier;
-                            self.store = resp.data.excute.data.header.store;
-                            self.base = resp.data.excute.data.header.base;
-                        }
-                        if(!resp.data.excute.data.stocks){
-                            self.stocks = resp.data.excute.data.stocks;
-                        }
+                        self.supplier = resp.data.excute.data.header.supplier;
+                        self.store = resp.data.excute.data.header.store;
+                        self.base = resp.data.excute.data.header.base;
+                        self.stocks = resp.data.excute.data.stocks;
+                        self.data = resp.data;
+
                         let noStockSkuData = resp.data.noStockSkus;
                         if (noStockSkuData && noStockSkuData.length > 0) {
                             scope.noStockSkus = angular.copy(noStockSkuData);

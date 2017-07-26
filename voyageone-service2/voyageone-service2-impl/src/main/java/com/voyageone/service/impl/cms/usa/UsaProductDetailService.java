@@ -614,8 +614,6 @@ public class UsaProductDetailService extends BaseService {
                             model.setUpdateMap(updateMap);
                             model.setQueryMap(queryMap);
                             bulkList.add(model);
-
-
                             //修改最大值最小值
                             BulkUpdateModel minMaxPriceModel = new BulkUpdateModel();
                             minMaxPriceModel.setUpdateMap(minMaxPriceUpdateMap);
@@ -635,18 +633,13 @@ public class UsaProductDetailService extends BaseService {
                     List<BulkUpdateModel> bulkList1 = new ArrayList<>();
                     List<BulkUpdateModel> minMaxPrice1 = new ArrayList<>();
                     List<BaseMongoMap<String, Object>> skus = platform.getSkus();
-
                     if (skus != null) {
                         for (BaseMongoMap<String, Object> sku : skus) {
                             //获取到对应的skuCode
                             String skuCode = (String) sku.get("skuCode");
                             //修改最大值最小值
-
                             HashMap<String, Object> minMaxPriceQueryMap = new HashMap<>();
-
-
                             HashMap<String, Object> updateMap = new HashMap<>();
-
                             //设置查询条件,通过productCode进行定位
                             minMaxPriceQueryMap.put("common.fields.code", code);
                             HashMap<String, Object> minMaxPriceUpdateMap = new HashMap<>();
@@ -693,8 +686,6 @@ public class UsaProductDetailService extends BaseService {
                 }
             }
         }
-
-
         return null;
     }
 
