@@ -132,56 +132,56 @@ public class UsaCustomColumnService extends BaseService {
         // 设置按销量排序的选择列表
         List<TypeChannelBean> cartList = this.getUsaCartTypeBean(channelId, language);
 
-        List<Map<String, String>> platformAttrList = new ArrayList<>(0);
+        List<Map<String, String>> platformAttrList = new ArrayList<>();
 
         for (TypeChannelBean cartObj : cartList) {
             Integer cartId = Integer.valueOf(cartObj.getValue());
             String cartName = cartObj.getName();
             // 自定义列 --->>> 各平台销量
-            Map<String, String> keySum7Map = new HashMap<>(2);
+            Map<String, String> keySum7Map = new HashMap<>();
             keySum7Map.put("cartId", String.valueOf(cartId));
             keySum7Map.put("name", String.format("%s (Last 7)", cartName));
             keySum7Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_7 + "." + CmsBtProductModel_Sales.CARTID + cartId);
             platformAttrList.add(keySum7Map);
 
-            Map<String, String> keySum30Map = new HashMap<>(2);
+            Map<String, String> keySum30Map = new HashMap<>();
             keySum30Map.put("cartId", String.valueOf(cartId));
             keySum30Map.put("name", String.format("%s (Last 30)", cartName));
             keySum30Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_30 + "." + CmsBtProductModel_Sales.CARTID + cartId);
             platformAttrList.add(keySum30Map);
 
-            Map<String, String> keySumYearMap = new HashMap<>(2);
+            Map<String, String> keySumYearMap = new HashMap<>();
             keySumYearMap.put("cartId", String.valueOf(cartId));
             keySumYearMap.put("name", String.format("%s (Period)", cartName));
             keySumYearMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_YEAR + "." + CmsBtProductModel_Sales.CARTID + cartId);
             platformAttrList.add(keySumYearMap);
 
-            Map<String, String> keySumAllMap = new HashMap<>(2);
+            Map<String, String> keySumAllMap = new HashMap<>();
             keySumAllMap.put("cartId", String.valueOf(cartId));
             keySumAllMap.put("name", String.format("%s (All)", cartName));
             keySumAllMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_ALL + "." + CmsBtProductModel_Sales.CARTID + cartId);
             platformAttrList.add(keySumAllMap);
 
             // 各平台属性 >>> 'Publish Time' && 'Price' && 'Msrp' && 'QTY'
-            Map<String, String> keyPublishTimeMap = new HashMap<>(2);
+            Map<String, String> keyPublishTimeMap = new HashMap<>();
             keyPublishTimeMap.put("cartId", String.valueOf(cartId));
             keyPublishTimeMap.put("name", String.format("%s Publish Time", cartName));
             keyPublishTimeMap.put("value", String.format("usPlatforms.P%d.publishTime", cartId));
             platformAttrList.add(keyPublishTimeMap);
 
-            Map<String, String> keyMsrpMap = new HashMap<>(2);
+            Map<String, String> keyMsrpMap = new HashMap<>();
             keyMsrpMap.put("cartId", String.valueOf(cartId));
             keyMsrpMap.put("name", String.format("%s Msrp", cartName));
             keyMsrpMap.put("value", String.format("usPlatforms.P%d.pPriceMsrpSt,usPlatforms.P%d.pPriceMsrpEd", cartId, cartId));
             platformAttrList.add(keyMsrpMap);
 
-            Map<String, String> keyPriceMap = new HashMap<>(2);
+            Map<String, String> keyPriceMap = new HashMap<>();
             keyPriceMap.put("cartId", String.valueOf(cartId));
             keyPriceMap.put("name", String.format("%s Price", cartName));
             keyPriceMap.put("value", String.format("usPlatforms.P%d.pPriceSaleSt,usPlatforms.P%d.pPriceSaleEd", cartId, cartId));
             platformAttrList.add(keyPriceMap);
 
-            Map<String, String> keyQtyMap = new HashMap<>(2);
+            Map<String, String> keyQtyMap = new HashMap<>();
             keyQtyMap.put("cartId", String.valueOf(cartId));
             keyQtyMap.put("name", String.format("%s Qty", cartName));
             keyQtyMap.put("value", String.format("usPlatforms.P%d.quantity", cartId));
