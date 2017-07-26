@@ -139,7 +139,7 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                 jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + ".skus.$." + changedPriceType + "\":#}}");
                 jongoUpdate.setUpdateParameters(newPrice);
                 cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
-                if (CmsConstants.ProductStatus.Approved.name().equals(status)) {
+                if (CmsConstants.ProductStatus.Approved.name().equals(status) && (CmsConstants.PlatformStatus.OnSale.name().equals(platform.getpStatus()) || CmsConstants.PlatformStatus.InStock.name().equals(platform.getpStatus()))) {
                     platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, sender);
                 }
                 i++;
