@@ -618,7 +618,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
 
             // sku模式 or product模式（默认s模式， 如果没有颜色的话， 就是p模式）
             sxData.setHasSku(true);
-            if ("ERROR:15:isv.invalid-parameter::该类目没有颜色销售属性,不能上传图片".equals(result)) {
+            if (!StringUtils.isEmpty(result) && result.contains("该类目没有颜色销售属性,不能上传图片")) {
                 // 用simple的那个sku， 覆盖到原来的那个sku上
                 int idxOrg = -1;
                 String strSimpleSkuValue = null;
@@ -1343,15 +1343,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
         // modified by morse.lu 2016/12/23 end
         // 店铺级标题禁用词 20161216 tom START
         // 先临时这样处理
-        if (!StringUtils.isEmpty(errorWord)) {
-            if (!StringUtils.isEmpty(valDescription)) {
-//                String[] splitWord = notAllowList.split(",");
-//                for (String notAllow : splitWord) {
-//                    // 直接删掉违禁词
-//                    valDescription = valDescription.replaceAll(notAllow, "");
-//                }
-                sxProductService.deleteErrorWord(valDescription, errorWord);
-            }
+        String errorWord_desc = getConditionPropValue(sxData, "updateErrorWord_Desc", shopProp);
+        if (!StringUtils.isEmpty(errorWord_desc) && !StringUtils.isEmpty(valDescription)) {
+            valDescription = sxProductService.deleteErrorWord(valDescription, errorWord_desc);
         }
         // 店铺级标题禁用词 20161216 tom END
         productInfoMap.put("description", valDescription);

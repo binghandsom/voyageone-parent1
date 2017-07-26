@@ -1282,6 +1282,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         colorId = feed.getAttribute().get("ColorId").get(0);
                     }
                     productCommonField.setColor(colorName + colorId);
+                }else if("044".equals(feed.getChannelId())){
+                    productCommonField.setColor(feed.getColor());
                 }
                 // 20161227 tom champion特殊处理， 目前没有设置common的配置画面， 将来会增加 END
             }

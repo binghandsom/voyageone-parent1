@@ -15,11 +15,7 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.solr.bean.SolrUpdateBean;
-import com.voyageone.service.dao.cms.CmsBtJmProductDao;
-import com.voyageone.service.dao.cms.CmsBtJmPromotionSkuDao;
-import com.voyageone.service.dao.cms.CmsBtJmSkuDao;
-import com.voyageone.service.dao.cms.CmsBtPromotionSkusDao;
+import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductGroupDao;
@@ -48,7 +44,6 @@ import com.voyageone.service.model.util.MapModel;
 import com.voyageone.web2.cms.CmsController;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -112,6 +107,8 @@ public class BackDoorController extends CmsController {
     private PriceService priceService;
     @Autowired
     private ProductPlatformService productPlatformService;
+    @Autowired
+    private CmsBtJmPromotionProductDao cmsBtJmPromotionProductDao;
 
     /*@Autowired
     private MqSender sender;*/
@@ -1810,6 +1807,51 @@ public class BackDoorController extends CmsController {
 
         return builder.toString();
     }
+
+    @RequestMapping(value = "updateJmPromotionMallIdByPromotionId", method = RequestMethod.GET)
+    public Object updateJmPromotionMallIdByPromotionId(@RequestParam("channelId") String channelId, @RequestParam("pId") Integer promotionId, @RequestParam("code") String code) {
+
+        Map<String, Object> mapMapper = new HashMap<String, Object>();
+        mapMapper.put("channelId", channelId);
+        mapMapper.put("cmsBtJmPromotionId", promotionId);
+        if (!StringUtils.isEmpty(code))
+            mapMapper.put("productCode", code);
+
+        List<CmsBtJmPromotionProductModel> jmPromotionProducts = cmsBtJmPromotionProductDao.selectList(mapMapper);
+
+        List<JongoUpdate> updates = new ArrayList<>();
+        jmPromotionProducts.stream()
+                .filter(jmPromotionProduct -> !StringUtils.isEmpty(jmPromotionProduct.getJmHashId()))
+                .forEach(jmPromotionProduct -> {
+
+                    List<MapModel> mapModels = cmsBtJmPromotionDaoExt.selectMaxJmHashId2(channelId, jmPromotionProduct.getProductCode());
+
+                    String jmHashId = (String) mapModels.get(0).get("jmHashId");
+                    JongoUpdate updateQuery = new JongoUpdate();
+                    updateQuery.setQuery("{\"common.fields.code\": # }");
+                    updateQuery.setQueryParameters(jmPromotionProduct.getProductCode());
+
+                    updateQuery.setUpdate("{$set: {\"platforms.P27.pNumIId\": #}}");
+                    updateQuery.setUpdateParameters(jmHashId);
+
+                    updates.add(updateQuery);
+
+                    if (updates.size() >= 100) {
+
+                        cmsBtProductDao.bulkUpdateWithJongo(channelId, updates);
+                        updates.clear();
+                    }
+                });
+
+        if (updates.size() > 0) {
+
+            cmsBtProductDao.bulkUpdateWithJongo(channelId, updates);
+
+        }
+
+        return "处理完成:" + promotionId;
+    }
+
 
     /**
      * 从mongo的product表中获取mallId然后更新到jm_product表中
