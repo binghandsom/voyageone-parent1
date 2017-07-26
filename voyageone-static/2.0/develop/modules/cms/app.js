@@ -421,7 +421,7 @@ define([
         }
     }
 
-    function breadcrumbsCtrl($scope, $rootScope, $location, menuService, cRoutes) {
+    function breadcrumbsCtrl($scope, $rootScope, $location, menuService, cRoutes,$localStorage) {
         var vm = this;
         vm.cid = "";
         vm.navigation = {};
@@ -437,7 +437,8 @@ define([
                 vm.navigation = data.categoryList;
                 // TODO 来至服务器端的session
                 $rootScope.platformType = data.platformType;
-                $rootScope.imageUrl = data.imageUrl;
+
+                $rootScope.imageUrl = data.imageUrl.replace('{channel}',$localStorage.user.channel);
                 $rootScope.productUrl = data.productUrl;
             });
         }
