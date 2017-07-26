@@ -318,23 +318,6 @@
                                 </th>
                                 <th class="text-center td-width-100 white-space-noWrap th-border-white">IMG</th>
                                 <th class="text-left td-width-100 white-space-noWrap th-border-white">Code</th>
-                                <th class="text-left td-width-150 white-space-noWrap th-border-white">Name</th>
-                                <th class="text-left td-width-100 white-space-noWrap th-border-white">ProductType</th>
-                                <th class="text-left td-width-100 white-space-noWrap th-border-white">Brand
-                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('brand')">
-                                        <i class="fa fa-{{ctrl.getArrowName('brand')}}"></i>
-                                    </button>
-                                </th>
-                                <th class="text-right td-width-100 white-space-noWrap th-border-white">Total Qty
-                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('quantity')">
-                                        <i class="fa fa-{{ctrl.getArrowName('quantity')}}"></i>
-                                    </button>
-                                </th>
-                                <th class="text-center td-width-100 white-space-noWrap th-border-white">Last Received
-                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('lastReceivedOn')">
-                                        <i class="fa fa-{{ctrl.getArrowName('lastReceivedOn')}}"></i>
-                                    </button>
-                                </th>
                                 <th class="text-left td-width-100 white-space-noWrap th-border-white">Sneakerhead Qty
                                     <button class="opacityBtn" ng-click="ctrl.columnOrder('brand')">
                                         <i class="fa fa-{{ctrl.getArrowName('brand')}}"></i>
@@ -354,7 +337,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr><td colspan="14" if-no-rows="ctrl.searchResult.productList.length"></td></tr>
+                                <tr><td colspan="9" if-no-rows="ctrl.searchResult.productList.length"></td></tr>
                             </tbody>
                             <tbody class="box-body" ng-repeat="productInfo in ctrl.searchResult.productList" style="border-bottom: 1px solid #ddd; height: 80px;">
                             <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;height: 40px;">
@@ -371,7 +354,7 @@
                                         <img image="{{productInfo.common.fields.images6 && productInfo.common.fields.images6[0].image6?productInfo.common.fields.images6[0].image6:productInfo.common.fields.images1[0].image1}}" alt="{{productInfo.common.fields.code}}" class="thumb-sm-search"/>
                                     </a>
                                 </td>
-                                <td colspan="10"
+                                <td colspan="{{ctrl.customColumns.selCommonProps.length  + ctrl.customColumns.selPlatformAttributes.length + ctrl.customColumns.selPlatformSales.length + 1}}"
                                     class="control-label text-left form-inline" style="height:27px; ">
                                     <!--Todo  显示商品numid  -->
                                     <span class="m-r-sm" ng-if="!!productInfo.groupBean.numIId&&!!vm.productUrl">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
@@ -412,11 +395,6 @@
                                 <td class="text-left">
                                     <a href="#/product/usa/detail/{{productInfo.prodId}}" target="_blank" >{{productInfo.common.fields.code}}</a>
                                 </td>
-                                <td class="text-left">{{productInfo.common.fields.productNameEn}}</td>
-                                <td class="text-left">{{productInfo.common.fields.productType}}</td>
-                                <td class="text-left">{{productInfo.common.fields.brand}}</td>
-                                <td class="text-right">{{productInfo.common.fields.quantity}}</td>
-                                <td class="text-center">{{productInfo.common.fields.translateTime}}</td>
                                 <td class="text-center"></td>
                                 <td class="text-center"></td>
                                 <td class="text-center"></td>
@@ -434,6 +412,41 @@
                     </div>
                 </div>
             </div>
+
+            <nav-bar>
+                <div class="list-group" style="margin-bottom: 0px">
+                    <button type="button" class="list-group-item text-left" style="width: 100%"
+                            ng-click="ctrl.popCustomAttributes()">
+                        <i class="fa fa-arrow-circle-right"></i>&nbsp;Custom Columns
+                    </button>
+                    <button type="button" class="list-group-item text-left" style="width: 100%"
+                            ng-click="ctrl.popBatchPrice()">
+                        <i class="fa fa-arrow-circle-right"></i>&nbsp;Price
+                    </button>
+                    <button type="button" class="list-group-item text-left" style="width: 100%" ng-click="ctrl.addFreeTag()">
+                        <i class="fa fa-arrow-circle-right"></i>&nbsp;tag
+                    </button>
+                    <div uib-dropdown ng-repeat="platform in ctrl.masterData.usPlatforms">
+                        <button type="button" class="list-group-item text-left"  style="width: 100%" uib-dropdown-toggle>
+                            <i class="fa fa-arrow-circle-right"></i>&nbsp;{{platform.name}}&emsp;<span class="caret"></span>
+                        </button>
+                        <ul uib-dropdown-menu style="margin-left: 17px">
+                            <!--<li>
+                                <a href="javascript:void(0)" ng-click="ctrl.batchCategory()"><i class="fa fa-minus"></i>&nbsp;Category</a>
+                            </li>-->
+                            <li>
+                                <a href="javascript:void(0)" ng-click="ctrl.batchList(platform.value,'list',platform.name)"><i class="fa fa-minus"></i>&nbsp;List</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" ng-click="ctrl.batchList(platform.value,'deList',platform.name)"><i class="fa fa-minus"></i>&nbsp;Delist</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0)" ng-click="ctrl.popBatchPrice(platform.value)"><i class="fa fa-minus"></i>&nbsp;Platform Price</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav-bar>
 
         </uib-tab>
 

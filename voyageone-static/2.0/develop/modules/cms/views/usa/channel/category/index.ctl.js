@@ -5,7 +5,8 @@
 define([
     'cms',
     'modules/cms/enums/Carts',
-    './sortEnum'
+    './sortEnum',
+    'modules/cms/directives/navBar.directive'
 ], function (cms, carts, sortEnum) {
 
     cms.controller('usCategoryController',class UsCategoryController{
