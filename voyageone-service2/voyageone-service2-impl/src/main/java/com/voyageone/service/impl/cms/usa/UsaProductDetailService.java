@@ -190,7 +190,7 @@ public class UsaProductDetailService extends BaseService {
 
         List<Map<String, String>> sellers = new ArrayList<>();
         String pCatId = platformCart.getpCatId();
-        if(platformCart.getSellerCats() != null) {
+        if (platformCart.getSellerCats() != null) {
             platformCart.getSellerCats().forEach(seller -> {
                 if (!seller.getcId().equals(pCatId)) {
                     Map<String, String> item = new HashMap<String, String>();
@@ -213,8 +213,8 @@ public class UsaProductDetailService extends BaseService {
         commInfo.remove("schemaFields");
         CmsBtProductModel_Common commonModel = new CmsBtProductModel_Common(commInfo);
         Map<String, Object> fields = FieldUtil.getFieldsValueToMap(masterFields);
-        fields.put("images1", ((Map<String, Object>)commInfo.get("fields")).get("images1"));
-        fields.put("images2", ((Map<String, Object>)commInfo.get("fields")).get("images2"));
+        fields.put("images1", ((Map<String, Object>) commInfo.get("fields")).get("images1"));
+        fields.put("images2", ((Map<String, Object>) commInfo.get("fields")).get("images2"));
         commonModel.put("fields", fields);
 
         HashMap<String, Object> queryMap = new HashMap<>();
@@ -244,7 +244,7 @@ public class UsaProductDetailService extends BaseService {
     }
 
     // 更新自由标签
-    public void updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, List<Map<String, String>>sellers, String modifier) {
+    public void updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, List<Map<String, String>> sellers, String modifier) {
         /* 保存类型 */
 
         if (platform.get("platformFields") != null) {
@@ -260,11 +260,11 @@ public class UsaProductDetailService extends BaseService {
 
         // 店铺内分类设置
         List<String> sellerPaths = new ArrayList<>();
-        if(!StringUtil.isEmpty(platformModel.getpCatPath())) {
+        if (!StringUtil.isEmpty(platformModel.getpCatPath())) {
             sellerPaths.add(platformModel.getpCatPath());
         }
-        if(ListUtils.notNull(sellers)){
-            for(Map<String, String> item : sellers){
+        if (ListUtils.notNull(sellers)) {
+            for (Map<String, String> item : sellers) {
                 sellerPaths.add(item.get("catPath"));
             }
             sellerPaths = sellerPaths.stream().distinct().collect(Collectors.toList());
@@ -555,10 +555,8 @@ public class UsaProductDetailService extends BaseService {
 
     //修改单条价格
     public String updateOnePrice(List<Map<String, Object>> lists, String channelId, String userName) {
-        List<BulkUpdateModel> bulkList = new ArrayList<>(1);
-        List<BulkUpdateModel> minMaxPrice = new ArrayList<>(1);
-        List<BulkUpdateModel> bulkList1 = new ArrayList<>(1);
-        List<BulkUpdateModel> minMaxPrice1 = new ArrayList<>(1);
+        CmsBtProductModel cmsBtProductModel = null;
+
         if (ListUtils.notNull(lists)) for (Map<String, Object> paraMap : lists) {
             //同事传入portId更新价格履历
             Long prodId = Long.parseLong((String) paraMap.get("prodId"));
@@ -572,7 +570,9 @@ public class UsaProductDetailService extends BaseService {
             if (StringUtils.isNotEmpty((String) paraMap.get("clientRetailPrice"))) {
                 clientRetailPrice = Double.parseDouble((String) paraMap.get("clientRetailPrice"));
             }
-            CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);
+            if (cmsBtProductModel == null){
+                cmsBtProductModel = productService.getProductById(channelId, prodId);
+            }
             //获取商品code
             String code = cmsBtProductModel.getCommonNotNull().getFieldsNotNull().getCode();
             if (cartId < 20) {
@@ -580,6 +580,8 @@ public class UsaProductDetailService extends BaseService {
                 Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
                 CmsBtProductModel_Platform_Cart usPlatform = usPlatforms.get("P" + cartId);
                 if (usPlatform != null) {
+                    List<BulkUpdateModel> bulkList = new ArrayList<>();
+                    List<BulkUpdateModel> minMaxPrice = new ArrayList<>();
                     List<BaseMongoMap<String, Object>> skus = usPlatform.getSkus();
 
                     if (skus != null) {
@@ -587,13 +589,10 @@ public class UsaProductDetailService extends BaseService {
                             //获取到对应的skuCode
                             String skuCode = (String) sku.get("skuCode");
                             //修改最大值最小值
-
                             HashMap<String, Object> minMaxPriceQueryMap = new HashMap<>();
                             //设置查询条件,通过productCode进行定位
                             minMaxPriceQueryMap.put("common.fields.code", code);
                             HashMap<String, Object> minMaxPriceUpdateMap = new HashMap<>();
-
-
                             HashMap<String, Object> updateMap = new HashMap<>();
                             if (clientMsrpPrice != null) {
                                 updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientMsrpPrice", clientMsrpPrice);
@@ -605,8 +604,8 @@ public class UsaProductDetailService extends BaseService {
                                 updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientRetailPrice", clientRetailPrice);
                                 updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientNetPrice", clientRetailPrice);
                                 //修改最大值最小值
-                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceRetailSt", clientRetailPrice);
-                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceRetailEd", clientRetailPrice);
+                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceSaleSt", clientRetailPrice);
+                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceSaleEd", clientRetailPrice);
                             }
                             HashMap<String, Object> queryMap = new HashMap<>();
                             //设置查询条件
@@ -624,11 +623,17 @@ public class UsaProductDetailService extends BaseService {
                             minMaxPrice.add(minMaxPriceModel);
                         }
                     }
+                    if (ListUtils.notNull(bulkList) && ListUtils.notNull(minMaxPrice)) {
+                        productService.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
+                        productService.bulkUpdateWithMap(channelId, minMaxPrice, userName, "$set");
+                    }
                 }
             } else {
                 //修改中国平台价格
                 CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getPlatform(cartId);
                 if (platform != null) {
+                    List<BulkUpdateModel> bulkList1 = new ArrayList<>();
+                    List<BulkUpdateModel> minMaxPrice1 = new ArrayList<>();
                     List<BaseMongoMap<String, Object>> skus = platform.getSkus();
 
                     if (skus != null) {
@@ -676,7 +681,10 @@ public class UsaProductDetailService extends BaseService {
                             minMaxPriceModel.setQueryMap(minMaxPriceQueryMap);
                             minMaxPrice1.add(minMaxPriceModel);
                         }
-
+                        if (ListUtils.notNull(bulkList1) && ListUtils.notNull(minMaxPrice1)) {
+                            productService.bulkUpdateWithMap(channelId, bulkList1, userName, "$set");
+                            productService.bulkUpdateWithMap(channelId, minMaxPrice1, userName, "$set");
+                        }
                         //更新价格履历
                         List<String> skus1 = new ArrayList<>();
                         skus.forEach(sku -> skus1.add(sku.getStringAttribute("skuCode")));
@@ -685,15 +693,6 @@ public class UsaProductDetailService extends BaseService {
                 }
             }
         }
-        if (ListUtils.notNull(bulkList) &&ListUtils.notNull(minMaxPrice)){
-            productService.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
-            productService.bulkUpdateWithMap(channelId, minMaxPrice, userName, "$set");
-        }
-        if (ListUtils.notNull(bulkList1) &&ListUtils.notNull(minMaxPrice1)){
-            productService.bulkUpdateWithMap(channelId, bulkList1, userName, "$set");
-            productService.bulkUpdateWithMap(channelId, minMaxPrice1, userName, "$set");
-        }
-
 
 
         return null;
@@ -735,17 +734,17 @@ public class UsaProductDetailService extends BaseService {
                         HashMap<String, Object> priceMap = new HashMap<>();
                         priceMap.put("priceMsrpSt", value.getpPriceMsrpSt());
                         priceMap.put("priceMsrpEd", value.getpPriceMsrpEd());
-                        priceMap.put("priceRetailSt", value.getpPriceRetailSt());
-                        priceMap.put("priceRetailEd", value.getpPriceRetailEd());
-                        priceMap.put(key.replace("P", ""), namesMap.get(key.replace("P", "")));
+                        priceMap.put("priceRetailSt", value.getpPriceSaleSt());
+                        priceMap.put("priceRetailEd", value.getpPriceSaleEd());
+                        priceMap.put(value.getCartId().toString(), namesMap.get(value.getCartId().toString()));
 
-                        priceMap.put("cartName",namesMap.get(key.replace("P", "")));
-                        priceMap.put("cartId",key.replace("P", ""));
-                        priceMap.put("status",value.getStatus());
-                        priceMap.put("pStatus",value.getpStatus() != null ?value.getpStatus().name():null);
-                        priceMap.put("pReallyStatus",value.getpReallyStatus());
-                        priceMap.put("pPublishError",value.getpPublishError());
-                        allUsPriceList.put(key.replace("P", ""), priceMap);
+                        priceMap.put("cartName", namesMap.get(value.getCartId().toString()));
+                        priceMap.put("cartId", value.getCartId().toString());
+                        priceMap.put("status", value.getStatus());
+                        priceMap.put("pStatus", value.getpStatus() != null ? value.getpStatus().name() : null);
+                        priceMap.put("pReallyStatus", value.getpReallyStatus());
+                        priceMap.put("pPublishError", value.getpPublishError());
+                        allUsPriceList.put(value.getCartId().toString(), priceMap);
                     }
                     data.put("allUsPriceList", allUsPriceList);
                 }
@@ -755,7 +754,7 @@ public class UsaProductDetailService extends BaseService {
                     for (Map.Entry entry : platforms.entrySet()) {
                         String key = (String) entry.getKey();
                         CmsBtProductModel_Platform_Cart value = (CmsBtProductModel_Platform_Cart) entry.getValue();
-                        if (!"0".equals(key.replace("P", ""))) {
+                        if (!"0".equals(value.getCartId().toString())) {
                             HashMap<String, Object> priceMap = new HashMap<>();
                             priceMap.put("priceMsrpSt", value.getpPriceMsrpSt());
                             priceMap.put("priceMsrpEd", value.getpPriceMsrpEd());
@@ -765,16 +764,16 @@ public class UsaProductDetailService extends BaseService {
                             priceMap.put("priceSaleSt", value.getpPriceSaleSt());
                             priceMap.put("priceSaleEd", value.getpPriceSaleEd());
 
-                            priceMap.put(key.replace("P", ""), namesMap.get(key.replace("P", "")));
+                            priceMap.put(value.getCartId().toString(), namesMap.get(value.getCartId().toString()));
 
-                            priceMap.put("cartName",namesMap.get(key.replace("P", "")));
-                            priceMap.put("cartId",key.replace("P", ""));
-                            priceMap.put("status",value.getStatus());
-                            priceMap.put("pStatus",value.getpStatus() != null ?value.getpStatus().name():null);
-                            priceMap.put("pReallyStatus",value.getpReallyStatus());
-                            priceMap.put("pPublishError",value.getpPublishError());
+                            priceMap.put("cartName", namesMap.get(value.getCartId().toString()));
+                            priceMap.put("cartId", value.getCartId().toString());
+                            priceMap.put("status", value.getStatus());
+                            priceMap.put("pStatus", value.getpStatus() != null ? value.getpStatus().name() : null);
+                            priceMap.put("pReallyStatus", value.getpReallyStatus());
+                            priceMap.put("pPublishError", value.getpPublishError());
 
-                            allPriceList.put(key.replace("P", ""), priceMap);
+                            allPriceList.put(value.getCartId().toString(), priceMap);
                         }
                     }
                     data.put("allPriceList", allPriceList);
