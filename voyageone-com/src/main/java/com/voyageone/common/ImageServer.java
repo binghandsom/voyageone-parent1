@@ -143,7 +143,7 @@ public class ImageServer {
         }
 
         final String path = matcher.group(1);
-        final String ISImageUrl = imageServerUrl(path);
+        final String ISImageUrl = imageServerUrl(channel, path);
 
         try {
             return new URL(ISImageUrl).openStream();
