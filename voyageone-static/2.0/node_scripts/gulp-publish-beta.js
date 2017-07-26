@@ -59,12 +59,12 @@ gulp.task(tasks.beta.angular, function () {
         // 包裹整个内容
         .pipe(header(definePrefix))
         .pipe(footer(defineSuffix))
+        .pipe(babel())
         .pipe(uglify({
             mangle: false,
             compress: false,
             output: {beautify: true}
         }))
-        .pipe(babel())
         .pipe(gulp.dest(publish.components.angular.dist))
         .pipe(gulp.dest(publish.release.components));
 });
@@ -78,12 +78,12 @@ gulp.task(tasks.beta.com, function () {
         .pipe(concat(build.common.native.concat))
         .pipe(header(definePrefix))
         .pipe(footer(defineSuffix))
+        .pipe(babel())
         .pipe(uglify({
             mangle: false,
             compress: false,
             output: {beautify: true}
         }))
-        .pipe(babel())
         .pipe(gulp.dest(publish.components.native.dist))
         .pipe(gulp.dest(publish.release.components));
 });
@@ -129,9 +129,9 @@ gulp.task(tasks.beta.modules, function () {
 });
 
 gulp.task(tasks.beta.all, [
-    tasks.beta.statics, 
-    tasks.beta.angular, 
-    tasks.beta.com, 
-    tasks.beta.libs, 
+    tasks.beta.statics,
+    tasks.beta.angular,
+    tasks.beta.com,
+    tasks.beta.libs,
     tasks.beta.modules
 ]);
