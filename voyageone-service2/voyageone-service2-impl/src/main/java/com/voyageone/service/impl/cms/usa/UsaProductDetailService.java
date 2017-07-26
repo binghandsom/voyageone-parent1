@@ -573,6 +573,7 @@ public class UsaProductDetailService extends BaseService {
             if (cmsBtProductModel == null){
                 cmsBtProductModel = productService.getProductById(channelId, prodId);
             }
+            String productCode = cmsBtProductModel.getCommon().getFields().getCode();
             //获取商品code
             String code = cmsBtProductModel.getCommonNotNull().getFieldsNotNull().getCode();
             if (cartId < 20) {
@@ -624,6 +625,9 @@ public class UsaProductDetailService extends BaseService {
                     if (ListUtils.notNull(bulkList) && ListUtils.notNull(minMaxPrice)) {
                         productService.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
                         productService.bulkUpdateWithMap(channelId, minMaxPrice, userName, "$set");
+                    }
+                    if (CmsConstants.ProductStatus.Approved.name().equals(usPlatform.getStatus()) && (CmsConstants.PlatformStatus.OnSale.name().equals(usPlatform.getpStatus()) || CmsConstants.PlatformStatus.InStock.name().equals(usPlatform.getpStatus()))) {
+                        platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, userName);
                     }
                 }
             } else {
@@ -679,6 +683,10 @@ public class UsaProductDetailService extends BaseService {
                             productService.bulkUpdateWithMap(channelId, bulkList1, userName, "$set");
                             productService.bulkUpdateWithMap(channelId, minMaxPrice1, userName, "$set");
                         }
+                        if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus()) && (CmsConstants.PlatformStatus.OnSale.name().equals(platform.getpStatus()) || CmsConstants.PlatformStatus.InStock.name().equals(platform.getpStatus()))) {
+                            platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, userName);
+                        }
+
                         //更新价格履历
                         List<String> skus1 = new ArrayList<>();
                         skus.forEach(sku -> skus1.add(sku.getStringAttribute("skuCode")));
