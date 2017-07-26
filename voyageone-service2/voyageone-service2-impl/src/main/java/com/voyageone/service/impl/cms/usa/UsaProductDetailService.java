@@ -38,7 +38,6 @@ import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdate
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,47 +45,42 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.voyageone.common.configs.Enums.CartEnums.Cart.SN;
-
 /**
  * Created by james on 2017/7/18.
+ *
  */
 @Service
 public class UsaProductDetailService extends BaseService {
 
-    private final
-    ProductService productService;
+    private final ProductService productService;
 
-    private final
-    CommonSchemaService commonSchemaService;
+    private final CommonSchemaService commonSchemaService;
 
-    private final
-    PlatformCategoryService platformCategoryService;
+    private final PlatformCategoryService platformCategoryService;
 
-    private final
-    TagService tagService;
+    private final TagService tagService;
 
-    @Autowired
-    CmsBtProductDao cmsBtProductDao;
-    @Autowired
-    PriceService priceService;
-    @Autowired
-    private CmsMqSenderService cmsMqSenderService;
-    @Autowired
-    private CmsProductSearchQueryService cmsProductSearchQueryService;
-    @Autowired
-    private CmsBtPriceLogService cmsBtPriceLogService;
-    @Autowired
-    private PlatformProductUploadService platformProductUploadService;
-    @Autowired
-    private SellerCatService sellerCatService;
+    private final CmsBtProductDao cmsBtProductDao;
+    private final PriceService priceService;
+    private final CmsMqSenderService cmsMqSenderService;
+    private final CmsProductSearchQueryService cmsProductSearchQueryService;
+    private final CmsBtPriceLogService cmsBtPriceLogService;
+    private final PlatformProductUploadService platformProductUploadService;
+    private final SellerCatService sellerCatService;
 
     @Autowired
-    public UsaProductDetailService(ProductService productService, CommonSchemaService commonSchemaService, PlatformCategoryService platformCategoryService, TagService tagService) {
+    public UsaProductDetailService(ProductService productService, CommonSchemaService commonSchemaService, PlatformCategoryService platformCategoryService, TagService tagService, CmsBtProductDao cmsBtProductDao, PriceService priceService, CmsMqSenderService cmsMqSenderService, CmsProductSearchQueryService cmsProductSearchQueryService, CmsBtPriceLogService cmsBtPriceLogService, PlatformProductUploadService platformProductUploadService, SellerCatService sellerCatService) {
         this.productService = productService;
         this.commonSchemaService = commonSchemaService;
         this.platformCategoryService = platformCategoryService;
         this.tagService = tagService;
+        this.cmsBtProductDao = cmsBtProductDao;
+        this.priceService = priceService;
+        this.cmsMqSenderService = cmsMqSenderService;
+        this.cmsProductSearchQueryService = cmsProductSearchQueryService;
+        this.cmsBtPriceLogService = cmsBtPriceLogService;
+        this.platformProductUploadService = platformProductUploadService;
+        this.sellerCatService = sellerCatService;
     }
 
     /**
@@ -144,7 +138,6 @@ public class UsaProductDetailService extends BaseService {
         //freeTag
         List<String> tagPathList = cmsBtProduct.getUsFreeTags();
         if (tagPathList != null && tagPathList.size() > 0) {
-            List<CmsBtTagBean> tagModelList = new ArrayList<>();
             List<String> temp = new ArrayList<>();
             for (String tag : tagPathList) {
                 temp.add(tag);
