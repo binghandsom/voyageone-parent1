@@ -20,13 +20,18 @@ import java.util.Map;
 
 /**
  * Created by dell on 2016/11/28.
+ *
  */
 @RestController
 @RequestMapping(method = RequestMethod.POST, value = CmsUrlConstants.ProductTop.ROOT)
 public class CmsProductTopController extends CmsController {
 
+    private final ProductTopService service;
+
     @Autowired
-    ProductTopService service;
+    public CmsProductTopController(ProductTopService service) {
+        this.service = service;
+    }
 
     //获取初始化数据
     @RequestMapping(CmsUrlConstants.ProductTop.Init)
@@ -37,23 +42,23 @@ public class CmsProductTopController extends CmsController {
     }
 
     //普通区查询 获取指定页
-    @RequestMapping(CmsUrlConstants.ProductTop.GetPage)
-    public AjaxResponse getPage(@RequestBody ProductPageParameter param) {
-        UserSessionBean userSessionBean = getUser();
-
-        /**vo项目中默认分页字段为curr size , 字段转换*/
-        param.setPageIndex(param.getCurr());
-        param.setPageSize(param.getSize());
-
-        return success(service.getPage(param, userSessionBean.getSelChannelId(), userSessionBean.getUserName()));
-    }
+//    @RequestMapping(CmsUrlConstants.ProductTop.GetPage)
+//    public AjaxResponse getPage(@RequestBody ProductPageParameter param) {
+//        UserSessionBean userSessionBean = getUser();
+//
+//        /**vo项目中默认分页字段为curr size , 字段转换*/
+//        param.setPageIndex(param.getCurr());
+//        param.setPageSize(param.getSize());
+//
+//        return success(service.getPage(param, userSessionBean.getSelChannelId(), userSessionBean.getUserName()));
+//    }
 
     //普通区查询 获取数量
-    @RequestMapping(CmsUrlConstants.ProductTop.GetCount)
-    public Object getCount(@RequestBody ProductPageParameter param) {
-
-        return success(service.getCount(param, getUser().getSelChannelId()));
-    }
+//    @RequestMapping(CmsUrlConstants.ProductTop.GetCount)
+//    public Object getCount(@RequestBody ProductPageParameter param) {
+//
+//        return success(service.getCount(param, getUser().getSelChannelId()));
+//    }
 
     //获取置顶区 列表
     @RequestMapping(CmsUrlConstants.ProductTop.GetTopList)
@@ -76,6 +81,13 @@ public class CmsProductTopController extends CmsController {
         UserSessionBean userSessionBean = getUser();
         service.saveTopProduct(param, userSessionBean.getSelChannelId(), userSessionBean.getUserName());
 
+        return success(null);
+    }
+
+    //排序 保存
+    @RequestMapping(CmsUrlConstants.ProductTop.SaveSortColumnName)
+    public AjaxResponse saveSortColumnName(@RequestBody ProductPageParameter param) {
+        service.saveSortColumnName(param,getUser().getSelChannelId(), getUser().getUserName());
         return success(null);
     }
 }
