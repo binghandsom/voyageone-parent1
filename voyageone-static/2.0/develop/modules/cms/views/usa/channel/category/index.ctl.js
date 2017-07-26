@@ -10,9 +10,9 @@ define([
     'modules/cms/service/search.util.service'
 ], function (cms, carts, sortEntity) {
 
-    cms.controller('usCategoryController',class UsCategoryController{
+    cms.controller('usCategoryController', class UsCategoryController {
 
-        constructor($routeParams,advanceSearch, productTopService, alert, notify, confirm, $filter,popups,selectRowsFactory,$parse,searchUtilService){
+        constructor($routeParams, advanceSearch, productTopService, alert, notify, confirm, $filter, popups, selectRowsFactory, $parse, searchUtilService) {
             let self = this;
 
             self.sortEntity = sortEntity;
@@ -28,17 +28,17 @@ define([
             self.tempUpEntity = {};
             self.searchResult = {};
             self.masterData = {};
-            self.productSelList =  {selList: []};
+            self.productSelList = {selList: []};
             self.catInfo = angular.fromJson(this.$routeParams.category);
             self.popups = popups;
             self.searchInfo = {
-                cartId:carts.Sneakerhead.id,
-                codeList:''
+                cartId: carts.Sneakerhead.id,
+                codeList: ''
             };
             self.customColumns = {
-                selCommonProps:[],
-                selPlatformAttributes:[],
-                selPlatformSales:[]
+                selCommonProps: [],
+                selPlatformAttributes: [],
+                selPlatformSales: []
             };
             self.columnArrow = {};
             self.moveKeys = {
@@ -47,14 +47,16 @@ define([
                 down: 'down',
                 downToLast: 'downToLast'
             };
-            self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
-                self.search();
-            }};
+            self.pageOption = {
+                curr: 1, total: 0, size: 10, fetch: function () {
+                    self.search();
+                }
+            };
             self.searchUtilService = searchUtilService;
             self.sort = sortEntity[1];
         }
 
-        init(){
+        init() {
             let self = this,
                 catInfo = self.catInfo;
 
@@ -70,7 +72,7 @@ define([
                     // 品牌列表
                     self.masterData.brandList = res.data.brandList;
                     self.masterData.freeTags = {};
-                    _.each(res.data.freeTags,freeTag => {
+                    _.each(res.data.freeTags, freeTag => {
                         self.masterData.freeTags[freeTag.tagPath] = freeTag;
                     });
 
@@ -81,8 +83,8 @@ define([
                     self.customColumns.commonProps = res.data.commonProps;
                     self.customColumns.platformAttributes = res.data.platformAttributes;
                     self.customColumns.platformSales = res.data.platformSales;
-                    self.customColumns.selCommonProps = self.searchUtilService.getSelectedProps(res.data.commonProps,res.data.selCommonProps,'propId',self);
-                    self.customColumns.selPlatformAttributes = self.searchUtilService.getSelectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value',self);
+                    self.customColumns.selCommonProps = self.searchUtilService.getSelectedProps(res.data.commonProps, res.data.selCommonProps, 'propId', self);
+                    self.customColumns.selPlatformAttributes = self.searchUtilService.getSelectedProps(res.data.platformAttributes, res.data.selPlatformAttributes, 'value', self);
                     self.customColumns.selPlatformSales = res.data.selPlatformSales;
 
                     self.search();
@@ -96,24 +98,24 @@ define([
         clear() {
             let self = this;
             self.searchInfo = {
-                brandSelType:1,
-                pCatPathType:1,
-                shopCatType:1
+                brandSelType: 1,
+                pCatPathType: 1,
+                shopCatType: 1
             };
         }
 
-        dismiss(attrName){
+        dismiss(attrName) {
             this.searchInfo[attrName] = null;
         }
 
-        search(){
+        search() {
             let self = this;
-              //  sort = self.sort;
+            //  sort = self.sort;
 
-           // if (sort) {
-           //     data.sortColumnName = sort.sValue;
-           //     data.sortType = sort.sortType;
-           // }
+            // if (sort) {
+            //     data.sortColumnName = sort.sValue;
+            //     data.sortType = sort.sortType;
+            // }
 
             self.srInstance.clearCurrPageRows();
             self.advanceSearch.search(self.searchUtilService.handleQueryParams(self)).then(res => {
@@ -122,8 +124,11 @@ define([
                     self.pageOption.total = res.data.productListTotal;
 
                     self.searchResult.productList.forEach(productInfo => {
-                       // self.setFreeTagList(productInfo);
-                        self.srInstance.currPageRows({"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
+                        // self.setFreeTagList(productInfo);
+                        self.srInstance.currPageRows({
+                            "id": productInfo.prodId,
+                            "code": productInfo.common.fields["code"]
+                        });
                     });
 
                     self.productSelList = self.srInstance.selectRowsInfo;
@@ -134,18 +139,22 @@ define([
             this.selAll = false;
         }
 
-        getTopList(){
+        getTopList() {
             let self = this;
-            self.productTopService.getTopList({"cartId":carts.Sneakerhead.id,"sellerCatId":self.catInfo.catId}).then(res => {
+            self.productTopService.getTopList({
+                "cartId": carts.Sneakerhead.id,
+                "sellerCatId": self.catInfo.catId
+            }).then(res => {
                 if (res.data) {
                     self.topList = res.data;
                 }
             });
         }
+
         addTopProductClick(productInfo) {
             let self = this,
                 parameter = {};
-                parameter.codeList = [productInfo.common.fields.code];
+            parameter.codeList = [productInfo.common.fields.code];
 
             parameter.cartId = carts.Sneakerhead.id;
             parameter.sellerCatId = self.catInfo.catId;
@@ -232,17 +241,16 @@ define([
         };
 
 
-
         popUsFreeTag() {
             let self = this;
 
             self.popups.openUsFreeTag({
                 orgFlg: '1',
                 tagType: '4',
-                orgChkStsMap:self.searchInfo.usFreeTags
+                orgChkStsMap: self.searchInfo.usFreeTags
             }).then(res => {
                 self.searchInfo.usFreeTagsOption = res.selectdTagList;
-                self.searchInfo.usFreeTags = _.pluck(res.selectdTagList,'tagPath');
+                self.searchInfo.usFreeTags = _.pluck(res.selectdTagList, 'tagPath');
             });
 
         }
@@ -252,33 +260,33 @@ define([
             let self = this;
             self.popups.openCustomAttributes().then(res => {
                 self.customColumnNames = {};
-                self.customColumns.selCommonProps = self.searchUtilService.getSelectedProps(self.customColumns.commonProps,res.selCommonProps,'propId',self);
-                self.customColumns.selPlatformAttributes = self.searchUtilService.getSelectedProps(self.customColumns.platformAttributes, res.selPlatformAttributes,'value',self);
+                self.customColumns.selCommonProps = self.searchUtilService.getSelectedProps(self.customColumns.commonProps, res.selCommonProps, 'propId', self);
+                self.customColumns.selPlatformAttributes = self.searchUtilService.getSelectedProps(self.customColumns.platformAttributes, res.selPlatformAttributes, 'value', self);
                 self.customColumns.selPlatformSales = res.selPlatformSales;
             })
         }
 
         popBatchPrice(cartId) {
             let self = this;
-            if(self.getSelectedProduct('code').length == 0){
+            if (self.getSelectedProduct('code').length == 0) {
                 self.alert("please choose at least one!!!");
                 return;
             }
             self.popups.openBatchPrice({
-                selAll:self._selall,
-                codeList:self.getSelectedProduct('code'),
-                queryMap:self.searchUtilService.handleQueryParams(),
-                cartId:cartId? cartId :0
+                selAll: self._selall,
+                codeList: self.getSelectedProduct('code'),
+                queryMap: self.searchUtilService.handleQueryParams(),
+                cartId: cartId ? cartId : 0
             }).then(res => {
                 //根据返回参数确定勾选状态,"1",需要清除勾选状态,"0"不需要清除勾选状态
-                if(res.success == "1"){
+                if (res.success == "1") {
                     //需要清除勾选状态
                     self.clearSelList();
                     self._selall = 0;
                 }
-                if(res.type == 1){
+                if (res.type == 1) {
                     self.notify.success('Update Success');
-                }else {
+                } else {
                     self.alert('Update Defeated');
                 }
             });
@@ -288,7 +296,7 @@ define([
         /**
          * 添加产品到指定自由标签
          */
-        addFreeTag () {
+        addFreeTag() {
             let self = this;
             let selCodeList = self.getSelectedProduct('code');
             if (!self._selall && _.size(selCodeList) == 0) {
@@ -318,7 +326,7 @@ define([
                 self.confirm(msg)
                     .then(function () {
                         var data = {
-                            "type":"usa",
+                            "type": "usa",
                             "tagPathList": freeTags,
                             "prodIdList": selCodeList,
                             "isSelAll": self._selall ? 1 : 0,
@@ -337,22 +345,22 @@ define([
         };
 
         //进行上下架操作
-        batchList(cartId,activeStatus,usPlatformName){
+        batchList(cartId, activeStatus, usPlatformName) {
             let self = this;
-            if(self.getSelectedProduct('code').length == 0){
+            if (self.getSelectedProduct('code').length == 0) {
                 self.alert("please choose at least one!!!");
                 return;
             }
             self.popups.openUsList({
-                selAll:self._selall,
-                codeList:self.getSelectedProduct('code'),
-                queryMap:self.searchUtilService.handleQueryParams(),
-                cartId:cartId? cartId :0,
+                selAll: self._selall,
+                codeList: self.getSelectedProduct('code'),
+                queryMap: self.searchUtilService.handleQueryParams(),
+                cartId: cartId ? cartId : 0,
                 //操作状态1为上架,0为下架
-                activeStatus:activeStatus,
-                usPlatformName:usPlatformName
+                activeStatus: activeStatus,
+                usPlatformName: usPlatformName
             }).then(res => {
-                if(res.success == "1"){
+                if (res.success == "1") {
                     //需要清除勾选状态
                     self.clearSelList();
                     self._selall = 0;
@@ -365,7 +373,7 @@ define([
          * 获取自由标签tagName
          * @param productInfo
          */
-        setFreeTagList(productInfo){
+        setFreeTagList(productInfo) {
             let self = this,
                 _usFreeTags = [];
 
@@ -384,12 +392,12 @@ define([
          * @param  id  or code
          * @returns {Array}
          */
-        getSelectedProduct(onlyAttr){
+        getSelectedProduct(onlyAttr) {
             let self = this;
 
-            if(onlyAttr){
-                return _.pluck(self.productSelList.selList,onlyAttr);
-            }else{
+            if (onlyAttr) {
+                return _.pluck(self.productSelList.selList, onlyAttr);
+            } else {
                 return self.productSelList.selList;
             }
         }
@@ -398,8 +406,8 @@ define([
         /**
          * 检索列排序
          * */
-        columnOrder (columnName) {
-            let self  = this,
+        columnOrder(columnName) {
+            let self = this,
                 column,
                 columnArrow = self.columnArrow;
 
@@ -449,24 +457,47 @@ define([
 
         }
 
-        getProductValue(element,prop){
+        getProductValue(element, prop) {
             let self = this;
-            return self.searchUtilService.getProductValue(element,prop);
+            return self.searchUtilService.getProductValue(element, prop);
         }
 
-        sortSave(type){
+        /**
+         * 保存默认排序结果
+         * @param type
+         */
+        sortSave(type) {
             let self = this;
 
             self.sort = self.sortEntity[type];
 
             self.productTopService.saveSortColumnName({
-                cartId:8,
-                sellerCatId:self.catInfo.catId,
-                sortColumnName:self.sort.sortValue,
-                sortType:self.sort.sortType
+                cartId: 8,
+                sellerCatId: self.catInfo.catId,
+                sortColumnName: self.sort.sortValue,
+                sortType: self.sort.sortType
             }).then(res => {
                 console.log(res);
             });
+
+        }
+
+        /**
+         * 保存置顶区商品
+         */
+        saveTopProduct() {
+            let self = this;
+
+            self.confirm('Comfirm to save this produts?').then(() => {
+                self.productTopService.saveTopProduct({
+                    cartId: 8,
+                    sellerCatId: self.catInfo.catId,
+                    codeList: self.getTopCodeList()
+                }).then(function () {
+                    self.notify.success('保存成功');
+                });
+            });
+
 
         }
 
