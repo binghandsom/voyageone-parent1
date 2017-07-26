@@ -74,7 +74,8 @@ define([
             }else {
                 self.flag = false;
             }
-
+        } else {
+            self.flag = false;
         }
     };
 
