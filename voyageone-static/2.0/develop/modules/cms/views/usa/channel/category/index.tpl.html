@@ -350,6 +350,7 @@
                                         <i class="fa fa-{{ctrl.getArrowName('brand')}}"></i>
                                     </button>
                                 </th>
+                                <th class="text-center w10m">Action</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -370,7 +371,7 @@
                                         <img image="{{productInfo.common.fields.images6 && productInfo.common.fields.images6[0].image6?productInfo.common.fields.images6[0].image6:productInfo.common.fields.images1[0].image1}}" alt="{{productInfo.common.fields.code}}" class="thumb-sm-search"/>
                                     </a>
                                 </td>
-                                <td colspan="{{ctrl.customColumns.selCommonProps.length  + ctrl.customColumns.selPlatformAttributes.length + ctrl.customColumns.selPlatformSales.length + 6}}"
+                                <td colspan="10"
                                     class="control-label text-left form-inline" style="height:27px; ">
                                     <!--Todo  显示商品numid  -->
                                     <span class="m-r-sm" ng-if="!!productInfo.groupBean.numIId&&!!vm.productUrl">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;

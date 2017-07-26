@@ -21,19 +21,19 @@ define([
 
                 let $domObj = element;
 
-                // $domObj.on('mouseenter',function (event) {
-                //
-                //     $domObj.animate({right:"-7px"},1000,"linear",function () {
-                //
-                //     });
-                //
-                // }).on('mouseleave',function (event) {
-                //
-                //     $domObj.animate({right:"-170px"},1000,"linear",function () {
-                //         console.log('mouseleave');
-                //     });
-                //
-                // })
+                $domObj.on('mouseenter',function () {
+
+                    $domObj.animate({right:"-7px"},1000,"linear",function () {
+
+                    });
+
+                }).on('mouseleave',function () {
+
+                    $domObj.animate({right:"-170px"},1000,"linear",function () {
+                        console.log('mouseleave');
+                    });
+
+                })
 
             }
         }

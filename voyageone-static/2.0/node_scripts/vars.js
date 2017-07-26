@@ -43,6 +43,7 @@ const build = {
                 'develop/static/css/app.old.css',
                 'develop/static/css/app.custom.css',
                 'develop/static/css/app.components.css',
+                'develop/static/css/app.us.css',
                 'develop/static/css/app.pages.css'
             ],
             dist: 'develop/static/css/',

@@ -485,6 +485,6 @@ vpagination button.btn-default {
     border-radius: 6px;
     position: fixed;
     top: 40%;
-    right: -10px;
+    right: -170px;
     z-index: 999;
 }
