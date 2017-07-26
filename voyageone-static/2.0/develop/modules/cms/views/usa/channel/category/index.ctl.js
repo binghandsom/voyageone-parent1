@@ -11,10 +11,11 @@ define([
 
     cms.controller('usCategoryController',class UsCategoryController{
 
-        constructor($routeParams,advanceSearch, productTopService, alert, notify, confirm, $filter,popups){
+        constructor($routeParams,advanceSearch, productTopService, alert, notify, confirm, $filter,popups,selectRowsFactory){
             let self = this;
 
             self.$routeParams = $routeParams;
+            self.srInstance = new selectRowsFactory();
             self.productTopService = productTopService;
             self.alert = alert;
             self.notify = notify;
@@ -82,16 +83,15 @@ define([
 
         search(){
             let self = this,
-                data = self.getSearchInfo(),
-                paging = self.paging,
-                sort = self.sort,
-                productTopService = self.productTopService;
+                data = self.getSearchInfo();
+                sort = self.sort;
 
             if (sort) {
                 data.sortColumnName = sort.sValue;
                 data.sortType = sort.sortType;
             }
 
+            self.srInstance.clearCurrPageRows();
             self.advanceSearch.search(data).then(res => {
                 if (res.data) {
                     self.searchResult.productList = res.data.productList;
@@ -102,20 +102,8 @@ define([
                         self.srInstance.currPageRows({"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
                     });
 
-                    // self.productSelList = self.srInstance.selectRowsInfo;
                 }
             });
-
-            // self.productTopService.getPage(_.extend(paging, data)).then(function (res) {
-            //
-            //     self.modelList = res.data;
-            //
-            //     console.log(self.modelList);
-            // });
-            //
-            // productTopService.getCount(self.getSearchInfo()).then(function (res) {
-            //     self.paging.total = res.data;
-            // });
 
             this.selAll = false;
         }
@@ -225,6 +213,146 @@ define([
                 orgChkStsMap:self.searchInfo.usFreeTags
             }).then(res => {
                 self.searchInfo.usFreeTags = _.pluck(res.selectdTagList,'tagPath');
+            });
+        }
+
+        // 自定义列弹出
+        popCustomAttributes() {
+            let self = this;
+            self.popups.openCustomAttributes().then(res => {
+                self.customColumnNames = {};
+                self.customColumns.selCommonProps = self.getSelectedProps(self.customColumns.commonProps,res.selCommonProps,'propId');
+                self.customColumns.selPlatformAttributes = self.getSelectedProps(self.customColumns.platformAttributes, res.selPlatformAttributes,'value');
+                self.customColumns.selPlatformSales = res.selPlatformSales;
+            })
+        }
+
+        popBatchPrice(cartId) {
+            let self = this;
+            if(self.getSelectedProduct('code').length == 0){
+                self.alert("please choose at least one!!!");
+                return;
+            }
+            self.popups.openBatchPrice({
+                selAll:self._selall,
+                codeList:self.getSelectedProduct('code'),
+                queryMap:self.handleQueryParams(),
+                cartId:cartId? cartId :0
+            }).then(res => {
+                //根据返回参数确定勾选状态,"1",需要清除勾选状态,"0"不需要清除勾选状态
+                if(res.success == "1"){
+                    //需要清除勾选状态
+                    self.clearSelList();
+                    self._selall = 0;
+                }
+                if(res.type == 1){
+                    self.notify.success('Update Success');
+                }else {
+                    self.alert('Update Defeated');
+                }
+            });
+        }
+
+        // 批量修改Free tags
+        /**
+         * 添加产品到指定自由标签
+         */
+        addFreeTag () {
+            let self = this;
+            let selCodeList = self.getSelectedProduct('code');
+            if (!self._selall && _.size(selCodeList) == 0) {
+                self.alert("Please select at least one record.");
+                return;
+            }
+            let params = {
+                orgFlg: '2',
+                selTagType: '6',
+                selAllFlg: self._selall ? 1 : 0,
+                selCodeList: self.getSelectedProduct('code'),
+                searchInfo: self.handleQueryParams()
+            };
+            self.popups.openUsFreeTag(params).then(res => {
+                let msg = '';
+                if (_.size(res.selectdTagList) > 0) {
+                    let freeTagsTxt = _.chain(res.selectdTagList).map(function (key, value) {
+                        return key.tagPathName;
+                    }).value();
+                    msg = "Set free tags for selected products:<br>" + freeTagsTxt.join('; ');
+                } else {
+                    msg = "Clear free tags for selected products";
+                }
+                let freeTags = _.chain(res.selectdTagList).map(function (key, value) {
+                    return key.tagPath;
+                }).value();
+                self.confirm(msg)
+                    .then(function () {
+                        var data = {
+                            "type":"usa",
+                            "tagPathList": freeTags,
+                            "prodIdList": selCodeList,
+                            "isSelAll": self._selall ? 1 : 0,
+                            "orgDispTagList": res.orgDispTagList,
+                            'searchInfo': self.handleQueryParams()
+                        };
+                        self.$searchAdvanceService2.addFreeTag(data).then(function () {
+                            // notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
+                            self.notify.success("Set free tags succeeded.");
+                            self.clearSelList();
+                            self._selall = false;
+                            self.search();
+                        })
+                    });
+            });
+        };
+
+        //进行上下架操作
+        batchList(cartId,activeStatus,usPlatformName){
+            let self = this;
+            if(self.getSelectedProduct('code').length == 0){
+                self.alert("please choose at least one!!!");
+                return;
+            }
+            self.popups.openUsList({
+                selAll:self._selall,
+                codeList:self.getSelectedProduct('code'),
+                queryMap:self.handleQueryParams(),
+                cartId:cartId? cartId :0,
+                //操作状态1为上架,0为下架
+                activeStatus:activeStatus,
+                usPlatformName:usPlatformName
+            }).then(res => {
+                if(res.success == "1"){
+                    //需要清除勾选状态
+                    self.clearSelList();
+                    self._selall = 0;
+                }
+                self.notify.success('Update Success');
+            });
+        }
+
+        popBatchPrice(cartId) {
+            let self = this;
+            if(self.getSelectedProduct('code').length == 0){
+                self.alert("please choose at least one!!!");
+                return;
+            }
+            self.popups.openBatchPrice({
+                selAll:self._selall,
+                codeList:self.getSelectedProduct('code'),
+                queryMap:self.handleQueryParams(),
+                cartId:cartId? cartId :0
+            }).then(res => {
+                //根据返回参数确定勾选状态,"1",需要清除勾选状态,"0"不需要清除勾选状态
+                if(res.success == "1"){
+                    //需要清除勾选状态
+                    self.clearSelList();
+                    self._selall = 0;
+                }
+                if(res.type == 1){
+                    self.notify.success('Update Success');
+                }else {
+                    self.alert('Update Defeated');
+                }
             });
         }
 
