@@ -6,12 +6,13 @@ define([
     'cms',
     'modules/cms/enums/Carts',
     './sortEnum',
-    'modules/cms/directives/navBar.directive'
+    'modules/cms/directives/navBar.directive',
+    'modules/cms/service/search.util.service'
 ], function (cms, carts, sortEnum) {
 
     cms.controller('usCategoryController',class UsCategoryController{
 
-        constructor($routeParams,advanceSearch, productTopService, alert, notify, confirm, $filter,popups,selectRowsFactory){
+        constructor($routeParams,advanceSearch, productTopService, alert, notify, confirm, $filter,popups,selectRowsFactory,$parse,searchUtilService){
             let self = this;
 
             self.$routeParams = $routeParams;
@@ -21,6 +22,7 @@ define([
             self.notify = notify;
             self.confirm = confirm;
             self.$filter = $filter;
+            self.$parse = $parse;
             self.advanceSearch = advanceSearch;
             self.tempUpEntity = {};
             self.sort = {};
@@ -32,11 +34,6 @@ define([
             self.searchInfo = {
                 cartId:carts.Sneakerhead.id,
                 codeList:''
-            };
-            self.paging = {
-                curr: 1, total: 0, size: 10, fetch: function () {
-                    self.search();
-                }
             };
             self.customColumns = {
                 selCommonProps:[],
@@ -53,6 +50,7 @@ define([
             self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
                 self.search();
             }};
+            self.searchUtilService = searchUtilService;
         }
 
         init(){
@@ -82,8 +80,8 @@ define([
                     self.customColumns.commonProps = res.data.commonProps;
                     self.customColumns.platformAttributes = res.data.platformAttributes;
                     self.customColumns.platformSales = res.data.platformSales;
-                    self.customColumns.selCommonProps = self.getSelectedProps(res.data.commonProps,res.data.selCommonProps,'propId');
-                    self.customColumns.selPlatformAttributes = self.getSelectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
+                    self.customColumns.selCommonProps = self.searchUtilService.getSelectedProps(res.data.commonProps,res.data.selCommonProps,'propId',self);
+                    self.customColumns.selPlatformAttributes = self.searchUtilService.getSelectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value',self);
                     self.customColumns.selPlatformSales = res.data.selPlatformSales;
 
                     self.search();
@@ -92,75 +90,6 @@ define([
 
             self.search();
             self.getTopList();
-        }
-
-        getSearchInfo(){
-            let self = this,
-                upEntity = angular.copy(self.searchInfo);
-
-            upEntity.cidValue = [self.catInfo.catId];
-            upEntity.shopCatType = 1;
-            upEntity.codeList = upEntity.codeList.split("\n");
-            upEntity.platformStatus = _.chain(upEntity.platformStatus).map((value,key) => {
-                if(value)
-                    return key;
-            }).filter(item => {return item}).value();
-
-            _.extend(upEntity, {productPageNum:self.pageOption.curr, productPageSize:self.pageOption.size});
-            console.log('upEntity',upEntity);
-
-            return upEntity;
-        }
-
-        // 处理请求参数
-        handleQueryParams() {
-            let self = this;
-            let searchInfo = angular.copy(self.searchInfo);
-            if (!searchInfo) {
-                searchInfo = {};
-            }
-            // codeList 换行符分割
-            let codeList = [];
-            if (searchInfo.codeList) {
-                codeList = searchInfo.codeList.split("\n");
-            }
-            searchInfo.codeList = codeList;
-            // 处理平台状态
-            if (searchInfo.platformStatus) {
-                let platformStatusObj = _.pick(searchInfo.platformStatus, function (value, key, object) {
-                    return value;
-                });
-                searchInfo.platformStatus = _.keys(platformStatusObj);
-            }
-
-            //处理类目和店铺内分类
-            if(self.tempUpEntity.pCatPathListTmp)
-            // _.extend(searchInfo, {pCatPathType:1}); // 1 in, 2 not in
-                searchInfo.pCatPathList = _.pluck(self.tempUpEntity.pCatPathListTmp,'catPath');
-            if(self.tempUpEntity.cidValueTmp)
-            // _.extend(searchInfo, {shopCatType:1}); // 1 in, 2 not in
-                searchInfo.cidValue = _.pluck(self.tempUpEntity.cidValueTmp,'catId');
-
-            //价格范围排序修改
-            if(searchInfo.sortOneName && searchInfo.sortOneName.split(',').length === 2){
-                let _priceResult = '';
-
-                if(searchInfo.sortOneType === '1'){
-                    _priceResult = searchInfo.sortOneName.split(',')[0]
-                }else{
-                    _priceResult = searchInfo.sortOneName.split(',')[1];
-                }
-
-                _priceResult.replace(/P(\d)+([A-Z,a-z,\\.])+/g, function (match) {
-                    _priceResult = match;
-                });
-
-                searchInfo.sortOneName = _priceResult.replace('.','_');
-            }
-
-            // 分页参数处理
-            _.extend(searchInfo, {productPageNum:self.pageOption.curr, productPageSize:self.pageOption.size});
-            return searchInfo;
         }
 
         clear() {
@@ -177,8 +106,7 @@ define([
         }
 
         search(){
-            let self = this,
-                data = self.getSearchInfo();
+            let self = this;
               //  sort = self.sort;
 
            // if (sort) {
@@ -187,7 +115,7 @@ define([
            // }
 
             self.srInstance.clearCurrPageRows();
-            self.advanceSearch.search(data).then(res => {
+            self.advanceSearch.search(self.searchUtilService.handleQueryParams(self)).then(res => {
                 if (res.data) {
                     self.searchResult.productList = res.data.productList;
                     self.pageOption.total = res.data.productListTotal;
@@ -302,40 +230,7 @@ define([
             }
         };
 
-        /**
-         * 批量操作前判断是否选中
-         * @param cartId
-         * @param callback
-         */
-        $chkProductSel(cartId, callback) {
-            let self = this;
 
-            if (cartId === null || cartId === undefined) {
-                cartId = 0;
-            } else {
-                cartId = parseInt(cartId);
-            }
-
-            let selList;
-
-            if (!self._selall) {
-                selList = self.getSelectedProduct('code');
-                if (selList.length === 0) {
-                    self.alert(self.$translate.instant('TXT_MSG_NO_ROWS_SELECT'));
-                    return;
-                }
-                callback(cartId, selList);
-            } else {
-                if (self.pageOption.total === 0) {
-                    self.alert(self.$translate.instant('TXT_MSG_NO_ROWS_SELECT'));
-                    return;
-                }
-
-                self.confirm(`您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>${self.pageOption.total}</span></h3>`).then(function () {
-                    callback(cartId);
-                });
-            }
-        }
 
         popUsFreeTag() {
             let self = this;
@@ -356,8 +251,8 @@ define([
             let self = this;
             self.popups.openCustomAttributes().then(res => {
                 self.customColumnNames = {};
-                self.customColumns.selCommonProps = self.getSelectedProps(self.customColumns.commonProps,res.selCommonProps,'propId');
-                self.customColumns.selPlatformAttributes = self.getSelectedProps(self.customColumns.platformAttributes, res.selPlatformAttributes,'value');
+                self.customColumns.selCommonProps = self.searchUtilService.getSelectedProps(self.customColumns.commonProps,res.selCommonProps,'propId',self);
+                self.customColumns.selPlatformAttributes = self.searchUtilService.getSelectedProps(self.customColumns.platformAttributes, res.selPlatformAttributes,'value',self);
                 self.customColumns.selPlatformSales = res.selPlatformSales;
             })
         }
@@ -371,7 +266,7 @@ define([
             self.popups.openBatchPrice({
                 selAll:self._selall,
                 codeList:self.getSelectedProduct('code'),
-                queryMap:self.handleQueryParams(),
+                queryMap:self.searchUtilService.handleQueryParams(),
                 cartId:cartId? cartId :0
             }).then(res => {
                 //根据返回参数确定勾选状态,"1",需要清除勾选状态,"0"不需要清除勾选状态
@@ -404,7 +299,7 @@ define([
                 selTagType: '6',
                 selAllFlg: self._selall ? 1 : 0,
                 selCodeList: self.getSelectedProduct('code'),
-                searchInfo: self.handleQueryParams()
+                searchInfo: self.searchUtilService.handleQueryParams()
             };
             self.popups.openUsFreeTag(params).then(res => {
                 let msg = '';
@@ -427,7 +322,7 @@ define([
                             "prodIdList": selCodeList,
                             "isSelAll": self._selall ? 1 : 0,
                             "orgDispTagList": res.orgDispTagList,
-                            'searchInfo': self.handleQueryParams()
+                            'searchInfo': self.searchUtilService.handleQueryParams()
                         };
                         self.$searchAdvanceService2.addFreeTag(data).then(function () {
                             // notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
@@ -450,7 +345,7 @@ define([
             self.popups.openUsList({
                 selAll:self._selall,
                 codeList:self.getSelectedProduct('code'),
-                queryMap:self.handleQueryParams(),
+                queryMap:self.searchUtilService.handleQueryParams(),
                 cartId:cartId? cartId :0,
                 //操作状态1为上架,0为下架
                 activeStatus:activeStatus,
@@ -551,6 +446,11 @@ define([
 
             self.search();
 
+        }
+
+        getProductValue(element,prop){
+            let self = this;
+            return self.searchUtilService.getProductValue(element,prop);
         }
 
     });
