@@ -31,7 +31,7 @@ define([
                 self.search();
             }};
 
-            self.defulatSearchInfo = {
+            self.defaultSearchInfo = {
                 brandSelType:1, // brand include
                 pCatPathType:1, // 平台类目
                 shopCatType:1,  // 店铺内分类
@@ -40,7 +40,7 @@ define([
                 sortOneType:"-1"
             };
             // 检索条件
-            self.searchInfo = angular.copy(self.defulatSearchInfo);
+            self.searchInfo = angular.copy(self.defaultSearchInfo);
             // 检索结果
             self.searchResult = {
                 productList: []
@@ -293,7 +293,7 @@ define([
 
         clear() {
             let self = this;
-            self.searchInfo = angular.copy(self.defulatSearchInfo);
+            self.searchInfo = angular.copy(self.defaultSearchInfo);
         }
 
         dismiss(attrName){
