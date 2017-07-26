@@ -483,10 +483,10 @@ define([
 
         }
 
-        combineSort(){
+        combineSort() {
             let self = this;
 
-           self.columnOrder(self.sort.arrowName);
+            self.columnOrder(self.sort.arrowName);
             console.log(self.columnArrow);
         }
 
