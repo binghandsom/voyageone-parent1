@@ -73,8 +73,8 @@ gulp.task(tasks.publish.modules, function () {
 
     // build login.app and channel.app
     gulp.src(publish.loginAndChannel.js)
-        .pipe(ngAnnotate())
         .pipe(babel())
+        .pipe(ngAnnotate())
         .pipe(uglify())
         .pipe(rename({suffix: ".min"}))
         .pipe(gulp.dest(publish.release.loginAndChannel));
@@ -88,8 +88,8 @@ gulp.task(tasks.publish.modules, function () {
     gulp.src(publish.modules.js)
         .pipe(replace('version=', 'v='+ Date.parse(new Date())))
         .pipe(requireMin(searchMin))
-        .pipe(ngAnnotate())
         .pipe(babel())
+        .pipe(ngAnnotate())
         .pipe(uglify())
         .pipe(gulp.dest(publish.release.modules));
 
