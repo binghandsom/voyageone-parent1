@@ -41,7 +41,7 @@ define([
 
                 // SKU 是否全选
                 let flag = true;
-                if(self.platform && self.platform.skus.length > 0){
+                if(self.platform && _.size(self.platform.skus) > 0){
                     _.each(self.platform.skus, sku => {
                         let isSale = sku.isSale;
                         if (!isSale) {
