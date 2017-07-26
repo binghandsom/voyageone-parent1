@@ -2,15 +2,19 @@ package com.voyageone.service.impl.cms.product;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.producttop.*;
+import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductTopDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
+import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
+import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +38,9 @@ public class ProductTopService extends BaseService {
 
     @Autowired
     MongoSequenceService mongoSequenceService;
+
+    @Autowired
+    CmsProductSearchQueryService cmsProductSearchQueryService;
 
     //获取初始化数据
     public Map<String, Object> init(String channelId, String sellerCatId, String language) throws IOException {
@@ -80,16 +87,16 @@ public class ProductTopService extends BaseService {
         if (topModel.getProductCodeList() == null) topModel.setProductCodeList(new ArrayList<>());
 
         //加入code
-        HashSet<String> codeSet = new HashSet<>();
+        List<String> codeSet = new ArrayList<>();
         if (param.getCodeList() != null) {
-            param.getCodeList().stream().forEach(code -> {
-                codeSet.add(code);
-            });
+            codeSet.addAll(param.getCodeList());
         }
-        topModel.getProductCodeList().stream().forEach(code -> {
-            codeSet.add(code);
+        topModel.getProductCodeList().forEach(code -> {
+            if(!codeSet.contains(code)){
+                codeSet.add(code);
+            }
         });
-        topModel.setProductCodeList(codeSet.stream().collect(Collectors.toList()));
+        topModel.setProductCodeList(codeSet);
 
         if (isAdd) {
             dao.insert(topModel);
@@ -176,23 +183,48 @@ public class ProductTopService extends BaseService {
     //获取置顶区 列表
     public List<ProductInfo> getTopList(GetTopListParameter parameter, String channelId) {
         CmsBtProductTopModel topModel = dao.selectBySellerCatId(parameter.getSellerCatId(), channelId);
-        if (topModel == null || topModel.getProductCodeList() == null || topModel.getProductCodeList().size() == 0)
-            return new ArrayList<>();
+        if(topModel == null) {
+            topModel = new CmsBtProductTopModel();
+            topModel.setProductCodeList(new ArrayList<>());
+        }
+        if (topModel.getProductCodeList().size() < 50){
+            CmsSearchInfoBean2 params = new CmsSearchInfoBean2();
+            params.setCartId(CartEnums.Cart.SN.getValue());
+            params.setCidValue(Collections.singletonList(parameter.getSellerCatId()));
+            params.setShopCatType(1);
+            params.setProductPageNum(1);
+            params.setProductPageSize(100);
+            if(StringUtil.isEmpty(topModel.getSortColumnName())){
+                params.setSortOneName("created");
+                params.setSortOneType("-1");
+            }else {
+                params.setSortOneName(topModel.getSortColumnName());
+                params.setSortOneType(topModel.getSortType()+"");
+            }
 
-        JongoQuery jongoQuery = getTopListJongoQuery(parameter, topModel);
-        List<CmsBtProductModel> list = cmsBtProductDao.select(jongoQuery, channelId);
-        List<ProductInfo> listResult = list.stream().map(f -> mapProductInfo(f, parameter.getCartId())).collect(Collectors.toList());
+            List<String> topCodes = topModel.getProductCodeList();
 
+            CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(params, channelId, 0, " ");
+            if(ListUtils.notNull(cmsProductCodeListBean.getProductCodeList())){
+                topCodes.addAll(cmsProductCodeListBean.getProductCodeList().stream().filter(item->!topCodes.contains(item)).limit(50-topCodes.size()).collect(Collectors.toList()));
+            }
+        }
         //排序
         List<ProductInfo> listSortResult = new ArrayList<>();
-        topModel.getProductCodeList().forEach(f -> {
-            Optional<ProductInfo> optional = listResult.stream().filter(ff -> f.equals(ff.getCode())).findFirst();
-            if (optional != null) {
-                listSortResult.add(optional.get());
-            }
-        });
 
+        if(ListUtils.notNull(topModel.getProductCodeList())) {
+            JongoQuery jongoQuery = getTopListJongoQuery(parameter, topModel);
+            List<CmsBtProductModel> list = cmsBtProductDao.select(jongoQuery, channelId);
+            List<ProductInfo> listResult = list.stream().map(f -> mapProductInfo(f, parameter.getCartId())).collect(Collectors.toList());
+            topModel.getProductCodeList().forEach(f -> {
+                Optional<ProductInfo> optional = listResult.stream().filter(ff -> f.equals(ff.getCode())).findFirst();
+                if (optional != null) {
+                    listSortResult.add(optional.get());
+                }
+            });
+        }
         return listSortResult;
+
     }
 
     JongoQuery getTopListJongoQuery(GetTopListParameter param, CmsBtProductTopModel topModel) {
