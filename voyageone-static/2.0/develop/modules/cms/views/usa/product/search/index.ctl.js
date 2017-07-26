@@ -9,11 +9,9 @@ define([
     'modules/cms/directives/navBar.directive'
 ], function (cms,cartEntity) {
 
-    // console.log('cartEntity',cartEntity);
-
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2,notify,$routeParams) {
+        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2,notify) {
             let self = this;
 
             self.popups = popups;
@@ -64,29 +62,9 @@ define([
             };
             self.columnArrow = {};
             self.cartEntity = cartEntity;
-
-            if (self.$routeParams.code) {
-                let routePrams = eval('(' + self.$routeParams.code + ')');
-                let cartId = routePrams.cartId;
-                let platformStatus = routePrams.platformStatus;
-                if (cartId && platformStatus) {
-                    self.searchInfo.cartId = cartId;
-                    if (!self.searchInfo.platformStatus) {
-                        self.searchInfo.platformStatus = {};
-                    }
-                    // 如果状态在self.masterData不存在(all)则默认查询平台下所有状态数据
-                    let platformStatusObj = _.find(self.masterData.platformStatus, item => {
-                        return platformStatus === item.status;
-                    });
-                    if (!platformStatusObj) {
-                        _.each(self.masterData.platformStatus, item => {
-                            let tempPlatformStatus = item.status;
-                            self.searchInfo.platformStatus[tempPlatformStatus] = true;
-                        });
-                    } else {
-                        self.searchInfo.platformStatus[platformStatus] = true;
-                    }
-                }
+            self.sort = {
+                sName:'Newest',
+                sortType:-1
             }
         }
 
@@ -568,7 +546,7 @@ define([
                         })
                     });
             });
-        };
+        }
 
     });
 

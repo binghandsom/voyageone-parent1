@@ -196,7 +196,8 @@ define(function () {
                     "getCount": "getCount",
                     "getTopList": "getTopList",
                     "addTopProduct": "addTopProduct",
-                    "saveTopProduct": "saveTopProduct"
+                    "saveTopProduct": "saveTopProduct",
+                    "saveSortColumnName":"saveSortColumnName"
                 }
             },
             "mapping": {

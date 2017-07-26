@@ -8,13 +8,14 @@ define([
     './sortEnum',
     'modules/cms/directives/navBar.directive',
     'modules/cms/service/search.util.service'
-], function (cms, carts, sortEnum) {
+], function (cms, carts, sortEntity) {
 
     cms.controller('usCategoryController',class UsCategoryController{
 
         constructor($routeParams,advanceSearch, productTopService, alert, notify, confirm, $filter,popups,selectRowsFactory,$parse,searchUtilService){
             let self = this;
 
+            self.sortEntity = sortEntity;
             self.$routeParams = $routeParams;
             self.srInstance = new selectRowsFactory();
             self.productTopService = productTopService;
@@ -25,7 +26,6 @@ define([
             self.$parse = $parse;
             self.advanceSearch = advanceSearch;
             self.tempUpEntity = {};
-            self.sort = {};
             self.searchResult = {};
             self.masterData = {};
             self.productSelList =  {selList: []};
@@ -51,6 +51,7 @@ define([
                 self.search();
             }};
             self.searchUtilService = searchUtilService;
+            self.sort = sortEntity[1];
         }
 
         init(){
@@ -451,6 +452,22 @@ define([
         getProductValue(element,prop){
             let self = this;
             return self.searchUtilService.getProductValue(element,prop);
+        }
+
+        sortSave(type){
+            let self = this;
+
+            self.sort = self.sortEntity[type];
+
+            self.productTopService.saveSortColumnName({
+                cartId:8,
+                sellerCatId:self.catInfo.catId,
+                sortColumnName:self.sort.sortValue,
+                sortType:self.sort.sortType
+            }).then(res => {
+                console.log(res);
+            });
+
         }
 
     });

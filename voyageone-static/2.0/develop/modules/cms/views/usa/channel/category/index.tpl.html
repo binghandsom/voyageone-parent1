@@ -270,34 +270,32 @@
                         <div class="col-md-4 col-md-offset-4 text-right">
                                 <div class="btn-group" uib-dropdown style="margin-top: 7px">
                                     <button type="button" class="btn btn-info btn-pop" uib-dropdown-toggle>
-                                        &nbsp;<span ng-if="ctrl.sort.sName">{{ctrl.sort.sName}}{{ctrl.sort.sortType == 1 ? '升序'  :'降序'}}</span>
-                                              <span ng-if="!ctrl.sort.sName">Newest</span>&nbsp;<span class="caret"></span>
+                                         <span>{{ctrl.sort.sortName}}</span>&nbsp;<span class="caret"></span>
                                     </button>&emsp;
                                     <ul uib-dropdown-menu>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('created',1)" >Newest</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSave(1)" >Newest</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('created',-1)" >Name(A~Z)</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSave(2)" >Name(A~Z)</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('platforms.P✓.pPriceSaleEd',1)" >Name(Z~A)</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSave(3)" >Name(Z~A)</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('platforms.P✓.pPriceSaleEd',-1)" >Highest Price</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSave(4)" >Highest Price</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('common.fields.quantity',-1)" >Lowest Price</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSave(5)" >Lowest Price</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSum7.cartId✓',-1)" >Highest Qty</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSave(6)" >Highest Qty</button>
                                         </li>
                                         <li>
-                                            <button class="opacityBtn" ng-click="ctrl.sortSearch('sales.codeSum30.cartId✓',-1)" >Lowest Qty</button>
+                                            <button class="opacityBtn" ng-click="ctrl.sortSave(7)" >Lowest Qty</button>
                                         </li>
 
                                     </ul>
-                                    <button class="btn btn-default btn-pop" ng-click="ctrl.addTopProductClick()" style="margin-left: 10px"><i class="glyphicon glyphicon-plane"></i>&nbsp;SORT SAVE</button>&emsp;
                                 </div>
 
                         </div>
