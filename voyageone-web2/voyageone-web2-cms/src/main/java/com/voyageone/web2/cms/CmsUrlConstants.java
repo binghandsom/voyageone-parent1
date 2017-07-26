@@ -733,6 +733,8 @@ public interface CmsUrlConstants {
         String GetTopList="getTopList";
         String AddTopProduct="addTopProduct";
         String SaveTopProduct="saveTopProduct";
+        String SaveSortColumnName="saveSortColumnName";
+
     }
     // 商品编辑
     interface GROUP {

@@ -120,35 +120,36 @@ public class ProductTopService extends BaseService {
         dao.update(topModel);
     }
 
-    //普通区查询 获取指定页
-    public List<ProductInfo> getPage(ProductPageParameter param, String channelId, String userName) {
-
-        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId);
-        //保存排序字段
-        topModel = saveSortColumnName(param, topModel, channelId, userName);
-
-        int pageIndex = param.getPageIndex();
-        int pageSize = param.getPageSize();
-        JongoQuery queryObject = getJongoQuery(param, topModel);
-        queryObject.setProjection("");
-        queryObject.setLimit(pageSize);
-        queryObject.setSkip((pageIndex - 1) * pageSize);
-        //排序字段
-        if (topModel != null && !com.voyageone.common.util.StringUtils.isEmpty(topModel.getSortColumnName())) {
-            queryObject.setSort(String.format("{\"%s\":%s}", topModel.getSortColumnName(), topModel.getSortType()));
-        } else {
-            queryObject.setSort("{\"prodId\":-1}");
-        }
-
-        List<CmsBtProductModel> list = cmsBtProductDao.select(queryObject, channelId);
-        List<ProductInfo> listResult = list.stream().map(f -> mapProductInfo(f, param.getCartId())).collect(Collectors.toList());
-        return listResult;
-    }
+//    //普通区查询 获取指定页
+//    public List<ProductInfo> getPage(ProductPageParameter param, String channelId, String userName) {
+//
+//        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId);
+//        //保存排序字段
+//        //topModel = saveSortColumnName(param, topModel, channelId, userName);
+//
+//        int pageIndex = param.getPageIndex();
+//        int pageSize = param.getPageSize();
+//        JongoQuery queryObject = getJongoQuery(param, topModel);
+//        queryObject.setProjection("");
+//        queryObject.setLimit(pageSize);
+//        queryObject.setSkip((pageIndex - 1) * pageSize);
+//        //排序字段
+//        if (topModel != null && !com.voyageone.common.util.StringUtils.isEmpty(topModel.getSortColumnName())) {
+//            queryObject.setSort(String.format("{\"%s\":%s}", topModel.getSortColumnName(), topModel.getSortType()));
+//        } else {
+//            queryObject.setSort("{\"prodId\":-1}");
+//        }
+//
+//        List<CmsBtProductModel> list = cmsBtProductDao.select(queryObject, channelId);
+//        List<ProductInfo> listResult = list.stream().map(f -> mapProductInfo(f, param.getCartId())).collect(Collectors.toList());
+//        return listResult;
+//    }
 
     //保存排序字段
-    public CmsBtProductTopModel saveSortColumnName(ProductPageParameter param, CmsBtProductTopModel topModel, String channelId, String userName) {
+    public void saveSortColumnName(ProductPageParameter param, String channelId, String userName) {
         if (!StringUtils.isEmpty(param.getSortColumnName())) {
             boolean isAdd = false;
+            CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId);
             if (topModel == null) {
                 isAdd = true;
                 topModel = new CmsBtProductTopModel();
@@ -167,7 +168,6 @@ public class ProductTopService extends BaseService {
                 dao.update(topModel);
             }
         }
-        return topModel;
     }
 
 
