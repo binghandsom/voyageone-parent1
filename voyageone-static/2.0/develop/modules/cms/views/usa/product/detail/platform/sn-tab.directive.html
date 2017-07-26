@@ -60,7 +60,7 @@
                                             <div class="col-xs-6 col-md-2" ng-repeat="image in ctrl.mastData.images">
                                                 <a href="javascript:void(0);" class="thumbnail pos-relative" style="height: 88px;padding: 0px"
                                                    ng-class="{'active':item.status=='Approved'}">
-                                                    <img class="thumb-sm-search" ng-src="{{ctrl.imageView.imageUrl.replace('%s', image.imageName)}}">
+                                                    <img class="thumb-sm-search" ng-src="{{ctrl.imageView.imageUrl.replace('{image_name}', image.imageName)}}">
                                                 </a>
                                                 <span class="text-wrap"><strong>{{image.productCode}}</strong></span>
                                             </div>
@@ -214,7 +214,7 @@
                                                 <div class="imageContainer">
                                                     <div class="imageWrapper">
                                                         <img  class="imageWrapper" style="cursor: pointer;max-width: 200px; max-height: 170px;"
-                                                              ng-src="{{ctrl.imageView.imageUrl.replace('%s', ctrl.imageView.currImage.image1)}}"
+                                                              ng-src="{{ctrl.imageView.imageUrl.replace('{image_name}', ctrl.imageView.currImage.image1)}}"
                                                               title="【click me】" ng-click="ctrl.goDetail(ctrl.currentFeedImage)">
                                                     </div>
                                                 </div>
@@ -229,7 +229,7 @@
                                                                    class="thumbnail clear-margin-bottom img-auto-fix" ng-click="ctrl.imageView.currImage = image"
                                                                    ng-class="active" style="height: 88px;padding: 0px">
                                                                     <img class="thumb-group" style="max-height: 80px;max-width: 45px"
-                                                                         ng-src="{{ctrl.imageView.imageUrl.replace('%s', image.image1)}}"
+                                                                         ng-src="{{ctrl.imageView.imageUrl.replace('{image_name}', image.image1)}}"
                                                                          align="bottom">
                                                                 </a>
                                                             </div>
@@ -299,7 +299,7 @@
                                                                    ng-click="ctrl.currentBoxImage = image"
                                                                    ng-class="active" style="height: 80px">
                                                                     <img style="max-height: 80px;max-width: 45px" class="thumb-group pos-abt"
-                                                                         ng-src="{{ctrl.imageView.imageUrl.replace('%s', ctrl.imageView.currBoxImage.image2)}}">
+                                                                         ng-src="{{ctrl.imageView.imageUrl.replace('{image_name}', ctrl.imageView.currBoxImage.image2)}}">
                                                                 </a>
                                                             </div>
                                                             <div class="col-md-3 text-center m-t-md">
