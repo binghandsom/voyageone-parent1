@@ -460,7 +460,8 @@ public class UsaProductDetailService extends BaseService {
             String basePriceType = (String) paraMap.get("basePriceType");
             String optionType = (String) paraMap.get("optionType");
             // Double value = (Double) paraMap.get("value");
-            Double value = Double.parseDouble((String) paraMap.get("value"));
+            //Double value = Double.parseDouble((String) paraMap.get("value"));
+            String value = (String) paraMap.get("value");
             //"1":取整,"0":不取整
             String flag = (String) paraMap.get("flag");
             params.put("changedPriceType", changedPriceType);

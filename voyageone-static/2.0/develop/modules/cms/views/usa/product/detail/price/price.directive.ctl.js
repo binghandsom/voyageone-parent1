@@ -65,6 +65,7 @@ define([
             });
             //刷新页面
         }
+        //批量修改价格
         saveAll(){
             let self = this;
             let lists = [];
