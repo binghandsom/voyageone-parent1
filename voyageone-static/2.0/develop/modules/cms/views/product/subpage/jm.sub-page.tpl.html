@@ -317,9 +317,8 @@
                                 </div>
                                 <div class="col-md-8">
                                     <select class="form-control" ng-model="ctrl.vm.platform.fields.mainImageTemplate" ng-change="ctrl.change(ctrl.vm.platform.fields.mainImageTemplate)">
-                                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                         <option class="form-control" value={{item.imageTemplate}} ng-repeat="item in ctrl.vm.sxImageTemplates" >{{item.imageTemplate}}</option>
-                                        <option class="form-control" value="true">手动输入模板路径</option>
+                                        <option class="form-control" value="">手动输入模板路径</option>
                                     </select>
                                 </div>
 

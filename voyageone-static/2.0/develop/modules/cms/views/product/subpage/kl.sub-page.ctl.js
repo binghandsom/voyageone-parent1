@@ -73,14 +73,8 @@ define([
     /*xu*/
     SpKlController.prototype.change = function(){
         var self = this;
-        if(self.vm.platform.fields.mainImageTemplate == "true"){
-            self.vm.platform.fields.mainImageTemplate='';
-            if(self.flag == false){
-                self.flag = true;
-            }else {
-                self.flag = false;
-            }
-
+        if (self.vm.platform.fields.mainImageTemplate == "") {
+            self.flag = true;
         } else {
             self.flag = false;
         }
