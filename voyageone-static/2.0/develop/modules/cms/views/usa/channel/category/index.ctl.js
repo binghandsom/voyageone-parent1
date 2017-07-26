@@ -22,7 +22,10 @@ define([
             self.confirm = confirm;
             self.$filter = $filter;
             self.advanceSearch = advanceSearch;
+            self.tempUpEntity = {};
+            self.sort = {};
             self.searchResult = {};
+            self.productSelList =  {selList: []};
             self.catInfo = angular.fromJson(this.$routeParams.category);
             self.popups = popups;
             self.searchInfo = {
@@ -81,15 +84,79 @@ define([
             return upEntity;
         }
 
+        // 处理请求参数
+        handleQueryParams() {
+            let self = this;
+            let searchInfo = angular.copy(self.searchInfo);
+            if (!searchInfo) {
+                searchInfo = {};
+            }
+            // codeList 换行符分割
+            let codeList = [];
+            if (searchInfo.codeList) {
+                codeList = searchInfo.codeList.split("\n");
+            }
+            searchInfo.codeList = codeList;
+            // 处理平台状态
+            if (searchInfo.platformStatus) {
+                let platformStatusObj = _.pick(searchInfo.platformStatus, function (value, key, object) {
+                    return value;
+                });
+                searchInfo.platformStatus = _.keys(platformStatusObj);
+            }
+
+            //处理类目和店铺内分类
+            if(self.tempUpEntity.pCatPathListTmp)
+            // _.extend(searchInfo, {pCatPathType:1}); // 1 in, 2 not in
+                searchInfo.pCatPathList = _.pluck(self.tempUpEntity.pCatPathListTmp,'catPath');
+            if(self.tempUpEntity.cidValueTmp)
+            // _.extend(searchInfo, {shopCatType:1}); // 1 in, 2 not in
+                searchInfo.cidValue = _.pluck(self.tempUpEntity.cidValueTmp,'catId');
+
+            //价格范围排序修改
+            if(searchInfo.sortOneName && searchInfo.sortOneName.split(',').length === 2){
+                let _priceResult = '';
+
+                if(searchInfo.sortOneType === '1'){
+                    _priceResult = searchInfo.sortOneName.split(',')[0]
+                }else{
+                    _priceResult = searchInfo.sortOneName.split(',')[1];
+                }
+
+                _priceResult.replace(/P(\d)+([A-Z,a-z,\\.])+/g, function (match) {
+                    _priceResult = match;
+                });
+
+                searchInfo.sortOneName = _priceResult.replace('.','_');
+            }
+
+            // 分页参数处理
+            _.extend(searchInfo, {productPageNum:self.pageOption.curr, productPageSize:self.pageOption.size});
+            return searchInfo;
+        }
+
+        clear() {
+            let self = this;
+            self.searchInfo = {
+                brandSelType:1,
+                pCatPathType:1,
+                shopCatType:1
+            };
+        }
+
+        dismiss(attrName){
+            this.searchInfo[attrName] = null;
+        }
+
         search(){
             let self = this,
                 data = self.getSearchInfo();
-                sort = self.sort;
+              //  sort = self.sort;
 
-            if (sort) {
-                data.sortColumnName = sort.sValue;
-                data.sortType = sort.sortType;
-            }
+           // if (sort) {
+           //     data.sortColumnName = sort.sValue;
+           //     data.sortType = sort.sortType;
+           // }
 
             self.srInstance.clearCurrPageRows();
             self.advanceSearch.search(data).then(res => {
@@ -98,15 +165,18 @@ define([
                     self.pageOption.total = res.data.productListTotal;
 
                     self.searchResult.productList.forEach(productInfo => {
-                        self.setFreeTagList(productInfo);
+                       // self.setFreeTagList(productInfo);
                         self.srInstance.currPageRows({"id": productInfo.prodId, "code": productInfo.common.fields["code"]});
                     });
+
+                    self.productSelList = self.srInstance.selectRowsInfo;
 
                 }
             });
 
             this.selAll = false;
         }
+
         getTopList(){
             let self = this;
             self.productTopService.getTopList({"cartId":carts.Sneakerhead.id,"sellerCatId":self.catInfo.catId}).then(res => {
@@ -204,6 +274,41 @@ define([
             }
         };
 
+        /**
+         * 批量操作前判断是否选中
+         * @param cartId
+         * @param callback
+         */
+        $chkProductSel(cartId, callback) {
+            let self = this;
+
+            if (cartId === null || cartId === undefined) {
+                cartId = 0;
+            } else {
+                cartId = parseInt(cartId);
+            }
+
+            let selList;
+
+            if (!self._selall) {
+                selList = self.getSelectedProduct('code');
+                if (selList.length === 0) {
+                    self.alert(self.$translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                    return;
+                }
+                callback(cartId, selList);
+            } else {
+                if (self.pageOption.total === 0) {
+                    self.alert(self.$translate.instant('TXT_MSG_NO_ROWS_SELECT'));
+                    return;
+                }
+
+                self.confirm(`您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>${self.pageOption.total}</span></h3>`).then(function () {
+                    callback(cartId);
+                });
+            }
+        }
+
         popUsFreeTag() {
             let self = this;
 
@@ -214,6 +319,7 @@ define([
             }).then(res => {
                 self.searchInfo.usFreeTags = _.pluck(res.selectdTagList,'tagPath');
             });
+
         }
 
         // 自定义列弹出
@@ -330,30 +436,37 @@ define([
             });
         }
 
-        popBatchPrice(cartId) {
-            let self = this;
-            if(self.getSelectedProduct('code').length == 0){
-                self.alert("please choose at least one!!!");
-                return;
-            }
-            self.popups.openBatchPrice({
-                selAll:self._selall,
-                codeList:self.getSelectedProduct('code'),
-                queryMap:self.handleQueryParams(),
-                cartId:cartId? cartId :0
-            }).then(res => {
-                //根据返回参数确定勾选状态,"1",需要清除勾选状态,"0"不需要清除勾选状态
-                if(res.success == "1"){
-                    //需要清除勾选状态
-                    self.clearSelList();
-                    self._selall = 0;
-                }
-                if(res.type == 1){
-                    self.notify.success('Update Success');
-                }else {
-                    self.alert('Update Defeated');
-                }
+        /**
+         * 获取自由标签tagName
+         * @param productInfo
+         */
+        setFreeTagList(productInfo){
+            let self = this,
+                _usFreeTags = [];
+
+            productInfo.usFreeTags.forEach(tag => {
+                let _tag = self.masterData.freeTags[tag];
+
+                _usFreeTags.push(_tag.tagName);
             });
+
+            productInfo._usFreeTags = _usFreeTags;
+
+        }
+
+        /**
+         * 获取选中产品 getSelectedProduct('code')
+         * @param  id  or code
+         * @returns {Array}
+         */
+        getSelectedProduct(onlyAttr){
+            let self = this;
+
+            if(onlyAttr){
+                return _.pluck(self.productSelList.selList,onlyAttr);
+            }else{
+                return self.productSelList.selList;
+            }
         }
 
     });
