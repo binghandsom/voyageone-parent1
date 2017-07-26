@@ -30,7 +30,7 @@
                                <span ng-if="platform.priceMsrpSt != platform.priceMsrpEd">
                                     {{platform.priceMsrpSt}}~{{platform.priceMsrpEd}}
                                </span>
-                               <input type="number" ng-if="platform.priceMsrpSt == platform.priceMsrpEd" value="{{platform.priceMsrpSt | number}}"
+                               <input type="number" ng-if="platform.priceMsrpSt == platform.priceMsrpEd" value="{{platform.priceMsrpSt}}"
                                       ng-model="platform.priceMsrpSt" ng-change="platform.priceMsrpEd = platform.priceMsrpSt ;platform.flag=false">
                            </td>
                            <td class="text-center">
