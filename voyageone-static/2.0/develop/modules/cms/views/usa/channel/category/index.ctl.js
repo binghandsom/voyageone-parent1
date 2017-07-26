@@ -76,8 +76,6 @@ define([
                         self.masterData.freeTags[freeTag.tagPath] = freeTag;
                     });
 
-                    console.log(self.masterData.freeTags);
-
                     // 用户自定义列
                     self.customColumnNames = {};
                     self.customColumns.commonProps = res.data.commonProps;
@@ -471,15 +469,25 @@ define([
 
             self.sort = self.sortEntity[type];
 
+            self.combineSort();
+
             self.productTopService.saveSortColumnName({
                 cartId: 8,
                 sellerCatId: self.catInfo.catId,
                 sortColumnName: self.sort.sortValue,
                 sortType: self.sort.sortType
             }).then(res => {
-                console.log(res);
+                //搜索区排序要联动
+
             });
 
+        }
+
+        combineSort(){
+            let self = this;
+
+           self.columnOrder(self.sort.arrowName);
+            console.log(self.columnArrow);
         }
 
         /**
@@ -494,7 +502,7 @@ define([
                     sellerCatId: self.catInfo.catId,
                     codeList: self.getTopCodeList()
                 }).then(function () {
-                    self.notify.success('保存成功');
+                    self.notify.success('save success!');
                 });
             });
 
