@@ -25,6 +25,7 @@ define([
             self.tempUpEntity = {};
             self.sort = {};
             self.searchResult = {};
+            self.masterData = {};
             self.productSelList =  {selList: []};
             self.catInfo = angular.fromJson(this.$routeParams.category);
             self.popups = popups;
@@ -37,6 +38,12 @@ define([
                     self.search();
                 }
             };
+            self.customColumns = {
+                selCommonProps:[],
+                selPlatformAttributes:[],
+                selPlatformSales:[]
+            };
+            self.columnArrow = {};
             self.moveKeys = {
                 up: 'up',
                 upToTop: 'upToTop',
@@ -52,14 +59,35 @@ define([
             let self = this,
                 catInfo = self.catInfo;
 
-            self.productTopService.init({catId: catInfo.catId}).then(function (res) {
-                self.brandList = res.data.brandList;
+            this.advanceSearch.init().then(res => {
+                if (res.data) {
+                    // 美国平台、中国平台
+                    let channelPlatforms = res.data.platforms;
 
-              /*  self.sort = _.find(self.sortList, function (ele) {
-                    return ele.sValue == res.data.sortColumnName;
-                });
-                if (self.sort)
-                    self.sort.sortType = res.data.sortType;*/
+                    self.masterData.usPlatforms = _.filter(channelPlatforms, cartObj => {
+                        let cartId = parseInt(cartObj.value);
+                        return cartId > 0 && cartId < 20;
+                    });
+                    // 品牌列表
+                    self.masterData.brandList = res.data.brandList;
+                    self.masterData.freeTags = {};
+                    _.each(res.data.freeTags,freeTag => {
+                        self.masterData.freeTags[freeTag.tagPath] = freeTag;
+                    });
+
+                    console.log(self.masterData.freeTags);
+
+                    // 用户自定义列
+                    self.customColumnNames = {};
+                    self.customColumns.commonProps = res.data.commonProps;
+                    self.customColumns.platformAttributes = res.data.platformAttributes;
+                    self.customColumns.platformSales = res.data.platformSales;
+                    self.customColumns.selCommonProps = self.getSelectedProps(res.data.commonProps,res.data.selCommonProps,'propId');
+                    self.customColumns.selPlatformAttributes = self.getSelectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
+                    self.customColumns.selPlatformSales = res.data.selPlatformSales;
+
+                    self.search();
+                }
             });
 
             self.search();
@@ -317,6 +345,7 @@ define([
                 tagType: '4',
                 orgChkStsMap:self.searchInfo.usFreeTags
             }).then(res => {
+                self.searchInfo.usFreeTagsOption = res.selectdTagList;
                 self.searchInfo.usFreeTags = _.pluck(res.selectdTagList,'tagPath');
             });
 
@@ -467,6 +496,61 @@ define([
             }else{
                 return self.productSelList.selList;
             }
+        }
+
+
+        /**
+         * 检索列排序
+         * */
+        columnOrder (columnName) {
+            let self  = this,
+                column,
+                columnArrow = self.columnArrow;
+
+            _.forEach(columnArrow, function (value, key) {
+                if (key != columnName)
+                    columnArrow[key] = null;
+            });
+
+            column = columnArrow[columnName];
+
+            if (!column) {
+                column = {};
+                column.mark = 'unsorted';
+                column.count = null;
+            }
+
+            column.count = !column.count;
+
+            //偶数升序，奇数降序
+            if (column.count)
+                column.mark = 'sort-desc';
+            else
+                column.mark = 'sort-up';
+
+            columnArrow[columnName] = column;
+
+            self.searchByOrder(columnName, column.mark);
+        };
+
+        getArrowName(columnName) {
+            let columnArrow = this.columnArrow;
+
+            if (!columnArrow || !columnArrow[columnName])
+                return 'unsorted';
+
+            return columnArrow[columnName].mark;
+        };
+
+        searchByOrder(columnName, sortOneType) {
+            let self = this,
+                searchInfo = self.searchInfo;
+
+            searchInfo.sortOneName = columnName;
+            searchInfo.sortOneType = sortOneType == 'sort-up' ? '1' : '-1';
+
+            self.search();
+
         }
 
     });

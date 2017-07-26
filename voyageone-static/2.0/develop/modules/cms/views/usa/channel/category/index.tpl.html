@@ -131,7 +131,7 @@
                             <div class="col-sm-8">
                                 <select multiple chosen width="'100%'" class="form-control"
                                         ng-model="ctrl.searchInfo.usFreeTags"
-                                        ng-options="tag for tag in ctrl.searchInfo.usFreeTags ">
+                                        ng-options="tag.tagPath as tag.tagPathName for tag in ctrl.searchInfo.usFreeTagsOption ">
                                 </select>
                             </div>
                         </div>
@@ -175,7 +175,7 @@
                             <div class="col-sm-8">
                                 <select multiple chosen width="'100%'" class="form-control"
                                         ng-model="ctrl.searchInfo.brandList" search-contains = "true"
-                                        ng-options="brand.value as brand.name for brand in ctrl.brandList">
+                                        ng-options="brand.value as brand.name for brand in ctrl.masterData.brandList">
                                 </select>
                             </div>
                         </div>
@@ -318,26 +318,29 @@
                                 </th>
                                 <th class="text-center td-width-100 white-space-noWrap th-border-white">IMG</th>
                                 <th class="text-left td-width-100 white-space-noWrap th-border-white">Code</th>
-                                <th class="text-left td-width-100 white-space-noWrap th-border-white">Sneakerhead Qty
-                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('brand')">
-                                        <i class="fa fa-{{ctrl.getArrowName('brand')}}"></i>
-                                    </button>
-                                </th>
-                                <th class="text-left td-width-100 white-space-noWrap th-border-white">Sneakerhead Sale Price
-                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('brand')">
-                                        <i class="fa fa-{{ctrl.getArrowName('brand')}}"></i>
-                                    </button>
-                                </th>
-                                <th class="text-left td-width-100 white-space-noWrap th-border-white">Sneakerhead Sales(30)
-                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('brand')">
-                                        <i class="fa fa-{{ctrl.getArrowName('brand')}}"></i>
-                                    </button>
-                                </th>
                                 <th class="text-center w10m">Action</th>
+                                <th class="text-center td-width-150 white-space-noWrap th-border-white" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selCommonProps">
+                                    {{prop.propName}}
+                                    <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.sortName)" ng-if="prop.sortFlag == 1">
+                                        <i class="fa fa-{{ctrl.getArrowName(prop.sortName)}}"></i>
+                                    </button>
+                                </th>
+                                <th class="text-center td-width-150 white-space-noWrap th-border-white" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes track by $index">
+                                    {{prop.name}}
+                                    <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.value)">
+                                        <i class="fa fa-{{ctrl.getArrowName(prop.value)}}"></i>
+                                    </button>
+                                </th>
+                                <th class="text-center td-width-150 white-space-noWrap th-border-white" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selPlatformSales track by $index">
+                                    {{ctrl.cartEntity.valueOf(+prop.cartId).name}}【{{prop.beginTime}}～{{prop.endTime}}】
+                                    <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.cartId)">
+                                        <i class="fa fa-{{ctrl.getArrowName(prop.cartId)}}"></i>
+                                    </button>
+                                </th>
                             </tr>
                             </thead>
                             <tbody>
-                                <tr><td colspan="9" if-no-rows="ctrl.searchResult.productList.length"></td></tr>
+                                <tr><td colspan="6" if-no-rows="ctrl.searchResult.productList.length"></td></tr>
                             </tbody>
                             <tbody class="box-body" ng-repeat="productInfo in ctrl.searchResult.productList" style="border-bottom: 1px solid #ddd; height: 80px;">
                             <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;height: 40px;">
@@ -354,7 +357,7 @@
                                         <img image="{{productInfo.common.fields.images6 && productInfo.common.fields.images6[0].image6?productInfo.common.fields.images6[0].image6:productInfo.common.fields.images1[0].image1}}" alt="{{productInfo.common.fields.code}}" class="thumb-sm-search"/>
                                     </a>
                                 </td>
-                                <td colspan="{{ctrl.customColumns.selCommonProps.length  + ctrl.customColumns.selPlatformAttributes.length + ctrl.customColumns.selPlatformSales.length + 5}}"
+                                <td colspan="{{ctrl.customColumns.selCommonProps.length  + ctrl.customColumns.selPlatformAttributes.length + ctrl.customColumns.selPlatformSales.length + 2}}"
                                     class="control-label text-left form-inline" style="height:27px; ">
                                     <!--Todo  显示商品numid  -->
                                     <span class="m-r-sm" ng-if="!!productInfo.groupBean.numIId&&!!vm.productUrl">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
@@ -395,13 +398,13 @@
                                 <td class="text-left">
                                     <a href="#/product/usa/detail/{{productInfo.prodId}}" target="_blank" >{{productInfo.common.fields.code}}</a>
                                 </td>
-                                <td class="text-center"></td>
-                                <td class="text-center"></td>
-                                <td class="text-center"></td>
                                 <td class="text-center">
                                     <button type="button" class="btn btn-empty" ng-click="ctrl.addTopProductClick(productInfo)"><i class="fa fa-long-arrow-up"></i></button>&emsp;
                                     <button type="button" class="btn btn-empty"><i class="fa fa-long-arrow-down"></i></button>
                                 </td>
+                                <td class="text-center" ng-repeat="prop in ctrl.customColumns.selCommonProps">{{ctrl.getProductValue(productInfo,prop)}}</td>
+                                <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes track by $index">{{ctrl.getProductValue(productInfo,prop)}}</td>
+                                <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformSales track by $index">{{productInfo.sales["P"+prop.cartId]?productInfo.sales["P"+prop.cartId]:0}}</td>
                             </tr>
                             </tbody>
                         </table>
