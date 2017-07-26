@@ -15,7 +15,7 @@ import java.util.List;
  * Created by dell on 2017/7/18.
  */
 @VOMQQueue(value = CmsMqRoutingKey.CMS_USA_PRODUCT_UPDATE_TAGS)
-public class CmsBtProductUpdateTagsMQMessageBody extends BaseMQMessageBody implements IMQMessageSubBeanName {
+public class CmsBtProductUpdateTagsMQMessageBody extends BaseMQMessageBody{
 
     //是否全量
     boolean isSelAll;
@@ -102,8 +102,4 @@ public class CmsBtProductUpdateTagsMQMessageBody extends BaseMQMessageBody imple
         }
     }
 
-    @Override
-    public String getSubBeanName() {
-            return getChannelId();
-    }
 }

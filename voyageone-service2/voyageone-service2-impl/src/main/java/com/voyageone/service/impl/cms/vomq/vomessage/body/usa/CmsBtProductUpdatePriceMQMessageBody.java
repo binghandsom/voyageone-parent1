@@ -15,7 +15,7 @@ import java.util.Map;
  * Created by dell on 2017/7/17.
  */
 @VOMQQueue(value = CmsMqRoutingKey.CMS_USA_PRODUCT_UPDATE_PRICE)
-public class CmsBtProductUpdatePriceMQMessageBody extends BaseMQMessageBody implements IMQMessageSubBeanName {
+public class CmsBtProductUpdatePriceMQMessageBody extends BaseMQMessageBody{
     private List<String> productCodes;
     private Integer cartId;
     private Map<String, Object> params;
@@ -63,8 +63,4 @@ public class CmsBtProductUpdatePriceMQMessageBody extends BaseMQMessageBody impl
         }
     }
 
-    @Override
-    public String getSubBeanName() {
-            return getChannelId();
-    }
 }
