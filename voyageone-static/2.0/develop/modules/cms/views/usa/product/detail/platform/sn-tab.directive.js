@@ -152,7 +152,7 @@ define([
                 }else{
 
                     let selNode = {pCatId:context.catId, pCatPath:context.catPath};
-                    _.extend(self.productComm, selNode);
+                    _.extend(self.platform.platform, selNode);
 
                     if (context.mapping) {
                         self.searchField("googleCategory", self.productComm.schemaFields).value = context.mapping.googleCategory;
