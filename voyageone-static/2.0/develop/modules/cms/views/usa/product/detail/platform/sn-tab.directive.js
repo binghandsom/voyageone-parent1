@@ -152,7 +152,7 @@ define([
                 }else{
 
                     let selNode = {pCatId:context.catId, pCatPath:context.catPath};
-                    _.extend(self.platform, selNode);
+                    _.extend(self.productComm, selNode);
 
                     if (context.mapping) {
                         self.searchField("googleCategory", self.productComm.schemaFields).value = context.mapping.googleCategory;
@@ -163,9 +163,7 @@ define([
                         self.searchField("seoKeywords", self.platform.platform.platformFields).value = context.mapping.seoKeywords;
                         self.searchField("seoDescription", self.platform.platform.platformFields).value = context.mapping.seoDescription;
                     }
-
                 }
-
             });
         }
 
