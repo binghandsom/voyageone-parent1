@@ -107,7 +107,7 @@ define([
             this.$usProductDetailService.updateProductPlatform(parameter).then(res => {
                 if (res.data) {
                     self.notify.success("Save success.");
-                    self.platform.pStatus = status;
+                    self.platform.pStatus = platform.pStatus;
                 }
             });
         }
