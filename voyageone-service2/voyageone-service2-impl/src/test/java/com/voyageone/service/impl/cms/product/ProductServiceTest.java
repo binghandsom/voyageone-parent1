@@ -2,6 +2,8 @@ package com.voyageone.service.impl.cms.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.bean.cms.product.ProductForOmsBean;
+import com.voyageone.service.bean.cms.product.ProductForWmsBean;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
@@ -12,7 +14,10 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Ethan Shi on 2016/6/7.
@@ -24,9 +29,9 @@ public class ProductServiceTest {
     @Test
     public void removeTagByCodes() throws Exception {
 
-        List<String> listCode=new ArrayList<>();
+        List<String> listCode = new ArrayList<>();
         listCode.add("DMC015700");
-        productService.removeTagByCodes("010",listCode,196);
+        productService.removeTagByCodes("010", listCode, 196);
 
     }
 
@@ -39,7 +44,7 @@ public class ProductServiceTest {
     public void testUpdateProductPlatform() throws Exception {
 
         CmsBtProductModel product = productService.getProductById("010", 2522623L);
-        CmsBtProductModel_Platform_Cart platformCart =  new CmsBtProductModel_Platform_Cart();
+        CmsBtProductModel_Platform_Cart platformCart = new CmsBtProductModel_Platform_Cart();
         platformCart.setCartId(27);
         platformCart.setpCatId("50009522");
         platformCart.setpCatPath("尿片/洗护/喂哺/推车床>奶瓶/奶瓶相关>奶瓶");
@@ -65,7 +70,7 @@ public class ProductServiceTest {
         fieldsMap.put("specialExplain", "无");
         fieldsMap.put("searchMetaTextCustom", "奶瓶");
         platformCart.setFields(fieldsMap);
-        List<BaseMongoMap<String, Object>>  skus= new ArrayList<>();
+        List<BaseMongoMap<String, Object>> skus = new ArrayList<>();
         BaseMongoMap<String, Object> skuMap = new BaseMongoMap<>();
         skuMap.put("skuCode", "15183274");
         skuMap.put("priceSale", 10.0);
@@ -110,7 +115,7 @@ public class ProductServiceTest {
 
         platformCart.setSellerCats(sellerCats);
 
-        productPlatformService.updateProductPlatformNoSx("010", 2522623L, platformCart,"test", "comment", false);
+        productPlatformService.updateProductPlatformNoSx("010", 2522623L, platformCart, "test", "comment", false);
 
     }
 
@@ -130,5 +135,26 @@ public class ProductServiceTest {
     public void testGetProductByOriginalCodeWithoutItself() throws Exception {
         List<CmsBtProductModel> a = productService.getProductByOriginalCodeWithoutItself("928", "NY-23923-PG-PINK");
         System.out.println(JacksonUtil.bean2Json(a));
+    }
+
+    @Test
+    public void testGetWmsProductsInfo() {
+        ProductForWmsBean productForWmsBean = productService.getWmsProductsInfo("928",
+                "023-VN-015GGTY-9.5", null);
+        String imagePath = productForWmsBean.getShowName();
+        boolean result = imagePath.startsWith("http://image.voyageone.com.cn/928/is");
+        assertTrue(result);
+    }
+
+    @Test
+    public void testGetOmsProductsInfo() {
+        List<ProductForOmsBean> productForOmsBeans = productService.getOmsProductsInfo("928", null,
+                Arrays.asList("029-1-8026-011-252", "029-1-17313-011-252"),
+                null, null, "0", null);
+        assertTrue(!productForOmsBeans.isEmpty());
+        productForOmsBeans.forEach(item -> {
+            System.out.println(item.getImgPath());
+            assertTrue(item.getImgPath().startsWith("http://image.voyageone.com.cn/928/"));
+        });
     }
 }
