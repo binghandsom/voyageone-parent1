@@ -6,7 +6,7 @@
  * @Version: 2.0.0
  */
 
-define(['components/dist/voyageone.angular.com'], function () {
+define(['components/dist/common'], function () {
     angular.module('voyageone.cms.login', [
         'blockUI',
         'ngStorage',

@@ -10,8 +10,7 @@ require.config({
     baseUrl: '../../',
     urlArgs: "version=",
     paths: {
-        'voyageone-angular-com': 'components/dist/voyageone.angular.com',
-        'voyageone-com': 'components/dist/voyageone.com',
+        'voyageone-angular-com': 'components/dist/common',
         'angular-animate': 'libs/angular.js/1.5.6/angular-animate',
         'angular-route': 'libs/angular.js/1.5.6/angular-route',
         'angular-sanitize': 'libs/angular.js/1.5.6/angular-sanitize',
@@ -39,8 +38,7 @@ require.config({
     },
     waitSeconds: 0,
     shim: {
-        'voyageone-com': ['jquery'],
-        'voyageone-angular-com': ['angular'],
+        'voyageone-angular-com': ['jquery', 'angular'],
         'angular-sanitize': ['angular'],
         'angular-route': ['angular'],
         'angular-animate': ['angular'],
@@ -65,7 +63,6 @@ require.config({
         'cms': [
             'underscore',
             'voyageone-angular-com',
-            'voyageone-com',
             'angular-block-ui',
             'angular-ui-bootstrap',
             'angular-ngStorage',

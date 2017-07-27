@@ -8,7 +8,7 @@
 
 define([
     'underscore',
-    'components/dist/voyageone.angular.com.js'
+    'components/dist/common'
 ], function (_) {
 
     angular.module('voyageone.cms.channel', [

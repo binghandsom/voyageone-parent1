@@ -1,7 +1,7 @@
 /**
  * Created by sofia on 2016/8/30.
  */
-define(['components/dist/voyageone.angular.com'], function () {
+define(['components/dist/common'], function () {
     angular.module('voyageone.admin.adminForgetPass', [
         'blockUI',
         'voyageone.angular'
@@ -10,7 +10,7 @@ define(['components/dist/voyageone.angular.com'], function () {
             $ajax.post('/admin/user/self/forgetPass', {
                 userAccount: $scope.userAccount
             }).then(function (res) {
-                if (res.data == true) {
+                if (res.data) {
                     console.log(res);
                 }
             })
