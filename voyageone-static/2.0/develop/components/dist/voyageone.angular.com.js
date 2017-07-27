@@ -563,7 +563,7 @@ angular.module("voyageone.angular.directives").directive("image", function () {
         link: function (scope, element, attrs) {
             attrs.$observe('image', function () {
                 if (scope.image != null && scope.image != "" && scope.$root.imageUrl != undefined)
-                    element[0].src = scope.$root.imageUrl.replace('%s', scope.image);
+                    element[0].src = scope.$root.imageUrl.replace('{image_name}', scope.image);
             });
         }
     };
