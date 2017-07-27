@@ -209,9 +209,7 @@
                                     <div class="col-sm-5 input-group">
                                         <input type="number" class="form-control" ng-model="ctrl.searchInfo.pSalePriceFrom" ng-disabled="!ctrl.searchInfo.cartId">
                                     </div>
-                                    <!--<div class="col-sm-1 text-center">-->
                                         &nbsp;~&nbsp;
-                                    <!--</div>-->
                                     <div class="col-sm-5 input-group">
                                         <input type="text" class="form-control" ng-model="ctrl.searchInfo.pSalePriceTo" ng-disabled="!ctrl.searchInfo.cartId">
                                     </div>
@@ -348,7 +346,7 @@
                                             </span>
                                         </td>
                                     </tr>
-                                    <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="height: 66px">
+                                    <tr class="table_bg_gray" style="height: 66px">
                                         <td class="text-left">
                                             <a href="#/product/usa/detail/{{productInfo.prodId}}" target="_blank" >{{productInfo.common.fields.code}}</a>
                                         </td>
