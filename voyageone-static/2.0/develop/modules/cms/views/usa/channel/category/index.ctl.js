@@ -126,10 +126,14 @@ define([
         }
 
         search() {
-            let self = this;
+            let self = this,
+                upEntity = self.searchUtilService.handleQueryParams(self);
+
+            upEntity.cidValue = [self.catInfo.catId];
+            upEntity.shopCatType = 1;
 
             self.srInstance.clearCurrPageRows();
-            self.advanceSearch.search(self.searchUtilService.handleQueryParams(self)).then(res => {
+            self.advanceSearch.search(upEntity).then(res => {
                 if (res.data) {
                     self.searchResult.productList = res.data.productList;
                     self.pageOption.total = res.data.productListTotal;
