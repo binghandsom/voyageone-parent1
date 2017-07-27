@@ -20,4 +20,7 @@ public interface CmsBtUsWorkloadDaoExt {
                                                     @Param("cartId") int cartId,
                                                     @Param("publishTime") Date publishTime,
                                                     @Param("recordCount") int recordCount);
+
+
+    int updateUsPublishStatus(CmsBtUsWorkloadModel model);
 }

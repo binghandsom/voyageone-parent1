@@ -753,7 +753,7 @@ public class SellerCatService extends BaseService {
      * @param cId
      * @return
      */
-    private CmsBtSellerCatModel getCurrentNode(List<CmsBtSellerCatModel> nodes, String cId) {
+    public CmsBtSellerCatModel getCurrentNode(List<CmsBtSellerCatModel> nodes, String cId) {
         if (CollectionUtils.isNotEmpty(nodes)) {
             for (CmsBtSellerCatModel node:nodes) {
                 if (node.getCatId().equals(cId)) {
@@ -810,7 +810,7 @@ public class SellerCatService extends BaseService {
      * @param cId
      * @return
      */
-    private int indexOfCurrentCat (List<CmsBtSellerCatModel> sellerCats, String parentCid, String cId) {
+    public int indexOfCurrentCat (List<CmsBtSellerCatModel> sellerCats, String parentCid, String cId) {
         int index = -1;
         if (CollectionUtils.isNotEmpty(sellerCats)) {
             for (CmsBtSellerCatModel node : sellerCats) {

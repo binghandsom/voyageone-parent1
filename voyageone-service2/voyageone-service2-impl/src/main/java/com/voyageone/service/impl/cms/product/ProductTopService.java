@@ -186,6 +186,8 @@ public class ProductTopService extends BaseService {
         if(topModel == null) {
             topModel = new CmsBtProductTopModel();
             topModel.setProductCodeList(new ArrayList<>());
+        }else if(topModel.getProductCodeList() == null){
+            topModel.setProductCodeList(new ArrayList<>());
         }
         if (topModel.getProductCodeList().size() < 50){
             CmsSearchInfoBean2 params = new CmsSearchInfoBean2();

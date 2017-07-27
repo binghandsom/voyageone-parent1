@@ -202,6 +202,9 @@ public class CmsConstants {
         String FEED_PRICE_MSRP = "FEED_PRICE_MSRP";
 
         String FEED_PRICE_RETAIL = "FEED_PRICE_RETAIL";
+
+        // 推送美国的商品数
+        String US_TRANSFER_COUNT = "US_TRANSFER_COUNT";
     }
 
     public interface ImageUploadStatus {
