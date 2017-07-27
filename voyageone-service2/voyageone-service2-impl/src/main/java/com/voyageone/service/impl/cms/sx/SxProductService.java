@@ -9,6 +9,7 @@ import com.mongodb.WriteResult;
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
+import com.voyageone.base.dao.mongodb.BaseJongoTemplate;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
@@ -224,6 +225,8 @@ public class SxProductService extends BaseService {
             return plainValue + endStr;
         return plainValue;
     }
+    @Autowired
+    protected BaseJongoTemplate mongoTemplate;
 
     /**
      * 获取网络图片流，遇错重试
@@ -4885,50 +4888,45 @@ public class SxProductService extends BaseService {
 
         int cartId = workload.getCartId();
         CmsBtProductModel_Platform_Cart platformInfo = sxData.getMainProduct().getUsPlatform(cartId);
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
 
-        // 设置更新条件
-        HashMap<String, Object> bulkQueryMap = new HashMap<>();
-        bulkQueryMap.put("common.fields.code", workload.getCode());
+        JongoUpdate jongoUpdate = new JongoUpdate();
+        jongoUpdate.setQuery("{\"common.fields.code\": #}");
+        jongoUpdate.setQueryParameters(workload.getCode());
 
-        // 设置更新值
-        HashMap<String, Object> bulkUpdateMap = new HashMap<>();
-
-        // 更新时间
-        bulkUpdateMap.put("usPlatforms.P" + cartId + ".modified", DateTimeUtil.getNowTimeStamp());
-        // 更新者
-        bulkUpdateMap.put("usPlatforms.P" + cartId + ".modifier", modifier);
+        StringBuilder stringBuilder = new StringBuilder();
+        List<String> updateParems = new ArrayList<>();
+        stringBuilder.append(String.format("{$set: {\"usPlatforms.P%s.modified\": #,", cartId));
+        updateParems.add(DateTimeUtil.getNowTimeStamp());
 
         if (uploadStatus) {
-            // 设置第一次上新的时候需要更新的值
             if (StringUtils.isEmpty(platformInfo.getpPublishTime())) {
-                bulkUpdateMap.put("usPlatforms.P" + cartId + ".pPublishTime", DateTimeUtil.getNowTimeStamp());
+                stringBuilder.append(String.format("\"usPlatforms.P%s.pPublishTime\": #,", cartId));
+                updateParems.add(DateTimeUtil.getNowTimeStamp());
             }
-            // 平台上真实的上下架状态，会有另外一个batch每天从平台上拉一次最新的商品上下架状态，保存到这里
-            bulkUpdateMap.put("usPlatforms.P" + cartId + ".pReallyStatus", platformInfo.getpStatus().name());
-            // 设置pPublishError：如果上新成功则更新成功则清空，如果上新失败，设置固定值"Error"
-            bulkUpdateMap.put("usPlatforms.P" + cartId + ".pPublishError", "");
-            // 设置pPublishMessage(产品平台详情页显示用的错误信息)清空
-            bulkUpdateMap.put("usPlatforms.P" + cartId + ".pPublishMessage", "");
-        } else {
-            // 设置pPublishError：如果上新成功则更新成功则清空，如果上新失败，设置固定值"Error"
-            bulkUpdateMap.put("usPlatforms.P" + cartId + ".pPublishError", "Error");
-            // 设置pPublishMessage(产品平台详情页显示用的错误信息)清空
-            bulkUpdateMap.put("usPlatforms.P" + cartId + ".pPublishMessage", sxData.getErrorMessage());
-        }
+            stringBuilder.append(String.format("\"usPlatforms.P%s.pReallyStatus\": #,", cartId));
+            updateParems.add(platformInfo.getpStatus().name());
 
-        // 设定批量更新条件和值
-        if (!bulkUpdateMap.isEmpty()) {
-            BulkUpdateModel bulkUpdateModel = new BulkUpdateModel();
-            bulkUpdateModel.setUpdateMap(bulkUpdateMap);
-            bulkUpdateModel.setQueryMap(bulkQueryMap);
-            bulkList.add(bulkUpdateModel);
+            stringBuilder.append(String.format("\"usPlatforms.P%s.pPublishError\": #,", cartId));
+            updateParems.add("");
+
+            stringBuilder.append(String.format("\"usPlatforms.P%s.pPublishMessage\": #,", cartId));
+            updateParems.add("");
+        } else {
+            stringBuilder.append(String.format("\"usPlatforms.P%s.pPublishError\": #,", cartId));
+            updateParems.add("Error");
+
+            stringBuilder.append(String.format("\"usPlatforms.P%s.pPublishMessage\": #,", cartId));
+            updateParems.add(sxData.getErrorMessage());
         }
-        // 批量更新product表
-        if (!bulkList.isEmpty()) {
-            // 因为是回写产品状态，找不到产品时也不插入新错误的记录
-            cmsBtProductDao.bulkUpdateWithMap(workload.getChannelId(), bulkList, null, "$set", false);
-        }
+        stringBuilder.append(String.format("\"usPlatforms.P%s.modifier\": #}}", cartId));
+        updateParems.add(modifier);
+
+        jongoUpdate.setUpdate(stringBuilder.toString());
+        jongoUpdate.setUpdateParameters(updateParems.toArray());
+        String collectionName = cmsBtProductDao.getCollectionName(workload.getChannelId());
+
+        mongoTemplate.updateFirst(jongoUpdate, collectionName);
+
 
     }
 

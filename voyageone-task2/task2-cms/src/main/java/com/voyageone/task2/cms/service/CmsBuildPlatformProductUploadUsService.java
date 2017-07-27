@@ -332,13 +332,14 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
             }
         }
 
-        // 推送数据给美国
-        CmsProductTransferToUsMQMessageBody messageBody = new CmsProductTransferToUsMQMessageBody();
-        messageBody.setChannelId(shopBean.getOrder_channel_id());
-        messageBody.setProductModels(productModels);
-        messageBody.setSender(getTaskName());
-        cmsMqSenderService.sendMessage(messageBody);
-
+        if (ListUtils.notNull(productModels)) {
+            // 推送数据给美国
+            CmsProductTransferToUsMQMessageBody messageBody = new CmsProductTransferToUsMQMessageBody();
+            messageBody.setChannelId(shopBean.getOrder_channel_id());
+            messageBody.setProductModels(productModels);
+            messageBody.setSender(getTaskName());
+            cmsMqSenderService.sendMessage(messageBody);
+        }
         $info(String.format("本次推送数据 [%s] 条！", productModels.size()));
     }
 
