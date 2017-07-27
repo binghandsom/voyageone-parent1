@@ -17,21 +17,19 @@ define([
                 isOpen: '=?',
                 isDisabled: '=?'
             },
-            link: function(scope, element, attrs) {
+            link: function(scope, element) {
 
                 let $domObj = element;
 
                 $domObj.on('mouseenter',function () {
 
-                    $domObj.animate({right:"-7px"},1000,"linear",function () {
+                    $domObj.animate({right:"-7px"},800,"linear");
 
-                    });
+                });
 
-                }).on('mouseleave',function () {
+                $('.hasNavBar').on('click',function () {
 
-                    $domObj.animate({right:"-170px"},1000,"linear",function () {
-                        console.log('mouseleave');
-                    });
+                    $domObj.animate({right:"-170px"},800,"linear");
 
                 })
 
