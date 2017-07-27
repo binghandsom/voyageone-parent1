@@ -341,7 +341,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getStringAttribute("priceGrabberCategory");
     }
 
+    public void setTaxable(String taxable) {
+        setAttribute("taxable", taxable );
+    }
 
+    public String getTaxable() {
+        return getStringAttribute("taxable");
+    }
 
     //商品图片
     public List<CmsBtProductModel_Field_Image> getImages(CmsBtProductConstants.FieldImageType imageType) {

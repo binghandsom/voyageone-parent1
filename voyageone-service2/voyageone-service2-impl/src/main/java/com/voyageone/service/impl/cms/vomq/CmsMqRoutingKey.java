@@ -158,7 +158,12 @@ public class CmsMqRoutingKey {
     public static final String CMS_USA_PRODUCT_UPDATE_CATEGORY = "VoCmsUsaProductUpdateCategoryMQJobQueue";
     //修改标签
     public static final String CMS_USA_PRODUCT_UPDATE_TAGS = "VoCmsUsaProductUpdateTagsMQJobQueue";
-
+    // 推送产品至us
+    public static final String CMS_USA_PRODUCT_TRANSFER = "VOUsSynchronizeProductQueue";
+    // 推送类目至us
+    public static final String CMS_USA_CATEGORY_TRANSFER = "VOUsSynchronizeCategoryQueue";
+    // 接收类目信息
+    public static final String CMS_USA_CATEGORY_RECEIVE = "VOUsReceiveCategoryQueue";
 
     // 未整理的业务内容
 
