@@ -48,8 +48,8 @@ public class TranslationController extends CmsController {
         Map<String, Object> translateTaskInitResponse = new HashMap<>();
 
         translateTaskInitResponse.put("sortFieldOptions", TypeConfigEnums.MastType.translateTask.getList(getLang()));
-        translateTaskInitResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
-//        translateTaskInitResponse.put("taskSummary",new TaskSummaryBean());
+//        translateTaskInitResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
+        translateTaskInitResponse.put("taskSummary",new TaskSummaryBean());
         translateTaskInitResponse.put("taskDetail", translationTaskService.getCurrentTask(channelId, user));
 
         return success(translateTaskInitResponse);
@@ -151,8 +151,8 @@ public class TranslationController extends CmsController {
 
         translateTaskSaveResponse.put("taskDetail", translationTaskService.saveTask(requestBean, channelId, user, status));
 
-        translateTaskSaveResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
-//        translateTaskSaveResponse.put("taskSummary",new TaskSummaryBean());
+//        translateTaskSaveResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
+        translateTaskSaveResponse.put("taskSummary",new TaskSummaryBean());
         return translateTaskSaveResponse;
     }
 
