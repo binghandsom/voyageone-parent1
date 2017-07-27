@@ -24,7 +24,7 @@
             <list>
                 <bean class="com.mongodb.ServerAddress">
                     <constructor-arg type="java.lang.String" name="host" value="10.0.0.75"/>
-                    <constructor-arg type="int" name="port" value="27018"/>
+                    <constructor-arg type="int" name="port" value="27017"/>
                 </bean>
             </list>
         </constructor-arg>
