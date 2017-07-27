@@ -324,6 +324,15 @@ define([
                         element.common.fields.originalTitleCn = oldOriginalTitleCn;
                     }
                     _.extend(element, {"oldOriginalTitleCn": oldOriginalTitleCn});
+
+                    var platformInfo = _.find(element.platforms, function (platInfo) {
+                        return platInfo.cartId == $scope.vm.searchInfo.cartId;
+                    });
+                    if (platformInfo.cartId == 27)
+                        _.extend(element, {"numIId": platformInfo.pNumIId});
+                    else
+                        _.extend(element, {"numIId": platformInfo.pPlatformMallId});
+
                     element.saleQty = (function () {
                         var qtyArr = codeMap[element.common.fields.code],
                             _cartId = $scope.vm.searchInfo.cartId,
