@@ -9,13 +9,13 @@ define(function () {
         },
         2: {
             sortName: 'Name(A~Z)',
-            arrowName:'productNameEn',
+            arrowName:'nameEn',
             sortValue: 'common.fields.productNameEn',
             sortType: '1'
         },
         3: {
             sortName: 'Name(Z~A)',
-            arrowName:'productNameEn',
+            arrowName:'nameEn',
             sortValue: 'common.fields.productNameEn',
             sortType: '-1'
         },
