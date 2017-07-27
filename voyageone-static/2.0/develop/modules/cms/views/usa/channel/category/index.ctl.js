@@ -58,8 +58,10 @@ define([
 
         init() {
             let self = this,
+                _sort,
                 catInfo = self.catInfo;
 
+            //初始化右侧搜索初始化
             this.advanceSearch.init().then(res => {
                 if (res.data) {
                     // 美国平台、中国平台
@@ -84,13 +86,30 @@ define([
                     self.customColumns.selCommonProps = self.searchUtilService.getSelectedProps(res.data.commonProps, res.data.selCommonProps, 'propId', self);
                     self.customColumns.selPlatformAttributes = self.searchUtilService.getSelectedProps(res.data.platformAttributes, res.data.selPlatformAttributes, 'value', self);
                     self.customColumns.selPlatformSales = res.data.selPlatformSales;
-
-                    self.search();
                 }
             });
 
-            self.search();
+            //获取保存的排序结果
+            self.productTopService.init({catId: catInfo.catId}).then(function (res) {
+
+                _.each(self.sortEntity,(value) => {
+                    if(value['sortValue'] === res.data.sortColumnName)
+                        _sort =  value;
+                });
+
+                if(_sort){
+                    self.sort = _sort;
+
+                    self.combineSort();
+                }else{
+                    self.search();
+                }
+
+            });
+
+            //左侧蓝top50
             self.getTopList();
+
         }
 
         clear() {
@@ -108,12 +127,6 @@ define([
 
         search() {
             let self = this;
-            //  sort = self.sort;
-
-            // if (sort) {
-            //     data.sortColumnName = sort.sValue;
-            //     data.sortType = sort.sortType;
-            // }
 
             self.srInstance.clearCurrPageRows();
             self.advanceSearch.search(self.searchUtilService.handleQueryParams(self)).then(res => {
@@ -441,15 +454,6 @@ define([
             self.searchByOrder(columnName, column.mark);
         };
 
-        getArrowName(columnName) {
-            let columnArrow = this.columnArrow;
-
-            if (!columnArrow || !columnArrow[columnName])
-                return 'unsorted';
-
-            return columnArrow[columnName].mark;
-        };
-
         searchByOrder(columnName, sortOneType) {
             let self = this,
                 searchInfo = self.searchInfo;
@@ -460,6 +464,15 @@ define([
             self.search();
 
         }
+
+        getArrowName(columnName) {
+            let columnArrow = this.columnArrow;
+
+            if (!columnArrow || !columnArrow[columnName])
+                return 'unsorted';
+
+            return columnArrow[columnName].mark;
+        };
 
         getProductValue(element, prop) {
             let self = this;
@@ -493,7 +506,7 @@ define([
         combineSort() {
             let self = this;
 
-            self.columnOrder(self.sort.arrowName,self.sort.sortType);
+            self.columnOrder(self.sort.sortValue,self.sort.sortType);
 
         }
 
