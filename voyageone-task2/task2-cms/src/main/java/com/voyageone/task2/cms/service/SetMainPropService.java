@@ -1192,6 +1192,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("googleCategory", feed.getAttribute().get("googleCategory"));
             cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("googleDepartment", feed.getAttribute().get("googleDepartment"));
             cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("priceGrabberCategory", feed.getAttribute().get("priceGrabberCategory"));
+            cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("taxable", feed.getAttribute().get("taxable"));
 
             feed.setCategory(feed.getCategory().replaceAll("-",">").replaceAll("－","-"));
             if(!StringUtil.isEmpty(cmsProduct.getFeed().getCatPath())){
