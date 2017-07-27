@@ -10,7 +10,7 @@ define([
 
     class PriceTabController {
 
-        constructor($scope, detailDataService, notify) {
+        constructor($scope, detailDataService, notify,alert) {
             this.$scope = $scope;
             this.detailDataService = detailDataService;
             this.productInfo = $scope.productInfo;
@@ -30,6 +30,7 @@ define([
 
             this.flag = true;
             this.notify = notify;
+            this.alert = alert;
         }
 
         init() {
@@ -51,26 +52,29 @@ define([
                 });
             });
         }
-
         //修改价格
         save(cartId, priceMsrpSt,priceRetailSt) {
             let self = this;
-            self.saveParam.cartId = cartId + "";
-            self.saveParam.prodId = self.productInfo.productId + "";
-            self.saveParam.clientMsrpPrice = priceMsrpSt + "";
-            self.saveParam.clientRetailPrice = priceRetailSt + "";
-            self.detailDataService.updateOnePrice([self.saveParam]).then(res =>{
-                self.notify.success('Update Success');
-                self.getData();
-            });
-            //刷新页面
+            if((priceMsrpSt == null || priceMsrpSt == "0") || (priceRetailSt == null || priceRetailSt == "0")){
+                self.alert('value can not to be 0 or empty!');
+                return;
+            }else{
+                self.saveParam.cartId = cartId + "";
+                self.saveParam.prodId = self.productInfo.productId + "";
+                self.saveParam.clientMsrpPrice = priceMsrpSt + "";
+                self.saveParam.clientRetailPrice = priceRetailSt + "";
+                self.detailDataService.updateOnePrice([self.saveParam]).then(res =>{
+                    self.notify.success('Update Success');
+                    self.getData();
+                });
+            }
         }
         //批量修改价格
         saveAll(){
             let self = this;
             let lists = [];
             //美国平台
-            if(self.manyUsMsrp != "" || self.manyUsNetPrice != ""){
+            if((self.manyUsMsrp != "" && self.manyUsMsrp != null && self.manyUsMsrp != "0") || (self.manyUsNetPrice != ""&& self.manyUsNetPrice != null && self.manyUsNetPrice != "0")){
                 _.each(self.usPriceList, function (value,key) {
                     let map = {
                         cartId: key + "",
@@ -80,9 +84,12 @@ define([
                     };
                     lists.push(map);
                 });
+            }else {
+                self.alert('value can not to be 0 or empty!');
+                return;
             }
-            //中国平台
-            if(self.manyMsrp != "" || self.manySalePrice != ""){
+            //中国平台 manyMsrp manySalePrice
+            if((self.manyMsrp != "" && self.manyMsrp != null && self.manyMsrp != "0") || (self.manySalePrice != ""&& self.manySalePrice != null && self.manySalePrice != "0")){
                 _.each(self.priceList, function (value,key) {
                     let map = {
                         cartId: key + "",
@@ -92,6 +99,9 @@ define([
                     }
                     lists.push(map);
                 })
+            }else {
+                self.alert('value can not to be 0 or empty!');
+                return;
             }
             self.detailDataService.updateOnePrice(lists).then(res =>{
                 self.manyMsrp = "";
