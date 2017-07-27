@@ -444,7 +444,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             channelConditionConfig = conditionPropValueRepo.getAllByChannelId(channelId);
 
             // 从cms_mt_channel_config查询COPY_MAIN_PRODUCT_FREE_TAGS设置，如果config_value1为1则复制主商品FreeTags
-            CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.COPY_MAIN_PRODUCT_FREE_TAGS);
+            CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(usjoi ? "928" : channelId, CmsConstants.ChannelConfig.COPY_MAIN_PRODUCT_FREE_TAGS);
             if (channelConfig != null && "1".equals(channelConfig.getConfigValue1())) {
                 copyMainProductFreeTagsFlg = "1";
             }
