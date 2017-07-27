@@ -11,7 +11,7 @@ define([
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2,notify) {
+        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2,notify,$routeParams) {
             let self = this;
 
             self.popups = popups;
