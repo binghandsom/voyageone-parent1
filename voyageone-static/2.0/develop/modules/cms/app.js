@@ -427,6 +427,7 @@ define([
         vm.navigation = {};
 
         $scope.initialize = initialize;
+        $scope.isCn = $localStorage.isCn;
         $scope.selectCategory = selectCategory;
 
         /**

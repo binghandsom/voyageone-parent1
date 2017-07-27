@@ -5,7 +5,7 @@ define(function () {
         "TXT_REMINDER_WITH_COLON": "温馨提示：",
         "TXT_EDIT_TASK": "编辑当前 Task ",
         "TXT_LOGOUT": "注销",
-        "TXT_HOME": "首页",
+        "TXT_HOME": "Home",
         "TXT_CATEGORY_VIEWS": "-- 类目视图 --",
         "TXT_FEED_MANAGER": "Feed管理",
         "TXT_FEED_PRODUCT_LIST": "Feed商品一览",
