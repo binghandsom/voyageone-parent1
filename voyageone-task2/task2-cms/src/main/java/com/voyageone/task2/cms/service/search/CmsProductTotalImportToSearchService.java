@@ -116,7 +116,7 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
                 removeIdList = new ArrayList<>();
                 cmsProductSearchService.commit();
             }
-            index++;
+//            pageNo++;
         }
         // 删除数据
         if (!removeIdList.isEmpty()) {
