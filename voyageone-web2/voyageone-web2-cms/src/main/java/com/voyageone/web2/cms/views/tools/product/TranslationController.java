@@ -133,8 +133,10 @@ public class TranslationController extends CmsController {
         Map<String, Object> translateTaskAssignResponse = new HashMap<>();
 
         translateTaskAssignResponse.put("taskDetail", translationTaskService.assignTask(channelId, user, priority, sort, keyWord));
-        translateTaskAssignResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
+//        translateTaskAssignResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
+        translateTaskAssignResponse.put("taskSummary", new TaskSummaryBean());
         return success(translateTaskAssignResponse);
+
     }
 
     /**
