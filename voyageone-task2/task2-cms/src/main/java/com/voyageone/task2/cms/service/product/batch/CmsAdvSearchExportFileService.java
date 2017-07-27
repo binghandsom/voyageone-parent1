@@ -1289,6 +1289,8 @@ public class CmsAdvSearchExportFileService extends BaseService {
                             } else {
                                 FileUtils.cell(row, index++, unlock).setCellValue(skuItem.getClientNetPrice());
                             }
+                        }else if("created".equals(propId)){
+                            FileUtils.cell(row, index++, unlock).setCellValue(item.getCreated());
                         }else {
                             Object value = fields.getAttribute(propId);
                             FileUtils.cell(row, index++, unlock).setCellValue(StringUtils.null2Space2(value == null ? "" : value.toString()));
