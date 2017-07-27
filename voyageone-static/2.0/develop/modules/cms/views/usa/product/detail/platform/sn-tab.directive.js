@@ -36,7 +36,7 @@ define([
 
             //平台类目
             this.categorys = {};
-            this.showModel = true;
+            this.showModel = false;
             // SKU
             this.selAllSkuFlag = false;
             // 平台状态
