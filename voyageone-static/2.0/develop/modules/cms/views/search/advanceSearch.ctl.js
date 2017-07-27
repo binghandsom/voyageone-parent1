@@ -329,9 +329,9 @@ define([
                         return platInfo.cartId == $scope.vm.searchInfo.cartId;
                     });
                     if (platformInfo.cartId == 27)
-                        _.extend(element, {"numIId": platformInfo.pNumIId});
-                    else
                         _.extend(element, {"numIId": platformInfo.pPlatformMallId});
+                    else
+                        _.extend(element, {"numIId": platformInfo.pNumIId});
 
                     element.saleQty = (function () {
                         var qtyArr = codeMap[element.common.fields.code],
