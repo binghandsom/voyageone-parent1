@@ -484,7 +484,7 @@ define([
                 sortType: self.sort.sortType
             }).then(() => {
 
-                self.notify('Save Success');
+                self.notify.success('Save Success');
 
             });
 
