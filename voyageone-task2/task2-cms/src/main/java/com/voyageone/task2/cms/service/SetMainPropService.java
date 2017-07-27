@@ -3048,12 +3048,13 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 common.getFields().setUsageCn(mainProduct.getCommon().getFields().getUsageCn());
 
                 // 复制主商品自由标签
-                List<String> mainFreeTags = mainProduct.getFreeTags();
-                if (!ListUtils.isNull(mainFreeTags)) {
+                // 从cms_mt_channel_config查询COPY_MAIN_PRODUCT_FREE_TAGS设置，如果config_value1为1则复制主商品FreeTags
+                CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(channelId, CmsConstants.ChannelConfig.COPY_MAIN_PRODUCT_FREE_TAGS);
+                if (channelConfig != null && "1".equals(channelConfig.getConfigValue1())) {
                     if (ListUtils.isNull(productModel.getFreeTags())) {
-                        productModel.setFreeTags(mainFreeTags);
+                        productModel.setFreeTags(mainProduct.getFreeTags());
                     } else {
-                        for (String tag : mainFreeTags) {
+                        for (String tag : mainProduct.getFreeTags()) {
                             if (!productModel.getFreeTags().contains(tag)) {
                                 productModel.getFreeTags().add(tag);
                             }

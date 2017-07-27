@@ -194,6 +194,9 @@ public class CmsConstants {
 
         // WMS->CMS推送平台库存，当Code库存为0时是否切换平台主商品
         String AUTO_SWITCH_MASTER_PRODUCT = "AUTO_SWITCH_MASTER_PRODUCT";
+
+        // Feed->Master是否复制主商品自由标签
+        String COPY_MAIN_PRODUCT_FREE_TAGS = "COPY_MAIN_PRODUCT_FREE_TAGS";
     }
 
     public interface ImageUploadStatus {
