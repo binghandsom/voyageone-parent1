@@ -25,7 +25,17 @@
                     </thead>
                     <tbody>
                         <tr ng-repeat="(key,platform) in ctrl.usPriceList">
-                           <td class="text-center">{{platform[key]}}</td>
+                           <td class="text-center">
+                               <platform-status data="{
+                                            cartId: platform.cartId,
+                                            cartName: platform.cartName,
+                                            status: platform.status,
+                                            pStatus: platform.pStatus,
+                                            pReallyStatus: platform.pReallyStatus,
+                                            pPublishError: platform.pPublishError
+                                        }"></platform-status>
+                               {{platform[key]}}
+                           </td>
                            <td class="text-center">
                                <span ng-if="platform.priceMsrpSt != platform.priceMsrpEd">
                                     {{platform.priceMsrpSt}}~{{platform.priceMsrpEd}}
