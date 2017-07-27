@@ -93,6 +93,11 @@ define([
                 self.categorys.googleDepartment = self.searchField("googleDepartment", self.productComm.schemaFields);
                 self.categorys.googleCategory = self.searchField("googleCategory", self.productComm.schemaFields);
 
+                // console.log(res.data);
+                // _.each(self.platform.platform.platformFields, item => {
+                //    console.log(item.id);
+                // });
+
             });
         }
 
@@ -148,6 +153,16 @@ define([
 
                     let selNode = {pCatId:context.catId, pCatPath:context.catPath};
                     _.extend(self.platform, selNode);
+
+                    if (context.mapping) {
+                        self.searchField("googleCategory", self.productComm.schemaFields).value = context.mapping.googleCategory;
+                        self.searchField("googleDepartment", self.productComm.schemaFields).value = context.mapping.googleDepartment;
+                        self.searchField("priceGrabberCategory", self.productComm.schemaFields).value = context.mapping.priceGrabber;
+
+                        self.searchField("seoTitle", self.platform.platform.platformFields).value = context.mapping.seoTitle;
+                        self.searchField("seoKeywords", self.platform.platform.platformFields).value = context.mapping.seoKeywords;
+                        self.searchField("seoDescription", self.platform.platform.platformFields).value = context.mapping.seoDescription;
+                    }
 
                 }
 
