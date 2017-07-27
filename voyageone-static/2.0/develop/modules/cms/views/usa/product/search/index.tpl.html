@@ -262,23 +262,6 @@
                                 </th>
                                 <th class="text-center td-width-100 white-space-noWrap th-border-white">IMG</th>
                                 <th class="text-left td-width-100 white-space-noWrap th-border-white">Code</th>
-                                <!--<th class="text-left td-width-150 white-space-noWrap th-border-white">Name</th>
-                                <th class="text-left td-width-100 white-space-noWrap th-border-white">ProductType</th>
-                                <th class="text-left td-width-100 white-space-noWrap th-border-white">Brand
-                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('brand')">
-                                        <i class="fa fa-{{ctrl.getArrowName('brand')}}"></i>
-                                    </button>
-                                </th>
-                                <th class="text-right td-width-100 white-space-noWrap th-border-white">Total Qty
-                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('quantity')">
-                                        <i class="fa fa-{{ctrl.getArrowName('quantity')}}"></i>
-                                    </button>
-                                </th>
-                                <th class="text-center td-width-100 white-space-noWrap th-border-white">Last Received
-                                    <button class="opacityBtn" ng-click="ctrl.columnOrder('lastReceivedOn')">
-                                        <i class="fa fa-{{ctrl.getArrowName('lastReceivedOn')}}"></i>
-                                    </button>
-                                </th>-->
                                 <th class="text-center td-width-150 white-space-noWrap th-border-white" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selCommonProps">
                                     {{prop.propName}}
                                     <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.sortName)" ng-if="prop.sortFlag == 1">
@@ -329,16 +312,25 @@
                                     <!-- Todo 美国商品平台状态 -->
                                     <span ng-if="productInfo.usPlatforms">
                                         <span class="m-t-xs"  ng-repeat="usPlatform in productInfo.usPlatforms">
-                                            <platform-status data="{cartId:usPlatform.cartId,
-                                               status:'Approved',
-                                               pStatus:usPlatform.status}">
-                                            </platform-status>&nbsp;&nbsp;
+                                            <span class="label" ng-class="{
+                                               'label-default':!usPlatform.pStatus || usPlatform.pStatus == 'Pending',
+                                                'label-warning':usPlatform.pStatus == 'InStock',
+                                                'label-success':usPlatform.pStatus == 'OnSale'
+                                            }">
+                                                {{usPlatform.cartId}}
+                                            </span>
                                         </span>
                                     </span>
                                     <!-- Todo 商品平台状态-->
                                     <span class="label m-l-sm" ng-if="productInfo.platforms">
                                         <span ng-repeat='entity in productInfo.platforms' ng-if="entity.cartId > 0">
-                                               <platform-status data="entity"></platform-status>
+                                            <span class="label" ng-class="{
+                                               'label-default':!entity.pStatus || entity.pStatus == 'Pending',
+                                                'label-warning':entity.pStatus == 'InStock',
+                                                'label-success':entity.pStatus == 'OnSale'
+                                            }">
+                                                {{entity.cartId}}
+                                            </span>
                                         </span>
                                     </span>
                                     <span class="label label-success m-t-xs m-r-sm" ng-if="vm.masterData.isminimall==1&&productInfo._prodOrgChaName">&nbsp;{{productInfo._prodOrgChaName}}&nbsp;</span>&nbsp;
@@ -360,11 +352,6 @@
                                         <td class="text-left">
                                             <a href="#/product/usa/detail/{{productInfo.prodId}}" target="_blank" >{{productInfo.common.fields.code}}</a>
                                         </td>
-                                        <!--<td class="text-left">{{productInfo.common.fields.productNameEn}}</td>
-                                        <td class="text-left">{{productInfo.common.fields.productType}}</td>
-                                        <td class="text-left">{{productInfo.common.fields.brand}}</td>
-                                        <td class="text-right">{{productInfo.common.fields.quantity}}</td>
-                                        <td class="text-center">{{productInfo.common.fields.translateTime}}</td>-->
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selCommonProps">{{ctrl.getProductValue(productInfo,prop)}}</td>
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes track by $index">{{ctrl.getProductValue(productInfo,prop)}}</td>
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformSales track by $index">{{productInfo.sales["P"+prop.cartId]?productInfo.sales["P"+prop.cartId]:0}}</td>

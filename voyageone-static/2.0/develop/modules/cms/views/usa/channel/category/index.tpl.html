@@ -367,10 +367,13 @@
                                     <!-- Todo 美国商品平台状态 -->
                                     <span ng-if="productInfo.usPlatforms">
                                         <span class="m-t-xs"  ng-repeat="usPlatform in productInfo.usPlatforms">
-                                            <platform-status data="{cartId:usPlatform.cartId,
-                                               status:'Approved',
-                                               pStatus:usPlatform.status}">
-                                            </platform-status>&nbsp;&nbsp;
+                                            <span class="label" ng-class="{
+                                               'label-default':!usPlatform.pStatus || usPlatform.pStatus == 'Pending',
+                                                'label-warning':usPlatform.pStatus == 'InStock',
+                                                'label-success':usPlatform.pStatus == 'OnSale'
+                                            }">
+                                                {{usPlatform.cartId}}
+                                            </span>
                                         </span>
                                     </span>
                                     <!-- Todo 商品平台状态-->

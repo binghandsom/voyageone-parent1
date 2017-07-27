@@ -26,14 +26,13 @@
                     <tbody>
                         <tr ng-repeat="(key,platform) in ctrl.usPriceList">
                            <td class="text-center">
-                               <platform-status data="{
-                                            cartId: platform.cartId,
-                                            cartName: platform.cartName,
-                                            status: platform.status,
-                                            pStatus: platform.pStatus,
-                                            pReallyStatus: platform.pReallyStatus,
-                                            pPublishError: platform.pPublishError
-                                        }"></platform-status>
+                               <span class="label" ng-class="{
+                                   'label-default':!platform.pStatus || platform.pStatus == 'Pending',
+                                    'label-warning':platform.pStatus == 'InStock',
+                                    'label-success':platform.pStatus == 'OnSale'
+                                }">
+                                    {{platform[key]}}
+                                </span>
                            </td>
                            <td class="text-center">
                                <span ng-if="platform.priceMsrpSt != platform.priceMsrpEd">
@@ -60,15 +59,13 @@
                     <tbody>
                         <tr ng-repeat="(key,platform) in ctrl.priceList">
                             <td class="text-center">
-                                <!--Todo 这边能给提供这些数据么？？？-->
-                                <platform-status data="{
-                                            cartId: platform.cartId,
-                                            cartName: platform.cartName,
-                                            status: platform.status,
-                                            pStatus: platform.pStatus,
-                                            pReallyStatus: platform.pReallyStatus,
-                                            pPublishError: platform.pPublishError
-                                        }"></platform-status>
+                                <span class="label" ng-class="{
+                                   'label-default':!platform.pStatus || platform.pStatus == 'Pending',
+                                    'label-warning':platform.pStatus == 'InStock',
+                                    'label-success':platform.pStatus == 'OnSale'
+                                }">
+                                    {{platform[key]}}
+                                </span>
                             </td>
                             <td class="text-center">-</td>
                             <td class="text-center">-</td>
