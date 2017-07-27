@@ -22,13 +22,13 @@ define(function () {
         4: {
             sortName: 'Highest Price',
             arrowName:'Sneakerhead Price',
-            sortValue: 'usPlatforms.P8.pPriceSaleEd',
+            sortValue: 'usPlatforms.P8.pPriceSaleSt,usPlatforms.P8.pPriceSaleEd',
             sortType: '-1'
         },
         5: {
             sortName: 'Lowest Price',
             arrowName:'Sneakerhead Price',
-            sortValue: 'usPlatforms.P8.pPriceSaleSt',
+            sortValue: 'usPlatforms.P8.pPriceSaleSt,usPlatforms.P8.pPriceSaleEd',
             sortType: '1'
         },
         6: {

@@ -403,8 +403,9 @@ define([
 
         /**
          * 检索列排序
+         * sortType 1:升序  -1:降序
          * */
-        columnOrder(columnName) {
+        columnOrder(columnName,sortType) {
             let self = this,
                 column,
                 columnArrow = self.columnArrow;
@@ -425,10 +426,15 @@ define([
             column.count = !column.count;
 
             //偶数升序，奇数降序
-            if (column.count)
+            if (column.count){
                 column.mark = 'sort-desc';
-            else
+            }else{
                 column.mark = 'sort-up';
+            }
+
+            if(sortType){
+                column.mark = sortType === '1' ? 'sort-up' : 'sort-desc';
+            }
 
             columnArrow[columnName] = column;
 
@@ -476,8 +482,9 @@ define([
                 sellerCatId: self.catInfo.catId,
                 sortColumnName: self.sort.sortValue,
                 sortType: self.sort.sortType
-            }).then(res => {
-                //搜索区排序要联动
+            }).then(() => {
+
+                self.notify('Save Success');
 
             });
 
@@ -486,8 +493,8 @@ define([
         combineSort() {
             let self = this;
 
-            self.columnOrder(self.sort.arrowName);
-            console.log(self.columnArrow);
+            self.columnOrder(self.sort.arrowName,self.sort.sortType);
+
         }
 
         /**
