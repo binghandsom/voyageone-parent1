@@ -2,7 +2,7 @@
     <div class="wrapper-md">
         <div class="container-fluid">
             <div class="table-responsive box box-body">
-                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main table-hover">
                     <tr>
                     <th class="text-center">Bulk changes</th>
                     <th class="text-center"><input type="text" ng-model="ctrl.manyUsMsrp" ng-change="ctrl.flag=false" ></th>
@@ -79,7 +79,7 @@
                                     {{platform.priceMsrpSt}}~{{platform.priceMsrpEd}}
                                 </span>
                                 <input type="number" ng-if="platform.priceMsrpSt == platform.priceMsrpEd"
-                                       ng-model="platform.priceMsrpSt" ng-change="platform.priceMsrpEd = platform.priceMsrpSt;platform.flag=false">
+                                       ng-model="platform.priceMsrpSt" ng-change="platform.priceMsrpEd = platform.priceMsrpSt;platform.flag=false" >
                             </td>
                             <td class="text-center">
                                 <span  ng-if="platform.priceRetailSt != platform.priceRetailEd">
