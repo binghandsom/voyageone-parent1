@@ -46,7 +46,8 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-sm-5">
-                                        <img class="thumb thumb-sm-search" image="{{product.image1}}">
+                                        <img-by-name name="product.image1"
+                                                     class="thumb-sm-search"></img-by-name>
                                     </div>
                                     <div class="col-sm-7">
                                         <div class="row">
@@ -352,7 +353,9 @@
                                 </td>
                                 <td rowspan="2">
                                     <a href="javascript:void(0)" ng-click="openAdvanceImagedetail(productInfo)">
-                                        <img image="{{productInfo.common.fields.images6 && productInfo.common.fields.images6[0].image6?productInfo.common.fields.images6[0].image6:productInfo.common.fields.images1[0].image1}}" alt="{{productInfo.common.fields.code}}" class="thumb-sm-search"/>
+                                        <img-by-name name="productInfo.common.fields.images6 && productInfo.common.fields.images6[0].image6?productInfo.common.fields.images6[0].image6:productInfo.common.fields.images1[0].image1"
+                                                     alt="{{productInfo.common.fields.code}}"
+                                                     class="thumb-sm-search"></img-by-name>
                                     </a>
                                 </td>
                                 <td colspan="{{ctrl.customColumns.selCommonProps.length  + ctrl.customColumns.selPlatformAttributes.length + ctrl.customColumns.selPlatformSales.length + 2}}"
