@@ -27,4 +27,14 @@ public class BackDoorControllerTest {
         backDoorController.addNewGroup("024", 0, null, false);
     }
 
+    @Test
+    public void updateJmPromotionMallIdByPromotionId() {
+        backDoorController.updateJmPromotionMallIdByPromotionId("001", 1860, "");
+    }
+
+    @Test
+    public void updateJmPromotionMallIdByPromotionId_withCode() {
+        backDoorController.updateJmPromotionMallIdByPromotionId("001", 1860, "aq8014");
+    }
+
 }

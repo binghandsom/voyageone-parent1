@@ -9,10 +9,7 @@ import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.ConvertUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.DateTimeUtilBeijing;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.AddProductSaveParameter;
 import com.voyageone.service.bean.cms.businessmodel.CmsAddProductToPromotion.InitParameter;
@@ -167,20 +164,27 @@ public class PromotionDetailService extends BaseService {
         CmsBtProductModel productInfo=bean.getProductInfo();   //check方法  已经初始化
         CmsBtProductGroupModel groupModel=bean.getGroupModel();//check方法  已经初始化
 
+
         String numIId = groupModel == null ? null : groupModel.getNumIId();
         // 插入cms_bt_promotion_model表
         CmsBtPromotionGroupsBean cmsBtPromotionGroupsBean = new CmsBtPromotionGroupsBean(productInfo, groupModel, promotionId, modifier);
         cmsBtPromotionGroupsBean.setNumIid(numIId);
-        cmsPromotionModelDao.insertPromotionModel(cmsBtPromotionGroupsBean);
+
 
         //初始化PromotionCode
         CmsBtPromotionCodesModel codesModel = loadCmsBtPromotionCodesModel(productInfo, groupModel, promotionId, modifier, cartId);
 
         //初始化PromotionSku
         List<CmsBtPromotionSkuBean> listPromotionSku = loadPromotionSkus(bean, productInfo, groupModel, promotionId, modifier, isUpdatePromotionPrice);
+        if(ListUtils.isNull(listPromotionSku)){
+            $info(String.format("添加活动产品出错 可能平台的sku 与code 不一致 channel:%s code:%s", channelId, productInfo.getCommonNotNull().getFieldsNotNull().getCode()));
+            return;
+        }
 
         //计算PromotionSku活动价
         promotionSkuService.loadSkuPrice(listPromotionSku, bean.getAddProductSaveParameter());
+
+        cmsPromotionModelDao.insertPromotionModel(cmsBtPromotionGroupsBean);
 
         //保存sku
         listPromotionSku.forEach(cmsBtPromotionSkuModelBean -> {
@@ -776,6 +780,7 @@ public class PromotionDetailService extends BaseService {
             CmsBtTasksBean tasksBean = new CmsBtTasksBean();
             tasksBean.setModifier(operator);
             tasksBean.setCreater(operator);
+            tasksBean.setCartId(cmsBtPromotionModel.getCartId());
             tasksBean.setPromotionId(promotionId);
             tasksBean.setTaskType(PromotionTypeEnums.Type.TEJIABAO.getTypeId());
             tasksBean.setTaskName(cmsBtPromotionModel.getPromotionName());

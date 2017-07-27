@@ -3,8 +3,6 @@ package com.voyageone.web2.cms.views.product;
 import com.google.common.base.Preconditions;
 import com.voyageone.common.asserts.Assert;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.TypeConfigEnums;
-import com.voyageone.common.util.ConvertUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CustomPropBean;
 import com.voyageone.service.bean.cms.product.DelistingParameter;
@@ -13,21 +11,16 @@ import com.voyageone.service.bean.cms.product.SetMastProductParameter;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.wms.WmsCodeStoreInvBean;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.cms.bean.CmsProductInfoBean;
-import com.voyageone.web2.sdk.api.response.wms.GetStoreStockDetailResponse;
 import com.voyageone.web2.core.bean.UserSessionBean;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -57,27 +50,6 @@ public class CmsProductDetailController extends CmsController {
 
     @Autowired
     CmsProductPlatformDetailService cmsProductPlatformDetailService;
-
-    @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_INFO)
-    public AjaxResponse doGetProductInfo(@RequestBody Map params) {
-        Long productId = Long.parseLong(String.valueOf(params.get("productId")));
-
-        String channelId = getUser().getSelChannelId();
-        int cartId = (int) getCmsSession().getPlatformType().get("cartId");
-        Map<String, Object> result = new HashMap<>();
-
-        Map<String, Object> productInfo = productPropsEditService.getProductInfo(channelId, productId, cartId, getLang());
-        CmsProductInfoBean productModel = (CmsProductInfoBean) productInfo.get("productInfo");
-        List<Map<String, Object>> inventoryList = productPropsEditService.getProdSkuCnt(productModel.getChannelId(), productId);
-        result.put("inventoryList", inventoryList);
-        result.put("productInfo", productInfo.get("productInfo"));
-        result.put("productStatusList", TypeConfigEnums.MastType.productStatus.getList(getLang()));
-        result.put("customProps", feedCustomPropService.getFeedCustomPropAttrs(channelId, "0"));
-        productInfo.remove("productInfo");
-        result.putAll(productInfo);
-
-        return success(result);
-    }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_MASTER_INFO)
     public AjaxResponse doUpdateProductMasterInfo(@RequestBody Map requestMap) {

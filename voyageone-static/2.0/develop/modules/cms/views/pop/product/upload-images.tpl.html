@@ -16,7 +16,8 @@
                         <div class="vo_prodGallery">
                             <div class="imageContainer">
                                 <div class="imageWrapper">
-                                    <img  class="imageWrapper" style="cursor: pointer;max-width: 330px; max-height: 200px;" ng-src="{{ctrl.currentImage}}" title="【click me】" ng-click="FeedDetailController.goDetail()">
+                                    <img-by-name name="ctrl.currentImage" class="imageWrapper" style="cursor: pointer;max-width: 330px; max-height: 200px;"
+                                                 ng-click="ctrl.goDetail()"></img-by-name>
                                 </div>
                             </div>
                         </div>
@@ -31,7 +32,7 @@
                                         <div class="tab-pane active">
 
                                             <div class="row" sv-root sv-part="ctrl.images1" sv-on-sort="ctrl.sortImg('images1')">
-                                                <div class="col-md-3" ng-repeat="image in ctrl.images1" sv-element ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image1)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.images1" sv-element ng-click="ctrl.currentImage=image.image1">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <div class="btn-group btn-copy" uib-dropdown ng-if="image.image1">
                                                         <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
@@ -47,8 +48,7 @@
                                                     </div>
 
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':ctrl.currentImage == image.image1}" style="height: 88px">
-                                                        <img style="max-height: 80px" class="thumb-group" ng-if="image.image1 = null && image.image1 != ''"
-                                                             ng-src="{{$root.imageUrl.replace('%s', image.image1)}}">
+                                                        <img-by-name style="max-height: 80px" class="thumb-group" name="image.image1"></img-by-name>
                                                         <button class="btn btn-upLoad btn-xs btn-image " ng-click="ctrl.simpleImgDown(image.image1,0,$event)"><i class="fa fa-cloud-download "></i></button>
                                                     </a>
                                                 </div>
@@ -65,7 +65,7 @@
                                         <div class="tab-pane active">
                                             <div class="row" sv-root sv-part="ctrl.platform.images6" sv-on-sort="ctrl.sortImg('images6')">
                                                 <div class="col-md-3"  ng-repeat="image in ctrl.platform.images6 | filter : {image6:''}" sv-element
-                                                     ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image6)">
+                                                     ng-click="ctrl.currentImage=image.image6">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <div class="btn-group btn-copy" uib-dropdown ng-if="image.image6">
                                                         <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
@@ -80,8 +80,7 @@
                                                         </ul>
                                                     </div>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':ctrl.currentImage == image.image6}" style="height: 88px">
-                                                        <img style="max-height: 80px" class="thumb-group"  ng-if="image.image6 != null && image.image6 != ''"
-                                                             ng-src="{{$root.imageUrl.replace('%s', image.image6)}}">
+                                                        <img-by-name style="max-height: 80px" class="thumb-group" name="image.image6"></img-by-name>
                                                         <button class="btn btn-dangerdel btn-xs btn-image" ng-click="ctrl.restorePlatformImg('images6',image.image6,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                         <button class="btn btn-upLoad btn-xs btn-image " ng-click="ctrl.simpleImgDown(image.image6,0,$event)"><i class="fa fa-cloud-download "></i></button>
                                                     </a>
@@ -101,7 +100,7 @@
                                         <div class="tab-pane active">
 
                                             <div class="row" sv-root sv-part="ctrl.platform.images7" sv-on-sort="ctrl.sortImg('images7')">
-                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images7 | filter : {image7:''}" sv-element ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image7)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images7 | filter : {image7:''}" sv-element ng-click="ctrl.currentImage=image.image7">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <div class="btn-group btn-copy" uib-dropdown ng-if="image.image7">
                                                         <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
@@ -116,8 +115,7 @@
                                                         </ul>
                                                     </div>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':ctrl.currentImage == image.image7}" style="height: 88px">
-                                                        <img style="max-height: 80px" class="thumb-group" ng-if="image.image7 != null && image.image7 != ''"
-                                                             ng-src="{{$root.imageUrl.replace('%s', image.image7)}}">
+                                                        <img-by-name style="max-height: 80px" class="thumb-group" name="image.image7"></img-by-name>
                                                         <button class="btn btn-dangerdel btn-xs btn-image" ng-click="ctrl.restorePlatformImg('images7',image.image7,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                         <button class="btn btn-upLoad btn-xs btn-image " ng-click="ctrl.simpleImgDown(image.image7,0,$event)"><i class="fa fa-cloud-download "></i></button>
                                                     </a>
@@ -138,7 +136,7 @@
                                         <div class="tab-pane active">
 
                                             <div class="row" sv-root sv-part="ctrl.platform.images2" sv-on-sort="ctrl.sortImg('images2')">
-                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images2 | filter : {image2:''}" sv-element ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image2)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images2 | filter : {image2:''}" sv-element ng-click="ctrl.currentImage=image.image2">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <div class="btn-group btn-copy" uib-dropdown ng-if="image.image2">
                                                         <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
@@ -153,8 +151,7 @@
                                                         </ul>
                                                     </div>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':ctrl.currentImage == image.image2}" style="height: 88px">
-                                                        <img style="max-height: 80px" class="thumb-group"  ng-if="image.image2 != null && image.image2 != ''"
-                                                             ng-src="{{$root.imageUrl.replace('%s', image.image2)}}">
+                                                        <img-by-name style="max-height: 80px" class="thumb-group" name="image.image2"></img-by-name>
                                                         <button class="btn btn-dangerdel btn-xs btn-image" ng-click="ctrl.restorePlatformImg('images2',image.image2,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                         <button class="btn btn-upLoad btn-xs btn-image " ng-click="ctrl.simpleImgDown(image.image2,0,$event)"><i class="fa fa-cloud-download "></i></button>
                                                     </a>
@@ -175,7 +172,7 @@
                                         <div class="tab-pane active">
 
                                             <div class="row" sv-root sv-part="ctrl.platform.images3" sv-on-sort="ctrl.sortImg('images3')">
-                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images3 | filter : {image3:''}" sv-element ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image3)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images3 | filter : {image3:''}" sv-element ng-click="ctrl.currentImage=image.image3">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <div class="btn-group btn-copy" uib-dropdown ng-if="image.image3">
                                                         <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
@@ -190,8 +187,7 @@
                                                         </ul>
                                                     </div>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':ctrl.currentImage == image.image3}" style="height: 88px">
-                                                        <img style="max-height: 80px" class="thumb-group"  ng-if="image.image3 != null && image.image3 != ''"
-                                                             ng-src="{{$root.imageUrl.replace('%s', image.image3)}}">
+                                                        <img-by-name style="max-height: 80px" class="thumb-group" name="image.image3"></img-by-name>
                                                         <button class="btn btn-dangerdel btn-xs btn-image" ng-click="ctrl.restorePlatformImg('images3',image.image3,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                         <button class="btn btn-upLoad btn-xs btn-image " ng-click="ctrl.simpleImgDown(image.image3,0,$event)"><i class="fa fa-cloud-download "></i></button>
                                                     </a>
@@ -212,7 +208,7 @@
                                         <div class="tab-pane active">
 
                                             <div class="row" sv-root sv-part="ctrl.platform.images4" sv-on-sort="ctrl.sortImg('images4')">
-                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images4 | filter : {image4:''}" sv-element ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image4)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images4 | filter : {image4:''}" sv-element ng-click="ctrl.currentImage=image.image4">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <div class="btn-group btn-copy" uib-dropdown ng-if="image.image4">
                                                         <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
@@ -227,8 +223,7 @@
                                                         </ul>
                                                     </div>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':ctrl.currentImage == image.image4}" style="height: 88px">
-                                                        <img style="max-height: 80px" class="thumb-group" ng-if="image.image4 != null && image.image4 != ''"
-                                                             ng-src="{{$root.imageUrl.replace('%s', image.image4)}}">
+                                                        <img-by-name style="max-height: 80px" class="thumb-group" name="image.image4"></img-by-name>
                                                         <button class="btn btn-dangerdel btn-xs btn-image" ng-click="ctrl.restorePlatformImg('images4',image.image4,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                         <button class="btn btn-upLoad btn-xs btn-image " ng-click="ctrl.simpleImgDown(image.image4,1,$event)"><i class="fa fa-cloud-download "></i></button>
                                                     </a>
@@ -249,7 +244,7 @@
                                         <div class="tab-pane active">
 
                                             <div class="row" sv-root sv-part="ctrl.platform.images5" sv-on-sort="ctrl.sortImg('images5')">
-                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images5 | filter : {image5:''}" sv-element ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image5)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images5 | filter : {image5:''}" sv-element ng-click="ctrl.currentImage=image.image5">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <div class="btn-group btn-copy" uib-dropdown ng-if="image.image5">
                                                         <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
@@ -264,8 +259,7 @@
                                                         </ul>
                                                     </div>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':ctrl.currentImage == image.image5}" style="height: 88px">
-                                                        <img style="max-height: 80px" class="thumb-group" ng-if="image.image5 != null && image.image5 != ''"
-                                                             ng-src="{{$root.imageUrl.replace('%s', image.image5)}}">
+                                                        <img-by-name style="max-height: 80px" class="thumb-group" name="image.image5"></img-by-name>
                                                         <button class="btn btn-dangerdel btn-xs btn-image" ng-click="ctrl.restorePlatformImg('images5',image.image5,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                         <button class="btn btn-upLoad btn-xs btn-image " ng-click="ctrl.simpleImgDown(image.image5,1,$event)"><i class="fa fa-cloud-download "></i></button>
                                                     </a>
@@ -286,7 +280,7 @@
                                         <div class="tab-pane active">
 
                                             <div class="row" sv-root sv-part="ctrl.platform.images8" sv-on-sort="ctrl.sortImg('images8')">
-                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images8 | filter : {image8:''}" sv-element ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image8)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images8 | filter : {image8:''}" sv-element ng-click="ctrl.currentImage=image.image8">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <div class="btn-group btn-copy" uib-dropdown ng-if="image.image8">
                                                         <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
@@ -301,8 +295,7 @@
                                                         </ul>
                                                     </div>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':ctrl.currentImage == image.image8}" style="height: 88px">
-                                                        <img style="max-height: 80px" class="thumb-group" ng-if="image.image8 != null && image.image8 != ''"
-                                                             ng-src="{{$root.imageUrl.replace('%s', image.image8)}}">
+                                                        <img-by-name style="max-height: 80px" class="thumb-group" name="image.image8"></img-by-name>
                                                         <button class="btn btn-dangerdel btn-xs btn-image" ng-click="ctrl.restorePlatformImg('images8',image.image8,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                         <button class="btn btn-upLoad btn-xs btn-image " ng-click="ctrl.simpleImgDown(image.image8,0,$event)"><i class="fa fa-cloud-download "></i></button>
                                                     </a>
@@ -323,7 +316,7 @@
                                         <div class="tab-pane active">
 
                                             <div class="row" sv-root sv-part="ctrl.platform.images9" sv-on-sort="ctrl.sortImg('images9')">
-                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images9 | filter : {image9:''}" sv-element ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image9)">
+                                                <div class="col-md-3" ng-repeat="image in ctrl.platform.images9 | filter : {image9:''}" sv-element ng-click="ctrl.currentImage=image.image9">
                                                     <span class="label label-success pos-abt cur-m" sv-handle><i class="fa fa-arrows"></i></span>
                                                     <div class="btn-group btn-copy" uib-dropdown ng-if="image.image9">
                                                         <button type="button" class="btn btn-default btn-copy" uib-dropdown-toggle>
@@ -338,8 +331,7 @@
                                                         </ul>
                                                     </div>
                                                     <a href="javascript:void(0)" class="thumbnail clear-margin-bottom" ng-class="{'active':ctrl.currentImage == image.image9}" style="height: 88px">
-                                                        <img style="max-height: 80px" class="thumb-group" ng-if="image.image9 != null && image.imageName != ''"
-                                                             ng-src="{{$root.imageUrl.replace('%s', image.image9)}}">
+                                                        <img-by-name style="max-height: 80px" class="thumb-group" name="image.image9"></img-by-name>
                                                         <button class="btn btn-dangerdel btn-xs btn-image" ng-click="ctrl.restorePlatformImg('images9',image.image9,$event)" style="right: 42px"><i class="fa fa-trash-o "></i></button>
                                                         <button class="btn btn-upLoad btn-xs btn-image " ng-click="ctrl.simpleImgDown(image.image9,0,$event)"><i class="fa fa-cloud-download "></i></button>
                                                     </a>
@@ -359,10 +351,7 @@
                 </div>
             </div>
         </div>
-
-
     </div>
-
     <div class="modal-footer">
         <button class="btn btn-success" ng-click="ctrl.complete()"><i class="fa fa-check "></i>&nbsp;确认上传</button>
     </div>

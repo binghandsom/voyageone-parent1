@@ -145,7 +145,14 @@
 						<a ng-if="promotion.cartId != '27'" href="#/promotion/detail/{{promotion.id}}" target="_blank">{{promotion.promotionName}}</a>
 						<a ng-if="promotion.cartId == '27'" href="#/jmpromotion/detail/{{promotion.id}}/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a>
 						&nbsp;<span ng-if="promotion.tejiabaoId != 0">({{promotion.tejiabaoId}})</span></td>
-					<td class="text-left"><span ng-show="promotion.promotionStatus==1" class="label label-success-new m-r-lg"><a ng-click="setClosePromotionStatus(promotion)"> Open </a></span><span ng-show="promotion.promotionStatus==0" class="label label-yellow-new m-r-lg"><a ng-click="setOpenPromotionStatus(promotion)"> Close </a> </span></td>
+					<td class="text-left">
+						<span ng-show="promotion.promotionStatus==1" class="label label-success-new m-r-lg">
+							<a ng-click="setClosePromotionStatus(promotion)"> Open </a>
+						</span>
+						<span ng-show="promotion.promotionStatus==0" class="label label-yellow-new m-r-lg">
+							<a ng-click="setOpenPromotionStatus(promotion)"> Close </a>
+						</span>
+					</td>
 					<td class="text-left">{{currentChannelId == '997' || promotion.channelId != '997'? promotion.cartName:'US Joi'}}</td>
 					<td class="text-left">{{promotion.activityStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.activityEnd | date:'yyyy-MM-dd'}}</td>
 					<td class="text-left">{{promotion.prePeriodStart | date:'yyyy-MM-dd'}}&nbsp;~&nbsp;{{promotion.prePeriodEnd | date:'yyyy-MM-dd'}}</td>
@@ -156,7 +163,7 @@
 								<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_CREATE_TASK' | translate}}&nbsp;<span class="caret"></span>
 							</button>
 							<ul uib-dropdown-menu>
-								<li><a href ng-click="openNewBeatTask({promotion: promotion})" translate="BTN_CREATE_BEAT_TASK"></a></li>
+								<!--<li><a href ng-click="openNewBeatTask({promotion: promotion})" translate="BTN_CREATE_BEAT_TASK"></a></li>-->
 								<li ng-if="promotion.tejiabaoId" ><a href ng-click="teJiaBaoInit(promotion.id)" translate="BTN_CREATE_TE_JIA_BAO_TASK"></a></li>
 							</ul>
 						</div>

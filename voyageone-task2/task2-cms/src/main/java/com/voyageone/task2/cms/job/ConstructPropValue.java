@@ -14,10 +14,6 @@ import com.voyageone.common.configs.Enums.*;
  * Created by Leo on 15-7-3.
  */
 public class ConstructPropValue {
-    public static final String ITEM_IMAGE_TPL_URL = "http://s7d5.scene7.com/is/image/sneakerhead/JEWELRY%5F20150803%5Fx1200%5F1200x?$1200x1200$&$1200x1200$&$product=%s";
-    public static final String PRODUCT_IMAGE_TPL_URL = "http://s7d5.scene7.com/is/image/sneakerhead/BHFO%5F20150819%5Fx1200%5F1200x?$1200x1200$&$1200x1200$&$proudct=%s";
-    public static final String DESCRIPTION_SINGLE_IMAGE_TPL_URL = "http://s7d5.scene7.com/is/image/sneakerhead/Jewelry%5F20150819%5Fx760%5F760x?$760x760$&$JEWERLY%2D760%2D760$&$proudct=%s";
-    public static final String DESCRIPTION_WENZI_IMAGE_TPL_URL = "http://s7d5.scene7.com/is/image/sneakerhead/JEWELRY%5F20150901%5Fx380%5F251x%2D1?$380%2D251$&$text05=%s&$text04=%s&$text03=%s&$text02=%s&$text01=%s";
 
     public static void constructPlatformPropMappingCustom(PlatformPropCustomMappingDao platformPropCustomMappingDao) { CustomPlatformPropMappingModel customPlatformPropMappingModel = new CustomPlatformPropMappingModel();
         customPlatformPropMappingModel.setCartId(23);

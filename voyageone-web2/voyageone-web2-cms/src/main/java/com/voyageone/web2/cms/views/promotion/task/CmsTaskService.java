@@ -28,4 +28,6 @@ class CmsTaskService extends BaseViewService {
     CmsBtTasksBean getTaskWithPromotion(int task_id) {
         return taskService.getTaskWithPromotion(task_id);
     }
+
+
 }

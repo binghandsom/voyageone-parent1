@@ -8,6 +8,7 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.configs.*;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -306,10 +307,11 @@ public class CmsProductDetailService extends BaseViewService {
         infoMap.put("isMain", isMain ? 1 : 0);
 
         // 设置默认第一张图片
-        String defaultImageUrl = imageTemplateService.getDefaultImageUrl();
         Map<String, Object> defaultImage = productValueModel.getCommon().getFields().getImages1().get(0);
-        if (defaultImage.size() > 0)
-            infoMap.put("defaultImage", String.format(defaultImageUrl, String.valueOf(defaultImage.get("image1"))));
+        if (defaultImage.size() > 0) {
+            final String image1 = String.valueOf(defaultImage.get("image1"));
+            infoMap.put("defaultImage", ImageServer.imageUrl(channelId, image1));
+        }
 
         return infoMap;
     }

@@ -17,31 +17,15 @@ import com.voyageone.service.model.cms.CmsBtPromotionExportTaskModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtPromotionSkusModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.io.*;
+import java.util.*;
 
 /**
  * 活动(非聚美)商品导出Service
@@ -145,7 +129,7 @@ public class CmsPromotionExportService extends BaseService {
         } else if (Objects.equals(templateType, Integer.valueOf(2))) {
             exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_TMALL_EXPORT_PATH);
         } else if (Objects.equals(templateType, Integer.valueOf(3))) {
-            exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_NEW_EXPORT_PATH);
+            exportPath = Properties.readValue(CmsProperty.Props.PROMOTION_JIAGEPILU_EXPORT_PATH);
         }
         File pathFileObj = new File(exportPath);
         if (StringUtils.isBlank(exportPath) || !(pathFileObj = new File(exportPath)).exists()) {
@@ -176,7 +160,7 @@ public class CmsPromotionExportService extends BaseService {
                 // 模板是xls，后缀格式必须统一，否则打不开
                 filename = filename.replace("xlsx", "xls");
                 book = createTmallExportFile(cmsBtPromotionModel);
-            }else if (Objects.equals(templateType, Integer.valueOf(3))) {
+            } else if (Objects.equals(templateType, Integer.valueOf(3))) {
                 // 模板是xls，后缀格式必须统一，否则打不开
                 filename = filename.replace("xlsx", "xls");
                 book = createNewExportFile(cmsBtPromotionModel);
@@ -198,7 +182,7 @@ public class CmsPromotionExportService extends BaseService {
             cmsBtPromotionExportTaskDao.update(targetExportTaskModel);
         } catch (Exception e) {
             e.printStackTrace();
-            $error(String.format("活动(%s)商品导出失败", cmsBtPromotionModel.getPromotionName()));
+            $error(String.format("活动(%s)商品导出失败", cmsBtPromotionModel.getPromotionName()), e);
             // 如果任务出现错误，记录失败
             CmsBtPromotionExportTaskModel targetExportTaskModel = new CmsBtPromotionExportTaskModel();
             targetExportTaskModel.setId(exportTaskModel.getId());
@@ -609,4 +593,5 @@ public class CmsPromotionExportService extends BaseService {
 
         return book;
     }
+
 }

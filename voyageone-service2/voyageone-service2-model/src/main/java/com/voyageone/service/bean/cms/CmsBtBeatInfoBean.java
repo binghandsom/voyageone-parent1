@@ -2,6 +2,7 @@ package com.voyageone.service.bean.cms;
 
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTaskJiagepiluModel;
+import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
 import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
 import org.apache.commons.lang3.StringUtils;
@@ -14,11 +15,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
 
-    private CmsBtPromotionCodesBean promotion_code;
 
-    private CmsBtPromotionModel promotion;
-
-    private CmsBtTasksBean task;
+    private CmsBtTasksModel task;
 
     /**
      * 为任务保存信息。
@@ -56,30 +54,6 @@ public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
         this.message = null;
     }
 
-    public CmsBtPromotionCodesBean getPromotion_code() {
-        return promotion_code;
-    }
-
-    public void setPromotion_code(CmsBtPromotionCodesBean promotion_code) {
-        this.promotion_code = promotion_code;
-    }
-
-    public CmsBtPromotionModel getPromotion() {
-        return promotion;
-    }
-
-    public void setPromotion(CmsBtPromotionModel promotion) {
-        this.promotion = promotion;
-    }
-
-    public CmsBtTasksBean getTask() {
-        return task;
-    }
-
-    public void setTask(CmsBtTasksBean task) {
-        this.task = task;
-    }
-
     public BeatFlag getSynFlagEnum() {
         return BeatFlag.valueOf(synFlag);
     }
@@ -94,5 +68,13 @@ public class CmsBtBeatInfoBean extends CmsBtTaskJiagepiluModel {
 
     public void setImageStatus(ImageStatus imageStatus) {
         this.imageStatus = imageStatus.getId();
+    }
+
+    public CmsBtTasksModel getTask() {
+        return task;
+    }
+
+    public void setTask(CmsBtTasksModel task) {
+        this.task = task;
     }
 }

@@ -34,7 +34,8 @@ require.config({
         'angular-chosen': 'libs/angular-chosen/1.5.0/angular-chosen',
         'md5': 'libs/angular-md5/0.1.8/angular-md5',
         'angular-drag': 'libs/angular-drag/angular-drag',
-        'angular-sortable-view': 'libs/angular-sortable-view/0.0.15/angular-sortable-view'
+        'angular-sortable-view': 'libs/angular-sortable-view/0.0.15/angular-sortable-view',
+        'autocomplete': 'libs/jQuery-Autocomplete/1.4.1/jquery.autocomplete'
     },
     waitSeconds: 0,
     shim: {
@@ -60,6 +61,7 @@ require.config({
         'angular-drag': ['angular'],
         'md5': ['angular'],
         'angular-sortable-view': ['angular'],
+        'autocomplete':['jquery'],
         'cms': [
             'underscore',
             'voyageone-angular-com',
@@ -79,7 +81,8 @@ require.config({
             'angular-ui-utils',
             'md5',
             'angular-drag',
-            'angular-sortable-view'
+            'angular-sortable-view',
+            'autocomplete'
         ]
     },
     deps: ['cms']

@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.components.transaction.VOTransactional;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.TypeChannels;
@@ -46,7 +47,6 @@ import static java.util.stream.Collectors.toMap;
  */
 @Service
 public class CmsBtJmPromotionService extends BaseService {
-    private final static String ORIGINAL_SCENE7_IMAGE_URL = "http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100";
     private final CmsBtJmPromotionDao dao;
     private final CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand;
     private final CmsBtJmPromotionDaoExt daoExt;
@@ -609,7 +609,8 @@ public class CmsBtJmPromotionService extends BaseService {
     public List<MapModel> getJmPromotionList(Map params) {
         // 过滤参数
         Map sqlParams = (Map) params.get("parameters");
-        sqlParams.put("channelId", params.get("channelId"));
+        final String channelId = String.valueOf(params.get("channelId"));
+        sqlParams.put("channelId", channelId);
         convertParams(sqlParams);
 
         int pageIndex = (Integer) params.get("pageIndex");
@@ -633,7 +634,7 @@ public class CmsBtJmPromotionService extends BaseService {
                         if (imgObj.getUseTemplate() != null && imgObj.getUseTemplate())
                             promObj.put("entryImg", jmImageTemplateService.getUrl(imgName, "appEntrance", jmId));
                         else
-                            promObj.put("entryImg", String.format(ORIGINAL_SCENE7_IMAGE_URL, imgName));
+                            promObj.put("entryImg", ImageServer.imageUrl(channelId, imgName + "?fmt=jpg&scl=1&qlt=100"));
                     }
                 }
             }

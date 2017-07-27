@@ -290,7 +290,7 @@ define([
             }
 
             if (_.size(selectProductList) == 0 && !$scope.vm._selall) {
-                alert("请选择修改价格的商品!");
+                alert("请选择修改标签的商品!");
                 return;
             }
 
@@ -371,7 +371,7 @@ define([
             })
         }
 
-    };
+    }
     detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory', 'cookieService','cActions','popups'];
     return detailController;
 });

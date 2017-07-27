@@ -60,7 +60,7 @@ public interface CmsBtBeatInfoDaoExt {
      */
     List<CmsBtBeatInfoBean> selectListNeedBeatFullData(
             @Param("limit") int limit, @Param("upFlag") int upFlag, @Param("revertFlag") int revertFlag,
-            @Param("downFlag") int downFlag, @Param("now") Date now);
+            @Param("downFlag") int downFlag, @Param("now") Date now, @Param("cartIds")List<Integer> cartIds);
 
     int updateFlagAndMessage(CmsBtBeatInfoBean beatInfoModel);
 }

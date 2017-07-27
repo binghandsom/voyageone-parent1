@@ -483,15 +483,9 @@ public class CmsBuildPlatformAttributeUpdateTmTongGouService extends BaseCronTas
         // modified by morse.lu 2016/12/23 end
         // 店铺级标题禁用词 20161216 tom START
         // 先临时这样处理
-        if (!StringUtils.isEmpty(errorWord)) {
-            if (!StringUtils.isEmpty(valDescription)) {
-//                String[] splitWord = notAllowList.split(",");
-//                for (String notAllow : splitWord) {
-//                    // 直接删掉违禁词
-//                    valDescription = valDescription.replaceAll(notAllow, "");
-//                }
-                sxProductService.deleteErrorWord(valDescription, errorWord);
-            }
+        String errorWord_desc = getConditionPropValue(sxData, "updateErrorWord_Desc", shop);
+        if (!StringUtils.isEmpty(errorWord_desc) && !StringUtils.isEmpty(valDescription)) {
+            valDescription = sxProductService.deleteErrorWord(valDescription, errorWord_desc);
         }
         // 店铺级标题禁用词 20161216 tom END
         productInfoMap.put(PlatformWorkloadAttribute.DESCRIPTION.getValue(), valDescription);

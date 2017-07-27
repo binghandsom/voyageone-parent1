@@ -230,6 +230,8 @@ public interface CmsUrlConstants {
                 String ROOT = "/cms/promotion/task";
 
                 String PAGE = "page";
+
+                String UPDATE_STATUS = "updateStatus";
             }
 
             interface BEAT {
@@ -341,7 +343,56 @@ public interface CmsUrlConstants {
 
                 String EXECUTE_STOCK_INCREMENT_SEPARATION = "executeStockIncrementSeparation";
             }
+
         }
+    }
+
+    interface TASK {
+        /**
+         * 价格披露URL
+         */
+        interface JIAGEPILU {
+
+            String ROOT = "/cms/task/jiagepilu";
+
+            String GET_TASK_MODEL = "getTaskModel";
+
+            String GET_IMPORT_INFO_LIST = "getImportInfoList";
+
+            String DOWNLOAD_IMPORT_TEMPLATE = "downloadImportTemplate";
+
+            String IMPORT = "import";
+
+            String SEARCH = "search";
+
+            String DOWNLOAD_IMPORT_ERROR = "downloadImportError";
+
+            String ADD_JIAGEPILU_PRODUCT = "addJiagepiluProduct";
+
+            String OPERATE_PRODUCT = "operateProduct";
+
+            String REBEATING = "reBeating";
+
+            String GET_EDIT_PRODUCT = "getEditProduct";
+
+            /**
+             * 根据产品code获取京东系产品skuId
+             */
+            String GET_JD_SERIES_SKU_ID = "getJdSeriesSkuId";
+
+            String DOWNLOAD = "download";
+
+            String GET_SUMMARY = "getSummary";
+
+            String DELETE_JIAGEPILU_TASK = "deleteJiagepiluTask";
+
+            /**
+             * 选择平台上新模板
+             */
+            String GET_PLATFORM_SX_TEMPLATE = "getPlatformSxTemplate";
+
+        }
+
     }
 
     // 检索
@@ -602,8 +653,6 @@ public interface CmsUrlConstants {
             String DoAppSwitch="doAppSwitch";
 
             String DoTranslateStatus="doTranslateStatus";
-
-            String GET_PRODUCT_INFO = "getProductInfo";
 
             String UPDATE_PRODUCT_MASTER_INFO = "updateProductMasterInfo";
 

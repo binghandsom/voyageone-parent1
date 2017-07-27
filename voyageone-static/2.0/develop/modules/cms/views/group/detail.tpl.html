@@ -4,7 +4,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h4 class="panel-title"><i class="glyphicon glyphicon-th-list"></i>&nbsp;{{'TXT_GROUP_DETAIL' | translate}}</h4>
-					</div>
+				</div>
 				<div class="container-fluid m-t-sm m-b-md">
 					<div class="col-sm-12">
 						<div class="col-sm-4">
@@ -77,11 +77,11 @@
 								</div><!-- .form-group -->
 							</form><!-- .form -->
 						</div><!--.col -->
-						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 
 	<div class="box">
 		<tabset class="tab-container vo_nav-tabs">
@@ -131,7 +131,9 @@
 							</tr>
 							<tr ng-class="{'table_bg_green_mint': productInfo.platform.publishTime}">
 								<td class="mfb-xxt">
-									<img image="{{productInfo.common.fields.images1[0].image1}}" alt="{{productInfo.common.fields.code}}" class="thumb-sm-search pull-left m-r"/>
+									<img-by-name name="productInfo.common.fields.images1[0].image1"
+												 alt="{{productInfo.common.fields.code}}"
+												 class="thumb-sm-search pull-left m-r"></img-by-name>
 								</td>
 								<td class="mfb-xxt text-left">{{productInfo.common.fields.brand}}</td>
 								<td class="mfb-xxt text-center">
@@ -178,20 +180,8 @@
 							</tbody>
 						</table>
 					</div>
-					<!--<div class="col-sm-12 m-t-sm">-->
-						<!--<vpagination config="vm.productPageOption"></vpagination>-->
-					<!--</div>-->
 				</div><!-- .table-responsive -->
-				</table><!-- .table-responsive -->
 			</tab>
 		</tabset><!-- tabset -->
 	</div><!-- .col-lg-12 -->
 </div><!-- end .wrapper-md -->
-
-
-
-
-
-
-
-

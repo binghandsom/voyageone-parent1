@@ -1,7 +1,3 @@
-
-
-/*****************************/
-
 /**
  * 简单下载工具，通过 form 封装 post 请求下载文件
  */
@@ -64,5 +60,4 @@
             $frame[0].contentWindow.href = url + '?' + $.param(param);
         }
     };
-
 })(jQuery);
