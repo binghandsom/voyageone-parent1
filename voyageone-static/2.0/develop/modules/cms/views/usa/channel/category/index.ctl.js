@@ -534,11 +534,14 @@ define([
                 });
             });
 
+        }
 
+        remove(index){
+            this.topList.splice(index, 1);
         }
 
         showPriceSale(priceLow, priceHigh) {
-            var $filter = this.$filter;
+            let $filter = this.$filter;
 
             if (!priceLow || !priceHigh)
                 return '';
