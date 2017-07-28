@@ -232,7 +232,7 @@
                                                              ng-if="ctrl.vm.platform.fields.mainImageTemplate == null || ctrl.vm.platform.fields.mainImageTemplate == ''"
                                                              title="{{::image.productCode}}"></img-by-name>
                                                 <img class="thumb-group"
-                                                     src="{{ctrl.vm.platform.fields.mainImageTemplate.replace('%s',image.imageName)}}"
+                                                     ng-src="{{ctrl.vm.platform.fields.mainImageTemplate.replace('%s',image.imageName)}}"
                                                      title="{{::image.productCode}}"
                                                      ng-if="ctrl.vm.platform.fields.mainImageTemplate != null && ctrl.vm.platform.fields.mainImageTemplate != ''">
                                             </a>
@@ -245,7 +245,7 @@
                                                              ng-if="ctrl.vm.platform.fields.mainImageTemplate == null || ctrl.vm.platform.fields.mainImageTemplate == ''"
                                                              title="{{::image.productCode}}"></img-by-name>
                                                 <img class="thumb-group"
-                                                     src="{{ctrl.vm.platform.fields.mainImageTemplate.replace('%s',image.imageName)}}"
+                                                     ng-src="{{ctrl.vm.platform.fields.mainImageTemplate.replace('%s',image.imageName)}}"
                                                      title="{{image.productCode}}"
                                                      ng-if="ctrl.vm.platform.fields.mainImageTemplate != null && ctrl.vm.platform.fields.mainImageTemplate != ''">
                                             </a>
