@@ -27,5 +27,8 @@ public class CmsCategoryTransferToUsMQMessageBody extends BaseMQMessageBody {
     @Override
     public void check() throws MQMessageRuleException {
 
+        if (categoryModel == null) {
+            throw new MQMessageRuleException("VOUsSynchronizeCategoryQueue MQ发送异常，参数[categoryModel] 为空");
+        }
     }
 }

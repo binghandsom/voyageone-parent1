@@ -285,6 +285,11 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         return mongoTemplate.find(jongoQuery, OldCmsBtProductModel.class, "cms_bt_product_c" + channelId);
     }
 
+    public List<String> selectListCodeBySellerCat(String channelId, int cartId, String catId, String sortKey, Integer sortType, List<String> expCodes) {
+        return selectListCodeBySellerCat(channelId, cartId, catId, sortKey, sortType, expCodes, false);
+    }
+
+
     /**
      * 根据类目id找出所有code(检索时带上排序条件)
      *
@@ -292,12 +297,16 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
      * @param sortType 排序类型  1：升序  -1：降序
      * @param expCodes 不要检索出来的code列表
      */
-    public List<String> selectListCodeBySellerCat(String channelId, int cartId, String catId, String sortKey, Integer sortType, List<String> expCodes) {
+    public List<String> selectListCodeBySellerCat(String channelId, int cartId, String catId, String sortKey, Integer sortType, List<String> expCodes, boolean isUs) {
         JongoQuery jongoQuery = new JongoQuery();
         // modified by morse.lu 2016/11/30 start
 //        jongoQuery.setQuery(String.format("{\"channelId\":#, \"platforms.P%s.sellerCats.cIds\":#, \"platforms.P%s.pNumIId\":{$nin: ['', null]}, \"platforms.P%s.pStatus\":'%s'}", cartId, cartId, cartId, CmsConstants.PlatformStatus.OnSale.name()));
 //        jongoQuery.setParameters(channelId, catId);
-        jongoQuery.addQuery(String.format("{\"channelId\":#}, {\"platforms.P%s.sellerCats.cIds\":#}, {\"platforms.P%s.pNumIId\":{$nin: ['', null]}}, {\"platforms.P%s.pStatus\":'%s'}", cartId, cartId, cartId, CmsConstants.PlatformStatus.OnSale.name()));
+        if (isUs) {
+            jongoQuery.addQuery(String.format("{\"channelId\":#}, {\"usPlatforms.P%s.sellerCats.cIds\":#}", cartId));
+        } else {
+            jongoQuery.addQuery(String.format("{\"channelId\":#}, {\"platforms.P%s.sellerCats.cIds\":#}, {\"platforms.P%s.pNumIId\":{$nin: ['', null]}}, {\"platforms.P%s.pStatus\":'%s'}", cartId, cartId, cartId, CmsConstants.PlatformStatus.OnSale.name()));
+        }
         jongoQuery.addParameters(channelId, catId);
         if (ListUtils.notNull(expCodes)) {
             jongoQuery.addQuery("{'common.fields.code':{$nin:#}}");

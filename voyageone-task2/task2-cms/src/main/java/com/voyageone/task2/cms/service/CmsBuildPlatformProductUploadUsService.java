@@ -407,14 +407,13 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
         productModel.setGoogleDepartment(commonFields.getGoogleDepartment());
         productModel.setPriceGrabberCategory(commonFields.getPriceGrabberCategory());
         productModel.setStatus(platformInfo.getpStatus().name());
-        if (StringUtils.isEmpty(commonFields.getTaxable())) {
-            productModel.setIsTaxable("0");
+        if (StringUtils.isNullOrBlank2(commonFields.getTaxable()) || "0".equals(commonFields.getTaxable())) {
+            productModel.setTaxable(false);
         } else {
-            productModel.setIsTaxable(commonFields.getTaxable());
+            productModel.setTaxable(true);
         }
 
     }
-
 
     private List<TransferUsProductModel_Sku> getSkuInfo(CmsBtProductModel_Platform_Cart platformInfo, SxData sxData) {
         List<TransferUsProductModel_Sku> transferUsProductModelSkus = new ArrayList<>();

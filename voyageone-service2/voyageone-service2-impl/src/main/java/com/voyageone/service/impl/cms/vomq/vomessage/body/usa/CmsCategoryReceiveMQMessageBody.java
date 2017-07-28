@@ -1,9 +1,11 @@
 package com.voyageone.service.impl.cms.vomq.vomessage.body.usa;
 
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.List;
 
@@ -45,6 +47,14 @@ public class CmsCategoryReceiveMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-
+        if (StringUtils.isEmpty(channelId)) {
+            throw new MQMessageRuleException("获取美国类目信息MQ发送异常, 参数channelId为空.");
+        }
+        if (StringUtils.isEmpty(cartId)) {
+            throw new MQMessageRuleException("获取美国类目信息MQ发送异常, 参数cartId为空.");
+        }
+        if (CollectionUtils.isEmpty(fullCatIds)) {
+            throw new MQMessageRuleException("获取美国类目信息MQ发送异常, 参数fullCatIds为空.");
+        }
     }
 }

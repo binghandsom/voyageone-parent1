@@ -28,7 +28,7 @@ public class TransferUsProductModel {
     private List<CmsBtProductModel_Field_Image> boxImages;
     private List<CmsBtProductModel_Field_Image> marketingImages;
     private String brand;
-    private String isTaxable;
+    private boolean isTaxable;
     private String colorMap;
     private String material;
     private String origin;
@@ -256,11 +256,11 @@ public class TransferUsProductModel {
         this.storeAttributes = storeAttributes;
     }
 
-    public String getIsTaxable() {
+    public boolean isTaxable() {
         return isTaxable;
     }
 
-    public void setIsTaxable(String isTaxable) {
-        this.isTaxable = isTaxable;
+    public void setTaxable(boolean taxable) {
+        isTaxable = taxable;
     }
 }
