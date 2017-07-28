@@ -17,7 +17,6 @@ const cleanCss = require('gulp-clean-css');
 const minifyHtml = require('gulp-minify-html');
 const replace = require('gulp-replace');
 const _ = require('lodash');
-const taskName = require('./env/task-name');
 const paths = require('./env/path');
 const entry = require('./env/entry');
 const tryMin = require('./gulp-try-min');
@@ -61,6 +60,7 @@ function buildAppJS() {
     // 处理顶层页面的脚本
     gulp.src(entry.loginAndChannel.js)
         .pipe(debug('login/channel'))
+        .pipe(babel())
         .pipe(ngAnnotate())
         .pipe(production(uglify()))
         .pipe(production(rename({suffix: ".min"})))
@@ -70,6 +70,7 @@ function buildAppJS() {
     gulp.src(entry.modules.js)
         .pipe(debug('module'))
         .pipe(replace('version=', 'v=' + Date.parse(new Date())))
+        .pipe(babel())
         .pipe(ngAnnotate())
         .pipe(production(tryMin([
             'develop',
@@ -120,7 +121,7 @@ function buildAppHtml() {
         .pipe(gulp.dest(paths.modules));
 }
 
-gulp.task(taskName.build, function () {
+gulp.task('build', function () {
     buildResources();
     buildAppJS();
     buildAppHtml();
