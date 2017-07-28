@@ -9,22 +9,32 @@ define([
     class usTabController {
 
         constructor($scope,detailDataService,$usProductDetailService,notify,popups) {
-            this.$scope = $scope;
-            this.detailDataService = detailDataService;
-            this.$usProductDetailService = $usProductDetailService;
-            this.notify = notify;
-            this.popups = popups;
-            this.productInfo = $scope.productInfo;
-            this.cartInfo = $scope.cartInfo;
+            let self = this;
+
+            self.$scope = $scope;
+            self.detailDataService = detailDataService;
+            self.$usProductDetailService = $usProductDetailService;
+            self.notify = notify;
+            self.popups = popups;
+            self.productInfo = $scope.productInfo;
+            self.cartInfo = $scope.cartInfo;
 
             // 平台信息
-            this.platform = {};
+            self.platform = {};
 
             // SKU
-            this.selAllSkuFlag = false;
+            self.selAllSkuFlag = false;
 
             // 平台状态
-            this.platformStatus = this.detailDataService.platformStatus;
+            self.platformStatus = this.detailDataService.platformStatus;
+
+            $scope.$on('price.save', function (event,data) {
+                //匹配是否为当前平台，或者0：代表全平台刷新
+                if(Number(self.cartInfo.value) === Number(data.cartId) || Number(data.cartId) === 0){
+                    self.init();
+                }
+
+            });
 
         }
 

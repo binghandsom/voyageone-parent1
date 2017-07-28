@@ -33,6 +33,12 @@ define([
             this.alert = alert;
         }
 
+        broadcast(eventName,context){
+            let self = this;
+
+            self.$scope.$parent.$broadcast(eventName, context);
+        }
+
         init() {
             this.getData();
         }
@@ -63,12 +69,16 @@ define([
                 self.saveParam.prodId = self.productInfo.productId + "";
                 self.saveParam.clientMsrpPrice = priceMsrpSt + "";
                 self.saveParam.clientRetailPrice = priceRetailSt + "";
-                self.detailDataService.updateOnePrice([self.saveParam]).then(res =>{
+                self.detailDataService.updateOnePrice([self.saveParam]).then(() =>{
                     self.notify.success('Update Success');
                     self.getData();
+
+                    //广播到相应平台
+                    self.broadcast('price.save',{cartId:cartId});
                 });
             }
         }
+
         //批量修改价格
         saveAll(){
             let self = this;
@@ -110,6 +120,9 @@ define([
                 self.manyUsNetPrice = "";
                 self.notify.success('Update Success');
                 self.getData();
+
+                //广播到相应平台
+                self.broadcast('price.save',{cartId:0});
             });
         }
 
