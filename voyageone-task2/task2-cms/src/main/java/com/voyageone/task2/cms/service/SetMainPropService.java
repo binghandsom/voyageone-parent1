@@ -45,6 +45,7 @@ import com.voyageone.service.impl.cms.prices.PlatformPriceService;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductTopService;
 import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
@@ -174,6 +175,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
     @Autowired
     PlatformProductUploadService platformProductUploadService;
+
+    @Autowired
+    ProductTopService productTopService;
 
 
     /**
@@ -1141,6 +1145,11 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     doSetGroup(feed);
                     productService.createProduct(cmsProduct.getChannelId(), cmsProduct, getTaskName());
 
+                    // sneakerHead 新商品加入top50
+                    if(feed.getChannelId().equals(ChannelConfigEnums.Channel.SN.getId()) && CmsConstants.UsaFeedStatus.Approved.name().equals(feed.getStatus())){
+                        doInsertTop50(cmsProduct);
+                    }
+
                     $debug("createProduct:" + (System.currentTimeMillis() - startTime));
 
                 }
@@ -1182,6 +1191,17 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
         }
 
+        // 新code插入美国sneakhead官网相应类目的第一个
+        private void doInsertTop50(CmsBtProductModel cmsProduct){
+
+            CmsBtProductModel_Platform_Cart platform = cmsProduct.getUsPlatform(CartEnums.Cart.SN.getValue());
+            if(platform != null && ListUtils.notNull(platform.getSellerCats())){
+                List<String> sellerCatIds = new ArrayList<>();
+                platform.getSellerCats().stream().map(CmsBtProductModel_SellerCat::getcIds).collect(Collectors.toList()).forEach(sellerCatIds::addAll);
+                sellerCatIds = sellerCatIds.stream().distinct().collect(Collectors.toList());
+                sellerCatIds.forEach(sellerCatId->productTopService.insertTop50(cmsProduct.getChannelId(), sellerCatId, cmsProduct.getCommon().getFields().getCode()));
+            }
+        }
         private void doCreateUsaPlatform(CmsBtProductModel cmsProduct, CmsBtFeedInfoModel feed) {
             Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = new HashMap<>();
 
