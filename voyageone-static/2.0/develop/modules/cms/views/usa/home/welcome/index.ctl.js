@@ -23,6 +23,7 @@ define([
             // 页面数据
             this.feedInfo = [];
             this.platformInfo = {};
+            this.lastUpdateTime = "";
             this.platformHeader = {
                 "Pending Items":"Pending Items",
                 "Listing Items":"OnSale Items",
@@ -61,6 +62,9 @@ define([
                 if (res.data) {
                     self.feedInfo = res.data.feedInfo == null ? [] : res.data.feedInfo;
                     self.platformInfo = res.data.platformInfo == null ? {} : res.data.platformInfo;
+                    if (_.size(self.feedInfo) > 0) {
+                        self.lastUpdateTime = self.feedInfo[0].modified;
+                    }
                 }
             });
 
