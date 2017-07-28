@@ -5,13 +5,14 @@
                 <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main table-hover">
                     <tr>
                     <th class="text-center">Bulk changes</th>
-                    <th class="text-center"><input type="text" ng-model="ctrl.manyUsMsrp" ng-change="ctrl.flag=false" ></th>
-                    <th class="text-center"><input type="text" ng-model="ctrl.manyUsNetPrice" ng-change="ctrl.flag=false"></th>
-                    <th class="text-center"><input type="text" ng-model="ctrl.manyMsrp" ng-change="ctrl.flag=false"></th>
-                    <th class="text-center"><input type="text" ng-model="ctrl.manySalePrice" ng-change="ctrl.flag=false"></th>
+                    <th class="text-center"><input type="number" ng-model="ctrl.manyUsMsrp" ng-change="ctrl.flag=false" ></th>
+                    <th class="text-center"><input type="number" ng-model="ctrl.manyUsNetPrice" ng-change="ctrl.flag=false"></th>
+                    <th class="text-center"><input type="number" ng-model="ctrl.manyMsrp" ng-change="ctrl.flag=false"></th>
+                    <th class="text-center"><input type="number" ng-model="ctrl.manySalePrice" ng-change="ctrl.flag=false"></th>
                     <th class="text-center"></th>
                     <th class="text-center">
-                        <button ng-disabled="ctrl.flag"  class="btn btn-info btn-pop"  ng-click="ctrl.flag=true;ctrl.saveAll()">save</button>
+                        <button ng-disabled="ctrl.flag"
+                                class="btn btn-info btn-pop"  ng-click="ctrl.flag=true;ctrl.saveAll()">save</button>
                     </th>
                     </tr>
                     <thead>

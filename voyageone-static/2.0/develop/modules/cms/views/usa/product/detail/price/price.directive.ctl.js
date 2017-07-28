@@ -82,9 +82,17 @@ define([
         //批量修改价格
         saveAll(){
             let self = this;
+            if(self.manyUsMsrp == "0" || self.manyUsNetPrice == "0"|| self.manyMsrp == "0" ||self.manySalePrice == "0" ){
+                self.alert('value can not to be 0!');
+                return;
+            }
             let lists = [];
             //美国平台
-            if((self.manyUsMsrp != "" && self.manyUsMsrp != null && self.manyUsMsrp != "0") || (self.manyUsNetPrice != ""&& self.manyUsNetPrice != null && self.manyUsNetPrice != "0")){
+            self.manyUsMsrp = self.manyUsMsrp == null ?"":self.manyUsMsrp;
+            self.manyUsNetPrice = self.manyUsNetPrice == null ?"":self.manyUsNetPrice;
+            self.manyMsrp = self.manyMsrp == null ?"":self.manyMsrp;
+            self.manySalePrice = self.manySalePrice == null ?"":self.manySalePrice;
+            if(self.manyUsMsrp != ""  || self.manyUsNetPrice != ""){
                 _.each(self.usPriceList, function (value,key) {
                     let map = {
                         cartId: key + "",
@@ -94,12 +102,9 @@ define([
                     };
                     lists.push(map);
                 });
-            }else {
-                self.alert('value can not to be 0 or empty!');
-                return;
             }
             //中国平台 manyMsrp manySalePrice
-            if((self.manyMsrp != "" && self.manyMsrp != null && self.manyMsrp != "0") || (self.manySalePrice != ""&& self.manySalePrice != null && self.manySalePrice != "0")){
+            if(self.manyMsrp != "" || self.manySalePrice != ""){
                 _.each(self.priceList, function (value,key) {
                     let map = {
                         cartId: key + "",
@@ -109,9 +114,6 @@ define([
                     }
                     lists.push(map);
                 })
-            }else {
-                self.alert('value can not to be 0 or empty!');
-                return;
             }
             self.detailDataService.updateOnePrice(lists).then(() =>{
                 self.manyMsrp = "";
