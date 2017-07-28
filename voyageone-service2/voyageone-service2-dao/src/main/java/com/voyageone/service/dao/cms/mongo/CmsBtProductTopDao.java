@@ -10,8 +10,8 @@ public class CmsBtProductTopDao extends BaseMongoChannelDao<CmsBtProductTopModel
     /**
      * 根据catId返回数据
      */
-    public CmsBtProductTopModel selectBySellerCatId(String SellerCatId, String channelId) {
-        String query = "{\"sellerCatId\":\"" + SellerCatId + "\"}";
+    public CmsBtProductTopModel selectBySellerCatId(String SellerCatId, String channelId, Integer cartId) {
+        String query = "{\"sellerCatId\":\"" + SellerCatId + "\", 'cartId':"+ cartId +"}";
         return selectOneWithQuery(query, channelId);
     }
 

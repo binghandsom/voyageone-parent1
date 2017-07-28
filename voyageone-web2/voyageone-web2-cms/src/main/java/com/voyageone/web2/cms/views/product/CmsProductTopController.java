@@ -37,8 +37,9 @@ public class CmsProductTopController extends CmsController {
     @RequestMapping(CmsUrlConstants.ProductTop.Init)
     public AjaxResponse init(@RequestBody Map<String, Object> map) throws IOException {
         String catId = map.get("catId").toString();
+        Integer cartId = (Integer) map.get("cartId");
         UserSessionBean userSessionBean = getUser();
-        return success(service.init(userSessionBean.getSelChannelId(), catId, getLang()));
+        return success(service.init(userSessionBean.getSelChannelId(), cartId, catId, getLang()));
     }
 
     //普通区查询 获取指定页

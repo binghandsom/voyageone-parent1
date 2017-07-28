@@ -91,7 +91,7 @@ define([
             });
 
             //获取保存的排序结果
-            self.productTopService.init({catId: catInfo.catId}).then(function (res) {
+            self.productTopService.init({ cartId: carts.Sneakerhead.id, catId: catInfo.catId}).then(function (res) {
 
                 _.each(self.sortEntity,(value) => {
                     if(value['sortValue'] === res.data.sortColumnName)

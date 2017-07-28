@@ -43,10 +43,10 @@ public class ProductTopService extends BaseService {
     CmsProductSearchQueryService cmsProductSearchQueryService;
 
     //获取初始化数据
-    public Map<String, Object> init(String channelId, String sellerCatId, String language) throws IOException {
+    public Map<String, Object> init(String channelId, Integer cartId, String sellerCatId, String language) throws IOException {
 
         Map<String, Object> data = new HashMap<>();
-        CmsBtProductTopModel topModel = dao.selectBySellerCatId(sellerCatId, channelId);
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(sellerCatId, channelId, cartId);
 
         if (topModel != null) {
             data.put("sortColumnName", topModel.getSortColumnName());
@@ -64,7 +64,7 @@ public class ProductTopService extends BaseService {
     //加入置顶区
     public void addTopProduct(AddTopProductParameter param, String channelId, String userName) {
 
-        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId);
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId, param.getCartId());
 
         if (param.getIsSeachAdd()) {
             //全量加入
@@ -80,7 +80,7 @@ public class ProductTopService extends BaseService {
             topModel.setProductTopId(mongoSequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CmsBtProductTopID));
             topModel.setCreated(DateTimeUtil.getNow());
             topModel.setCreater(userName);
-
+            topModel.setCartId(param.getCartId());
             topModel.setChannelId(channelId);
             topModel.setSellerCatId(param.getSellerCatId());
         }
@@ -106,7 +106,7 @@ public class ProductTopService extends BaseService {
     }
 
     public List<String> getSearchCodeList(AddTopProductParameter param, String channelId) {
-        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId);
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId, param.getCartId());
         JongoQuery queryObject = getJongoQuery(param.getSearchParameter(), topModel);
         queryObject.setProjectionExt("common.fields.code");
         List<CmsBtProductModel> list = cmsBtProductDao.select(queryObject, channelId);
@@ -115,8 +115,10 @@ public class ProductTopService extends BaseService {
 
     //保存置顶区
     public void saveTopProduct(SaveTopProductParameter param, String channelId, String userName) {
-        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId);
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId, param.getCartId());
         topModel.setProductCodeList(param.getCodeList());
+        topModel.setModifier(userName);
+        topModel.setModified(DateTimeUtil.getNow());
         dao.update(topModel);
     }
 
@@ -149,12 +151,12 @@ public class ProductTopService extends BaseService {
     public void saveSortColumnName(ProductPageParameter param, String channelId, String userName) {
         if (!StringUtils.isEmpty(param.getSortColumnName())) {
             boolean isAdd = false;
-            CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId);
+            CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId, param.getCartId());
             if (topModel == null) {
                 isAdd = true;
                 topModel = new CmsBtProductTopModel();
                 topModel.setProductTopId(mongoSequenceService.getNextSequence(MongoSequenceService.CommSequenceName.CmsBtProductTopID));
-
+                topModel.setCartId(param.getCartId());
                 topModel.setChannelId(channelId);
                 topModel.setSellerCatId(param.getSellerCatId());
                 topModel.setCreated(DateTimeUtil.getNow());
@@ -173,7 +175,7 @@ public class ProductTopService extends BaseService {
 
     //普通区查询 获取总数量
     public Object getCount(ProductPageParameter param, String channelId) {
-        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId);
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(param.getSellerCatId(), channelId, param.getCartId());
 
         JongoQuery queryObject = getJongoQuery(param, topModel);
 
@@ -182,7 +184,7 @@ public class ProductTopService extends BaseService {
 
     //获取置顶区 列表
     public List<ProductInfo> getTopList(GetTopListParameter parameter, String channelId) {
-        CmsBtProductTopModel topModel = dao.selectBySellerCatId(parameter.getSellerCatId(), channelId);
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(parameter.getSellerCatId(), channelId, parameter.getCartId());
         if(topModel == null) {
             topModel = new CmsBtProductTopModel();
             topModel.setProductCodeList(new ArrayList<>());
@@ -347,8 +349,8 @@ public class ProductTopService extends BaseService {
         return queryObject;
     }
 
-    public void insertTop50(String channelId, String sellerCatId, String code){
-        CmsBtProductTopModel topModel = dao.selectBySellerCatId(sellerCatId, channelId);
+    public void insertTop50(String channelId, String sellerCatId, String code, Integer cartId){
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(sellerCatId, channelId, cartId);
         if(topModel != null){
             if(ListUtils.notNull(topModel.getProductCodeList())){
                 topModel.getProductCodeList().add(0, code);

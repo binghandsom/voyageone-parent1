@@ -6,6 +6,7 @@ import java.util.List;
 public class CmsBtProductTopModel extends ChannelPartitionModel {
     private String channelId;
     private String sellerCatId;//店铺内分类
+    private Integer cartId;
 
     public String getSellerCatId() {
         return sellerCatId;
@@ -58,6 +59,14 @@ public class CmsBtProductTopModel extends ChannelPartitionModel {
 
     public void setSortType(int sortType) {
         this.sortType = sortType;
+    }
+
+    public Integer getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
     }
 }
 

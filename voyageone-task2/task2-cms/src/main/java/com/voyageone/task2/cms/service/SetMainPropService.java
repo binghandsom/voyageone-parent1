@@ -1198,7 +1198,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 List<String> sellerCatIds = new ArrayList<>();
                 platform.getSellerCats().stream().map(CmsBtProductModel_SellerCat::getcIds).collect(Collectors.toList()).forEach(sellerCatIds::addAll);
                 sellerCatIds = sellerCatIds.stream().distinct().collect(Collectors.toList());
-                sellerCatIds.forEach(sellerCatId->productTopService.insertTop50(cmsProduct.getChannelId(), sellerCatId, cmsProduct.getCommon().getFields().getCode()));
+                sellerCatIds.forEach(sellerCatId->productTopService.insertTop50(cmsProduct.getChannelId(), sellerCatId, cmsProduct.getCommon().getFields().getCode(), CartEnums.Cart.SN.getValue()));
             }
         }
         private void doCreateUsaPlatform(CmsBtProductModel cmsProduct, CmsBtFeedInfoModel feed) {
