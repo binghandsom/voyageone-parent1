@@ -2977,7 +2977,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 detailInfo.setOrigin(field.getOrigin());
                 messageBody.setDetailInfo(detailInfo);*/
                 cmsMqSenderService.sendMessage(messageBody);
-                $info(productModel.getModifier() + "同步最新Product信息至WMS，内容：" + JacksonUtil.bean2Json(messageBody));
+                $debug(productModel.getModifier() + "同步最新Product信息至WMS，内容：" + JacksonUtil.bean2Json(messageBody));
             });
 
             return true;
