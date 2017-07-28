@@ -92,6 +92,10 @@ define([
             self.manyUsNetPrice = self.manyUsNetPrice == null ?"":self.manyUsNetPrice;
             self.manyMsrp = self.manyMsrp == null ?"":self.manyMsrp;
             self.manySalePrice = self.manySalePrice == null ?"":self.manySalePrice;
+            if(self.manyUsMsrp == "" && self.manyUsNetPrice == ""&& self.manyMsrp == "" &&self.manySalePrice == "" ){
+                self.alert('value can not to be empty!');
+                return;
+            }
             if(self.manyUsMsrp != ""  || self.manyUsNetPrice != ""){
                 _.each(self.usPriceList, function (value,key) {
                     let map = {

@@ -270,7 +270,12 @@ public class ProductTopService extends BaseService {
                 info.setImage1(imgList.get(0).getName());
             }
         }
-        CmsBtProductModel_Platform_Cart platform_Cart = f.getPlatform(cartId);
+        CmsBtProductModel_Platform_Cart platform_Cart = null;
+        if(cartId < 20){
+            platform_Cart = f.getUsPlatform(cartId);
+        }else {
+            platform_Cart = f.getPlatform(cartId);
+        }
         if (platform_Cart != null) {
             info.setpNumIId(platform_Cart.getpNumIId());
             info.setpPriceSaleSt(platform_Cart.getpPriceSaleSt());
