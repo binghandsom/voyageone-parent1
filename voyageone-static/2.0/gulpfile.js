@@ -1,1 +1,1 @@
-require('./node_scripts/gulp-publish');
+require('./gulp');

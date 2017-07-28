@@ -5,7 +5,7 @@
  */
 angular.module("voyageone.angular.services").service("$ajax", $Ajax).service("ajaxService", AjaxService).config(['$httpProvider', function ($httpProvider) {
     $httpProvider.defaults.headers.common = {
-        'X-Requested-With': 'XMLHttpRequest'
+        'X-Requested-With': 'XMLHttpRequest12'
     };
 }]);
 

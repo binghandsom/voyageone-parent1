@@ -2,7 +2,7 @@
  * Created by sofia on 2016/8/12.
  */
 
-define(['components/dist/voyageone.angular.com'], function () {
+define(['components/dist/common'], function () {
     angular.module('voyageone.admin.login', [
         'blockUI',
         'ngStorage',
