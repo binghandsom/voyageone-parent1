@@ -346,4 +346,16 @@ public class ProductTopService extends BaseService {
         queryObject.setQuery(criteria);
         return queryObject;
     }
+
+    public void insertTop50(String channelId, String sellerCatId, String code){
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(sellerCatId, channelId);
+        if(topModel != null){
+            if(ListUtils.notNull(topModel.getProductCodeList())){
+                topModel.getProductCodeList().add(0, code);
+                //保险起见 去重一把
+                topModel.setProductCodeList(topModel.getProductCodeList().stream().distinct().collect(Collectors.toList()));
+                dao.update(topModel);
+            }
+        }
+    }
 }

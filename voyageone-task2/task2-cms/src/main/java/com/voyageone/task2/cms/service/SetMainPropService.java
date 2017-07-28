@@ -1193,7 +1193,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
         // 新code插入美国sneakhead官网相应类目的第一个
         private void doInsertTop50(CmsBtProductModel cmsProduct){
-
             CmsBtProductModel_Platform_Cart platform = cmsProduct.getUsPlatform(CartEnums.Cart.SN.getValue());
             if(platform != null && ListUtils.notNull(platform.getSellerCats())){
                 List<String> sellerCatIds = new ArrayList<>();
