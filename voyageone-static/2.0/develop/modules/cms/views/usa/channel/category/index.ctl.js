@@ -534,6 +534,19 @@ define([
 
         }
 
+        showPriceSale(priceLow, priceHigh) {
+            var $filter = this.$filter;
+
+            if (!priceLow || !priceHigh)
+                return '';
+
+            if (priceLow === priceHigh)
+                return $filter('currency')(priceLow, '');
+            else
+                return $filter('currency')(priceLow, '') + "~"
+                    + $filter('currency')(priceHigh, '');
+        };
+
     });
 
 });
