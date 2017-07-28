@@ -91,24 +91,25 @@ define([
             });
 
             //获取保存的排序结果
-            self.productTopService.init({ cartId: carts.Sneakerhead.id, catId: catInfo.catId}).then(function (res) {
+            self.productTopService.init({cartId: carts.Sneakerhead.id, catId: catInfo.catId}).then(function (res) {
 
-                _.each(self.sortEntity,(value) => {
-                    if(value['sortValue'] === res.data.sortColumnName)
-                        _sort =  value;
+                _.each(self.sortEntity, (value) => {
+                    if (value['sortValue'] === res.data.sortColumnName && Number(value['sortType']) === res.data.sortType) {
+                        _sort = value;
+                    }
                 });
 
-                if(_sort){
+                if (_sort) {
                     self.sort = _sort;
 
                     self.combineSort();
-                }else{
+                } else {
                     self.search();
                 }
 
             });
 
-            //左侧蓝top50
+            //左侧栏top50
             self.getTopList();
 
         }
@@ -423,7 +424,7 @@ define([
          * 检索列排序
          * sortType 1:升序  -1:降序
          * */
-        columnOrder(columnName,sortType) {
+        columnOrder(columnName, sortType) {
             let self = this,
                 column,
                 columnArrow = self.columnArrow;
@@ -444,13 +445,13 @@ define([
             column.count = !column.count;
 
             //偶数升序，奇数降序
-            if (column.count){
+            if (column.count) {
                 column.mark = 'sort-desc';
-            }else{
+            } else {
                 column.mark = 'sort-up';
             }
 
-            if(sortType){
+            if (sortType) {
                 column.mark = sortType === '1' ? 'sort-up' : 'sort-desc';
             }
 
@@ -511,7 +512,9 @@ define([
         combineSort() {
             let self = this;
 
-            self.columnOrder(self.sort.sortValue,self.sort.sortType);
+            self.columnOrder(self.sort.sortValue, self.sort.sortType);
+
+            self.getTopList();
 
         }
 
