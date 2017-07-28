@@ -17,7 +17,7 @@
                             </div>
 
                             <div class="row form-group">
-                                <label class="col-md-2 control-label"><strong>{{"TXT_PRODUCT_CODE"|translate}}</strong></label>
+                                <label class="col-md-2 control-label"><strong>Code</strong></label>
 
                                 <div class="col-md-8">
                                     <input class="form-control" ng-model="ctrl.productComm.fields.code" readonly>
@@ -27,7 +27,7 @@
                             <div class="row form-group">
 
                                 <button class="col-md-2 btn btn-default" ng-click="ctrl.popUsCategory()">
-                                    <span>{{ctrl.cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>
+                                    <span>{{ctrl.cartInfo.name}}&nbsp;Category</span>
                                 </button>
 
                                 <div class="col-md-8">
@@ -74,11 +74,11 @@
                                         <th class="text-left">Size</th>
                                         <th class="text-left">Sku</th>
                                         <th class="text-left">Upc</th>
-                                        <th class="text-center">platformQty</th>
+                                        <th class="text-center">PlatformQty</th>
                                         <th class="text-center">Weight</th>
                                         <th class="text-center">Weitch Unit</th>
                                         <th class="text-right">Msrp($)</th>
-                                        <th class="text-right">price($)</th>
+                                        <th class="text-right">Price($)</th>
                                         </thead>
                                         <tbody>
                                         <tr ng-repeat="sku in ctrl.platform.skus">
