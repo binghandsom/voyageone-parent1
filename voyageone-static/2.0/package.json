@@ -3,9 +3,8 @@
   "version": "2.0.0",
   "description": "VoyageOne Front Project v2",
   "scripts": {
-    "pkg:ng": "node node_scripts/npm/package-ng.js",
-    "pkg:css": "node node_scripts/npm-build-css-package.js",
-    "start": "browser-sync start -c bs-config.js"
+    "dev": "gulp",
+    "build": "gulp build"
   },
   "author": "VoyageOne",
   "license": "ISC",
