@@ -9,16 +9,12 @@
   },
   "author": "VoyageOne",
   "license": "ISC",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
-    "angular-ui-router": "^0.3.1",
     "babel-core": "^6.25.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.5.2",
     "browser-sync": "",
-    "chart.js": "^2.1.4",
-    "extend": "",
     "glob": "",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
@@ -31,19 +27,13 @@
     "gulp-header": "",
     "gulp-minify-html": "",
     "gulp-ng-annotate": "",
-    "gulp-ng-html2js": "",
     "gulp-iife": "^0.3.0",
     "gulp-rename": "",
     "gulp-replace": "",
     "gulp-remember": "^0.3.1",
-    "gulp-sourcemaps": "",
     "gulp-uglify": "",
-    "gulp-util": "",
     "http-proxy-middleware": "",
     "lodash": "^4.17.4",
-    "morgan": "",
-    "through2": "",
-    "uglify-js": "^2.7.0",
-    "url": ""
+    "morgan": ""
   }
 }
