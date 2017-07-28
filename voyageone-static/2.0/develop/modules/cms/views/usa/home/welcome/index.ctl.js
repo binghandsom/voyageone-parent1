@@ -23,7 +23,6 @@ define([
             // 页面数据
             this.feedInfo = [];
             this.platformInfo = {};
-            this.lastUpdateTime = "";
             this.platformHeader = {
                 "Pending Items":"Pending Items",
                 "Listing Items":"OnSale Items",

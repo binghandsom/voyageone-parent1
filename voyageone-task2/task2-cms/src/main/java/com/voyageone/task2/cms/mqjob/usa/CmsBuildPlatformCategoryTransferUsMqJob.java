@@ -51,15 +51,18 @@ public class CmsBuildPlatformCategoryTransferUsMqJob extends TBaseMQCmsService<C
             TransferUsCategoryModel categoryModel = new TransferUsCategoryModel();
 
             String[] fullCatIdArrs = fullCatId.split(symbol);
-            String catId = fullCatIdArrs[fullCatIdArrs.length - 1];
-            String parentId = fullCatIdArrs[fullCatIdArrs.length - 2];
-
+            String catId = fullCatId;
+            String parentId = "0";
+            if (fullCatIdArrs.length > 0) {
+                catId = fullCatIdArrs[fullCatIdArrs.length - 1];
+                parentId = fullCatIdArrs[fullCatIdArrs.length - 2];
+            }
             CmsBtSellerCatModel sellerCatModel = sellerCatService.getCurrentNode(sellerCatModels, catId);
             // 填充categoryModel
             categoryModel.setChannelId(channelId);
             categoryModel.setStoreId(cartId);
             categoryModel.setChannelId(catId);
-            categoryModel.setParentId(parentId);
+            categoryModel.setParentId("0".equals(parentId) ? null : parentId);
             categoryModel.setCategoryPath(fullCatId);
             if (sellerCatModel != null) {
                 categoryModel.setName(sellerCatModel.getCatName());
