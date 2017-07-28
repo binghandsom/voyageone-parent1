@@ -77,7 +77,7 @@ public class CmsBuildPlatformCategoryTransferUsMqJob extends TBaseMQCmsService<C
             }
             // 获取类目下产品code列表
             List<String> codes = new ArrayList<>();
-            CmsBtProductTopModel topModel = cmsBtProductTopDao.selectBySellerCatId(catId, channelId);
+            CmsBtProductTopModel topModel = cmsBtProductTopDao.selectBySellerCatId(catId, channelId, Integer.parseInt(messageBody.getCartId()));
             if (topModel == null) {
                 codes.addAll(cmsBtProductDao.selectListCodeBySellerCat(channelId, Integer.parseInt(cartId), catId, null, null, null, true)); // 普通code排序
             } else {

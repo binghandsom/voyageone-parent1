@@ -100,7 +100,7 @@ public class CmsBuildPlatformProductSellercatCnTmpService extends BaseCronTaskSe
             // modified by morse.lu 2016/11/30 start
 //            List<String> codes = cmsBtProductDao.selectListCodeBySellerCat(channelId, cartId, catId);
             List<String> codes = new ArrayList<>();
-            CmsBtProductTopModel topModel = cmsBtProductTopDao.selectBySellerCatId(catId, channelId);
+            CmsBtProductTopModel topModel = cmsBtProductTopDao.selectBySellerCatId(catId, channelId, cartId);
             if (topModel == null) {
                 codes.addAll(cmsBtProductDao.selectListCodeBySellerCat(channelId, cartId, catId, null, null, null)); // 普通code排序
             } else {
