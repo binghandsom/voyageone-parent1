@@ -103,7 +103,7 @@ define([
                 self.alert('value can not to be 0 or empty!');
                 return;
             }
-            self.detailDataService.updateOnePrice(lists).then(res =>{
+            self.detailDataService.updateOnePrice(lists).then(() =>{
                 self.manyMsrp = "";
                 self.manySalePrice = "";
                 self.manyUsMsrp = "";
