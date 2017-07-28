@@ -371,15 +371,21 @@
                                                'label-default':!usPlatform.pStatus || usPlatform.pStatus == 'Pending',
                                                 'label-warning':usPlatform.pStatus == 'InStock',
                                                 'label-success':usPlatform.pStatus == 'OnSale'
-                                            }">
-                                                {{usPlatform.cartId}}
+                                            }" style="margin:3px;">
+                                                {{ctrl.carts.valueOf(+usPlatform.cartId).name}}
                                             </span>
                                         </span>
                                     </span>
                                     <!-- Todo 商品平台状态-->
                                     <span class="label m-l-sm" ng-if="productInfo.platforms">
                                         <span ng-repeat='entity in productInfo.platforms' ng-if="entity.cartId > 0">
-                                               <platform-status data="entity"></platform-status>
+                                               <span class="label" ng-class="{
+                                               'label-default':!entity.pStatus || entity.pStatus == 'Pending',
+                                                'label-warning':entity.pStatus == 'InStock',
+                                                'label-success':entity.pStatus == 'OnSale'
+                                            }" style="margin:3px;">
+                                                {{ctrl.carts.valueOf(+entity.cartId).name}}
+                                            </span>
                                         </span>
                                     </span>
 

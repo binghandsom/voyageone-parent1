@@ -314,8 +314,8 @@
                                                'label-default':!usPlatform.pStatus || usPlatform.pStatus == 'Pending',
                                                 'label-warning':usPlatform.pStatus == 'InStock',
                                                 'label-success':usPlatform.pStatus == 'OnSale'
-                                            }">
-                                                {{usPlatform.cartId}}
+                                            }" style="margin: 3px;">
+                                                {{ctrl.cartEntity.valueOf(+usPlatform.cartId).name }}
                                             </span>
                                         </span>
                                     </span>
@@ -326,8 +326,8 @@
                                                'label-default':!entity.pStatus || entity.pStatus == 'Pending',
                                                 'label-warning':entity.pStatus == 'InStock',
                                                 'label-success':entity.pStatus == 'OnSale'
-                                            }">
-                                                {{entity.cartId}}
+                                            }" style="margin: 3px;">
+                                                {{ctrl.cartEntity.valueOf(+entity.cartId).name }}
                                             </span>
                                         </span>
                                     </span>

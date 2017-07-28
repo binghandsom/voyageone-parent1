@@ -35,6 +35,7 @@ define([
                 cartId: carts.Sneakerhead.id,
                 codeList: ''
             };
+            self.carts = carts;
             self.customColumns = {
                 selCommonProps: [],
                 selPlatformAttributes: [],
