@@ -17,6 +17,7 @@ define([
 
             self.sortEntity = sortEntity;
             self.$routeParams = $routeParams;
+            self.selectRowsFactory = selectRowsFactory;
             self.srInstance = new selectRowsFactory();
             self.productTopService = productTopService;
             self.alert = alert;
@@ -49,7 +50,7 @@ define([
                 downToLast: 'downToLast'
             };
             self.pageOption = {
-                curr: 1, total: 0, size: 10, fetch: function () {
+                curr: 1, total: 0, size: 1, fetch: function () {
                     self.search();
                 }
             };
@@ -150,6 +151,7 @@ define([
 
             self.srInstance.clearCurrPageRows();
             self.advanceSearch.search(upEntity).then(res => {
+
                 if (res.data) {
                     self.searchResult.productList = res.data.productList;
                     self.pageOption.total = res.data.productListTotal;
