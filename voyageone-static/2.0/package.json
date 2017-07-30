@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "description": "VoyageOne Front Project v2",
   "scripts": {
+    "server":"browser-sync start --config 'bs-config.js'",
     "dev": "gulp",
     "build": "gulp build",
     "publish": "gulp build --env=production"
