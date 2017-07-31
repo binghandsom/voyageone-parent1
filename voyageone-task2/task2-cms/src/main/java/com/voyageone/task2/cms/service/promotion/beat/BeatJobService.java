@@ -19,9 +19,7 @@ import com.voyageone.components.tmall.service.TbItemService;
 import com.voyageone.components.tmall.service.TbPictureService;
 import com.voyageone.components.tmall.service.TbSimpleItemService;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
-import com.voyageone.service.bean.cms.CmsBtPromotionCodesBean;
 import com.voyageone.service.bean.cms.task.beat.ConfigBean;
-import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
 import com.voyageone.service.model.cms.enums.jiagepilu.ImageStatus;
@@ -103,7 +101,7 @@ public class BeatJobService extends BaseCronTaskService {
         final int PRODUCT_COUNT_ON_THREAD = config[1];
         final int LIMIT = PRODUCT_COUNT_ON_THREAD * THREAD_COUNT;
 
-        List<CmsBtBeatInfoBean> beatInfoModels = beatInfoService.getNeedBeatData(LIMIT, Arrays.asList(20,23,30,31));
+        List<CmsBtBeatInfoBean> beatInfoModels = beatInfoService.getNeedBeatData(LIMIT, Arrays.asList(20, 23, 30, 31, 24, 26, 28, 29));
 
         if (beatInfoModels.isEmpty()) {
             $info("没有需要进行处理的价格披露任务");
