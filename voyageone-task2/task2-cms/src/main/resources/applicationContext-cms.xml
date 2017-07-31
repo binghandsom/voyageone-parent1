@@ -76,6 +76,8 @@
 
         <!-- 价格披露 v2 -->
         <task:scheduled ref="CmsBeatJob" method="run" cron="0 0/1 0-23 * * ?"/>
+        <!-- 价格披露(京东系) v2 -->
+        <task:scheduled ref="CmsBeatJDJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!--&lt;!&ndash; 特价宝  &ndash;&gt;-->
         <!--<task:scheduled ref="CmsPromotionJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
