@@ -86,7 +86,6 @@ public class UsaTagService extends BaseService {
             resultMap.put("tagTypeList", types.stream().filter(type -> type.getValue().equals(String.valueOf(CmsBtTagModelTagType.usa_free_tags))).collect(Collectors.toList()));
         }
 
-        orgFlg = "2";
         if (Objects.equals(orgFlg, "2")) {
             // 用于标识是否已勾选
             Map<String, Boolean> orgChkStsMap = new HashMap<>();
