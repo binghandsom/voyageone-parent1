@@ -1,13 +1,17 @@
 package com.voyageone.web2.cms.views.channel;
 
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.BeanUtils;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
+import com.voyageone.service.fields.cms.CmsBtTagModelTagType;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
@@ -375,6 +379,8 @@ public class CmsChannelTagService extends BaseViewService {
     public void DelTagInfo(Map<String, Object> param) {
         //子类标签
         int id = (Integer) param.get("id");
+        CmsBtTagModel tag = tagService.getTagByTagId(id);
+        if (tag == null) return;
         //父类标签
         int parentTagId = (Integer) param.get("parentTagId");
         //子标签标志位
@@ -425,8 +431,19 @@ public class CmsChannelTagService extends BaseViewService {
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
         cmsBtTagModel.setId(id);
         cmsBtTagModel.setActive(0);
-
-        tagService.updateTagModel(cmsBtTagModel);
+        int affected = tagService.updateTagModel(cmsBtTagModel);
+        if (affected > 0 && (tag.getTagType() == CmsBtTagModelTagType.shelves || tag.getTagType() == CmsBtTagModelTagType.usa_free_tags)) {
+            JongoUpdate updObj = new JongoUpdate();
+            if (tag.getTagType() == CmsBtTagModelTagType.usa_free_tags) {
+                updObj.setQuery("{\"usFreeTags\":{$regex:\"-" + id + "-\"}}");
+                updObj.setUpdate("{$pull:{\"usFreeTags\":{$regex:\"-" + id + "-\"}}}");
+            } else {
+                updObj.setQuery("{\"freeTags\":{$regex:\"-" + id + "-\"}}");
+                updObj.setUpdate("{$pull:{\"freeTags\":{$regex:\"-" + id + "-\"}}}");
+            }
+            WriteResult writeResult = productService.updateMulti(updObj, tag.getChannelId());
+            $info(String.format("删除Tag, 同步更新商品自由标签结果: %s", JacksonUtil.bean2Json(writeResult)));
+        }
     }
 
 
