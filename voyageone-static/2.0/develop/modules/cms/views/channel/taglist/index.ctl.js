@@ -87,11 +87,11 @@ define([
 
         };
 
-        TagListCtl.prototype.editTag = function (tag, treeIndex) {
+        TagListCtl.prototype.editTag = function (tag, parentIndex) {
             var self = this;
             self.popups.editTag({tag:tag}).then(res => {
-                self.notify.success("TagName modified successfully");
-                self.init();
+                self.notify.success("TagName modified successfully.");
+                self.init(parentIndex);
             });
         };
 
@@ -114,7 +114,7 @@ define([
                 tagInfo: tagInfo,
                 tagSelectObject: self.selected[parentIndex === 0 ? 0 : parentIndex - 1]
             }).then(function () {
-                self.notify.success('添加成功！');
+                self.notify.success('Tag added successfully.');
                 self.init(parentIndex);
             });
         };
@@ -126,7 +126,7 @@ define([
             var self = this,
                 channelTagService = self.channelTagService;
 
-            self.confirm('您确定要删除该标签吗？').then(function () {
+            self.confirm('TXT_CONFIRM_DELETE_TAG').then(function () {
                 channelTagService.del({
                     id: tag.id,
                     parentTagId: tag.parentTagId,
