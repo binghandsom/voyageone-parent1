@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.mqjob.usa;
 
-import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.VOCmsUsaProductSalesQueueMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsUsaProductSalesMQMessageBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +16,11 @@ import java.util.ArrayList;
 @ContextConfiguration("classpath:context-cms-test.xml")
 public class VOCmsUsaProductSalesQueueTest {
     @Autowired
-    VOCmsUsaProductSalesQueue VOCmsUsaProductSalesQueue;
+    CmsUsaProductSalesMQJob VOCmsUsaProductSalesQueue;
     @Test
     public void testOnStartup() throws Exception {
-        VOCmsUsaProductSalesQueueMQMessageBody body = new VOCmsUsaProductSalesQueueMQMessageBody();
-        VOCmsUsaProductSalesQueueMQMessageBody.Param param = body.new Param();
+        CmsUsaProductSalesMQMessageBody body = new CmsUsaProductSalesMQMessageBody();
+        CmsUsaProductSalesMQMessageBody.Param param = body.new Param();
 
         body.setSender("xusong");
 
@@ -30,7 +30,7 @@ public class VOCmsUsaProductSalesQueueTest {
         param.setStatus(1);
         param.setOrderDate(1460736000000L);
         param.setSku("aj6961-m");
-        ArrayList<VOCmsUsaProductSalesQueueMQMessageBody.Param> params = new ArrayList<>();
+        ArrayList<CmsUsaProductSalesMQMessageBody.Param> params = new ArrayList<>();
         params.add(param);
         body.setItems(params);
         VOCmsUsaProductSalesQueue.onStartup(body);

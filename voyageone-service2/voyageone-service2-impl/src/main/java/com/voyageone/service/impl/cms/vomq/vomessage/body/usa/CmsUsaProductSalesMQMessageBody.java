@@ -1,7 +1,6 @@
 package com.voyageone.service.impl.cms.vomq.vomessage.body.usa;
 
 import com.voyageone.common.util.ListUtils;
-import com.voyageone.common.util.LongUtils;
 import com.voyageone.components.rabbitmq.annotation.VOMQQueue;
 import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
@@ -14,9 +13,9 @@ import java.util.List;
  * Created by dell on 2017/7/31.
  */
 @VOMQQueue(value = CmsMqRoutingKey.CMS_USA_PRODUCT_SALES_UPDATE)
-public class VOCmsUsaProductSalesQueueMQMessageBody extends BaseMQMessageBody {
+public class CmsUsaProductSalesMQMessageBody extends BaseMQMessageBody {
 
-    private List<VOCmsUsaProductSalesQueueMQMessageBody.Param> items;
+    private List<CmsUsaProductSalesMQMessageBody.Param> items;
 
     public List<Param> getItems() {
         return items;
