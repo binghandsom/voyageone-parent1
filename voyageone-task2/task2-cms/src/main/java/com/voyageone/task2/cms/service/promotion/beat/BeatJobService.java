@@ -101,7 +101,7 @@ public class BeatJobService extends BaseCronTaskService {
         final int PRODUCT_COUNT_ON_THREAD = config[1];
         final int LIMIT = PRODUCT_COUNT_ON_THREAD * THREAD_COUNT;
 
-        List<CmsBtBeatInfoBean> beatInfoModels = beatInfoService.getNeedBeatData(LIMIT, Arrays.asList(20, 23, 30, 31, 24, 26, 28, 29));
+        List<CmsBtBeatInfoBean> beatInfoModels = beatInfoService.getNeedBeatData(LIMIT, Arrays.asList(20, 23, 30, 31));
 
         if (beatInfoModels.isEmpty()) {
             $info("没有需要进行处理的价格披露任务");
