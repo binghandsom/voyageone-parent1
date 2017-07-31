@@ -1,7 +1,6 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.util.CommonUtil;
@@ -18,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.SHOE_CITY;
 
 /**
  * @author jonasvlag. 16/3/30.
@@ -92,7 +93,7 @@ class SEAnalysisContext {
         product.setSizeType(feedBean.getSize_type());
         List<String> imageUrls = new ArrayList<>();
         for (int i = 1; i <= 5; i++)
-            imageUrls.add(String.format(Constants.productForOtherSystemInfo.IMG_URL_WITH_PARAMENTER, feedBean.getImg_id(), i));
+            imageUrls.add(ImageServer.imageUrl(SHOE_CITY.getId(), feedBean.getImg_id() + "-" + i));
         product.setImage(imageUrls);
         product.setBrand(feedBean.getBrand());
         product.setWeight("4");
@@ -110,7 +111,7 @@ class SEAnalysisContext {
         //增加属性结束
         product.setAttribute(attribute);
         product.setUpdFlg(0);
-        product.setChannelId(ChannelConfigEnums.Channel.SHOE_CITY.getId());
+        product.setChannelId(SHOE_CITY.getId());
         product.setProductType(feedBean.getProduct_type());
         product.setUsageEn(feedBean.getCategory());
         product.setMaterial(feedBean.getCategory());
@@ -154,7 +155,7 @@ class SEAnalysisContext {
     }
 
     private String getExp(FeedEnums.Name name) {
-        return Feeds.getVal1(ChannelConfigEnums.Channel.SHOE_CITY.getId(), name);
+        return Feeds.getVal1(SHOE_CITY.getId(), name);
     }
 
     /**

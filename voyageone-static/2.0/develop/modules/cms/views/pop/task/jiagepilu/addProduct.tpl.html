@@ -1,0 +1,36 @@
+<div class="vo_modal" ng-init="ctrl.init()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title">&nbsp;<i class="fa fa-plus"></i>&nbsp;<span translate="TXT_ADD_MOD_GOOD"></span></h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal" name="addJiagepiluProductForm" novalidate>
+            <div class="row form-group">
+                <label class="col-sm-5 control-label vo_reqfield"><strong translate="TXT_NUMIID_FULL"></strong></label>
+                <div class="col-sm-5">
+                    <input type="number" class="form-control" name="numIid" ng-model="ctrl.item.numIid" required/>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <label class="col-sm-5 control-label vo_reqfield"><strong translate="code"></strong></label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" name="productCode" ng-model="ctrl.item.productCode" required/>
+                </div>
+            </div>
+
+            <div class="row form-group">
+                <label class="col-sm-5 control-label vo_reqfield"><strong translate="TXT_PROMOTION_PRICE"></strong></label>
+                <div class="col-sm-5">
+                    <input type="number" min="0" class="form-control" name="price" ng-model="ctrl.item.price" required/>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i>&nbsp;<span translate="BTN_CANCEL"></span></button>
+        <button class="btn btn-vo"  ng-disabled="addJiagepiluProductForm.$invalid" ng-click="ctrl.ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;<span translate="BTN_SAVE"></span></button>
+    </div>
+</div>

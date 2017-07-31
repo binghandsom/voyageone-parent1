@@ -1,10 +1,12 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.common.components.transaction.VOTransactional;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
 import com.voyageone.service.dao.cms.CmsBtTasksDao;
 import com.voyageone.service.daoext.cms.CmsBtTasksDaoExt;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtTasksModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,5 +48,19 @@ public class TaskService extends BaseService {
     @VOTransactional
     public int updateConfig(CmsBtTasksBean cmsBtTasksBean) {
         return tasksDaoExt.updateConfig(cmsBtTasksBean);
+    }
+
+    public CmsBtTasksModel getTaskById(Integer taskId) {
+        return tasksDao.select(taskId);
+    }
+
+    @VOTransactional
+    public int updateTaskStatus(Integer taskId, Integer status, String userName) {
+        CmsBtTasksBean updateBean = new CmsBtTasksBean();
+        updateBean.setId(taskId);
+        updateBean.setStatus(status);
+        updateBean.setModifier(userName);
+        updateBean.setModified(DateTimeUtil.getDate());
+        return tasksDao.update(updateBean);
     }
 }

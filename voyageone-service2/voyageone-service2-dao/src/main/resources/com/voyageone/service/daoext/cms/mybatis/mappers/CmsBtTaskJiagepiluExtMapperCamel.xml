@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.service.daoext.cms.CmsBtTaskJiagepiluDaoExt" >
+    <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsBtTaskJiagepiluModel" />
+
+    <sql id="Base_Column_List" >
+        `id`, `task_id`, `num_iid`, `product_code`, `syn_flag`, `message`, `image_status`,
+        `image_task_id`, `created`, `creater`, `modified`, `modifier`, `price`, `image_url`,
+        `image_name`
+    </sql>
+
+    <resultMap id="BeanResultMap" extends="BaseResultMap" type="com.voyageone.service.bean.cms.task.beat.CmsBtTaskJiagepiluBean"/>
+
+    <select id="search" parameterType="com.voyageone.service.bean.cms.task.beat.SearchTaskJiagepiluBean" resultMap="BeanResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from cms_bt_task_jiagepilu
+        <where >
+            <if test="taskId != null" >
+                and `task_id` = #{taskId,jdbcType=INTEGER}
+            </if>
+            <if test="numIid != null" >
+                and `num_iid` = #{numIid,jdbcType=BIGINT}
+            </if>
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="synFlag != null" >
+                and `syn_flag` = #{synFlag,jdbcType=INTEGER}
+            </if>
+            <if test="message != null" >
+                and `message` = #{message,jdbcType=VARCHAR}
+            </if>
+            <if test="imageStatus != null" >
+                and `image_status` = #{imageStatus,jdbcType=INTEGER}
+            </if>
+            <if test="imageTaskId != null" >
+                and `image_task_id` = #{imageTaskId,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="price != null" >
+                and `price` = #{price,jdbcType=DOUBLE}
+            </if>
+            <if test="imageUrl != null" >
+                and `image_url` = #{imageUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="imageName != null" >
+                and `image_name` = #{imageName,jdbcType=VARCHAR}
+            </if>
+
+            <!--追加检索条件-->
+            <if test="numIidOrCodes!=null and numIidOrCodes.size()>0">
+                and (
+                num_iid in
+                <foreach collection="numIidOrCodes" item="item" index="index" open="(" close=")"
+                         separator=",">
+                    #{item}
+                </foreach>
+                or product_code in
+                <foreach collection="numIidOrCodes" item="item" index="index" open="(" close=")"
+                         separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+
+            <if test="beatFlagVals!=null and beatFlagVals.size()>0">
+                and syn_flag in
+                <foreach collection="beatFlagVals" item="item" index="index" open="(" close=")"
+                         separator=",">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="imageStatusVals!=null and imageStatusVals.size()>0">
+                and image_status in
+                <foreach collection="imageStatusVals" item="item" index="index" open="(" close=")"
+                         separator=",">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="errorMsg != null" >
+                and `message` like concat('%', #{errorMsg,jdbcType=VARCHAR}, '%')
+            </if>
+
+        </where>
+        order by modified desc, created desc limit #{start},#{size}
+    </select>
+
+    <select id="count" parameterType="com.voyageone.service.bean.cms.task.beat.SearchTaskJiagepiluBean" resultType="Integer">
+        select
+        count(1)
+        from cms_bt_task_jiagepilu
+        <where >
+            <if test="taskId != null" >
+                and `task_id` = #{taskId,jdbcType=INTEGER}
+            </if>
+            <if test="numIid != null" >
+                and `num_iid` = #{numIid,jdbcType=BIGINT}
+            </if>
+            <if test="productCode != null" >
+                and `product_code` = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="synFlag != null" >
+                and `syn_flag` = #{synFlag,jdbcType=INTEGER}
+            </if>
+            <if test="message != null" >
+                and `message` = #{message,jdbcType=VARCHAR}
+            </if>
+            <if test="imageStatus != null" >
+                and `image_status` = #{imageStatus,jdbcType=INTEGER}
+            </if>
+            <if test="imageTaskId != null" >
+                and `image_task_id` = #{imageTaskId,jdbcType=INTEGER}
+            </if>
+            <if test="created != null" >
+                and `created` = #{created,jdbcType=TIMESTAMP}
+            </if>
+            <if test="creater != null" >
+                and `creater` = #{creater,jdbcType=VARCHAR}
+            </if>
+            <if test="modified != null" >
+                and `modified` = #{modified,jdbcType=TIMESTAMP}
+            </if>
+            <if test="modifier != null" >
+                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            </if>
+            <if test="price != null" >
+                and `price` = #{price,jdbcType=DOUBLE}
+            </if>
+            <if test="imageUrl != null" >
+                and `image_url` = #{imageUrl,jdbcType=VARCHAR}
+            </if>
+            <if test="imageName != null" >
+                and `image_name` = #{imageName,jdbcType=VARCHAR}
+            </if>
+
+            <!--追加检索条件-->
+            <if test="numIidOrCodes!=null and numIidOrCodes.size()>0">
+                and (
+                num_iid in
+                <foreach collection="numIidOrCodes" item="item" index="index" open="(" close=")"
+                         separator=",">
+                    #{item}
+                </foreach>
+                or product_code in
+                <foreach collection="numIidOrCodes" item="item" index="index" open="(" close=")"
+                         separator=",">
+                    #{item}
+                </foreach>
+                )
+            </if>
+
+            <if test="beatFlagVals!=null and beatFlagVals.size()>0">
+                and syn_flag in
+                <foreach collection="beatFlagVals" item="item" index="index" open="(" close=")"
+                         separator=",">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="imageStatusVals!=null and imageStatusVals.size()>0">
+                and image_status in
+                <foreach collection="imageStatusVals" item="item" index="index" open="(" close=")"
+                         separator=",">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="errorMsg != null" >
+                and `message` like concat('%', #{errorMsg,jdbcType=VARCHAR}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectSummary" resultType="Map">
+        SELECT
+        syn_flag flag,
+        count(1) count
+        FROM cms_bt_task_jiagepilu
+        WHERE task_id = #{taskId}
+        GROUP BY syn_flag
+    </select>
+
+    <update id="updateFlags">
+        UPDATE cms_bt_task_jiagepilu
+        SET syn_flag = #{synFlag},
+        image_status = #{imageStatus},
+        modifier = #{modifier},
+        modified = NOW()
+        WHERE task_id = #{taskId}
+        <if test="!force">
+            AND syn_flag > 0
+        </if>
+    </update>
+
+    <update id="rebeatFailFlags">
+        UPDATE cms_bt_task_jiagepilu
+        SET syn_flag = #{newSynFlag},
+        image_status = #{imageStatus},
+        modifier = #{modifier},
+        modified = NOW()
+        WHERE
+            task_id = #{taskId}
+        AND syn_flag = #{synFlag,jdbcType=INTEGER}
+    </update>
+
+</mapper>

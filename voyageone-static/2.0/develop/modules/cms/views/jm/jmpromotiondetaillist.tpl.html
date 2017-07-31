@@ -31,7 +31,7 @@
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label ng-scope" translate="TXT_JM_PROMOTION_CHANGED_COUNT"></label>
                                     <div class="col-sm-8">
-                                       <inpuut type="number" class="form-control" readonly>{{vm.changeCount}}</inpuut>
+                                        <inpuut type="number" class="form-control" readonly>{{vm.changeCount}}</inpuut>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -115,11 +115,11 @@
                                     <div class="col-sm-8 form-inline">
                                         <div class="input-group col-sm-4">
                                             <input type="number" value=""  style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.beginDiscount"
-                                                                                 placeholder="from"></div>
+                                                   placeholder="from"></div>
                                         &nbsp;~&nbsp;
                                         <div class="input-group col-sm-4">
                                             <input type="number" value=""  style="ime-mode:disabled;" onpaste="return false;" onkeypress="if((event.keyCode<48||event.keyCode>57) && event.keyCode!=46){return false;}" class="form-control" ng-model="searchInfo.endDiscount"
-                                                                                 placeholder="to"></div>
+                                                   placeholder="to"></div>
                                     </div>
                                 </div>
                             </div>
@@ -286,7 +286,7 @@
                                                                                                                    ng-false-value="false"
                                                                                                                    ng-model="model.isChecked"><span
                                             class="fa fa-check"></span></label></td>
-                                    <td><img image="{{model.image1}}"class="thumb-sm-search pull-left m-r" /></td>
+                                    <td><img-by-name name="model.image1" class="thumb-sm-search pull-left m-r"></img-by-name></td>
                                     <td>{{model.productCode}}</td>
                                     <td class="text-left"><a href="javascript:void(0)"  ng-click="openProductDetailWin({promotionProductId:model.id})">
                                         {{model.productLongName}}  </a>
@@ -317,10 +317,10 @@
                                     </td>
                                     <td class="text-right">
                                         <div class="table_main" style="width: 100px;">
-                                        <ul>
-                                            <li>市场价:{{getMarketPrice(model)}}</li>
-                                            <li>团购价:{{getDealPrice(model)}}</li>
-                                        </ul>
+                                            <ul>
+                                                <li>市场价:{{getMarketPrice(model)}}</li>
+                                                <li>团购价:{{getDealPrice(model)}}</li>
+                                            </ul>
                                         </div>
                                     </td>
                                     <td class="text-left">{{model.jumeiMallId}}</td>
@@ -331,7 +331,7 @@
                                     </td>
                                     <td>
                                         <a ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"
-                                                popover-placement="left" class="ng-scope">
+                                           popover-placement="left" class="ng-scope">
                                             <div class="table_main">
                                                 <ul>
                                                     <li>{{getErrorMsg(model.errorMsg)}}</li>
@@ -387,7 +387,7 @@
                             <td class="text-left">{{model.endTime}}</td>
                             <td class="text-left">
                                 <a ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"
-                                       popover-placement="left" class="ng-scope">
+                                   popover-placement="left" class="ng-scope">
                                     <div class="table_main">
                                         <ul>
                                             <li>{{getErrorMsg(model.errorMsg)}}</li>
@@ -431,7 +431,7 @@
                             <td class="text-left">{{model.endTime}}</td>
                             <td class="text-center">
                                 <a ng-controller="showPopoverCtrl" popover-html="showInfo('{{model.errorMsg}}')"
-                                       popover-placement="left" class="ng-scope">
+                                   popover-placement="left" class="ng-scope">
                                     <div class="table_main">
                                         <ul>
                                             <li>{{getErrorMsg(model.errorMsg)}}</li>
@@ -450,7 +450,4 @@
             </tab>
         </tabset>
     </div>
-</div>
-
-
 </div>

@@ -2,12 +2,15 @@ package com.voyageone.service.model.cms.mongo.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductMqqBean;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * 各平台的产品数据
@@ -74,6 +77,15 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String, Object
     public void setpCatId(String pCatId) {
         setStringAttribute("pCatId", pCatId);
     }
+
+    /*xu*/
+    public String getMainImageTemplate() {
+        return getStringAttribute("mainImageTemplate");
+    }
+    public void setMainImageTemplate(String mainImageTemplate) {
+        setStringAttribute("mainImageTemplate", mainImageTemplate);
+    }
+    /*xu*/
 
     //pCatPath
     public String getpCatPath() {
@@ -426,7 +438,11 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String, Object
         if (!this.containsKey("images1") || getStringAttribute("images1") == null) {
             setAttribute("images1", new ArrayList<CmsBtProductModel_Field_Image>());
         }
-        return getAttribute("images1");
+        List<Map> objects = getAttribute("images1");
+        if(ListUtils.notNull(objects)){
+            return objects.stream().map(item->new CmsBtProductModel_Field_Image(item)).collect(Collectors.toList());
+        }
+        return null;
     }
 
     public void setImages1(List<CmsBtProductModel_Field_Image> images1) {
@@ -496,7 +512,11 @@ public class CmsBtProductModel_Platform_Cart extends BaseMongoMap<String, Object
         if (!this.containsKey("images6") || getStringAttribute("images6") == null) {
             setAttribute("images6", new ArrayList<CmsBtProductModel_Field_Image>());
         }
-        return getAttribute("images6");
+        List<Map> objects = getAttribute("images6");
+        if(ListUtils.notNull(objects)){
+            return objects.stream().map(item->new CmsBtProductModel_Field_Image(item)).collect(Collectors.toList());
+        }
+        return null;
     }
 
     public void setImages6(List<CmsBtProductModel_Field_Image> images6) {

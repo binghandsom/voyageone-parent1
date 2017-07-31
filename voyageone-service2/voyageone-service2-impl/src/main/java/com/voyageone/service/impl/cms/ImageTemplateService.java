@@ -1,19 +1,19 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
-import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.util.*;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.ListUtils;
+import com.voyageone.common.util.MongoUtils;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtImageTemplateBean;
 import com.voyageone.service.bean.cms.imagetemplate.GetDownloadUrlParamter;
 import com.voyageone.service.bean.cms.imagetemplate.ImageTempateParameter;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
 import com.voyageone.service.impl.BaseService;
-//import com.voyageone.service.impl.cms.imagecreate.LiquidFireImageService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+//import com.voyageone.service.impl.cms.imagecreate.LiquidFireImageService;
 
 /**
  * @author jeff.duan
@@ -344,38 +346,10 @@ public class ImageTemplateService extends BaseService {
     }
 
     /**
-     * 根据imageName返回图片生成返回的url
-     *
-     * @param imageName 图片名称
-     * @return 完整s7路径的图片地址(http://image.voyageone.com.cn/is/image/sneakerhead/xxxx-xxx)
-     */
-    public String getImageUrl(String imageName) {
-
-        if (StringUtils.isEmpty(imageName))
-            return "";
-
-        return String.format(this.getDefaultImageUrl(), imageName);
-    }
-
-    /**
      * 根据templateId获取单个模板
      */
     public CmsBtImageTemplateModel selectTemplateById(Long templateId) {
         return dao.selectByTemplateId(templateId);
-    }
-
-    /**
-     * 取得显示用图片的url,其中图片名字的%s保留(http://image.voyageone.com.cn/is/image/sneakerhead/%s)
-     */
-    public String getDefaultImageUrl() {
-
-        // 取得显示图片用URL
-        String templateImageUrl = Codes.getCodeName("IMAGE_TEMPLATE", "URL");
-        if (StringUtils.isEmpty(templateImageUrl))
-            throw new BusinessException("tm_codes表中对应的IMAGE_TEMPLATE,URL找不到数据");
-
-        // 返回图片URl(其中图片名字%s未替换)
-        return templateImageUrl;
     }
 
     public List<CmsBtImageTemplateModel> getAllTemplate(String channel, Integer cart) {

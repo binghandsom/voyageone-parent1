@@ -1,128 +1,201 @@
-<div class="vo_modal">
+<div class="vo_modal" ng-init="ctrl.init()">
     <div class="modal-header">
         <h5 class="modal-title">
-            <i class="glyphicons glyphicons-edit"></i>&nbsp;<span translate="BTN_CREATE"></span>&nbsp;<span translate="TXT_BEAT_TASK"></span>&nbsp;-&nbsp;<span translate="TXT_PROMOTION_NAME_WITH_COLON"></span>&nbsp;<span>{{ctrl.promotion.promotionName}}</span>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                    aria-hidden="true"><i class="fa fa-close"></i></span></button>
+            <i class="glyphicons glyphicons-edit"></i>&nbsp;<span translate="TXT_ADD_MOD_TASK"></span>&nbsp;<span translate="TXT_BEAT_TASK"></span>
         </h5>
     </div>
     <div class="modal-body wrapper">
-        <form name="beatForm" role="form" class="form-horizontal" novalidate>
-            <div class="form-group">
-                <label class="col-sm-4 control-label vo_reqfield"><span translate="TXT_NAME"></span>&nbsp;(<span translate="TXT_UNIQUE"></span>)</label>
-                <div class="col-sm-7">
-                    <input name="taskName" ng-model="ctrl.taskBean.taskName" class="form-control" title="名称 / Name" ng-readonly="ctrl.isEdit" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-7 col-sm-offset-4">
-                    <vo-message target="beatForm.taskName"></vo-message>
-                </div>
-            </div>
+        <div class="row">
+            <div class="col-md-8">
+                <form name="beatForm" role="form" class="form-horizontal" novalidate>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label vo_reqfield"><span translate="TXT_NAME"></span>&nbsp;(<span translate="TXT_PLATFORM"></span>)</label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="cartId" ng-model="ctrl.taskBean.cartId"
+                                    ng-options="platform.value as platform.name for platform in ctrl.platformTypeList" ng-change="ctrl.selectCart()" ng-disabled="ctrl.task" required>
+                                <option translate="TXT_SELECT_NO_VALUE"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label vo_reqfield"><span translate="TXT_NAME"></span>&nbsp;(<span translate="TXT_UNIQUE"></span>)</label>
+                        <div class="col-sm-7">
+                            <input name="taskName" ng-model="ctrl.taskBean.taskName" class="form-control" title="名称 / Name" ng-readonly="ctrl.isEdit" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-7 col-sm-offset-4">
+                            <vo-message target="beatForm.taskName"></vo-message>
+                        </div>
+                    </div>
 
-            <div class="form-group">
-                <label class="col-sm-4 control-label"><span translate="TXT_TIME_START"></span></label>
-                <div class="col-sm-7">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label vo_reqfield"><span translate="TXT_TIME_START"></span></label>
+                        <div class="col-sm-7">
                     <span class="input-group">
                         <input name="activityStart" class="form-control"
-                               title="开始时间 / Start Time" type="date"
-                               readonly
+                               title="开始时间 / Start Time" type="text"
                                ng-model="ctrl.taskBean.activityStart"
-                               uib-datepicker-popup
+                               uib-datepicker-popup="yyyy-MM-dd HH:mm:ss"
                                is-open="datepicker1"
                                max-date="ctrl.taskBean.activityEnd"
-                               date-model-format="yyyy-MM-dd">
+                               ng-disabled="ctrl.isEdit" required>
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-disabled="ctrl.isEdit" ng-click="datepicker1=!datepicker1"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </span>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-7 col-sm-offset-4">
-                    <vo-message target="beatForm.activityStart"></vo-message>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-4 control-label"><span translate="TXT_TIME_END"></span></label>
-                <div class="col-sm-7">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-7 col-sm-offset-4">
+                            <vo-message target="beatForm.activityStart"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label vo_reqfield"><span translate="TXT_TIME_END"></span></label>
+                        <div class="col-sm-7">
                     <span class="input-group">
                         <input name="activityEnd" class="form-control"
-                               title="结束时间 / End Time" type="date"
-                               readonly
+                               title="结束时间 / End Time" type="text"
                                ng-model="ctrl.taskBean.activityEnd"
-                               uib-datepicker-popup
+                               uib-datepicker-popup="yyyy-MM-dd HH:mm:ss"
                                is-open="datepicker2"
                                min-date="ctrl.taskBean.activityStart"
-                               date-model-format="yyyy-MM-dd">
+                               ng-disabled="ctrl.isEdit" required>
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-disabled="ctrl.isEdit" ng-click="datepicker2=!datepicker2"><i class="glyphicon glyphicon-calendar"></i></button>
                         </span>
                     </span>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-7 col-sm-offset-4">
-                    <vo-message target="beatForm.activityEnd"></vo-message>
-                </div>
-            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-7 col-sm-offset-4">
+                            <vo-message target="beatForm.activityEnd"></vo-message>
+                        </div>
+                    </div>
 
-            <div class="form-group">
-                <label class="col-sm-4 control-label vo_reqfield" translate="TXT_TEMPLATE"></label>
-                <div class="col-sm-7">
-                    <input name="beatTemplate" ng-model="ctrl.taskBean.config.beat_template" class="form-control" title="模板 / Image Template" required>
-                </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label vo_reqfield" translate="TXT_TEMPLATE"></label>
+                        <div class="col-sm-7">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <input name="beatTemplate" class="form-control" title="模板 / Image Template"
+                                           ng-model="ctrl.taskBean.config.beat_template" ng-chanel="ctrl.changeBeatTemplate()" required
+                                           ng-change="ctrl.changeBeatTemplate()">
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="input-group">
+                                        <span class="input-group-addon">$</span>
+                                        <input type="number" class="form-control" ng-model="ctrl.taskBean.testPrice"
+                                               ng-change="ctrl.changeBeatTemplate()">
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-7 col-sm-offset-4">
+                            <vo-message target="beatForm.beatTemplate"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label" translate="TXT_SELECT_REVERT_TEMPLATE"></label>
+                        <div class="col-sm-7">
+                            <select class="form-control" name="cartId" ng-model="ctrl.taskBean.config.revert_template"
+                                    ng-options="template.imageTemplate as template.imageTemplate for template in ctrl.platformSxImageTemplates" ng-change="ctrl.selectRevertTemplate()">
+                                <option translate="TXT_SELECT_NO_VALUE"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-7 col-sm-offset-4">
+                            <vo-message target="beatForm.revertTemplate"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="!ctrl.taskBean.isJdseries">
+                        <label class="col-sm-4 control-label"></label>
+
+                        <div class="col-sm-7" style="padding-left:0">
+                            <label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="ctrl.taskBean.config.need_vimage"
+                                                                             ng-change="ctrl.changeNeedVimage()">
+                                <span class="fa fa-check"></span>&nbsp;{{'TXT_NEED_VERTICAL'|translate}}</label>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="!ctrl.taskBean.isJdseries && ctrl.taskBean.config.need_vimage">
+                        <label class="col-sm-4 control-label vo_reqfield" translate="TXT_VERTICAL_TEMPLATE"></label>
+                        <div class="col-sm-7">
+                            <input name="beatVTemplate" ng-model="ctrl.taskBean.config.beat_vtemplate" class="form-control"
+                                   title="竖图模板 / Vertical Image Template" required ng-change="ctrl.changeBeatTemplate()">
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="!ctrl.taskBean.isJdseries && ctrl.taskBean.config.need_vimage">
+                        <div class="col-sm-7 col-sm-offset-4">
+                            <vo-message target="beatForm.beatVTemplate"></vo-message>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="!ctrl.taskBean.isJdseries && ctrl.taskBean.config.need_vimage">
+                        <label class="col-sm-4 control-label vo_reqfield" translate="TXT_VERTICAL_REVERT_TEMPLATE"></label>
+                        <div class="col-sm-7">
+                            <!--<input name="revertVTemplate" ng-model="ctrl.taskBean.config.revert_vtemplate" class="form-control" title="竖图还原模板 / Vertical Image Revert Template" required>-->
+                            <select class="form-control" name="cartId" ng-model="ctrl.taskBean.config.revert_vtemplate"
+                                    ng-options="template.imageTemplate as template.imageTemplate for template in ctrl.platformSxImageTemplates"
+                                    ng-change="ctrl.selectRevertTemplate()">
+                                <option translate="TXT_SELECT_NO_VALUE"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="!ctrl.taskBean.isJdseries && ctrl.taskBean.config.need_vimage">
+                        <div class="col-sm-7 col-sm-offset-4">
+                            <vo-message target="beatForm.revertVTemplate"></vo-message>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <div class="col-sm-7 col-sm-offset-4">
-                    <vo-message target="beatForm.beatTemplate"></vo-message>
-                </div>
+            <div class="col-md-4">
+                <form name="beatImageForm" role="form" class="form-horizontal" novalidate>
+                    <div class="form-group">
+                        <div class="col-md-6" ng-if="ctrl.taskBean.config.beat_template && ctrl.taskBean.testPrice">
+                            <span translate="TXT_TEMPLATE"></span>
+                            <a href="" class="thumbnail">
+                                <img src="{{ctrl.taskBean.testImageUrl}}" alt="还未生成图片">
+                            </a>
+                        </div>
+                        <div class="col-md-6" ng-if="ctrl.taskBean.config.revert_template">
+                            <span translate="TXT_REVERT_TEMPLATE"></span>
+                            <a href="" class="thumbnail">
+                                <img src="{{ctrl.taskBean.selectTemplate}}" alt="还未生成图片">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="form-group" ng-if="!ctrl.taskBean.isJdseries && ctrl.taskBean.config.need_vimage">
+                        <div class="col-md-6" ng-if="ctrl.taskBean.config.beat_vtemplate && ctrl.taskBean.testPrice">
+                            <span translate="TXT_VERTICAL_TEMPLATE"></span>
+                            <a href="" class="thumbnail">
+                                <img src="{{ctrl.taskBean.testVteImageUrl}}" alt="还未生成图片">
+                            </a>
+                        </div>
+                        <div class="col-md-6" ng-if="ctrl.taskBean.config.revert_vtemplate">
+                            <span translate="TXT_VERTICAL_REVERT_TEMPLATE"></span>
+                            <a href="" class="thumbnail">
+                                <img src="{{ctrl.taskBean.selectVteTemplateUrl}}" alt="还未生成图片">
+                            </a>
+                        </div>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label class="col-sm-4 control-label vo_reqfield" translate="TXT_REVERT_TEMPLATE"></label>
-                <div class="col-sm-7">
-                    <input name="revertTemplate" ng-model="ctrl.taskBean.config.revert_template" class="form-control" title="还原模板 / Image Revert Template" required>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-sm-7 col-sm-offset-4">
-                    <vo-message target="beatForm.revertTemplate"></vo-message>
-                </div>
-            </div>
-            <div class="form-group" ng-if="ctrl.taskBean.config.need_vimage">
-                <label class="col-sm-4 control-label vo_reqfield" translate="TXT_VERTICAL_TEMPLATE"></label>
-                <div class="col-sm-7">
-                    <input name="beatVTemplate" ng-model="ctrl.taskBean.config.beat_vtemplate" class="form-control" title="竖图模板 / Vertical Image Template" required>
-                </div>
-            </div>
-            <div class="form-group" ng-if="ctrl.taskBean.config.need_vimage">
-                <div class="col-sm-7 col-sm-offset-4">
-                    <vo-message target="beatForm.beatVTemplate"></vo-message>
-                </div>
-            </div>
-            <div class="form-group" ng-if="ctrl.taskBean.config.need_vimage">
-                <label class="col-sm-4 control-label vo_reqfield" translate="TXT_VERTICAL_REVERT_TEMPLATE"></label>
-                <div class="col-sm-7">
-                    <input name="revertVTemplate" ng-model="ctrl.taskBean.config.revert_vtemplate" class="form-control" title="竖图还原模板 / Vertical Image Revert Template" required>
-                </div>
-            </div>
-            <div class="form-group" ng-if="ctrl.taskBean.config.need_vimage">
-                <div class="col-sm-7 col-sm-offset-4">
-                    <vo-message target="beatForm.revertVTemplate"></vo-message>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-4 control-label"></label>
-                <div class="col-sm-7" style="padding-left:0">
-                    <label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="ctrl.taskBean.config.need_vimage"><span class="fa fa-check"></span>&nbsp;{{'TXT_NEED_VERTICAL'|translate}}</label>
-                </div>
-            </div>
-        </form>
+        </div>
+
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="ctrl.cancel()">
             <i class="fa fa-remove"></i>&nbsp;
             <span translate="BTN_CANCEL"></span>
         </button>
-        <button class="btn btn-vo" ng-click="ctrl.ok()">
+        <button class="btn btn-vo" ng-disabled="beatForm.$invalid" ng-click="ctrl.ok()">
             <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;
             <span translate="BTN_SAVE"></span>
         </button>

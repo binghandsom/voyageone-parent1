@@ -146,10 +146,6 @@ public final class Constants {
     }
 
     public static final class productForOtherSystemInfo {
-        public static final String IMG_URL = "http://image.voyageone.com.cn/is/image/sneakerhead/";
-
-        public static final String IMG_URL_WITH_PARAMENTER = "http://image.voyageone.com.cn/is/image/sneakerhead/%s-%s";
-
         public static final String TMALL_NUM_IID = "http://detail.tmall.com/item.htm?id=";
 
         public static final String JINDONG_NUM_IID = "https://item.jd.com/%s.html";

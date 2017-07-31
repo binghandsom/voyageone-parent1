@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.promotion.beat;
 
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.DateTimeUtilBeijing;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
 import com.voyageone.service.daoext.cms.CmsBtBeatInfoDaoExt;
 import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
@@ -26,7 +27,7 @@ public class CmsBeatInfoService {
      *
      * @return CmsBtBeatInfoModel 集合
      */
-    List<CmsBtBeatInfoBean> getNeedBeatData(int limit) {
+    List<CmsBtBeatInfoBean> getNeedBeatData(int limit, List<Integer> cartIds) {
         // 逻辑内指定了三个 flag。表示三种需要处理的场景。
         // BEATING 时, 当现在的时间正处于任务有效时间内。则需要上传图片。
         // REVERT 时, 表示强制或手动还原。
@@ -36,7 +37,8 @@ public class CmsBeatInfoService {
                 BeatFlag.BEATING.getFlag(),
                 BeatFlag.REVERT.getFlag(),
                 BeatFlag.SUCCESS.getFlag(),
-                DateTimeUtil.getDate());
+                DateTimeUtilBeijing.getCurrentBeiJingDate(),
+                cartIds);
     }
 
     int saveFlagAndMessage(CmsBtBeatInfoBean beatInfoModel) {

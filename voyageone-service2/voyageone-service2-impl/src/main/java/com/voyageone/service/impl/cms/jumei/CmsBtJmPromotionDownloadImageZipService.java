@@ -1,5 +1,7 @@
 package com.voyageone.service.impl.cms.jumei;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.jumei.CmsBtJmPromotionSaveBean;
 import com.voyageone.service.dao.cms.CmsBtJmPromotionProductDao;
@@ -12,7 +14,8 @@ import com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel;
 import com.voyageone.service.model.cms.mongo.CmsBtJmImageTemplateModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmBayWindowModel;
 import com.voyageone.service.model.cms.mongo.jm.promotion.CmsBtJmPromotionImagesModel;
-import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,8 +49,6 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
     @Autowired
     private TagService tagService;
 
-    //图片模板前缀
-    private static final String url = "http://s7d5.scene7.com/is/image/sneakerhead/";
     //图片模板后缀
     private static final String suffix = "?fmt=jpg&scl=1&qlt=100";
     //专场飘窗
@@ -57,9 +58,6 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
 
     /**
      * 下载专场图片包
-     *
-     * @param promotionId
-     * @return outputStream
      */
     public byte[] selectSpecialImagesList(Integer promotionId) {
         //压缩图片的所需要的对象
@@ -70,6 +68,9 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
         CmsBtJmPromotionImagesModel picNameModel = cmsBtJmPromotionImagesDao.selectPromotionImagesList(promotionId);
         //取得打包图片的名称转换成对象
         Map<String, Object> imageNameMap = JacksonUtil.jsonToMap(JacksonUtil.bean2Json(picNameModel));
+
+        final String channelId = cmsBtJmPromotionSaveBean.getModel().getChannelId();
+
         imageNameMap.forEach((s, o) -> {
             if (o instanceof String) {
                 //取得打包图片的信息(图片类型及图片路径)
@@ -85,13 +86,13 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
                     Map<String, String> urlMap = new HashMap<>();
                     if (picNameModel.getUseTemplate() != null && picNameModel.getUseTemplate()) {
                         //imageUrl
-                        String url = "";
+                        String url;
                         try {
                             url = cmsBtJmImageTemplateService.getUrl(imageName, imageType, cmsBtJmPromotionSaveBean);
-                            if(url!=null){
+                            if (url != null) {
                                 urlMap.put("url", url);
                                 urlMap.put("picturePath", imagePath);
-                                $info("geturl:" +url);
+                                $info("geturl:" + url);
                                 promotionImagesList.add(urlMap);
                             }
                         } catch (Exception e) {
@@ -99,7 +100,7 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
                             System.out.println(imageType);
                         }
                     } else {
-                        urlMap.put("url", url + imageName + suffix);
+                        urlMap.put("url", ImageServer.imageUrl(channelId, imageName + suffix));
                         urlMap.put("picturePath", imagePath);
                         promotionImagesList.add(urlMap);
                     }
@@ -133,14 +134,11 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
             }
         }
         //返回压缩流
-        return imageToZipThread(promotionImagesList);
+        return imageToZipThread(promotionImagesList, channelId);
     }
 
     /**
      * 下载商品主图包
-     *
-     * @param promotionId
-     * @return 返回压缩流
      */
     public byte[] selectWaresImageList(Integer promotionId) {
         //压缩图片的所需要的对象
@@ -155,7 +153,7 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
             for (CmsBtJmPromotionProductModel model : modelList) {
                 //压缩图片的所需要的对象
                 Map<String, String> urlMap = new HashMap<>();
-                urlMap.put("url", url + model.getImage1() + "?wid=2000&hei=2000");
+                urlMap.put("url", ImageServer.imageUrl(model.getChannelId(), model.getImage1() + "?wid=2000&hei=2000"));
                 urlMap.put("picturePath", model.getProductCode());
                 promotionImagesList.add(urlMap);
             }
@@ -166,119 +164,119 @@ public class CmsBtJmPromotionDownloadImageZipService extends BaseService {
 
     /**
      * 压缩图片
-     *
-     * @param promotionImagesList
-     * @return ZipOutputStream
      */
-    public byte[] imageToZip(List<Map<String, String>> promotionImagesList) {
-        //如果promotionImagesList为空的时，不做处理
-        if (promotionImagesList.size() > 0 || promotionImagesList != null) {
-            byte[] buffer = new byte[1024*10];
-            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                 ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);) {
-                for (Map<String, String> urlMap : promotionImagesList) {
-                    int len;
-                    URL url = new URL(urlMap.get("url"));
-                    $info(urlMap.get("url"));
-                    //Url
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    try (InputStream inputStream = conn.getInputStream()) {
-                        //压缩包内生成图片的路径以及名称
-                        zipOutputStream.putNextEntry(new ZipEntry(urlMap.get("picturePath") + ".jpg"));
-                        $info(urlMap.get("picturePath") + ".jpg");
-                        //读入需要下载的文件的内容，打包到zip文件
-                        while ((len = inputStream.read(buffer)) > 0) {
-                            zipOutputStream.write(buffer, 0, len);
-                            $info(len+"");
-                        }
-                        $info("finish");
-                        inputStream.close();
-                        zipOutputStream.closeEntry();
+    private byte[] imageToZip(List<Map<String, String>> promotionImagesList) {
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                zipOutputStream.close();
-                return byteArrayOutputStream.toByteArray();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (CollectionUtils.isEmpty(promotionImagesList)) {
+            return null;
         }
-        return null;
+
+        byte[] buffer = new byte[1024 * 10];
+
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+             ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream)) {
+
+            for (Map<String, String> urlMap : promotionImagesList) {
+                int len;
+                URL url = new URL(urlMap.get("url"));
+                $info(urlMap.get("url"));
+                //Url
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                try (InputStream inputStream = conn.getInputStream()) {
+                    //压缩包内生成图片的路径以及名称
+                    zipOutputStream.putNextEntry(new ZipEntry(urlMap.get("picturePath") + ".jpg"));
+                    $info(urlMap.get("picturePath") + ".jpg");
+                    //读入需要下载的文件的内容，打包到zip文件
+                    while ((len = inputStream.read(buffer)) > 0) {
+                        zipOutputStream.write(buffer, 0, len);
+                        $info(len + "");
+                    }
+                    $info("finish");
+                    inputStream.close();
+                    zipOutputStream.closeEntry();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            zipOutputStream.close();
+            return byteArrayOutputStream.toByteArray();
+
+        } catch (IOException e) {
+            throw new FailedZipException(e);
+        }
     }
 
-    public byte[] imageToZipThread(List<Map<String, String>> promotionImagesList) {
+    private byte[] imageToZipThread(List<Map<String, String>> promotionImagesList, String channelId) {
         //如果promotionImagesList为空的时，不做处理
-        List<Map<String,Object>> imageBytes = Collections.synchronizedList(new ArrayList<>());
-        if (promotionImagesList.size() > 0 || promotionImagesList != null) {
-            try {
-                ExecutorService es  = Executors.newFixedThreadPool(5);
-                promotionImagesList.forEach(stringStringMap -> {
-                    es.execute(() -> downImageThread(stringStringMap, imageBytes));
-                });
-                es.shutdown();
-                es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        List<Map<String, Object>> imageBytes = Collections.synchronizedList(new ArrayList<>());
 
-            try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                 ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);) {
-                for (Map<String,Object> imageByte: imageBytes) {
-                    if(imageByte.get("byte") != null) {
-                        //压缩包内生成图片的路径以及名称
-                        zipOutputStream.putNextEntry(new ZipEntry(imageByte.get("picturePath") + ".jpg"));
-                        //读入需要下载的文件的内容，打包到zip文件
-                        byte[] imageTemp = (byte[]) imageByte.get("byte");
-                        zipOutputStream.write(imageTemp , 0, imageTemp.length);
-                        zipOutputStream.closeEntry();
-                    }
-
-                }
-                zipOutputStream.close();
-                return byteArrayOutputStream.toByteArray();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+        if (CollectionUtils.isEmpty(promotionImagesList)) {
+            return null;
         }
-        return null;
+
+        try {
+            ExecutorService es = Executors.newFixedThreadPool(5);
+
+            promotionImagesList.forEach(stringStringMap ->
+                    es.execute(() -> downImageThread(stringStringMap, imageBytes, channelId)));
+
+            es.shutdown();
+            es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+             ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream)) {
+
+            for (Map<String, Object> imageByte : imageBytes) {
+                if (imageByte.get("byte") != null) {
+                    //压缩包内生成图片的路径以及名称
+                    zipOutputStream.putNextEntry(new ZipEntry(imageByte.get("picturePath") + ".jpg"));
+                    //读入需要下载的文件的内容，打包到zip文件
+                    byte[] imageTemp = (byte[]) imageByte.get("byte");
+                    zipOutputStream.write(imageTemp, 0, imageTemp.length);
+                    zipOutputStream.closeEntry();
+                }
+            }
+
+            zipOutputStream.close();
+            return byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            throw new FailedZipException(e);
+        }
     }
 
-    public void downImageThread(Map<String, String> promotionImage, List<Map<String, Object>> imageBytes){
-        Map<String,Object> imageByte = new HashedMap();
-        imageByte.put("picturePath",promotionImage.get("picturePath"));
-        imageByte.put("byte",downImage(promotionImage.get("url")));
+    private void downImageThread(Map<String, String> promotionImage, List<Map<String, Object>> imageBytes,
+                                 String channelId) {
+        Map<String, Object> imageByte = new HashMap<>();
+        imageByte.put("picturePath", promotionImage.get("picturePath"));
+        imageByte.put("byte", downImage(promotionImage.get("url"), channelId));
         imageBytes.add(imageByte);
     }
 
-    public byte[] downImage(String imageUrl) {
-        long threadNo =  Thread.currentThread().getId();
-        //如果promotionImagesList为空的时，不做处理
-        byte[] buffer = new byte[1024 * 10];
-        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();) {
-            int len;
-            URL url = new URL(imageUrl);
-            $info("threadNo:"+ threadNo + " url:" + imageUrl + "下载开始");
-            //Url
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            try (InputStream inputStream = conn.getInputStream()) {
-                //读入需要下载的文件的内容，打包到zip文件
-                while ((len = inputStream.read(buffer)) > 0) {
-                    byteArrayOutputStream.write(buffer, 0, len);
-//                    $info("threadNo:"+ threadNo + " len:" + len);
-                }
-                inputStream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            $info("threadNo:"+ threadNo + " url:" + imageUrl + "下载结束");
-            return byteArrayOutputStream.toByteArray();
+    byte[] downImage(String imageUrl, String channelId) {
+        long threadNo = Thread.currentThread().getId();
+        $info("threadNo:" + threadNo + " url:" + imageUrl + "下载开始");
+        try (InputStream inputStream = ImageServer.proxyDownloadImage(imageUrl, channelId)) {
+            $info("threadNo:" + threadNo + " url:" + imageUrl + "下载结束");
+            return IOUtils.toByteArray(inputStream);
         } catch (IOException e) {
-            $error(e);
+            throw new FailedDownloadException(e);
         }
-        return null;
+    }
+
+    public static class FailedZipException extends BusinessException {
+        FailedZipException(Throwable cause) {
+            super("打包聚美图片失败", cause);
+        }
+    }
+
+    public static class FailedDownloadException extends BusinessException {
+        FailedDownloadException(Throwable cause) {
+            super("聚美图片打包下载失败", cause);
+        }
     }
 }

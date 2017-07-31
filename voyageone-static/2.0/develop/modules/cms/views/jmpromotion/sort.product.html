@@ -25,7 +25,9 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-4">
-                        <img image="{{::(product.jmPromotionProduct.image1 || product.jmProduct.image1)}}" title="{{::product.jmProduct.image1}}" alt="{{::product.jmPromotionProduct.image1}}">
+                        <img-by-name name="product.jmPromotionProduct.image1 || product.jmProduct.image1)"
+                                     title="{{::product.jmProduct.image1}}"
+                                     alt="{{::product.jmPromotionProduct.image1}}"></img-by-name>
                     </div>
                     <div class="col-sm-8">
                         <div><a title="{{product.jmProduct.productShortName}}" target="_blank">{{product.jmProduct.productShortName | limitTo: 15}}{{product.jmProduct.productShortName.length > 15 ? '...' : ''}}</a></div>

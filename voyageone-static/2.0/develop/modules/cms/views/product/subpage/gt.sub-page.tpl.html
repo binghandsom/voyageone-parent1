@@ -258,9 +258,8 @@
                                                style="height: 115px;">
                                                 <strong class="main" ng-if="image.isMain"><span
                                                         class="label label-danger">&nbsp;M&nbsp;</span></strong>
-                                                <img class="thumb-group"
-                                                     src="http://image.voyageone.com.cn/is/image/sneakerhead/{{image.imageName}}"
-                                                     title="{{image.productCode}}">
+                                                <img-by-name name="image.imageName" class="thumb-group"
+                                                                    title="{{image.productCode}}"></img-by-name>
                                             </a>
                                             <div class="thumbInfo">
                                                 <div class="row">
@@ -283,6 +282,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <div class="row form-group">
 
                                 <button class="col-md-2 btn btn-default" ng-click="ctrl.categoryMapping()" ng-disabled = "ctrl.vm.mastData.isMain!= true"><span>{{cartInfo.name}}&nbsp;{{'TXT_CATEGORY'|translate}}</span>

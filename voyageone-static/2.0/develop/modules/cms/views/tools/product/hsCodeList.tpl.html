@@ -117,50 +117,52 @@
         <div class="box-body-new">
             <table class="table table-hover-new table-hover table_main">
                 <thead>
-                    <tr>
-                        <th class="text-center" translate="TXT_NUMBER_IID_WITH_COLON"></th>
-                        <th class="text-center col-sm-2" translate="TXT_IMAGE"></th>
-                        <th class="text-center col-sm-2" translate="TXT_PRODUCT_CODE_MATERIAL"></th>
-                        <th class="text-center col-sm-2" translate="TXT_HSCODE_PRODUCT_NAME_UNIT"></th>
-                        <th class="text-left col-sm-5" translate="TXT_GROUP_NAME_FEED_CAT_WITH_COLON"></th>
-                        <th class="text-center" translate="TXT_ACTION"></th>
-                    </tr>
+                <tr>
+                    <th class="text-center" translate="TXT_NUMBER_IID_WITH_COLON"></th>
+                    <th class="text-center col-sm-2" translate="TXT_IMAGE"></th>
+                    <th class="text-center col-sm-2" translate="TXT_PRODUCT_CODE_MATERIAL"></th>
+                    <th class="text-center col-sm-2" translate="TXT_HSCODE_PRODUCT_NAME_UNIT"></th>
+                    <th class="text-left col-sm-5" translate="TXT_GROUP_NAME_FEED_CAT_WITH_COLON"></th>
+                    <th class="text-center" translate="TXT_ACTION"></th>
+                </tr>
                 </thead>
                 <tbody ng-if="ctrl.hsCodeList.length == 0">
-                    <tr style="padding-left:0">
-                        <td colspan="6">
-                            <div if-no-rows="ctrl.hsCodeList.length"></div>
-                        </td>
-                    </tr>
+                <tr style="padding-left:0">
+                    <td colspan="6">
+                        <div if-no-rows="ctrl.hsCodeList.length"></div>
+                    </td>
+                </tr>
                 </tbody>
                 <tbody ng-if="ctrl.hsCodeList.length > 0">
-                    <tr ng-repeat="list in ctrl.hsCodeList" ng-style="{'background-color': list.selected == true ? '#cfcaca': 'white'}">
-                        <td class="text-center v-middle">{{$index + 1}}</td>
-                        <td style="overflow: hidden;" class="text-center v-middle">
-                            <a ng-if="list.common.fields.images1.length > 0" ng-click="ctrl.openHsCodeImagedetail(list)"><img class="thumb" image="{{list.common.fields.images1[0].image1}}"></a>
-                        </td>
-                        <td class="text-center v-middle">
-                            <ul>
-                                <li class="text-center"><a class="a a-link" ng-click="ctrl.openHsCodeCodeDetail(list)">{{list.common.fields.code}}</a></li>
-                                <li class="text-center">{{common.fields.materialCn?common.fields.materialCn:common.fields.materialEn}}</li>
-                            </ul>
-                        </td>
-                        <td class="text-left v-middle">
-                            <select class="form-control" ng-options="value.value as value.value for value in ctrl.hsCodeValue" ng-model="list.common.fields.hsCodePrivate">
-                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-                            </select>
-                        </td>
-                        <td class="text-left v-middle">
-                            <ul class="tableWordBreak">
-                                <li>{{list.common.fields.originalTitleCn?list.common.fields.originalTitleCn : list.common.fields.productNameEn}}</li>
-                                <li>{{list.feed.catPath}}</li>
-                                <li>{{list.common.catPath}}</li>
-                            </ul>
-                        </td>
-                        <td class="text-center v-middle">
-                            <button class="btn btn-vo btn-xs ng-binding" title="点击保存当前设置" ng-click="ctrl.save(list)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
-                        </td>
-                    </tr>
+                <tr ng-repeat="list in ctrl.hsCodeList" ng-style="{'background-color': list.selected == true ? '#cfcaca': 'white'}">
+                    <td class="text-center v-middle">{{$index + 1}}</td>
+                    <td style="overflow: hidden;" class="text-center v-middle">
+                        <a ng-if="list.common.fields.images1.length > 0" ng-click="ctrl.openHsCodeImagedetail(list)">
+                            <img-by-name class="thumb" name="list.common.fields.images1[0].image1">
+                            </img-by-name></a>
+                    </td>
+                    <td class="text-center v-middle">
+                        <ul>
+                            <li class="text-center"><a class="a a-link" ng-click="ctrl.openHsCodeCodeDetail(list)">{{list.common.fields.code}}</a></li>
+                            <li class="text-center">{{common.fields.materialCn?common.fields.materialCn:common.fields.materialEn}}</li>
+                        </ul>
+                    </td>
+                    <td class="text-left v-middle">
+                        <select class="form-control" ng-options="value.value as value.value for value in ctrl.hsCodeValue" ng-model="list.common.fields.hsCodePrivate">
+                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        </select>
+                    </td>
+                    <td class="text-left v-middle">
+                        <ul class="tableWordBreak">
+                            <li>{{list.common.fields.originalTitleCn?list.common.fields.originalTitleCn : list.common.fields.productNameEn}}</li>
+                            <li>{{list.feed.catPath}}</li>
+                            <li>{{list.common.catPath}}</li>
+                        </ul>
+                    </td>
+                    <td class="text-center v-middle">
+                        <button class="btn btn-vo btn-xs ng-binding" title="点击保存当前设置" ng-click="ctrl.save(list)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                    </td>
+                </tr>
                 </tbody>
             </table>
         </div>

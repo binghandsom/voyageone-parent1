@@ -4,7 +4,10 @@
 
 (function ($) {
 
-    if (!$) throw 'require jQery';
+    if (!$) {
+        console.warn('jQuery is not defined');
+        return;
+    }
 
     function newId() {
 
@@ -61,4 +64,4 @@
         }
     };
 
-})(jQuery);
+})(window['jQuery']);

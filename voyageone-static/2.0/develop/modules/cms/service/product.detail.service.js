@@ -15,7 +15,6 @@ define([
 
     function productDetailService($q, $productDetailService, $filter, confirm, $compile) {
 
-        this.getProductInfo = getProductInfo;
         this.updateProductDetail = updateProductDetail;
         this.changeCategory = changeCategory;
         this.getProductPlatform = getProductPlatform;
@@ -56,41 +55,6 @@ define([
         this.doTranslateStatus = doTranslateStatus;
         this.getMainCategoryInfo = getMainCategoryInfo;
         this.upperLowerFrame = upperLowerFrame;
-
-        /**
-         * 获取页面产品信息
-         * @param formData
-         * @returns {*}
-         */
-        function getProductInfo(formData) {
-            var defer = $q.defer();
-            $productDetailService.getProductInfo(formData)
-                .then(function (res) {
-                    var result = angular.copy(res);
-
-                    var feedKeys = _.values(result.data.productInfo.customAttributes.customIds);
-                    if (res.data.productInfo.feedInfoModel) {
-                        result.data.productInfo.feedInfoModel = _returnNew(res.data.productInfo.feedInfoModel
-                            , feedKeys
-                            , result.data.productInfo.customAttributes
-                            , result.data.customProps);
-
-                    }
-
-                    // 设置sku的渠道列表是否被选中
-                    angular.forEach(result.data.skus, function (sku) {
-                        var SelSkuCarts = [];
-                        angular.forEach(sku.skuCarts, function (skuCart) {
-                            SelSkuCarts[skuCart] = true;
-                        });
-                        sku.SelSkuCarts = SelSkuCarts;
-                    });
-
-                    defer.resolve(result);
-                });
-
-            return defer.promise;
-        }
 
         /**
          * 同时保存产品详情,产品自定义,SKU列表信息

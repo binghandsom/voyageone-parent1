@@ -403,7 +403,7 @@ define([
         }
     }
 
-    function breadcrumbsCtrl($scope, $rootScope, $location, menuService, cRoutes) {
+    function breadcrumbsCtrl($scope, $rootScope, $location, menuService, cRoutes, imageDirectiveService) {
         var vm = this;
         vm.cid = "";
         vm.navigation = {};
@@ -420,6 +420,7 @@ define([
                 // TODO 来至服务器端的session
                 $rootScope.platformType = data.platformType;
                 $rootScope.imageUrl = data.imageUrl;
+                imageDirectiveService.imageUrlTemplate = data.imageUrl;
                 $rootScope.productUrl = data.productUrl;
             });
         }

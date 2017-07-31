@@ -14,6 +14,7 @@ import com.voyageone.category.match.data.MtCategoryKeysDao;
 import com.voyageone.category.match.data.MtCategoryKeysModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
@@ -25,11 +26,7 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.logger.VOAbsIssueLoggable;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.ListUtils;
-import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleJsonMapper;
@@ -55,8 +52,6 @@ import com.voyageone.service.impl.cms.sx.rule_parser.ExpressionParser;
 import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.WmsCreateOrUpdateProductMQMessageBody;
-import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.WmsCreateOrUpdateProductMQMessageBody_detail;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
@@ -2957,10 +2952,15 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 messageBody.setSize(sku.getClientSize());
                 messageBody.setBarcode(sku.getBarcode());
                 String imagePath = "";
-                if (!field.getImages1().isEmpty()) {
-                    if (!StringUtils.isEmpty(field.getImages1().get(0).getName()))
-                        imagePath = imageTemplateService.getImageUrl(field.getImages1().get(0).getName());
+
+                final List<CmsBtProductModel_Field_Image> image1List = field.getImages1();
+                if (!image1List.isEmpty()) {
+                    final String image1 = image1List.get(0).getName();
+                    if (!StringUtils.isEmpty(image1)) {
+                        imagePath = ImageServer.imageUrl(messageBody.getChannelId(), image1);
+                    }
                 }
+
                 messageBody.setImageUrl(imagePath);
                 messageBody.setMsrp(BigDecimal.valueOf(sku.getClientMsrpPrice()));
                 messageBody.setClientSku(sku.getClientSkuCode());

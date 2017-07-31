@@ -17,16 +17,13 @@ define([
     'cms'
 ], function (cms) {
 
-    var mConfig = {
-        bigImageUrl: 'http://image.voyageone.com.cn/is/image/sneakerhead/✓?wid=2200&hei=2200',
-        newImageUrl: 'http://image.voyageone.com.cn/is/image/sneakerhead/✓?fmt=jpg&scl=1&qlt=100'
-    };
-
     cms.controller('uploadImagesController', (function () {
 
-        function UploadImagesCtl(context, $uibModalInstance, popups, $productDetailService, confirm, notify, $rootScope, alert) {
+        function UploadImagesCtl(context, $uibModalInstance, imageDirectiveService, popups, $productDetailService,
+                                 confirm, notify, $rootScope, alert) {
             this.context = context;
             this.uibModalInstance = $uibModalInstance;
+            this.imageDirectiveService = imageDirectiveService;
             this.popups = popups;
             this.confirm = confirm;
             this.notify = notify;
@@ -68,7 +65,7 @@ define([
         UploadImagesCtl.prototype.init = function () {
             var self = this;
 
-            self.currentImage = self.$rootScope.imageUrl.replace('%s', self.context.platform.images1[0].image1);
+            self.currentImage = self.context.platform.images1[0].image1;
 
             self.images1 = self.context.platform.images1;
             self.platform = self.context.platform;
@@ -165,7 +162,9 @@ define([
             if (args.length == 0)
                 return;
 
-            window.open(mConfig.bigImageUrl.replace("✓", args[args.length - 1]));
+            var imageName = args[args.length - 1];
+            var imageUrl = imageDirectiveService.getImageUrlByName(imageName) + '?wid=2200&hei=2200';
+            window.open(imageUrl);
         };
 
         UploadImagesCtl.prototype.sortImg = function (imagesType) {
@@ -197,12 +196,14 @@ define([
             var jq = angular.element,
                 _aTag;
 
+            var imageUrl = imageDirectiveService.getImageUrlByName(imgName);
+
             if (templateFlag == 0) {
-                imgName = mConfig.bigImageUrl.replace("✓", imgName);
+                imageUrl += '?wid=2200&hei=2200';
             } else {
-                imgName = mConfig.newImageUrl.replace("✓", imgName);
+                imageUrl += '?fmt=jpg&scl=1&qlt=100';
             }
-            _aTag = jq('<a download>').attr({'href': imgName});
+            _aTag = jq('<a download>').attr({'href': imageUrl});
 
             jq('body').append(_aTag);
             _aTag[0].click();

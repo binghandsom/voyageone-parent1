@@ -4,7 +4,7 @@
 </head>
 <body>
 <header>
-    <h1 style="font-size: 2em; font-weight: bolder">图片服务异常报告</h1>
+    <h1 style="font-size: 2em; font-weight: bolder">图片服务异常报告 [ %s ]</h1>
 </header>
 <main>%s</main>
 </body>

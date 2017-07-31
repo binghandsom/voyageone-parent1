@@ -8,6 +8,26 @@ define([
     './advance.search.append.ctl'
 ], function (cms, carts) {
 
+    function listWithThumb(list) {
+        // 预先处理商品的缩略图，简化页面上如下的缩略图绑定
+        // groupInfo.common.fields.images6 && groupInfo.common.fields.images6[0].image6
+        //     ?groupInfo.common.fields.images6[0].image6
+        //     :groupInfo.common.fields.images1[0].image1
+        // 还有这个
+        // productInfo.common.fields.images6 && productInfo.common.fields.images6[0].image6
+        // ?productInfo.common.fields.images6[0].image6
+        // :productInfo.common.fields.images1[0].image1
+        if (list) {
+            list.forEach(function (i) {
+                var f = i.common.fields;
+                i.thumb = f.images6 && f.images6.length && f.images6[0].image6
+                    ?f.images6[0].image6
+                    :f.images1[0].image1
+            });
+        }
+        return list;
+    }
+
     cms.controller('advanceSearchController', function searchIndex($scope, $routeParams, searchAdvanceService2, $searchAdvanceService2, $fieldEditService, productDetailService, systemCategoryService, $addChannelCategoryService, confirm, $translate, notify, alert, sellerCatService, platformMappingService, attributeService, $sessionStorage, cActions, popups, $q, shelvesService, $localStorage) {
 
             $scope.vm = {
@@ -286,10 +306,10 @@ define([
                     }
 
                     $scope.vm.productUrl = res.data.productUrl;
-                    $scope.vm.groupList = res.data.groupList;
+                    $scope.vm.groupList = listWithThumb(res.data.groupList);
                     $scope.vm.groupPageOption.total = res.data.groupListTotal;
                     $scope.vm.groupSelList = res.data.groupSelList;
-                    $scope.vm.productList = res.data.productList;
+                    $scope.vm.productList = listWithThumb(res.data.productList);
                     $scope.vm.codeMap = res.data.codeMap;
                     $scope.vm.qtyList = res.data.qtyList;
                     $scope.vm.productPageOption.total = res.data.productListTotal;
@@ -437,7 +457,13 @@ define([
                 $scope.searchInfoBefo = searchAdvanceService2.resetSearchInfo($scope.searchInfoBefo);
                 searchAdvanceService2.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
                     .then(function (res) {
-                        $scope.vm.groupList = res.data.groupList == null ? [] : res.data.groupList;
+
+                        if (res.data.groupList) {
+                            $scope.vm.groupList = listWithThumb(res.data.groupList)
+                        } else {
+                            $scope.vm.groupList = []
+                        }
+
                         $scope.vm.groupPageOption.total = res.data.groupListTotal;
                         $scope.vm.groupSelList = res.data.groupSelList;
                         $scope.vm._selall = false;
@@ -452,7 +478,13 @@ define([
                 $scope.searchInfoBefo = searchAdvanceService2.resetSearchInfo($scope.searchInfoBefo);
                 searchAdvanceService2.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList, $scope.vm.commonProps, $scope.vm.customProps, $scope.vm.selSalesType, $scope.vm.selBiDataList)
                     .then(function (res) {
-                        $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
+
+                        if (res.data.productList) {
+                            $scope.vm.productList = listWithThumb(res.data.productList)
+                        } else {
+                            $scope.vm.productList = []
+                        }
+
                         $scope.vm.codeMap = res.data.codeMap;
                         $scope.vm.productPageOption.total = res.data.productListTotal;
                         $scope.vm.productSelList = res.data.productSelList;

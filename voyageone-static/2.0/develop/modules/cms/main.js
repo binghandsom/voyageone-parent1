@@ -10,8 +10,7 @@ require.config({
     baseUrl: '../../',
     urlArgs: "version=",
     paths: {
-        'voyageone-angular-com': 'components/dist/voyageone.angular.com',
-        'voyageone-com': 'components/dist/voyageone.com',
+        'voyageone-angular-com': 'components/dist/common',
         'angular-animate': 'libs/angular.js/1.5.6/angular-animate',
         'angular-route': 'libs/angular.js/1.5.6/angular-route',
         'angular-sanitize': 'libs/angular.js/1.5.6/angular-sanitize',
@@ -34,12 +33,12 @@ require.config({
         'angular-chosen': 'libs/angular-chosen/1.5.0/angular-chosen',
         'md5': 'libs/angular-md5/0.1.8/angular-md5',
         'angular-drag': 'libs/angular-drag/angular-drag',
-        'angular-sortable-view': 'libs/angular-sortable-view/0.0.15/angular-sortable-view'
+        'angular-sortable-view': 'libs/angular-sortable-view/0.0.15/angular-sortable-view',
+        'autocomplete': 'libs/jQuery-Autocomplete/1.4.1/jquery.autocomplete'
     },
     waitSeconds: 0,
     shim: {
-        'voyageone-com': ['jquery'],
-        'voyageone-angular-com': ['angular'],
+        'voyageone-angular-com': ['jquery', 'angular'],
         'angular-sanitize': ['angular'],
         'angular-route': ['angular'],
         'angular-animate': ['angular'],
@@ -60,10 +59,10 @@ require.config({
         'angular-drag': ['angular'],
         'md5': ['angular'],
         'angular-sortable-view': ['angular'],
+        'autocomplete':['jquery'],
         'cms': [
             'underscore',
             'voyageone-angular-com',
-            'voyageone-com',
             'angular-block-ui',
             'angular-ui-bootstrap',
             'angular-ngStorage',
@@ -79,7 +78,8 @@ require.config({
             'angular-ui-utils',
             'md5',
             'angular-drag',
-            'angular-sortable-view'
+            'angular-sortable-view',
+            'autocomplete'
         ]
     },
     deps: ['cms']

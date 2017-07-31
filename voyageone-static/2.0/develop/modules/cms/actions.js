@@ -118,7 +118,6 @@ define(function () {
                     getCalculateCartMsrp: "getCalculateCartMsrp",
                     saveCartSkuPrice: "saveCartSkuPrice",
                     getProductPriceSales: "getProductPriceSales",
-                    getProductInfo: "getProductInfo",
                     updateProductMasterInfo: "updateProductMasterInfo",
                     updateProductSkuInfo: "updateProductSkuInfo",
                     updateProductAllInfo: "updateProductAllInfo",
@@ -134,8 +133,6 @@ define(function () {
                     getCommonProductSkuInfo: "getCommonProductSkuInfo",
                     updateCommonProductInfo: "updateCommonProductInfo",
                     updateLock: "updateLock",
-                    doAppSwitch: "doAppSwitch",
-                    doTranslateStatus: "doTranslateStatus",
                     updateProductAtts: "updateProductAtts",
                     checkCategory: "checkCategory",
                     getChangeMastProductInfo: "getChangeMastProductInfo",
@@ -390,7 +387,8 @@ define(function () {
             "task": {
                 "taskService": {
                     "root": "/cms/promotion/task",
-                    "page": "page"
+                    "page": "page",
+                    "updateStatus": "updateStatus"
                 },
                 "taskBeatService": {
                     "root": "/cms/task/beat",
@@ -448,6 +446,25 @@ define(function () {
                     "importStockInfo": "importStockInfo",
                     "exportStockInfo": "exportStockInfo",
                     "executeStockIncrementSeparation": "executeStockIncrementSeparation"
+                },
+                "taskJiagepiluService": {
+                    "root": "/cms/task/jiagepilu",
+                    "getTaskModel":"getTaskModel",
+                    "search":"search",
+                    "downloadImportTemplate":"downloadImportTemplate",
+                    "import":"import",
+                    "getImportInfoList":"getImportInfoList",
+                    "downloadImportError":"downloadImportError",
+                    "addJiagepiluProduct":"addJiagepiluProduct",
+                    "operateProduct":"operateProduct",
+                    "reBeating":"reBeating",
+                    "getEditProduct":"getEditProduct",
+                    "getJiagepiluCarts":"getJiagepiluCarts",
+                    "download": "download",
+                    "getSummary":"getSummary",
+                    "deleteJiagepiluTask":"deleteJiagepiluTask",
+                    "getPlatformSxTemplate":"getPlatformSxTemplate",
+                    "getJdSeriesSkuId":"getJdSeriesSkuId"
                 }
             },
             "system": {

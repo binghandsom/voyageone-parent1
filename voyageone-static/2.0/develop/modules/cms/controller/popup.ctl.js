@@ -317,7 +317,7 @@ define([
                 "templateUrl": "views/pop/promotion/newBeatTask.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/promotion/newBeatTask.ctl",
                 "controller": 'popNewBeatCtl as ctrl',
-                "size": "md"
+                "size": "lg"
             },
             "addBeat": {
                 "templateUrl": "views/pop/promotion/addBeat.tpl.html",
@@ -456,7 +456,7 @@ define([
             "imagedetail": {
                 "templateUrl": "views/pop/search/imagedetail.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/search/imagedetail.ctl",
-                "controller": 'popImageDetailCtl'
+                "controller": 'popImageDetailCtl as imageDetail'
             },
             "codeDetail": {
                 "templateUrl": "views/pop/search/codeDetail.tpl.html",
@@ -671,6 +671,14 @@ define([
             controllerUrl: "modules/cms/views/pop/error/mqSkuCodeError.ctl",
             controller: 'mqSkuCodeErrorController as ctrl',
             size: 'md'
+        },
+        "task": {
+            "addJiagepiluProduct": {
+                "templateUrl": "views/pop/task/jiagepilu/addProduct.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/task/jiagepilu/addProduct.ctl",
+                "controller": 'AddJiagepiluProductController as ctrl',
+                "size": "md"
+            }
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -1130,7 +1138,8 @@ define([
 
         /**
          * 新增feed查询页图片弹出
-         * */
+         * @param context {{host: Number, search: String, mainPic: String, picList: Array<String>}}
+         */
         $scope.openImagedetail = function openImagedetail(context) {
             return openModal(popActions.search.imagedetail, context);
         };
@@ -1544,13 +1553,21 @@ define([
 
         $scope.openEditGroup = function(context){
             return openModal(popActions.group.editGroup, context);
-        }
+        };
 
         /**
          * 自定义下载选择列模态框
          */
         $scope.openColumnForDownLoad = function (context) {
             return openModal(popActions.custom.columnForDownLoad, context);
+        };
+
+        /**
+         * 为价格披露Task添加商品
+         */
+        $scope.popAddJiagepiluProduct = function popAddJiagepiluProduct(context, id) {
+            _.extend(context, {id:id});
+            return openModal(popActions.task.addJiagepiluProduct, context);
         };
 
     }).factory('popups', function ($controller, $rootScope) {

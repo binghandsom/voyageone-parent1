@@ -5,9 +5,9 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.configs.Carts;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
@@ -1633,7 +1633,7 @@ public class CmsAdvSearchExportFileService extends BaseService {
                 // 图片路径
                 String imgPath = "";
                 if (CollectionUtils.isNotEmpty(fields.getImages1()) && fields.getImages1().get(0) != null) {
-                    imgPath = Constants.productForOtherSystemInfo.IMG_URL + fields.getImages1().get(0).getName();
+                    imgPath = ImageServer.imageUrl(item.getChannelId(), fields.getImages1().get(0).getName());
                 }
                 FileUtils.cell(row, index++, unlock).setCellValue(imgPath); // 图片
                 FileUtils.cell(row, index++, unlock).setCellValue(org.apache.commons.lang3.StringUtils.trimToEmpty(fields.getSizeType())); // 使用人群
