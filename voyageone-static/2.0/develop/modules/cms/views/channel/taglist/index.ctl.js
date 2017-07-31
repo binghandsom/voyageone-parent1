@@ -90,7 +90,7 @@ define([
         TagListCtl.prototype.editTag = function (tag, treeIndex) {
             var self = this;
             self.popups.editTag({tag:tag}).then(res => {
-                self.notify.success("The name was successfully modified");
+                self.notify.success("TagName modified successfully");
                 self.init();
             });
         };
