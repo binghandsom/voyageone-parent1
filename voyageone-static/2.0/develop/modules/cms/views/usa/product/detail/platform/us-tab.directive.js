@@ -8,7 +8,7 @@ define([
 
     class usTabController {
 
-        constructor($scope,detailDataService,$usProductDetailService,notify,popups) {
+        constructor($scope, detailDataService, $usProductDetailService, notify, popups) {
             let self = this;
 
             self.$scope = $scope;
@@ -28,9 +28,9 @@ define([
             // 平台状态
             self.platformStatus = this.detailDataService.platformStatus;
 
-            $scope.$on('price.save', function (event,data) {
+            $scope.$on('price.save', function (event, data) {
                 //匹配是否为当前平台，或者0：代表全平台刷新
-                if(Number(self.cartInfo.value) === Number(data.cartId) || Number(data.cartId) === 0){
+                if (Number(self.cartInfo.value) === Number(data.cartId) || Number(data.cartId) === 0) {
                     self.init();
                 }
 
@@ -51,7 +51,7 @@ define([
 
                 // SKU 是否全选
                 let flag = true;
-                if(self.platform && _.size(self.platform.skus) > 0){
+                if (self.platform && _.size(self.platform.skus) > 0) {
                     _.each(self.platform.skus, sku => {
                         let isSale = sku.isSale;
                         if (!isSale) {
@@ -73,8 +73,8 @@ define([
             let self = this;
 
             self.popups.openUsCategory({
-                cartId:self.cartInfo.value,
-                from:self.platform.pCatPath
+                cartId: self.cartInfo.value == 5 ? 5 : 8,
+                from: self.platform.pCatPath
             }).then(res => {
                 self.platform.pCatPath = res.catPath;
                 self.platform.pCatId = res.catId;
@@ -88,6 +88,7 @@ define([
                 sku.isSale = self.selAllSkuFlag;
             });
         }
+
         checkSelAllSku(sku) {
             let self = this;
             let isSale = sku.isSale;
@@ -109,9 +110,9 @@ define([
                 platform.pStatus = status;
             }
             let parameter = {
-                prodId:self.$scope.productInfo.productId,
-                data:{
-                    platform:platform
+                prodId: self.$scope.productInfo.productId,
+                data: {
+                    platform: platform
                 }
             };
             this.$usProductDetailService.updateProductPlatform(parameter).then(res => {
