@@ -45,7 +45,6 @@ define([
 
             if (self.usaFlag) {
                 self.usTagService.init({tagTypeSelectValue: vm.usTagTypeSelectValue}).then(res => {
-                    console.log(res.data);
                     //获取选择下拉数据
                     vm.tagTypeList = res.data.tagTypeList;
                     //保存原来的树
