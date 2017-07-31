@@ -1,11 +1,10 @@
 package com.voyageone.task2.cms.mqjob.usa;
 
-import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.mongo.CmsMtProdSalesHisDao;
 import com.voyageone.service.impl.cms.product.ProductService;
-import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.VOCmsUsaProductSalesQueueMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.VOCmsUsaProductSalesMQMessageBody;
 import com.voyageone.service.model.cms.CmsMtProdSalesHisModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
@@ -23,15 +22,15 @@ import java.util.List;
  */
 @Service
 @RabbitListener()
-public class VOCmsUsaProductSalesQueue extends TBaseMQCmsService<VOCmsUsaProductSalesQueueMQMessageBody> {
+public class VOCmsUsaProductSalesMQJob extends TBaseMQCmsService<VOCmsUsaProductSalesMQMessageBody> {
     @Autowired
     ProductService productService;
     @Autowired
     CmsMtProdSalesHisDao cmsMtProdSalesHisDao;
     @Override
-    public void onStartup(VOCmsUsaProductSalesQueueMQMessageBody messageBody) throws Exception {
-        List<VOCmsUsaProductSalesQueueMQMessageBody.Param> items =messageBody.getItems();
-        for (VOCmsUsaProductSalesQueueMQMessageBody.Param item : items) {
+    public void onStartup(VOCmsUsaProductSalesMQMessageBody messageBody) throws Exception {
+        List<VOCmsUsaProductSalesMQMessageBody.Param> items =messageBody.getItems();
+        for (VOCmsUsaProductSalesMQMessageBody.Param item : items) {
             JongoQuery jongoQuery = new JongoQuery();
             String time = parseTime(item.getOrderDate());
             Criteria criteria = new Criteria("cart_id").is(item.getCartId()).and("channel_id").is(messageBody.getChannelId()).
