@@ -73,9 +73,14 @@ angular.module("voyageone.angular.controllers").controller("selectRowsCtrl", fun
         if (!id) {
             id = "id";
         }
-        if (objectList != undefined) {
+        if (objectList) {
             objectList.selAllFlag = true;
-            var tempList = _.pluck(objectList.selList, id);
+            let tempList = _.pluck(objectList.selList, id);
+
+            if(objectList.currPageRows && objectList.currPageRows.length === 0){
+                return false;
+            }
+
             angular.forEach(objectList.currPageRows, function (object) {
                 if (tempList && tempList.indexOf(object[id]) == -1) {
                     objectList.selAllFlag = false;

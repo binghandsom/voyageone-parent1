@@ -527,6 +527,12 @@ define(function () {
             templateUrl: "views/channel/taglist/index.tpl.html",
             controllerUrl: "modules/cms/views/channel/taglist/index.ctl",
             controller: "tagListController as ctrl"
+        },
+        us_shop_category:{
+            hash: "/channel/usa/shopCategory",
+            templateUrl: "views/usa/channel/shopCategory/index.tpl.html",
+            controllerUrl: "modules/cms/views/usa/channel/shopCategory/index.ctl",
+            controller: "shopCategoryController as ctrl"
         }
     };
 });

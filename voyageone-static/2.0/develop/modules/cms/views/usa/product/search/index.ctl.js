@@ -25,7 +25,7 @@ define([
             self.notify = notify;
             self.$routeParams = $routeParams;
 
-            self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
+            self.pageOption = {curr: 1, total: 0, size: 2, fetch: function(){
                 self.search();
             }};
 
