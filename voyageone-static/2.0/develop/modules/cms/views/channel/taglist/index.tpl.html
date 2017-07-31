@@ -21,7 +21,7 @@
                             </div>
                         </div>
                         <div class="col-md-1 m-t-sm">
-                                <span notice-direction="bottom" notice-content="请选择标签类型来设置标签！"
+                                <span notice-direction="bottom" notice-content="Please select tag type!"
                                       notice-tip class="text-warnings cur-p"><i
                                         class="icon fa fa-hand-o-left text-md"></i></span>
                         </div>
@@ -38,7 +38,7 @@
                     <div class="category_drag col-sm-3" ng-repeat="tree in ctrl.vm.trees" ng-init="$parentIndex = $index">
                         <div class="category_drag_main">
                             <div class="form-inline m-l-xs">
-                                <input type="text" placeholder="快速检索" class="form-control" style="width:85%" ng-model="name[$parentIndex]">
+                                <input type="text" placeholder="Quick search" class="form-control" style="width:85%" ng-model="name[$parentIndex]">
                                 <button type="button" class="btn btn-vo btn-xxs"
                                         ng-click="ctrl.searchName[$parentIndex] = name[$parentIndex] ;ctrl.filterByName($parentIndex,tree.tags)">
                                     <i class="fa fa-search"></i>
