@@ -38,11 +38,21 @@ public abstract class BaseSearchService extends ComponentBase {
         return response.toString();
     }
 
+    public String saveBean(String coreName, SolrUpdateBean bean) {
+        UpdateResponse response = getSolrTemplate().saveBean(coreName, bean);
+        return response.toString();
+    }
+
     /**
      * saveBeans
      */
     public String saveBeans(List<SolrUpdateBean> beans) {
         UpdateResponse response = getSolrTemplate().saveBeans(beans);
+        return response.toString();
+    }
+
+    public String saveBeans(String coreName, List<SolrUpdateBean> beans) {
+        UpdateResponse response = getSolrTemplate().saveBeans(coreName, beans);
         return response.toString();
     }
 
@@ -54,11 +64,20 @@ public abstract class BaseSearchService extends ComponentBase {
         return response.toString();
     }
 
+    public String deleteById(String coreName, String id) {
+        UpdateResponse response = getSolrTemplate().deleteById(coreName, id);
+        return response.toString();
+    }
+
     /**
      * saveBeans
      */
     public String deleteByIds(List<String> ids) {
         UpdateResponse response = getSolrTemplate().deleteById(ids);
+        return response.toString();
+    }
+    public String deleteByIds(String coreName, List<String> ids) {
+        UpdateResponse response = getSolrTemplate().deleteById(coreName, ids);
         return response.toString();
     }
 
@@ -70,11 +89,25 @@ public abstract class BaseSearchService extends ComponentBase {
     }
 
     /**
+     * commit specified collection
+     */
+    public void commit(String coreName) {
+        getSolrTemplate().commit(coreName);
+    }
+
+    /**
      * optimize
      */
     public void optimize() {
         try {
-            getSolrTemplate().getSolrServer().optimize();
+            getSolrTemplate().getSolrClient().optimize();
+        } catch (SolrServerException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void optimize(String coreName) {
+        try {
+            getSolrTemplate().getSolrClient().optimize(coreName);
         } catch (SolrServerException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -101,13 +134,13 @@ public abstract class BaseSearchService extends ComponentBase {
             } else {
                 Object docMap = doc.get(path);
                 if (docMap instanceof Map) {
-                    for (int i=0; i<rightPathList.size()-1; i++) {
+                    for (int i = 0; i < rightPathList.size() - 1; i++) {
                         docMap = ((Map) docMap).get(rightPathList.get(i));
                         if (!Map.class.isInstance(docMap)) {
                             return null;
                         }
                     }
-                    return ((Map) docMap).get(rightPathList.get(rightPathList.size()-1));
+                    return ((Map) docMap).get(rightPathList.get(rightPathList.size() - 1));
                 }
             }
         } else {

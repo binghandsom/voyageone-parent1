@@ -343,6 +343,6 @@ public class CmsBtProductDao extends BaseMongoChannelDao<CmsBtProductModel> {
         jongoUpdate.setUpdate("{$set: {\"usPlatforms\": #}}");
         jongoUpdate.setUpdateParameters(usPlatforms);
         String collectionName = getCollectionName(channelId);
-        mongoTemplate.updateFirst(jongoUpdate, collectionName);
+        mongoTemplate.updateMulti(jongoUpdate, collectionName);
     }
 }

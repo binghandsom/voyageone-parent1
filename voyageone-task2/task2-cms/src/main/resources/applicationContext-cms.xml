@@ -193,5 +193,5 @@
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->
-    <task:scheduler id="cms-job-scheduler" pool-size="20"/>
+    <task:scheduler id="cms-job-scheduler" pool-size="35"/>
 </beans>
