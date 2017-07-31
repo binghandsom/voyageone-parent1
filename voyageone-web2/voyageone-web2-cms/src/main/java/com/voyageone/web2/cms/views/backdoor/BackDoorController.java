@@ -14,6 +14,7 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.*;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
@@ -24,6 +25,7 @@ import com.voyageone.service.daoext.cms.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.impl.cms.CategoryTreeAllService;
 import com.voyageone.service.impl.cms.CmsMtBrandService;
 import com.voyageone.service.impl.cms.PlatformCategoryService;
+import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.jumei2.JmBtDealImportService;
 import com.voyageone.service.impl.cms.prices.PriceService;
@@ -32,12 +34,14 @@ import com.voyageone.service.impl.cms.product.ProductPlatformService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.usa.UsaNewArrivalService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.*;
 import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeAllModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.service.model.com.ComMtValueChannelModel;
 import com.voyageone.service.model.util.MapModel;
@@ -50,8 +54,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.voyageone.common.configs.Enums.CartEnums.Cart.SN;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -109,6 +115,12 @@ public class BackDoorController extends CmsController {
     private ProductPlatformService productPlatformService;
     @Autowired
     private CmsBtJmPromotionProductDao cmsBtJmPromotionProductDao;
+
+    @Autowired
+    private SellerCatService sellerCatService;
+
+    @Autowired
+    private UsaNewArrivalService usaNewArrivalService;
 
     /*@Autowired
     private MqSender sender;*/
@@ -2079,5 +2091,186 @@ public class BackDoorController extends CmsController {
         public void setUpdate(Boolean update) {
             isUpdate = update;
         }
+    }
+
+    @RequestMapping(value = "UsaSneakerHeadInit", method = RequestMethod.GET)
+    public Object UsaSneakerHeadInit() {
+//        cmsBtProductDao.selectCursor();
+        return "OK";
+    }
+    private void doCreateUsaPlatform(CmsBtProductModel cmsProduct, CmsBtFeedInfoModel feed) {
+        Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = new HashMap<>();
+
+        cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("colorMap", feed.getAttribute().get("colorMap"));
+        cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("urlkey", feed.getAttribute().get("urlkey"));
+        cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("abstract", feed.getAttribute().get("abstract"));
+        cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("accessory", feed.getAttribute().get("accessory"));
+        cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("googleCategory", feed.getAttribute().get("googleCategory"));
+        cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("googleDepartment", feed.getAttribute().get("googleDepartment"));
+        cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("priceGrabberCategory", feed.getAttribute().get("priceGrabberCategory"));
+        cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("taxable", feed.getAttribute().get("taxable"));
+
+//            feed.setCategory(feed.getCategory().replaceAll("-",">").replaceAll("－","-"));
+        if(!StringUtil.isEmpty(cmsProduct.getFeed().getCatPath())){
+            cmsProduct.getFeed().setCatPath(cmsProduct.getFeed().getCatPath().replaceAll(">","-"));
+            cmsProduct.getFeed().setCatId(feed.getCategoryCatId());
+        }
+        for (int iCartId = 5; iCartId <= 12; iCartId++) {
+            // add desmond 2016/07/05 start
+            // P0（主数据）等平台不用设置分平台共通属性(typeChannel表里面保存的是0)
+            if (iCartId >= CmsConstants.ACTIVE_CARTID_MIN && iCartId > 0) {
+                continue;
+            }
+            // add desmond 2016/07/05 end
+            CmsBtProductModel_Platform_Cart platform = new CmsBtProductModel_Platform_Cart();
+            // cartId
+            platform.setCartId(iCartId);
+
+            // 平台类目状态(新增时)
+            platform.setpCatStatus("0");  // add desmond 2016/07/05
+
+
+            // 平台sku
+            List<BaseMongoMap<String, Object>> skuList = new ArrayList<>();
+            Double msrpMin = Double.MAX_VALUE;
+            Double msrpMax = Double.MIN_VALUE;
+            Double retailMin = Double.MAX_VALUE;
+            Double retailMax = Double.MIN_VALUE;
+            for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
+                BaseMongoMap<String, Object> skuInfo = new BaseMongoMap();
+                skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.skuCode.name(), sku.getSku());
+                skuInfo.put("clientMsrpPrice", sku.getPriceClientMsrp());
+                skuInfo.put("clientRetailPrice", sku.getPriceClientRetail());
+                skuInfo.put("clientNetPrice", sku.getPriceClientRetail());
+                Boolean isSale = true;
+                if(sku.getIsSale() != null && sku.getIsSale() == 0) isSale = false;
+                skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), isSale);
+                skuList.add(skuInfo);
+                msrpMin = Double.min(msrpMin, sku.getPriceClientMsrp());
+                msrpMax = Double.max(msrpMax, sku.getPriceClientMsrp());
+                retailMin = Double.min(retailMin, sku.getPriceClientRetail());
+                retailMax = Double.max(retailMax, sku.getPriceClientRetail());
+            }
+            platform.setpPriceMsrpSt(msrpMin);
+            platform.setpPriceMsrpEd(msrpMax);
+            platform.setpPriceSaleSt(retailMin);
+            platform.setpPriceSaleEd(retailMax);
+            BaseMongoMap<String, Object> fields = new BaseMongoMap<>();
+            platform.setFields(fields);
+            switch (CartEnums.Cart.getValueByID(iCartId+"")){
+                case SN:
+                case MSN:
+                case military:
+                    CmsBtProductModel_SellerCat seller = sellerCatService.getSellerCat(feed.getChannelId(), SN.getValue(), feed.getCategory());
+                    if(seller != null){
+                        platform.setpCatId(seller.getcId());
+                    }
+                    platform.setpCatPath(feed.getCategory());
+                    platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                    platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                    platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                    platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                    platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                    platform.getFields().setFeedAttribute("freeShipping", feed.getAttribute().get("freeShipping"));
+                    platform.getFields().setFeedAttribute("rewardEligible", feed.getAttribute().get("rewardEligible"));
+                    platform.getFields().setFeedAttribute("discountEligible", feed.getAttribute().get("discountEligible"));
+                    platform.getFields().setFeedAttribute("sneakerheadPlus", feed.getAttribute().get("sneakerheadPlus"));
+                    platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                    platform.getFields().setAttribute("sneakerfoiko", false);
+
+                    List<String> catPath = new ArrayList<>();
+                    if(!StringUtil.isEmpty(feed.getCategory())) {
+                        catPath.add(feed.getCategory());
+                    }
+                    if(ListUtils.notNull(feed.getAttribute().get("categoriesTree"))){
+                        try {
+                            List<Map<String, Object>> cats = JacksonUtil.jsonToMapList(feed.getAttribute().get("categoriesTree").get(0));
+                            for(Map<String, Object> item:cats){
+                                catPath.add((String) item.get("catPath"));
+                            }
+                        }catch (Exception ignored){
+                        }
+                    }
+                    // NewArrival的自动匹配店铺分类
+                    if(platform.getFields().getAttribute("newArrival") != null && "1".equals(platform.getFields().getAttribute("newArrival"))){
+                        List<String> newArrivalCategorys = usaNewArrivalService.getNewArrivalCategory(feed.getProductType(), feed.getSizeType());
+                        if(ListUtils.notNull(newArrivalCategorys)){
+                            catPath.addAll(newArrivalCategorys);
+                        }
+                    }
+
+                    // 店铺内分类去重
+                    if(ListUtils.notNull(catPath)){
+                        catPath = catPath.stream().distinct().collect(Collectors.toList());
+                    }
+
+                    // 店铺内分类设置
+                    List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
+                    catPath.forEach(cat -> {
+                        CmsBtProductModel_SellerCat sellerCat = sellerCatService.getSellerCat(feed.getChannelId(), SN.getValue(), cat);
+                        if (sellerCat != null) {
+                            sellerCats.add(sellerCat);
+                        }
+                    });
+                    platform.setSellerCats(sellerCats);
+                    break;
+                case Xsneakers:
+                    platform.setpCatId(feed.getCategoryCatId());
+                    platform.setpCatPath(feed.getCategory());
+                    platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                    platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                    platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                    platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                    platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                    platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                    break;
+                case SneakerRx:
+                    platform.setpCatId(feed.getCategoryCatId());
+                    platform.setpCatPath(feed.getCategory());
+                    platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                    platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                    platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                    platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                    platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                    platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                    break;
+                case iKicks:
+                    platform.setpCatId(feed.getCategoryCatId());
+                    platform.setpCatPath(feed.getCategory());
+                    platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
+                    platform.getFields().setFeedAttribute("phoneOrderOnly", feed.getAttribute().get("phoneOrderOnly"));
+                    platform.getFields().setFeedAttribute("seoTitle", feed.getAttribute().get("seoTitle"));
+                    platform.getFields().setFeedAttribute("seoDescription", feed.getAttribute().get("seoDescription"));
+                    platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
+                    platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
+                    break;
+                case Amazon:
+                    platform.setpCatPath(feed.getAttribute().get("amazonBrowseTree")==null?"":feed.getAttribute().get("amazonBrowseTree").get(0));
+                    platform.getFields().setAttribute("sellerFulfilledPrime", true);
+                    break;
+            }
+
+            if(!StringUtil.isEmpty(platform.getpCatPath())){
+                platform.setpCatStatus("1");
+            }else{
+                platform.setpCatStatus("0");
+            }
+            platform.setSkus(skuList);
+
+            if(feed.getApproveInfo() != null && !feed.getApproveInfo().containsKey(iCartId)){
+                platform.setLock("1");
+                platform.setIsSale("0");
+                platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
+            }else{
+                platform.setLock("0");
+                platform.setIsSale("1");
+                platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
+            }
+            // 商品状态
+                platform.setpStatus(CmsConstants.PlatformStatus.OnSale.toString());
+
+            usPlatforms.put("P" + iCartId, platform);
+        }
+        cmsProduct.setUsPlatforms(usPlatforms);
     }
 }

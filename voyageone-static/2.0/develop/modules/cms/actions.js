@@ -638,7 +638,9 @@ define(function () {
                         "init": "init",
                         "save": "saveTag",
                         "del": "delTag",
-                        "getTagList": "getTagList"
+                        "getTagList": "getTagList",
+                        "getTag":"getTag",
+                        "editTagName":"editTagName"
                     }
                 },
                 "sellerCat": {

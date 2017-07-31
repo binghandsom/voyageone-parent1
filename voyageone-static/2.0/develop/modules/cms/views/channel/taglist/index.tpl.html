@@ -52,7 +52,12 @@
                                     <li ng-repeat="tag in tree.tags | filter:{tagChildrenName:ctrl.searchName[$parentIndex]}">
                                         <a href="javascript:void(0)" ng-click="ctrl.openTag(tag , $parentIndex)" ng-class="{indexSelected:ctrl.selected[$parentIndex].tagChildrenName == tag.tagChildrenName}">
                                             <span>{{tag.tagChildrenName}}</span>
-                                            <button class="btn btn-danger btn-xs pull-right" ng-if = "tag.isLeaf" ng-click="ctrl.delTag(tag,$parentIndex,$event)">
+                                            <button class="btn btn-success btn-xs pull-right"
+                                                    ng-if = "ctrl.usaFlag" ng-click="ctrl.editTag(tag,$parentIndex,$event)">
+                                                <i class="fa fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-xs pull-right" style="margin-right: 3px"
+                                             ng-if = "tag.isLeaf" ng-click="ctrl.delTag(tag,$parentIndex,$event)">
                                                 <i class="fa  fa-trash-o"></i>
                                             </button>
                                         </a>

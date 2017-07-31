@@ -1,0 +1,62 @@
+<div class="wrapper-md" id="SneakerCategory" ng-init="ctrl.init()">
+
+    <div class="panel panel-vo">
+        <div class="panel-heading">
+            <h4 class="panel-title"><i class="fa fa-search"></i>&nbsp;Shop Category Management</h4>
+        </div>
+        <div class="panel-body">
+            <div class="row form-horizontal">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="col-md-4 control-label query-title">Platform</label>
+                        <div class="col-md-8">
+                            <select class="form-control" chosen></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-4 control-label query-title">Current Category</label>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="category_drags">
+                <div class="category_drag col-sm-3" ng-repeat="categoryItem in ctrl.totalCategory">
+                    <div class="category_drag_main">
+                        <p class="text-center text-vo font-bold">{{:: categoryItem.index + 1 }}&nbsp;Level</p>
+                        <div class="input-group" style="padding: 0 4px;">
+                            <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" ng-model="catName">
+                            <div class="input-group-btn">
+                                <button type="button" class="btn btn-vo" ng-click="search.catName = catName"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                        <div class="category_drag_list_dp category_popup">
+                            <ul>
+                                <li ng-repeat="category in categoryItem.children">
+                                    <a href="javascript:void(0)" ng-click="ctrl.openCategory(category,categoryItem)" ng-class="{indexSelected:categoryItem.selectedCat == category}">
+                                    <span ng-if="ctrl.context.muiti">
+                                        <input type="checkbox" ng-click="ctrl.selectCat(category)"
+                                               ng-checked="category.catPath == ctrl.selectObj[category.catId]">{{ctrl.exitPath(category.catPath)}}
+                                    </span>
+                                        <span>{{::category.catName}}</span>
+                                        <span class="pull-right text-muted" ng-if="category.children && category.children.length">
+                                        <i class="fa fa-fw fa-angle-right text"></i>
+                                    </span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>

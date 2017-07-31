@@ -12,6 +12,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.util.MapModel;
+
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -329,7 +330,22 @@ public class TagService extends BaseService {
         return ret;
     }
 
-    public List<TagCodeCountInfo> getListTagCodeCount(int promotionId,int parentTagId, List<String> codeList) {
-        return cmsBtTagDaoExtCamel.selectListTagCodeCount(promotionId,parentTagId,codeList);
+    public List<TagCodeCountInfo> getListTagCodeCount(int promotionId, int parentTagId, List<String> codeList) {
+        return cmsBtTagDaoExtCamel.selectListTagCodeCount(promotionId, parentTagId, codeList);
+    }
+
+    /**
+     * 根据Tag-parentTagId 和 tagPathName 查询Tag
+     *
+     * @param parentTagId Tag父节点ID
+     * @param tagName     Tag->tagName
+     * @return Tag
+     */
+    public CmsBtTagModel getTagByParentIdAndPathName(Integer parentTagId, String tagName) {
+        CmsBtTagModel queryModel = new CmsBtTagModel();
+        queryModel.setParentTagId(parentTagId);
+        queryModel.setTagName(tagName);
+        queryModel.setActive(1);
+        return cmsBtTagDao.selectOne(queryModel);
     }
 }

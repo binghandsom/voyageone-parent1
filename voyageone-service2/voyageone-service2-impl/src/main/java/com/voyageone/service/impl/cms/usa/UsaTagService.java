@@ -7,6 +7,7 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
+import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.fields.cms.CmsBtTagModelTagType;
 import com.voyageone.service.impl.BaseService;
@@ -14,6 +15,7 @@ import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -38,6 +40,9 @@ import java.util.stream.Collectors;
  */
 @Service
 public class UsaTagService extends BaseService {
+
+    @Autowired
+    private TagService tagService;
 
     @Autowired
     private CmsBtTagDaoExt cmsBtTagDaoExt;
@@ -81,7 +86,6 @@ public class UsaTagService extends BaseService {
             resultMap.put("tagTypeList", types.stream().filter(type -> type.getValue().equals(String.valueOf(CmsBtTagModelTagType.usa_free_tags))).collect(Collectors.toList()));
         }
 
-        orgFlg = "2";
         if (Objects.equals(orgFlg, "2")) {
             // 用于标识是否已勾选
             Map<String, Boolean> orgChkStsMap = new HashMap<>();
@@ -237,4 +241,7 @@ public class UsaTagService extends BaseService {
         return ret;
     }
 
+    public CmsBtTagModel getTagByTagId(int tagId) {
+        return tagService.getTagByTagId(tagId);
+    }
 }

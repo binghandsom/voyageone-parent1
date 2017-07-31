@@ -1,6 +1,7 @@
 /**
  * @description 自由标签设置
  * @author Piao
+ * @author rex.wu 2017-07-31 美国自由标签
  */
 define([
     'cms',
@@ -10,16 +11,26 @@ define([
 
     cms.controller('tagListController', (function () {
 
-        function TagListCtl(channelTagService, confirm, popups, notify, alert) {
+        function TagListCtl(channelTagService, confirm, popups, notify, alert, $location, usTagService) {
             this.channelTagService = channelTagService;
             this.confirm = confirm;
             this.popups = popups;
             this.notify = notify;
             this.alert = alert;
+            this.$location = $location;
+            this.usTagService = usTagService;
+
+            this.usaFlag = false; // 是否是美国CMS->标签管理
+            let url = $location.$$url;
+            if (url.indexOf("usa") != -1) {
+                this.usaFlag = true;
+            }
+
             this.selected = [];
             this.searchName = [];
             this.vm = {
                 tagTypeSelectValue: "0",
+                usTagTypeSelectValue: "6",
                 tagTypeList: null,
                 trees: null
             }
@@ -32,14 +43,26 @@ define([
         TagListCtl.prototype.init = function (parentIndex) {
             var self = this, vm = self.vm;
 
-            self.channelTagService.init({tagTypeSelectValue: vm.tagTypeSelectValue}).then(function (res) {
-                //获取选择下拉数据
-                vm.tagTypeList = res.data.tagTypeList;
-                //保存原来的树
-                vm.orgTagTree = res.data.tagTree;
+            if (self.usaFlag) {
+                self.usTagService.init({tagTypeSelectValue: vm.usTagTypeSelectValue}).then(res => {
+                    console.log(res.data);
+                    //获取选择下拉数据
+                    vm.tagTypeList = res.data.tagTypeList;
+                    //保存原来的树
+                    vm.orgTagTree = res.data.tagTree;
 
-                self.constructOrg(res.data.tagTree, parentIndex);
-            });
+                    self.constructOrg(res.data.tagTree, parentIndex);
+                });
+            } else {
+                self.channelTagService.init({tagTypeSelectValue: vm.tagTypeSelectValue}).then(function (res) {
+                    //获取选择下拉数据
+                    vm.tagTypeList = res.data.tagTypeList;
+                    //保存原来的树
+                    vm.orgTagTree = res.data.tagTree;
+
+                    self.constructOrg(res.data.tagTree, parentIndex);
+                });
+            }
         };
 
         /**
@@ -64,6 +87,14 @@ define([
 
         };
 
+        TagListCtl.prototype.editTag = function (tag, parentIndex) {
+            var self = this;
+            self.popups.editTag({tag:tag}).then(res => {
+                self.notify.success("TagName modified successfully.");
+                self.init(parentIndex);
+            });
+        };
+
         /**
          * 新增标签popup
          * @param parentIndex 层级序号
@@ -83,7 +114,7 @@ define([
                 tagInfo: tagInfo,
                 tagSelectObject: self.selected[parentIndex === 0 ? 0 : parentIndex - 1]
             }).then(function () {
-                self.notify.success('添加成功！');
+                self.notify.success('Tag added successfully.');
                 self.init(parentIndex);
             });
         };
@@ -95,7 +126,7 @@ define([
             var self = this,
                 channelTagService = self.channelTagService;
 
-            self.confirm('您确定要删除该标签吗？').then(function () {
+            self.confirm('TXT_CONFIRM_DELETE_TAG').then(function () {
                 channelTagService.del({
                     id: tag.id,
                     parentTagId: tag.parentTagId,

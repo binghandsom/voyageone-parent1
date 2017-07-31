@@ -507,6 +507,7 @@ define(function () {
         "TXT_MSG_TAG_PATH": "标签路径!",
         "TXT_MSG_TAG_NAME": "标签名",
         "TXT_MSG_TAG_IMAGE": "标签名称小于50字节!",
+        "TXT_CONFIRM_DELETE_TAG":"确定要删除标签吗？",
         "TXT_MSG_UPLOAD_IMAGE_SUCCESS": "图片上传/刷新成功。",
         "TXT_ACTIVITY_NAME": "活动名称",
         "TXT_PC_MODULE_ID": "PC端模块ID",
