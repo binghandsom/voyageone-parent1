@@ -1,6 +1,7 @@
 /**
  * @description 自由标签设置
  * @author Piao
+ * @author rex.wu 2017-07-31 美国自由标签
  */
 define([
     'cms',
@@ -10,12 +11,20 @@ define([
 
     cms.controller('tagListController', (function () {
 
-        function TagListCtl(channelTagService, confirm, popups, notify, alert) {
+        function TagListCtl(channelTagService, confirm, popups, notify, alert, $location) {
             this.channelTagService = channelTagService;
             this.confirm = confirm;
             this.popups = popups;
             this.notify = notify;
             this.alert = alert;
+            this.$location = $location;
+
+            this.usaFlag = false; // 是否是美国CMS->标签管理
+            let url = $location.$$url;
+            if (url.indexOf("usa") != -1) {
+                this.usaFlag = true;
+            }
+
             this.selected = [];
             this.searchName = [];
             this.vm = {
@@ -31,6 +40,7 @@ define([
          */
         TagListCtl.prototype.init = function (parentIndex) {
             var self = this, vm = self.vm;
+
 
             self.channelTagService.init({tagTypeSelectValue: vm.tagTypeSelectValue}).then(function (res) {
                 //获取选择下拉数据
