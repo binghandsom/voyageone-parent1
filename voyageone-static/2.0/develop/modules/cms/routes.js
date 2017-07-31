@@ -523,10 +523,10 @@ define(function () {
             controller: 'usCategoryController as ctrl'
         },
         us_tagManagement: {
-            "hash": "/channel/usa/tag",
-            "templateUrl": "views/channel/taglist/index.tpl.html",
-            "controllerUrl": "modules/cms/views/channel/taglist/index.ctl",
-            "controller": "tagListController as ctrl"
+            hash: "/channel/usa/tag",
+            templateUrl: "views/channel/taglist/index.tpl.html",
+            controllerUrl: "modules/cms/views/channel/taglist/index.ctl",
+            controller: "tagListController as ctrl"
         }
     };
 });
