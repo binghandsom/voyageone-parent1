@@ -13,7 +13,7 @@ define([
         $scope.vm = {
             tagInfo: null,
             tagPath: null,
-            tagPathName: null,
+            tagName: null,
             tagSelectObject: null,
             first: null
         };

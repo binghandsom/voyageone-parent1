@@ -5,6 +5,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.impl.cms.TagService;
@@ -12,12 +13,14 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseViewService;
-import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.search.CmsAdvanceSearchService;
+
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +42,7 @@ public class CmsChannelTagService extends BaseViewService {
 
     /**
      * 取得标签管理初始化数据（注意：高级检索画面(查询条件)使用时，查询的是最近90天的所有活动，包括已结束的）
-     * @param param
-     * @param lang
+     *
      * @return result
      */
     public Map<String, Object> getInitTagInfo(Map param, String lang) {
@@ -51,10 +53,10 @@ public class CmsChannelTagService extends BaseViewService {
         //取得所有的标签类型
         result.put("tagTree", categoryList);
 
-        List<TypeBean>  types = Types.getTypeList(TypeConfigEnums.MastType.tagType.getId(), lang);
+        List<TypeBean> types = Types.getTypeList(TypeConfigEnums.MastType.tagType.getId(), lang);
         if (types != null) {
             //标签类型
-            result.put("tagTypeList", types.stream().filter(w->w.getValue().equals("4")).collect(Collectors.toList()));
+            result.put("tagTypeList", types.stream().filter(w -> w.getValue().equals("4")).collect(Collectors.toList()));
         }
 
         Integer orgFlg = (Integer) param.get("orgFlg");
@@ -117,7 +119,7 @@ public class CmsChannelTagService extends BaseViewService {
                             }
                             if (tags.indexOf(tagBean.getTagPath()) >= 0) {
                                 // 有勾选
-                                selCnt ++;
+                                selCnt++;
                             }
                         }
                         if (selCnt == prodList.size()) {
@@ -150,7 +152,6 @@ public class CmsChannelTagService extends BaseViewService {
     /**
      * 将数据转换为树型结构
      *
-     * @param valueList
      * @return List<CmsBtTagBean>
      */
     public List<CmsBtTagBean> convertToTree(List<CmsBtTagBean> valueList) {
@@ -193,7 +194,6 @@ public class CmsChannelTagService extends BaseViewService {
     /**
      * 将数据转换为list结构
      *
-     * @param tagsList
      * @return List<CmsBtTagModel>
      */
     public List<CmsBtTagModel> convertToList(List<CmsBtTagBean> tagsList) {
@@ -206,10 +206,11 @@ public class CmsChannelTagService extends BaseViewService {
 
     /**
      * 一棵树转成list（拍平）
+     *
      * @param tagBean 一棵树
      * @return List<CmsBtTagModel>
      */
-    private List<CmsBtTagModel> treeToList(CmsBtTagBean tagBean){
+    private List<CmsBtTagModel> treeToList(CmsBtTagBean tagBean) {
         List<CmsBtTagModel> result = new ArrayList<>();
         result.add(tagBean);
         if (tagBean.getChildren() != null) {
@@ -226,14 +227,14 @@ public class CmsChannelTagService extends BaseViewService {
      */
     public void saveTagInfo(Map<String, Object> param) {
         //标签类型
-        String tagPathName = (String) param.get("tagPathName");
+        String tagName = (String) param.get("tagName");
         //渠道id
         String channelId = (String) param.get("channelId");
         //创建者/更新者用
         String userName = (String) param.get("userName");
         //插入数据的数值
         Map<String, Object> tagInfo = (Map<String, Object>) param.get("tagInfo");
-        String tagTypeValue=String.valueOf(tagInfo.get("tagTypeSelectValue"));
+        String tagTypeValue = String.valueOf(tagInfo.get("tagTypeSelectValue"));
         //父级标签ID
         String parentTagId;
         //取得标签名称
@@ -243,14 +244,14 @@ public class CmsChannelTagService extends BaseViewService {
         //取得所有的标签类型
         Map<String, Object> tagSelectObject = (Map<String, Object>) param.get("tagSelectObject");
         if (firstTag) {
-            parentTagId="0";
-            tagPathNameValue=tagPathName;
-        }else{
-            tagPathNameValue=String.valueOf(tagSelectObject.get("tagPathName")) + " > " + tagPathName;
-            parentTagId=String.valueOf(tagSelectObject.get("id"));
+            parentTagId = "0";
+            tagPathNameValue = tagName;
+        } else {
+            tagPathNameValue = String.valueOf(tagSelectObject.get("tagPathName")) + " > " + tagName;
+            parentTagId = String.valueOf(tagSelectObject.get("id"));
         }
         //标签名称check
-        if (StringUtils.isEmpty(tagPathName) || tagPathName.getBytes().length > 50) {
+        if (StringUtils.isEmpty(tagName) || tagName.getBytes().length > 50) {
             //标签名称小于50字节
             throw new BusinessException("7000074");
         }
@@ -266,28 +267,27 @@ public class CmsChannelTagService extends BaseViewService {
         //一级标签
         if (firstTag) {
             cmsBtTagModel.setChannelId(channelId);
-            cmsBtTagModel.setTagName(tagTypeValue);
+            cmsBtTagModel.setTagName(tagName);
+            cmsBtTagModel.setTagType(Integer.valueOf(tagTypeValue));
             cmsBtTagModel.setTagPath("0");
-            cmsBtTagModel.setTagPathName(tagPathName);
-            cmsBtTagModel.setTagType(Integer.valueOf(String.valueOf(tagInfo.get("tagTypeSelectValue"))));
+            cmsBtTagModel.setTagPathName(tagName);
             cmsBtTagModel.setTagStatus(0);
             cmsBtTagModel.setSortOrder(0);
             cmsBtTagModel.setParentTagId(0);
             cmsBtTagModel.setActive(1);
             cmsBtTagModel.setCreater(userName);
-            cmsBtTagModel.setModifier(userName);
         } else {
             cmsBtTagModel.setChannelId(String.valueOf(tagSelectObject.get("channelId")));
-            cmsBtTagModel.setTagName(String.valueOf(tagSelectObject.get("tagName")));
+            cmsBtTagModel.setTagName(tagName);
             cmsBtTagModel.setTagPath(String.valueOf(tagSelectObject.get("tagPath")));
-            cmsBtTagModel.setTagPathName(String.valueOf(tagSelectObject.get("tagPathName")) + " > " + tagPathName);
+            cmsBtTagModel.setTagPathName(String.valueOf(tagSelectObject.get("tagPathName")) + " > " + tagName);
             cmsBtTagModel.setTagType(Integer.valueOf(tagSelectObject.get("tagType").toString()));
             cmsBtTagModel.setTagStatus(Integer.valueOf(String.valueOf(tagSelectObject.get("tagStatus"))));
             cmsBtTagModel.setSortOrder(0);
             cmsBtTagModel.setActive(1);
             cmsBtTagModel.setParentTagId(Integer.valueOf(String.valueOf(tagSelectObject.get("id"))));
-            cmsBtTagModel.setCreater(String.valueOf(tagSelectObject.get("creater")));
-            cmsBtTagModel.setModifier(String.valueOf(tagSelectObject.get("modifier")));
+            cmsBtTagModel.setCreater(userName);
+            cmsBtTagModel.setModifier(userName);
         }
         // save to db
         tagService.insertCmsBtTagAndUpdateTagPath(cmsBtTagModel, firstTag);
@@ -328,7 +328,7 @@ public class CmsChannelTagService extends BaseViewService {
         //如果没有一级标签 添加一级标签
         if (cmsBtTagModel.getParentTagId() == 0) {
             tagTree.add(tagTypeSelectValue);
-        }else{
+        } else {
             for (Map<String, Object> aTagTree : tagTree) {
                 //如果一级标签有儿子,取得二级标签
                 if (aTagTree.get("children") != null) {
@@ -427,5 +427,69 @@ public class CmsChannelTagService extends BaseViewService {
         cmsBtTagModel.setActive(0);
 
         tagService.updateTagModel(cmsBtTagModel);
+    }
+
+
+    public CmsBtTagModel getTagByTagId(int tagId) {
+        return tagService.getTagByTagId(tagId);
+    }
+
+    /**
+     * 编辑Tag->tagPathName
+     *
+     * @param tagId    Tag -> ID
+     * @param tagName  Tag -> tagName
+     * @param modifier 修改人
+     */
+    public CmsBtTagModel editTagPathName(Integer tagId, String tagName, String modifier) {
+        CmsBtTagModel tag = null;
+        if (tagId != null && org.apache.commons.lang3.StringUtils.isNotBlank(tagName)) {
+            tag = tagService.getTagByTagId(tagId);
+            if (tag != null && !tagName.equalsIgnoreCase(tag.getTagName())) {
+                Integer parentTagId = tag.getParentTagId() == null ? 0 : tag.getParentTagId();
+                CmsBtTagModel sameTagPathNameOne = tagService.getTagByParentIdAndPathName(parentTagId, tagName);
+                if (sameTagPathNameOne != null) {
+                    throw new BusinessException("A sibling tag with the same name exists.");
+                }
+
+                CmsBtTagModel updateModel = new CmsBtTagModel();
+                updateModel.setId(tag.getId());
+                updateModel.setTagName(tagName);
+                if (parentTagId == 0) {
+                    updateModel.setTagPathName(tagName);
+                } else {
+                    CmsBtTagModel parentTag = tagService.getTagByTagId(parentTagId);
+                    updateModel.setTagPathName(parentTag.getTagPathName() + " > " + tagName);
+                }
+                updateModel.setModified(new Date());
+                updateModel.setModifier(modifier);
+                int affected = tagService.updateTagModel(updateModel);
+                if (affected > 0) {
+                    // 如果修改的是父节点, 还必须同步修改所有子节点的tagPathName
+                    BeanUtils.copy(updateModel, tag);
+                    syncChildrenTagPathName(tag);
+                    return tag;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 同步更新Tag所有子节点的tagPathName
+     */
+    private void syncChildrenTagPathName(CmsBtTagModel tag) {
+        List<CmsBtTagModel> childrenTags = tagService.getListByParentTagId(tag.getId());
+        if (CollectionUtils.isNotEmpty(childrenTags)) {
+            for (CmsBtTagModel child : childrenTags) {
+                CmsBtTagModel childUpdateModel = new CmsBtTagModel();
+                childUpdateModel.setId(child.getId());
+                childUpdateModel.setModified(new Date());
+                childUpdateModel.setModifier(tag.getModifier());
+                childUpdateModel.setTagPathName(tag.getTagPathName() + " > " + child.getTagName());
+                tagService.updateTagModel(childUpdateModel);
+                syncChildrenTagPathName(childUpdateModel);
+            }
+        }
     }
 }

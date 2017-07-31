@@ -4,6 +4,8 @@ import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.cms.views.usa.UsaCmsUrlConstants;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +27,6 @@ public class CmsChannelTagController extends CmsController {
     /**
      * 标签管理初始化
      *
-     * @param param
      * @return success
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CHANNEL_TAG.INIT_CHANNEL_TAG)
@@ -41,7 +42,6 @@ public class CmsChannelTagController extends CmsController {
     /**
      * 查询指定标签类型下的所有标签(list形式)
      *
-     * @param param
      * @return AjaxResponse
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CHANNEL_TAG.GET_TAG_LIST)
@@ -57,7 +57,6 @@ public class CmsChannelTagController extends CmsController {
     /**
      * 标签管理增加标签
      *
-     * @param param
      * @return success
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CHANNEL_TAG.SAVE_CHANNEL_TAG)
@@ -75,7 +74,6 @@ public class CmsChannelTagController extends CmsController {
     /**
      * 标签管理删除标签
      *
-     * @param param
      * @return success
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CHANNEL_TAG.DEL_CHANNEL_TAG)
@@ -86,5 +84,23 @@ public class CmsChannelTagController extends CmsController {
         cmsChannelTagService.DelTagInfo(param);
         //返回数据的类型
         return success(param);
+    }
+
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CHANNEL_TAG.GET_TAG)
+    public AjaxResponse getTag(@RequestBody Map<String, Object> params) {
+        Integer tagId = (Integer) params.get("tagId");
+        return success(cmsChannelTagService.getTagByTagId(tagId));
+    }
+
+    /**
+     * 编辑Tag, 只能编辑tagPathName
+     *
+     * @param params 参数
+     */
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CHANNEL_TAG.EDIT_TAG_NAME)
+    public AjaxResponse editTag(@RequestBody Map<String, Object> params) {
+        Integer tagId = (Integer) params.get("tagId");
+        String tagName = (String) params.get("tagName");
+        return success(cmsChannelTagService.editTagPathName(tagId, tagName, getUser().getUserName()));
     }
 }
