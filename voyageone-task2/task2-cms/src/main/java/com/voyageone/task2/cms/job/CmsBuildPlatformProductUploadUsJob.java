@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
  * Created by Charis on 2017/7/20.
  */
 @Component("CmsBuildPlatformProductUploadUsJob")
-
 public class CmsBuildPlatformProductUploadUsJob extends BaseTaskJob{
 
     @Autowired
