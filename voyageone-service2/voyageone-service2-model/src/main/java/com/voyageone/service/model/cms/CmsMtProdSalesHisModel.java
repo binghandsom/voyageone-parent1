@@ -12,6 +12,59 @@ public class CmsMtProdSalesHisModel extends BaseMongoModel {
     private String sku;
     private String date;
     private int qty;
+    private String prodCode;
+    private String modifier;
+    private String modified;
+    private String creater;
+    private String created;
+
+    @Override
+    public String getCreater() {
+        return creater;
+    }
+
+    @Override
+    public void setCreater(String creater) {
+        this.creater = creater;
+    }
+
+    @Override
+    public String getCreated() {
+        return created;
+    }
+
+    @Override
+    public void setCreated(String created) {
+        this.created = created;
+    }
+
+    @Override
+    public String getModifier() {
+        return modifier;
+    }
+
+    @Override
+    public void setModifier(String modifier) {
+        this.modifier = modifier;
+    }
+
+    @Override
+    public String getModified() {
+        return modified;
+    }
+
+    @Override
+    public void setModified(String modified) {
+        this.modified = modified;
+    }
+
+    public String getProdCode() {
+        return prodCode;
+    }
+
+    public void setProdCode(String prodCode) {
+        this.prodCode = prodCode;
+    }
 
     public int getCart_id() {
         return cart_id;

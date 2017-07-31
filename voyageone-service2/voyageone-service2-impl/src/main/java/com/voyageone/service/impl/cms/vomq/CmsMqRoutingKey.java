@@ -165,6 +165,8 @@ public class CmsMqRoutingKey {
     // 接收类目信息
     public static final String CMS_USA_CATEGORY_RECEIVE = "VOUsReceiveCategoryQueue";
 
+    public static final String CMS_USA_PRODUCT_SALES_UPDATE = "VOCmsUsaProductSalesQueue";
+
     // 未整理的业务内容
 
     /**
