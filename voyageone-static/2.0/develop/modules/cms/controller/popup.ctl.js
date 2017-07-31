@@ -740,8 +740,15 @@ define([
                         "size": 'md'
                     }
                 }
+            },
+            tag: {
+                edit: {
+                    "templateUrl": "views/pop/channel/taglist/index.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/channel/taglist/index.ctl",
+                    "controller": 'EditTagController as ctrl',
+                    "size": 'md'
+                }
             }
-
         }
     }).controller('popupCtrl', function popupCtrl($scope, $uibModal, popActions, $q) {
 
@@ -1655,7 +1662,11 @@ define([
 
         $scope.openMoveModel = function (context) {
             return openModal(popActions.us.product.detail.moveModel, context);
-        }
+        };
+        
+        $scope.editTag = function (context) {
+            return openModal(popActions.us.tag.edit, context);
+        };
 
         /**
          * 为价格披露Task添加商品

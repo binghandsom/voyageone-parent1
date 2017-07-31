@@ -862,6 +862,8 @@ public interface CmsUrlConstants {
             String SAVE_CHANNEL_TAG = "saveTag";
             String DEL_CHANNEL_TAG = "delTag";
             String GET_TAG_LIST = "getTagList";
+            String GET_TAG = "getTag";
+            String EDIT_TAG_NAME = "editTagName";
         }
 
         interface CHANNEL_IMAGE_GROUP {
