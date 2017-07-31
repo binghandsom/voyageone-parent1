@@ -559,8 +559,14 @@ public class ProductService extends BaseService {
 
             CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
             if (product == null) {
-                $error("该产品不存在:" + productSku + "--" + channelId);
-                throw new BusinessException("该产品不存在:" + productSku);
+                if(channelId.equals("928") && (productSku.indexOf("016-") == 0 || productSku.indexOf("009-") == 0)){
+                    String subChannelId = productSku.substring(0,3);
+                    return getWmsProductsInfo(subChannelId, productSku, projection);
+                }else{
+                    $error("该产品不存在:" + productSku + "--" + channelId);
+                    throw new BusinessException("该产品不存在:" + productSku);
+                }
+
             }
             resultInfo.setChannelId(product.getChannelId());
             resultInfo.setCode(product.getCommon().getFields().getCode());
@@ -795,6 +801,10 @@ public class ProductService extends BaseService {
 
                 resultInfo.add(bean);
             });
+        }
+        if(ListUtils.isNull(resultInfo)  && channelId.equals("928") && (skuIncludes.indexOf("016-") == 0 || skuIncludes.indexOf("009-") == 0)){
+            String subChannelId = skuIncludes.substring(0,3);
+            return getOmsProductsInfo(subChannelId, skuIncludes, skuList, nameIncludes, descriptionIncludes, cartId, projection);
         }
 
         return resultInfo;
