@@ -521,6 +521,18 @@ define(function () {
             templateUrl: "views/usa/channel/category/index.tpl.html",
             controllerUrl: "modules/cms/views/usa/channel/category/index.ctl",
             controller: 'usCategoryController as ctrl'
+        },
+        us_tagManagement: {
+            hash: "/channel/usa/tag",
+            templateUrl: "views/channel/taglist/index.tpl.html",
+            controllerUrl: "modules/cms/views/channel/taglist/index.ctl",
+            controller: "tagListController as ctrl"
+        },
+        us_shop_category:{
+            hash: "/channel/usa/shopCategory",
+            templateUrl: "views/usa/channel/shopCategory/index.tpl.html",
+            controllerUrl: "modules/cms/views/usa/channel/shopCategory/index.ctl",
+            controller: "shopCategoryController as ctrl"
         }
     };
 });

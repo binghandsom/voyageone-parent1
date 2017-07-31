@@ -17,6 +17,7 @@ define([
 
             self.sortEntity = sortEntity;
             self.$routeParams = $routeParams;
+            self.selectRowsFactory = selectRowsFactory;
             self.srInstance = new selectRowsFactory();
             self.productTopService = productTopService;
             self.alert = alert;
@@ -49,7 +50,7 @@ define([
                 downToLast: 'downToLast'
             };
             self.pageOption = {
-                curr: 1, total: 0, size: 10, fetch: function () {
+                curr: 1, total: 0, size: 1, fetch: function () {
                     self.search();
                 }
             };
@@ -92,12 +93,26 @@ define([
 
             //获取保存的排序结果
             self.productTopService.init({cartId: carts.Sneakerhead.id, catId: catInfo.catId}).then(function (res) {
+                let _sortName = res.data.sortColumnName,
+                    _sortType = res.data.sortType;
 
-                _.each(self.sortEntity, (value) => {
-                    if (value['sortValue'] === res.data.sortColumnName && Number(value['sortType']) === res.data.sortType) {
-                        _sort = value;
+                _sort = _.chain(self.sortEntity).map((value)=>{
+                    return value;
+                }).find(value => {
+
+                    let _str = value['sortValue'].split(',');
+
+                    if(_str.length === 2 && /^P(\d)+_(\w)+/.test(_sortName)){
+                        if(_sortType === Number(value['sortType']))
+                            return true;
+
+                    }else{
+                        if (value['sortValue'] === _sortName && Number(value['sortType']) === _sortType) {
+                            return true;
+                        }
                     }
-                });
+
+                }).value();
 
                 if (_sort) {
                     self.sort = _sort;
@@ -136,6 +151,7 @@ define([
 
             self.srInstance.clearCurrPageRows();
             self.advanceSearch.search(upEntity).then(res => {
+
                 if (res.data) {
                     self.searchResult.productList = res.data.productList;
                     self.pageOption.total = res.data.productListTotal;
@@ -490,16 +506,35 @@ define([
          * @param type
          */
         sortSave(type) {
-            let self = this;
+            let self = this,
+                finalSort;
 
             self.sort = self.sortEntity[type];
 
             self.combineSort();
 
+            if(self.sort.sortValue && self.sort.sortValue.split(',').length === 2){
+                let _priceResult = '';
+
+                if(self.sort.sortType === '1'){
+                    _priceResult = self.sort.sortValue.split(',')[0]
+                }else{
+                    _priceResult = self.sort.sortValue.split(',')[1];
+                }
+
+                _priceResult.replace(/P(\d)+([A-Z,a-z,\\.])+/g, function (match) {
+                    _priceResult = match;
+                });
+
+                finalSort = _priceResult.replace('.','_');
+            }else{
+                finalSort = self.sort.sortValue;
+            }
+
             self.productTopService.saveSortColumnName({
                 cartId: 8,
                 sellerCatId: self.catInfo.catId,
-                sortColumnName: self.sort.sortValue,
+                sortColumnName: finalSort,
                 sortType: self.sort.sortType
             }).then(() => {
 
@@ -534,11 +569,14 @@ define([
                 });
             });
 
+        }
 
+        remove(index){
+            this.topList.splice(index, 1);
         }
 
         showPriceSale(priceLow, priceHigh) {
-            var $filter = this.$filter;
+            let $filter = this.$filter;
 
             if (!priceLow || !priceHigh)
                 return '';

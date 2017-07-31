@@ -50,7 +50,7 @@
                                                 ng-model="ctrl.searchInfo.brandList" search-contains = "true"
                                                 ng-options="brand.value as brand.name for brand in ctrl.masterData.brandList">
                                         </select>
-                                        <span class="input-group-addon cur-p" ng-click="dismiss('brandList')">reset</span>
+                                        <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('brandList')">reset</span>
                                     </div>
                                 </div>
                             </div>
@@ -169,7 +169,7 @@
                                                 ng-model="ctrl.tempUpEntity.cidValueTmp"
                                                 ng-options="category as category.catPath for category in ctrl.tempUpEntity.cidValueTmp">
                                         </select>
-                                        <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('cidValue')">reset</span>
+                                        <span class="input-group-addon cur-p" ng-click="ctrl.tempUpEntity.cidValueTmp=null">reset</span>
                                     </div>
                                 </div>
                             </div>
@@ -254,7 +254,7 @@
                                     <label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
                                         <input type="checkbox" ng-click="selectAll(ctrl.productSelList)"
                                                ng-checked="isAllSelected(ctrl.productSelList)"
-                                               ng-disabled="!ctrl.searchResult.productList.length">
+                                              >
                                         <span class="fa fa-check" style="vertical-align: middle;"></span>&nbsp;&nbsp;
                                     </label>
                                 </th>
