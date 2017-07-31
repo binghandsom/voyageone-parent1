@@ -355,8 +355,8 @@ public class CmsProductSearchService extends BaseSearchService {
         return getSolrTemplate().queryForCursor(query, clazz);
     }
 
-    public <T> Page<T> queryForPage(Query query, final Class<T> clazz) {
-        return getSolrTemplate().queryForPage(query, clazz);
+    public <T> Page<T> queryForPage(String coreName, Query query, final Class<T> clazz) {
+        return getSolrTemplate().queryForPage(coreName, query, clazz);
     }
 
     <T> SolrResultPage<T> queryForSolrResultPage(Query query, final Class<T> clazz) {
