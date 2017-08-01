@@ -46,7 +46,7 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
             if ("clientMsrpPrice".equals(changedPriceType)) {
                 minMaxChangedPriceType = "pPriceMsrp";
             } else {
-                minMaxChangedPriceType = "pPriceRetail";
+                minMaxChangedPriceType = "pPriceSale";
             }
 
             String basePriceType = (String) params.get("basePriceType");
@@ -76,7 +76,7 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                                 if ("clientMsrpPrice".equals(changedPriceType)) {
                                     minMaxChangedPriceType1 = "pPriceMsrp";
                                 } else {
-                                    minMaxChangedPriceType1 = "pPriceRetail";
+                                    minMaxChangedPriceType1 = "pPriceSale";
                                 }
                                 update(sender, channelId, changedPriceType, minMaxChangedPriceType1, basePriceType, optionType, value, flag, cartId2, productCode, platform);
                             });
@@ -128,8 +128,15 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                 JongoUpdate jongoUpdate = new JongoUpdate();
                 jongoUpdate.setQuery("{\"usPlatforms.P" + cartId + ".skus.skuCode\":#}");
                 jongoUpdate.setQueryParameters(skuCode);
-                jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + ".skus.$." + changedPriceType + "\":#}}");
-                jongoUpdate.setUpdateParameters(newPrice);
+                //判断修改的字段
+                if ("clientMsrpPrice".equals(changedPriceType)){
+                    jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + ".skus.$." + changedPriceType + "\":#}}");
+                    jongoUpdate.setUpdateParameters(newPrice);
+                }else {
+                    //这里需要修改两个价格clientNetPrice,clientRetailPrice
+                    jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + ".skus.$." + changedPriceType + "\":#,\"usPlatforms.P" + cartId + ".skus.$.clientNetPrice\":#}}");
+                    jongoUpdate.setUpdateParameters(newPrice,newPrice);
+                }
                 cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
                 if (CmsConstants.ProductStatus.Approved.name().equals(status) && (CmsConstants.PlatformStatus.OnSale.name().equals(platform.getpStatus()) || CmsConstants.PlatformStatus.InStock.name().equals(platform.getpStatus()))) {
                     platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, sender);
