@@ -2172,14 +2172,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             if (StringUtils.isEmpty(mallId) || sb.length() > 0) {
                 if (!StringUtils.isEmpty(mallId)) {
                     // add成功并生成了mallId,只是有别的错误，也回写mallId
-                    updateMallId(product, mallId);
+                    updateMallId(product, mallId, expressionParser.getSxData().getGroupId());
                 } else {
                     // 上传失败
                     throw new BusinessException("添加商品到聚美商城失败!" + sb.toString());
                 }
             } else {
                 // 成功，回写mallId
-                updateMallId(product, mallId);
+                updateMallId(product, mallId, expressionParser.getSxData().getGroupId());
             }
 
             product.getPlatform(CART_ID).setpPlatformMallId(mallId);
@@ -2315,7 +2315,7 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @param product
      * @param mallId 聚美Mall Id
      */
-    protected void updateMallId(CmsBtProductModel product, String mallId) {
+    protected void updateMallId(CmsBtProductModel product, String mallId, long groupId) {
         String channelId = product.getChannelId();
         String code = product.getCommon().getFields().getCode();
 
@@ -2335,8 +2335,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
 
         JongoUpdate updateGroupQuery = new JongoUpdate();
-        updateGroupQuery.setQuery("{\"cartId\": #, \"productCodes\": #}");
-        updateGroupQuery.setQueryParameters(CART_ID, code);
+        updateGroupQuery.setQuery("{\"groupId\": #, \"cartId\": #}");
+        updateGroupQuery.setQueryParameters(groupId, CART_ID);
 
         updateGroupQuery.setUpdate("{$set:{" +
                 "\"platformMallId\": #," +

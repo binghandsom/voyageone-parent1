@@ -380,7 +380,7 @@ public class CmsBuildPlatformProductUploadJMServiceTest {
                 return;
             }
             // 测试回写状态
-            cmsBuildPlatformProductUploadJMService.updateMallId(productModel, mallId);
+            cmsBuildPlatformProductUploadJMService.updateMallId(productModel, mallId, 0L);
 
         } catch (Exception e) {
             e.printStackTrace();
