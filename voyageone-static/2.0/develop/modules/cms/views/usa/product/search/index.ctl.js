@@ -14,6 +14,7 @@ define([
         constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2,notify,$routeParams) {
             let self = this;
 
+            self.accordionOpen = false;
             self.popups = popups;
             self.srInstance = new selectRowsFactory();
             self.$parse = $parse;
