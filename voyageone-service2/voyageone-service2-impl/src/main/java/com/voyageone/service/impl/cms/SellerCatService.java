@@ -869,4 +869,59 @@ public class SellerCatService extends BaseService {
         }
         return false;
     }
+
+    public void updateCategoryByPath (String channelId,Integer cartId,String catPath,String fullCatId, Map<String,Object> map) {
+        //解析路径
+        String[] totalPaths = catPath.split(">");
+        String[] catIds = fullCatId.split("-");
+        //通过根目录获取到完整的对象
+        CmsBtSellerCatModel cmsBtSellerCatModel = cmsBtSellerCatDao.selectByRootCatId(channelId, cartId, catIds[0]);
+        if (cmsBtSellerCatModel != null){
+            List<CmsBtSellerCatModel> childrens = cmsBtSellerCatModel.getChildren();
+            if (!totalPaths[0].equals(cmsBtSellerCatModel.getCatName())){
+                //catName不匹配.需要进行修改
+                //root
+                cmsBtSellerCatModel.setCatName(totalPaths[0]);
+                cmsBtSellerCatModel.setCatPath(totalPaths[0]);
+            }
+            match(childrens,totalPaths,catIds,fullCatId,map,cmsBtSellerCatModel);
+
+        }
+    }
+    private void match(List<CmsBtSellerCatModel> childrens ,String[] totalPaths ,String[] catIds,String fullCatId,Map<String,Object> map,CmsBtSellerCatModel cmsBtSellerCatModel){
+        if (ListUtils.notNull(childrens)){
+            for (CmsBtSellerCatModel children : childrens) {
+                StringBuilder pathBuilder = new StringBuilder(totalPaths[0]);
+                StringBuilder catIdBuilder = new StringBuilder(catIds[0]);
+                String[] currentCatId = children.getFullCatId().split("-");
+                for (int i = 1;i < currentCatId.length;i++){
+                    pathBuilder.append(">" + totalPaths[i]);
+                    catIdBuilder.append("-" + catIds[i]);
+                }
+                //获取到当前层级的path和catId
+                String path = pathBuilder.toString();
+                String catId = catIdBuilder.toString();
+                if (catId.equals(children.getFullCatId())){
+                    //catId匹配成功
+                    if (fullCatId.equals(children.getFullCatId())){
+                        //完全匹配
+                        //修改mapping信息
+                        children.setMapping(map);
+                        //修改catPath和catName
+                        if (!path.equals(children.getCatPath())){
+                            //path路径不匹配,需要修改
+                            children.setCatPath(path);
+                            //获取路径中的最后一个,即catName
+                            children.setCatName(totalPaths[currentCatId.length - 1]);
+                        }
+                        cmsBtSellerCatDao.update(cmsBtSellerCatModel);
+                    }else {
+                        //不完全匹配,递归
+                        match(children.getChildren(),totalPaths,catIds,fullCatId,map,cmsBtSellerCatModel);
+                    }
+                }
+            }
+        }
+    }
+
 }

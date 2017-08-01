@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -91,6 +92,14 @@ public class SellerCatServiceTest {
     @Test
     public void testPaixu() throws Exception {
         sellerCatService.doResetPlatformSellerCatIndex("010", 23);
+    }
+    //
+    @Test
+    public void updateCategoryByPath() throws Exception {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("name","xusong");
+        sellerCatService.updateCategoryByPath("001",8,"Women's>Puma>xusong","9-45-3164",map);
+
     }
 
 }

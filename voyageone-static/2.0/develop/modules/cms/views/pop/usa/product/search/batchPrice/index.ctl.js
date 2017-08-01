@@ -18,11 +18,11 @@ define([
             //设置修改参数
             self.paraMap = {
                 //被修改的价格类型clientMsrpPrice,clientRetailPrice
-                changedPriceType: "",
+                changedPriceType: "clientRetailPrice",
                 //clientMsrpPrice,clientRetailPrice,fixedValue,如果选择了fixedValue,操作类型默认为=,不能修改
-                basePriceType: "",
+                basePriceType: "clientRetailPrice",
                 //操作类型+-*/=,平台点进去才能选=?
-                optionType: "",
+                optionType: "*",
                 /*value:null,*/
                 //是否取整"1":是,"0":否,默认为取整
                 flag: "1",
