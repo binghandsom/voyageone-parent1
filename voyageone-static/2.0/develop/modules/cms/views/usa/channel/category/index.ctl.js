@@ -50,7 +50,7 @@ define([
                 downToLast: 'downToLast'
             };
             self.pageOption = {
-                curr: 1, total: 0, size: 1, fetch: function () {
+                curr: 1, total: 0, size: 10, fetch: function () {
                     self.search();
                 }
             };
@@ -413,7 +413,7 @@ define([
             productInfo.usFreeTags.forEach(tag => {
                 let _tag = self.masterData.freeTags[tag];
 
-                _usFreeTags.push(_tag.tagName);
+                _usFreeTags.push(_tag.tagPathName);
             });
 
             productInfo._usFreeTags = _usFreeTags;

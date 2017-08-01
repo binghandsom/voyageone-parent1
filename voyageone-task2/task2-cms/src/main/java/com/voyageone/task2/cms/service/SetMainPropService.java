@@ -226,6 +226,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         // --------------------------------------------------------------------------------------------
         // 允许approve这个sku到平台上去售卖渠道cart列表
         List<TypeChannelBean> typeChannelBeanListApprove = null;
+
+        List<TypeChannelBean> typeUsChannelBeanListApprove = null;
+
         // 允许展示的cart列表
         List<TypeChannelBean> typeChannelBeanListDisplay = null;
         // 主类目黑名单
@@ -329,6 +332,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
             // 从synship.com_mt_value_channel表中获取当前channel, 有多少个允许approve这个sku到平台上去售卖渠道cartId
             typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(usjoi ? "928" : channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en"); // 取得允许Approve的数据
+            if (ListUtils.isNull(typeChannelBeanListApprove)) {
+                String errMsg = String.format("feed->master导入:共通配置异常终止:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息(用于生成product分平台信息) [ChannelId=%s A en]", channelId);
+                $error(errMsg);
+                throw new CommonConfigNotFoundException(errMsg);
+            }
+            typeUsChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(usjoi ? "928" : channelId, Constants.comMtTypeChannel.SKU_CARTS_53_O, "en"); // 取得允许Approve的数据
             if (ListUtils.isNull(typeChannelBeanListApprove)) {
                 String errMsg = String.format("feed->master导入:共通配置异常终止:在com_mt_value_channel表中没有找到当前Channel允许售卖的Cart信息(用于生成product分平台信息) [ChannelId=%s A en]", channelId);
                 $error(errMsg);
@@ -1218,7 +1227,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 cmsProduct.getFeed().setCatPath(cmsProduct.getFeed().getCatPath().replaceAll(">","-"));
                 cmsProduct.getFeed().setCatId(feed.getCategoryCatId());
             }
-            for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
+            for (TypeChannelBean typeChannelBean : typeUsChannelBeanListApprove) {
                 // add desmond 2016/07/05 start
                 // P0（主数据）等平台不用设置分平台共通属性(typeChannel表里面保存的是0)
                 int iCartId = Integer.parseInt(typeChannelBean.getValue());
