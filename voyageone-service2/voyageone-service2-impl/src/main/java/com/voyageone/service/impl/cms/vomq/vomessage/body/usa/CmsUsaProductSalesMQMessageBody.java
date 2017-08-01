@@ -20,6 +20,7 @@ public class CmsUsaProductSalesMQMessageBody extends BaseMQMessageBody {
     public List<Param> getItems() {
         return items;
     }
+
     public void setItems(List<Param> items) {
         this.items = items;
     }

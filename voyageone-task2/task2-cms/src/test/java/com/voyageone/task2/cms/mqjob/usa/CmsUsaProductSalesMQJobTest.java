@@ -14,9 +14,9 @@ import java.util.ArrayList;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class VOCmsUsaProductSalesQueueTest {
+public class CmsUsaProductSalesMQJobTest {
     @Autowired
-    CmsUsaProductSalesMQJob VOCmsUsaProductSalesQueue;
+    CmsUsaProductSalesMQJob cmsUsaProductSalesMQJob;
     @Test
     public void testOnStartup() throws Exception {
         CmsUsaProductSalesMQMessageBody body = new CmsUsaProductSalesMQMessageBody();
@@ -33,6 +33,6 @@ public class VOCmsUsaProductSalesQueueTest {
         ArrayList<CmsUsaProductSalesMQMessageBody.Param> params = new ArrayList<>();
         params.add(param);
         body.setItems(params);
-        VOCmsUsaProductSalesQueue.onStartup(body);
+        cmsUsaProductSalesMQJob.onStartup(body);
     }
 }

@@ -27,9 +27,10 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
     ProductService productService;
     @Autowired
     CmsMtProdSalesHisDao cmsMtProdSalesHisDao;
+
     @Override
     public void onStartup(CmsUsaProductSalesMQMessageBody messageBody) throws Exception {
-        List<CmsUsaProductSalesMQMessageBody.Param> items =messageBody.getItems();
+        List<CmsUsaProductSalesMQMessageBody.Param> items = messageBody.getItems();
         for (CmsUsaProductSalesMQMessageBody.Param item : items) {
             JongoQuery jongoQuery = new JongoQuery();
             String time = parseTime(item.getOrderDate());
@@ -37,40 +38,40 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
                     and("sku").is(item.getSku()).and("date").is(time);
             jongoQuery.setQuery(criteria);
             CmsMtProdSalesHisModel cmsMtProdSalesHisModel = cmsMtProdSalesHisDao.selectOneWithQuery(jongoQuery);
-            if (cmsMtProdSalesHisModel != null){
+            if (cmsMtProdSalesHisModel != null) {
                 //查到了对应的数据
                 cmsMtProdSalesHisModel.setModifier(messageBody.getSender());
-                cmsMtProdSalesHisModel.setModified(DateTimeUtil.format(new Date(),DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+                cmsMtProdSalesHisModel.setModified(DateTimeUtil.format(new Date(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
                 //1:下单 / 0:取消
-                if (item.getStatus() == 1){
+                if (item.getStatus() == 1) {
                     //下单
                     cmsMtProdSalesHisModel.setQty(cmsMtProdSalesHisModel.getQty() + item.getQty());
-                }else {
+                } else {
                     //取消
                     cmsMtProdSalesHisModel.setQty(cmsMtProdSalesHisModel.getQty() - item.getQty());
                 }
                 cmsMtProdSalesHisDao.update(cmsMtProdSalesHisModel);
-        }else {
+            } else {
                 //没有查到对应的数据,新建一条数据
                 String code = null;
                 CmsBtProductModel cmsBtProductModel = productService.getProductBySku(messageBody.getChannelId(), item.getSku());
-                if (cmsBtProductModel != null){
+                if (cmsBtProductModel != null) {
                     code = cmsBtProductModel.getCommon().getFields().getCode();
                 }
                 cmsMtProdSalesHisModel = new CmsMtProdSalesHisModel();
-                cmsMtProdSalesHisModel.setModified(DateTimeUtil.format(new Date(),DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+                cmsMtProdSalesHisModel.setModified(DateTimeUtil.format(new Date(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
                 cmsMtProdSalesHisModel.setSku(item.getSku());
                 cmsMtProdSalesHisModel.setModifier(messageBody.getSender());
                 cmsMtProdSalesHisModel.setProdCode(code);
                 cmsMtProdSalesHisModel.setCart_id(item.getCartId());
                 cmsMtProdSalesHisModel.setChannel_id(messageBody.getChannelId());
                 cmsMtProdSalesHisModel.setDate(parseTime(item.getOrderDate()));
-                cmsMtProdSalesHisModel.setCreated(DateTimeUtil.format(new Date(),DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+                cmsMtProdSalesHisModel.setCreated(DateTimeUtil.format(new Date(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
                 cmsMtProdSalesHisModel.setCreater(messageBody.getSender());
-                if (item.getStatus() == 1){
+                if (item.getStatus() == 1) {
                     //下单
                     cmsMtProdSalesHisModel.setQty(item.getQty());
-                }else {
+                } else {
                     //取消
                     cmsMtProdSalesHisModel.setQty(0 - item.getQty());
                 }
@@ -78,12 +79,13 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
             }
         }
     }
-    private String parseTime(Long time){
+
+    private String parseTime(Long time) {
         //美国西海岸时间,减八个小时
         Date date = new Date(time);
         Calendar c = Calendar.getInstance();
         c.setTime(date);
-        c.add(Calendar.MINUTE, - 60 * 8);
+        c.add(Calendar.MINUTE, -60 * 8);
         String format = DateTimeUtil.format(c.getTime(), DateTimeUtil.DEFAULT_DATE_FORMAT);
         return format;
     }
