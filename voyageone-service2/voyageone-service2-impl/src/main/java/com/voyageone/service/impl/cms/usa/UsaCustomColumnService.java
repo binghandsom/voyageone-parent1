@@ -142,24 +142,32 @@ public class UsaCustomColumnService extends BaseService {
             keySum7Map.put("cartId", String.valueOf(cartId));
             keySum7Map.put("name", String.format("%s (Last 7)", cartName));
             keySum7Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_7 + "." + CmsBtProductModel_Sales.CARTID + cartId);
+            // Solr中暂无平台库存, 所以不能排序
+            keySum7Map.put("sortFlag", "0");
             platformAttrList.add(keySum7Map);
 
             Map<String, String> keySum30Map = new HashMap<>();
             keySum30Map.put("cartId", String.valueOf(cartId));
             keySum30Map.put("name", String.format("%s (Last 30)", cartName));
             keySum30Map.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_30 + "." + CmsBtProductModel_Sales.CARTID + cartId);
+            // Solr中暂无平台库存, 所以不能排序
+            keySum30Map.put("sortFlag", "0");
             platformAttrList.add(keySum30Map);
 
             Map<String, String> keySumYearMap = new HashMap<>();
             keySumYearMap.put("cartId", String.valueOf(cartId));
             keySumYearMap.put("name", String.format("%s (Period)", cartName));
             keySumYearMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_YEAR + "." + CmsBtProductModel_Sales.CARTID + cartId);
+            // Solr中暂无平台库存, 所以不能排序
+            keySumYearMap.put("sortFlag", "0");
             platformAttrList.add(keySumYearMap);
 
             Map<String, String> keySumAllMap = new HashMap<>();
             keySumAllMap.put("cartId", String.valueOf(cartId));
             keySumAllMap.put("name", String.format("%s (All)", cartName));
             keySumAllMap.put("value", "sales." + CmsBtProductModel_Sales.CODE_SUM_ALL + "." + CmsBtProductModel_Sales.CARTID + cartId);
+            // Solr中暂无平台库存, 所以不能排序
+            keySumAllMap.put("sortFlag", "0");
             platformAttrList.add(keySumAllMap);
 
             // 各平台属性 >>> 'Publish Time' && 'Price' && 'Msrp' && 'QTY'
@@ -167,6 +175,8 @@ public class UsaCustomColumnService extends BaseService {
             keyPublishTimeMap.put("cartId", String.valueOf(cartId));
             keyPublishTimeMap.put("name", String.format("%s Publish Time", cartName));
             keyPublishTimeMap.put("value", String.format("usPlatforms.P%d.publishTime", cartId));
+            // Solr中暂无平台库存, 所以不能排序
+            keyPublishTimeMap.put("sortFlag", "0");
             platformAttrList.add(keyPublishTimeMap);
 
             Map<String, String> keyMsrpMap = new HashMap<>();
@@ -185,6 +195,8 @@ public class UsaCustomColumnService extends BaseService {
             keyQtyMap.put("cartId", String.valueOf(cartId));
             keyQtyMap.put("name", String.format("%s Qty", cartName));
             keyQtyMap.put("value", String.format("usPlatforms.P%d.quantity", cartId));
+            // Solr中暂无平台库存, 所以不能排序
+            keyQtyMap.put("sortFlag", "0");
             platformAttrList.add(keyQtyMap);
         }
         return platformAttrList;

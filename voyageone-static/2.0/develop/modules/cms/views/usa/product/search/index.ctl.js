@@ -296,6 +296,7 @@ define([
         clear() {
             let self = this;
             self.searchInfo = angular.copy(self.defaultSearchInfo);
+            self.tempUpEntity = {};
         }
 
         dismiss(attrName){
