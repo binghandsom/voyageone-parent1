@@ -413,7 +413,7 @@ define([
             productInfo.usFreeTags.forEach(tag => {
                 let _tag = self.masterData.freeTags[tag];
 
-                _usFreeTags.push(_tag.tagName);
+                _usFreeTags.push(_tag.tagPathName);
             });
 
             productInfo._usFreeTags = _usFreeTags;
