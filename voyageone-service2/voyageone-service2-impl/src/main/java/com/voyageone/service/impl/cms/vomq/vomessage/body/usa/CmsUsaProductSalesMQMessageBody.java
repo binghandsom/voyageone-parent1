@@ -13,9 +13,9 @@ import java.util.List;
  * Created by dell on 2017/7/31.
  */
 @VOMQQueue(value = CmsMqRoutingKey.CMS_USA_PRODUCT_SALES_UPDATE)
-public class VOCmsUsaProductSalesMQMessageBody extends BaseMQMessageBody {
+public class CmsUsaProductSalesMQMessageBody extends BaseMQMessageBody {
 
-    private List<VOCmsUsaProductSalesMQMessageBody.Param> items;
+    private List<CmsUsaProductSalesMQMessageBody.Param> items;
 
     public List<Param> getItems() {
         return items;
