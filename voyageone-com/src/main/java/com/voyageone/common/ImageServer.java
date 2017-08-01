@@ -76,11 +76,16 @@ public class ImageServer {
             String content = IOUtils.toString(response.getEntity().getContent());
             String reasonPhrase = statusLine.getReasonPhrase();
 
-            final String main = String.format(httpTemplate, code, reasonPhrase, content);
+            final String main = String.format(httpTemplate, code, reasonPhrase, imageName, inputStream.available(),
+                    content);
 
             sendUploadFailNotify(main);
 
             throw new FailUploadingException(code, statusLine.getReasonPhrase(), content);
+
+        } catch (FailUploadingException fe) {
+
+            throw fe;
 
         } catch (Exception e) {
 
