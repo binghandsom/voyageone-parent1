@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * Created by james on 2017/7/20.
- *
+ * 自定义销量 数据准备
  */
 @Service
 @RabbitListener()
