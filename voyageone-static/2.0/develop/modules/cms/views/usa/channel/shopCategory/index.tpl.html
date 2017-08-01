@@ -7,12 +7,12 @@
         <div class="panel-body">
             <div class="row form-horizontal">
                 <div class="col-md-6">
-                    <div class="form-group">
+                   <!-- <div class="form-group">
                         <label class="col-md-4 control-label query-title">Platform</label>
                         <div class="col-md-8">
                             <select class="form-control" chosen></select>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="form-group">
                         <label class="col-md-4 control-label query-title">Current Category</label>
                         <div class="col-md-8">
@@ -40,14 +40,16 @@
                             <ul>
                                 <li ng-repeat="category in categoryItem.children">
                                     <a href="javascript:void(0)" ng-click="ctrl.openCategory(category,categoryItem)" ng-class="{indexSelected:categoryItem.selectedCat == category}">
-                                    <span ng-if="ctrl.context.muiti">
-                                        <input type="checkbox" ng-click="ctrl.selectCat(category)"
-                                               ng-checked="category.catPath == ctrl.selectObj[category.catId]">{{ctrl.exitPath(category.catPath)}}
-                                    </span>
+                                        <span ng-if="ctrl.context.muiti">
+                                            <input type="checkbox" ng-click="ctrl.selectCat(category)"
+                                                   ng-checked="category.catPath == ctrl.selectObj[category.catId]">{{ctrl.exitPath(category.catPath)}}
+                                        </span>
                                         <span>{{::category.catName}}</span>
-                                        <span class="pull-right text-muted" ng-if="category.children && category.children.length">
-                                        <i class="fa fa-fw fa-angle-right text"></i>
-                                    </span>
+                                        <span class="pull-right">
+                                            <button type="button" class="btn btn-success" ng-click="ctrl.popEditCategory(category,$event)">
+                                                <i class="glyphicon glyphicon-edit"></i>
+                                            </button>
+                                        </span>
                                     </a>
                                 </li>
                             </ul>

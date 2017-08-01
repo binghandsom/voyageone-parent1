@@ -288,8 +288,8 @@ define([
          * get platformShowTypeList.
          * @returns {*}
          */
-        function getPlatformType() {
-            return $menuService.getPlatformType().then(function (res) {
+        function getPlatformType(req) {
+            return $menuService.getPlatformType(req).then(function (res) {
                 return res.data;
             });
         }

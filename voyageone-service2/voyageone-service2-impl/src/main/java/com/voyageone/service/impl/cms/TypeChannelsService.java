@@ -22,4 +22,8 @@ public class TypeChannelsService extends BaseService {
     public List<TypeChannelBean> getPlatformTypeList (String channelId, String language) {
         return TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, language);
     }
+
+    public List<TypeChannelBean> getUsPlatformTypeList (String channelId, String language) {
+        return TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_O, language);
+    }
 }

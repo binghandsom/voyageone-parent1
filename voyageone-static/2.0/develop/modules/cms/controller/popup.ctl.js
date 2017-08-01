@@ -725,7 +725,7 @@ define([
                         "controller": 'freeTagOfUsController as ctrl',
                         "size": 'lg'
                     },
-                    list:{
+                    list: {
                         "templateUrl": "views/pop/usa/product/search/list/index.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/usa/product/search/list/index.ctl",
                         "controller": 'batchPriceController as ctrl',
@@ -746,6 +746,14 @@ define([
                     "templateUrl": "views/pop/channel/taglist/index.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/channel/taglist/index.ctl",
                     "controller": 'EditTagController as ctrl',
+                    "size": 'md'
+                }
+            },
+            category: {
+                editCategory: {
+                    "templateUrl": "views/pop/usa/category/editCategory/index.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/usa/category/editCategory/index.ctl",
+                    "controller": 'EditCategoryController as ctrl',
                     "size": 'md'
                 }
             }
@@ -1663,16 +1671,20 @@ define([
         $scope.openMoveModel = function (context) {
             return openModal(popActions.us.product.detail.moveModel, context);
         };
-        
+
         $scope.editTag = function (context) {
             return openModal(popActions.us.tag.edit, context);
+        };
+
+        $scope.openEditCategory = function (context) {
+            return openModal(popActions.us.category.editCategory, context)
         };
 
         /**
          * 为价格披露Task添加商品
          */
         $scope.popAddJiagepiluProduct = function popAddJiagepiluProduct(context, id) {
-            _.extend(context, {id:id});
+            _.extend(context, {id: id});
             return openModal(popActions.task.addJiagepiluProduct, context);
         };
 

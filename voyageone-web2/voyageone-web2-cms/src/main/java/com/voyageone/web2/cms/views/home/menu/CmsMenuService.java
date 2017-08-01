@@ -52,6 +52,10 @@ public class CmsMenuService extends BaseViewService {
         return typeChannelsService.getPlatformTypeList(channelId, language);
     }
 
+    public List<TypeChannelBean> getUsPlatformTypeList (String channelId, String language) {
+        return typeChannelsService.getUsPlatformTypeList(channelId, language);
+    }
+
     /**
      * 根据userId和ChannelId获取Menu列表.
      */

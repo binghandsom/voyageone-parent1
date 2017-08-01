@@ -464,7 +464,7 @@ public class CmsChannelTagService extends BaseViewService {
             tag = tagService.getTagByTagId(tagId);
             if (tag != null && !tagName.equalsIgnoreCase(tag.getTagName())) {
                 Integer parentTagId = tag.getParentTagId() == null ? 0 : tag.getParentTagId();
-                CmsBtTagModel sameTagPathNameOne = tagService.getTagByParentIdAndPathName(parentTagId, tagName);
+                CmsBtTagModel sameTagPathNameOne = tagService.getTagByParentIdAndName(tag.getTagType(), parentTagId, tagName);
                 if (sameTagPathNameOne != null) {
                     throw new BusinessException("A sibling tag with the same name exists.");
                 }

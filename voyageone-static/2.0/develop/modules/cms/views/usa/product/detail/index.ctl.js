@@ -39,7 +39,7 @@ define([
             let self = this,
                 _cartObj = self.routeParams.cartId;
 
-            self.menuService.getPlatformType().then(function (resp) {
+            self.menuService.getPlatformType({isUsa:true}).then(function (resp) {
 
                 self.platformTypes = _.filter(resp, function (element) {
                     return element.value < 20 && element.value != 0 ;
