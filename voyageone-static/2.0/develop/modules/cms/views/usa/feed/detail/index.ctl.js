@@ -555,17 +555,21 @@ define([
         }
 
         // 同Model
-        getTopModel(top) {
+        showTopModel(top) {
             let self = this;
 
             self.isShowModal = !self.isShowModal;
+            self.getTopModel(top);
 
+        }
+        getTopModel(top) {
+            let self = this;
             if (self.feed.model) {
                 self.itemDetailService.getTopModel({
-                    code: self.feed.code,
-                    model: self.feed.model,
-                    top: top
-                }).then((res) => {
+                   code: self.feed.code,
+                   model: self.feed.model,
+                   top: top
+               }).then((res) => {
                     if (res.data) {
                         self.topFeedList = res.data;
                         // 如果从Product查询的Code属性,那图片只是图片名称,不是完整链接
