@@ -21,6 +21,7 @@ define([
                 selectedNode: {},
                 trees: null
             }
+
         }
 
         popFreeTagCtl.prototype.init = function () {
@@ -35,11 +36,12 @@ define([
             if (context.orgFlg == 2) {
                 params.productIds = context.productIds;
                 params.isSelAll = context.selAllFlg;
+            } else if (context.orgFlg == 1) {
+                params.withUs = context.withUs;
             }
             params.searchInfo = context.searchInfo;
 
             self.channelTagService.init(params).then(function (res) {
-                console.log(res.data);
                 self.orgTagTree = res.data.tagTree;
 
                 /**设置自由标签时，有初始勾选值*/

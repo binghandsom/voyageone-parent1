@@ -147,7 +147,7 @@
             or tag.channel_id = #{orgChannelId}
         </if>
         )
-        and tag_type = '4'
+        and tag_type = #{tagTypeSelectValue}
         and tag.tag_path_name != ''
         and tag.active = 1
         and tag.tag_status = 0
