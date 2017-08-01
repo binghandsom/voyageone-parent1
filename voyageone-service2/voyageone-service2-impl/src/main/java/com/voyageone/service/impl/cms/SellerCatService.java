@@ -878,14 +878,7 @@ public class SellerCatService extends BaseService {
         CmsBtSellerCatModel cmsBtSellerCatModel = cmsBtSellerCatDao.selectByRootCatId(channelId, cartId, catIds[0]);
         if (cmsBtSellerCatModel != null){
             List<CmsBtSellerCatModel> childrens = cmsBtSellerCatModel.getChildren();
-            if (!totalPaths[0].equals(cmsBtSellerCatModel.getCatName())){
-                //catName不匹配.需要进行修改
-                //root
-                cmsBtSellerCatModel.setCatName(totalPaths[0]);
-                cmsBtSellerCatModel.setCatPath(totalPaths[0]);
-            }
             match(childrens,totalPaths,catIds,fullCatId,map,cmsBtSellerCatModel);
-
         }
     }
     private void match(List<CmsBtSellerCatModel> childrens ,String[] totalPaths ,String[] catIds,String fullCatId,Map<String,Object> map,CmsBtSellerCatModel cmsBtSellerCatModel){
