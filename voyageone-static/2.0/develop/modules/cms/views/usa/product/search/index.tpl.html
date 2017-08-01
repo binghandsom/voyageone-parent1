@@ -67,7 +67,7 @@
                                     <div class="input-group">
                                         <select multiple chosen width="'100%'" class="form-control"
                                                 ng-model="ctrl.searchInfo.usFreeTags"
-                                                ng-options="tag for tag in ctrl.searchInfo.usFreeTags">
+                                                ng-options="tag.tagPath as tag.tagPathName for tag in ctrl.tranferData.usFreeTags">
                                         </select>
                                         <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('usFreeTags')">reset</span>
                                     </div>
