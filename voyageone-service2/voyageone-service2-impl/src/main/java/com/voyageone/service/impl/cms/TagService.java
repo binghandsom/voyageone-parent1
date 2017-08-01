@@ -337,12 +337,14 @@ public class TagService extends BaseService {
     /**
      * 根据Tag-parentTagId 和 tagPathName 查询Tag
      *
+     * @param tagType     Tag类型
      * @param parentTagId Tag父节点ID
      * @param tagName     Tag->tagName
      * @return Tag
      */
-    public CmsBtTagModel getTagByParentIdAndPathName(Integer parentTagId, String tagName) {
+    public CmsBtTagModel getTagByParentIdAndName(Integer tagType, Integer parentTagId, String tagName) {
         CmsBtTagModel queryModel = new CmsBtTagModel();
+        queryModel.setTagType(tagType);
         queryModel.setParentTagId(parentTagId);
         queryModel.setTagName(tagName);
         queryModel.setActive(1);
