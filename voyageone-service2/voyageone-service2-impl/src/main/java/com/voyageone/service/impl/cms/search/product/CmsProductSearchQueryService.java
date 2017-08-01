@@ -403,11 +403,14 @@ public class CmsProductSearchQueryService extends BaseService {
 
         // 获取free tag查询条件
         if (searchValue.getFreeTags() != null && searchValue.getFreeTags().size() > 0 && searchValue.getFreeTagType() > 0) {
+            // 中国高级检索追加USA free tag
             if (searchValue.getFreeTagType() == 1) {
-                criteria = criteria.and("freeTags").in(searchValue.getFreeTags());
+                // criteria = criteria.and("freeTags").in(searchValue.getFreeTags());
+                criteria = criteria.and(new Criteria("freeTags").in(searchValue.getFreeTags()).or("usFreeTags").in(searchValue.getFreeTags()));
             } else if (searchValue.getFreeTagType() == 2) {
                 // 不在指定范围
                 criteria = criteria.and("freeTags").in(searchValue.getFreeTags()).not();
+                criteria = criteria.and("usFreeTags").in(searchValue.getFreeTags()).not();
             }
         }
 

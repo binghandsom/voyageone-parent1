@@ -20,9 +20,11 @@ import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.product.CmsBtProductBean;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.fields.cms.CmsBtTagModelTagType;
 import com.voyageone.service.impl.cms.CmsBtExportTaskService;
 import com.voyageone.service.impl.cms.CmsBtShelvesService;
 import com.voyageone.service.impl.cms.CommonPropService;
@@ -112,8 +114,18 @@ public class CmsAdvanceSearchService extends BaseViewService {
         Map<String, Object> param = new HashMap<>(2);
         param.put("channelId", userInfo.getSelChannelId());
         param.put("tagTypeSelectValue", "4");
-        masterData.put("freetagList", cmsChannelTagService.getTagInfoByChannelId(param));
-
+        //masterData.put("freetagList", cmsChannelTagService.getTagInfoByChannelId(param));
+        // 中国高级检索 追加 USA自由标签显示
+        List<CmsBtTagBean> freetagList = cmsChannelTagService.getTagInfoByChannelId(param);
+        if (freetagList == null) {
+            freetagList = Collections.emptyList();
+        }
+        param.put("tagTypeSelectValue", String.valueOf(CmsBtTagModelTagType.usa_free_tags));
+        List<CmsBtTagBean> usFreetagList = cmsChannelTagService.getTagInfoByChannelId(param);
+        if (CollectionUtils.isNotEmpty(usFreetagList)) {
+            freetagList.addAll(usFreetagList);
+        }
+        masterData.put("freetagList", freetagList);
         // 获取price type
         masterData.put("priceTypeList", TypeConfigEnums.MastType.priceType.getList(language));
 

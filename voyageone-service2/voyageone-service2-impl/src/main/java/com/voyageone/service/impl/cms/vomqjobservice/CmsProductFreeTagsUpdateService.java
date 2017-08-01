@@ -1,7 +1,6 @@
 package com.voyageone.service.impl.cms.vomqjobservice;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.util.BeanUtils;
 import com.voyageone.service.bean.cms.product.EnumProductOperationType;
 import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
 import com.voyageone.service.impl.BaseService;
@@ -15,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 
 /**

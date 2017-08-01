@@ -22,6 +22,8 @@ import com.voyageone.service.model.cms.enums.CartType;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.cms.views.channel.CmsChannelTagService;
+
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,6 +164,13 @@ public class CmsAdvSearchOtherService extends BaseViewService {
             if (!hasImgFlg) {
                 // 获取商品free tag信息
                 List<String> tagPathList = groupObj.getFreeTags();
+                // 追加美国CMS free tag
+                if (tagPathList == null) {
+                    tagPathList = Collections.emptyList();
+                }
+                if (CollectionUtils.isNotEmpty(groupObj.getUsFreeTags())) {
+                    tagPathList.addAll(groupObj.getUsFreeTags());
+                }
                 if (tagPathList != null && tagPathList.size() > 0) {
                     List<CmsBtTagBean> tagModelList = new ArrayList<>();
                     List<String> temp = new ArrayList<>();
@@ -297,6 +306,13 @@ public class CmsAdvSearchOtherService extends BaseViewService {
 
             // 获取商品free tag信息
             List<String> tagPathList = groupObj.getFreeTags();
+            // 追加美国CMS free tag
+            if (tagPathList == null) {
+                tagPathList = Collections.emptyList();
+            }
+            if (CollectionUtils.isNotEmpty(groupObj.getUsFreeTags())) {
+                tagPathList.addAll(groupObj.getUsFreeTags());
+            }
             if (tagPathList != null && tagPathList.size() > 0) {
                 List<CmsBtTagBean> tagModelList = new ArrayList<>();
                 List<String> temp = new ArrayList<>();

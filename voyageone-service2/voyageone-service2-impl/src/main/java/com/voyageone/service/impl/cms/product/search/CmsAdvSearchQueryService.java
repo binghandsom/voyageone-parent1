@@ -34,7 +34,7 @@ public class CmsAdvSearchQueryService extends BaseService {
             "common.skus.skuCode;common.skus.clientNetPriceChgFlg;common.skus.qty;common.skus.size;common.skus.clientMsrpPrice;common.skus.clientMsrpPriceChgFlg;common.fields.originalCode;common.fields.originalTitleCn;common.catPath;common.fields.productNameEn;common.fields.brand;common.fields.code;" +
             "common.fields.images1;common.fields.images2;common.fields.images3;common.fields.images4;common.fields.images5;common.fields.images6;common.fields.images7;common.fields.images8;common.fields.images9;" +
             "common.fields.quantity;common.fields.productType;common.fields.sizeType;common.fields.isMasterMain;" +
-            "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;usPlatforms;";
+            "common.fields.priceRetailSt;common.fields.priceRetailEd;common.fields.priceMsrpSt;common.fields.priceMsrpEd;common.fields.hsCodeCrop;common.fields.hsCodePrivate;usPlatforms;usFreeTags;";
     @Autowired
     private ProductService productService;
     @Autowired
@@ -535,14 +535,17 @@ public class CmsAdvSearchQueryService extends BaseService {
 
         // 获取free tag查询条件
         if (searchValue.getFreeTags() != null && searchValue.getFreeTags().size() > 0 && searchValue.getFreeTagType() > 0) {
+            // 中国高级检索处显示USA free tags, 并可以选作为检索条件
             if (searchValue.getFreeTagType() == 1) {
-                queryObject.addQuery("{'freeTags':{$in:#}}");
-                queryObject.addParameters(searchValue.getFreeTags());
+                queryObject.addQuery("{$or:[{'freeTags':{$in:#}},{'usFreeTags':{$in:#}}]}");
+                // queryObject.addQuery("{'freeTags':{$in:#}}");
+                queryObject.addParameters(searchValue.getFreeTags(), searchValue.getFreeTags());
             } else if (searchValue.getFreeTagType() == 2) {
                 // 不在指定范围
-                queryObject.addQuery("{'freeTags':{$nin:#}}");
-                queryObject.addParameters(searchValue.getFreeTags());
+                queryObject.addQuery("{'freeTags':{$nin:#},'usFreeTags':{$nin:#}}");
+                queryObject.addParameters(searchValue.getFreeTags(), searchValue.getFreeTags());
             }
+
         }
 
         // 获取翻译状态
