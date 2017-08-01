@@ -32,8 +32,7 @@ define([
                 boxImages:[],
                 imageUrl: $rootScope.imageUrl,
                 currImage:{image1:""},
-                currBoxImage:{image2:""},
-                urlkey:""
+                currBoxImage:{image2:""}
             };
 
             //平台类目
@@ -73,11 +72,6 @@ define([
                     self.imageView.boxImages = images2;
                     self.imageView.boxImageNum = _.size(images2);
                     self.imageView.currBoxImage = images2[0];
-                }
-
-                let urlkeyField = self.searchField("urlkey", self.productComm.schemaFields);
-                if (urlkeyField && urlkeyField.value) {
-                    self.imageView.urlkey = urlkeyField.value;
                 }
 
                 // SKU 是否全选
@@ -217,32 +211,30 @@ define([
         // 初始化Item -> image
         initImage(num) {
             let self = this;
-            let urlkey = self.searchField("urlkey", self.productComm.schemaFields);
-            if (!urlkey || !urlkey.value) {
-                self.alert("No urlkey!")
-                return;
-            }
             self.confirm("Make sure of setting the image count to <strong style='color:red'> " + num + "</strong>").then(confirmed => {
                 if (num <= 0) {
                     self.imageView.currImage = {};
                     self.imageView.images = [];
                     self.imageNum = 0;
                 } else {
-                    if (self.imageView.urlkey) {
-                        let count = _.size(self.imageView.images);
-                        let add = num - count;
-                        if (add != 0) {
-                            if (add > 0) {
-                                for (let i = 1; i <= add; i++) {
-                                    self.imageView.images.push({image1:self.imageView.urlkey + "-" + (count + i)});
-                                }
-                            } else {
-                                self.imageView.images.splice(add);
+                    let count = _.size(self.imageView.images);
+                    let add = num - count;
+                    if (add != 0) {
+                        if (add > 0) {
+                            let urlkey = self.searchField("urlkey", self.productComm.schemaFields);
+                            if (!urlkey || !urlkey.value) {
+                                self.alert("No urlkey!")
+                                return;
                             }
+                            for (let i = 1; i <= add; i++) {
+                                self.imageView.images.push({image1:urlkey.value + "-" + (count + i)});
+                            }
+                        } else {
+                            self.imageView.images.splice(add);
+                        }
 
-                            if (!self.imageView.currImage.image1) {
-                                self.imageView.currImage = self.imageView.images[0];
-                            }
+                        if (!self.imageView.currImage.image1) {
+                            self.imageView.currImage = self.imageView.images[0];
                         }
                     }
                 }
@@ -273,32 +265,30 @@ define([
         // 初始化Box -> image
         initBoxImage(num) {
             let self = this;
-            let urlkey = self.searchField("urlkey", self.productComm.schemaFields);
-            if (!urlkey || !urlkey.value) {
-                self.alert("No urlkey!")
-                return;
-            }
             self.confirm("Make sure of setting the image count to <strong style='color:red'> " + num + "</strong>").then(confirmed => {
                 if (num <= 0) {
                     self.imageView.currBoxImage = {};
                     self.imageView.boxImages = [];
                     self.boxImageNum = 0;
                 } else {
-                    if (self.imageView.urlkey) {
-                        let count = _.size(self.imageView.boxImages);
-                        let add = num - count;
-                        if (add != 0) {
-                            if (add > 0) {
-                                for (let i = 1; i <= add; i++) {
-                                    self.imageView.boxImages.push({image2:self.imageView.urlkey + "-2" + (count + i)});
-                                }
-                            } else {
-                                self.imageView.boxImages.splice(add);
+                    let count = _.size(self.imageView.boxImages);
+                    let add = num - count;
+                    if (add != 0) {
+                        if (add > 0) {
+                            let urlkey = self.searchField("urlkey", self.productComm.schemaFields);
+                            if (!urlkey || !urlkey.value) {
+                                self.alert("No urlkey!")
+                                return;
                             }
+                            for (let i = 1; i <= add; i++) {
+                                self.imageView.boxImages.push({image2:urlkey.value + "-2" + (count + i)});
+                            }
+                        } else {
+                            self.imageView.boxImages.splice(add);
+                        }
 
-                            if (!self.imageView.currBoxImage.image2) {
-                                self.imageView.currBoxImage = self.imageView.boxImages[0];
-                            }
+                        if (!self.imageView.currBoxImage.image2) {
+                            self.imageView.currBoxImage = self.imageView.boxImages[0];
                         }
                     }
                 }
