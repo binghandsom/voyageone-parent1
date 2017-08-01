@@ -225,11 +225,11 @@ public class TypeChannels {
      * 在表中, add_name1里存放的是三位数字
      * 第一位是display: 用来判断页面是否展示出来
      * 第二位是approve: 用来判断这个渠道是否允许approve这个sku到平台上去售卖
-     * 第三位是order: 代表的是这个渠道是否会存在有订单
+     * 第三位是order: 代表的是美国渠道
      * 一般来说:
      * 主数据的cart id是0, add_name1是100 (只展示)
      * 平台数据cart id不固定, add_name1是111 (展示, 允许approve到平台售卖, 存在订单)
-     * 线下数据cart id是22, add_name1是001 (只存在订单)
+     * 线下数据cart id是22, add_name1是001 (美国)
      * ------------------------------------------------------------------------------
      *
      * @param channel_id channel id
