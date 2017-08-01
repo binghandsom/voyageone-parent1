@@ -231,7 +231,7 @@ define([
         // 统一设置SKU属性
         setSkuProperty(sku, property, priceFlag) {
             let self = this;
-            if (!sku) {
+            if (!sku && self.setting[property]) {
                 angular.forEach(self.feed.skus, function (item) {
                     item[property] = self.setting[property];
                     item['priceClientRetail'] = item['priceNet'];
