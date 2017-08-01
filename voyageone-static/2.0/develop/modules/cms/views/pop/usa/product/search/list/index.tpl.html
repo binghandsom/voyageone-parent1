@@ -3,16 +3,18 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="fa fa-pencil"></i>&nbsp;Update Price</h5>
+        <h5 class="modal-title"><i class="fa fa-pencil"></i>&nbsp;List/Delist</h5>
     </div>
     <div class="modal-body">
        <div class="container-fluid">
            <div class="row">
                <div class="col-md-12">
-                   <p class="well question">Make sure of listing these products to <label class="label label-primary">{{ctrl.usPlatformName}}</label>&emsp;?</p>
+                   <p class="well question">Make sure of
+                       {{ctrl.context.activeStatus == 'list' ? 'listing' : 'delisting'}}
+                       these products to <label class="label label-primary">{{ctrl.usPlatformName}}</label>&emsp;?</p>
                </div>
            </div>
-           <div class="row">
+           <div class="row" ng-if="ctrl.context.activeStatus == 'list'">
                <div class="col-md-4">
                    <label>Days Old Before Sharing</label>
                </div>
