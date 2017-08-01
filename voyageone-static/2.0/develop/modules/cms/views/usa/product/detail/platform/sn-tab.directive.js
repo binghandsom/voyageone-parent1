@@ -340,12 +340,15 @@ define([
          * 选择自由标签
          */
         setFreeTag () {
+            //orgChkStsMap
             let self = this;
             let params = {
-                orgFlg: '0',
+                orgFlg: '1',
                 selTagType: '6',
-                selAllFlg: 0
+                selAllFlg: 0,
+                orgChkStsMap:self.freeTags
             };
+
             self.popups.openUsFreeTag(params).then(res => {
                 // console.log(res);
                 self.freeTagList = res.selectdTagList == null ? [] : res.selectdTagList;
