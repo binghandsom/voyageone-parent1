@@ -477,27 +477,42 @@ vpagination button.btn-default {
 }
 
 /** nav-bar */
-.nav-bar{
-    min-width: 200px;
+.nav-bar {
+    min-width: 170px;
     background-color: #fff;
     border: 1px solid #ededed;
     box-shadow: 2px 2px 2px #ededed;
     border-radius: 6px;
     position: fixed;
     top: 40%;
-    right: -170px;
+    right: 0px;
     z-index: 999;
 }
+
+.nav-slide {
+    position: relative;
+    top: 45%;
+    margin-left: 3px;
+}
+
+.nav-container{
+    display: flex;
+}
+
+.nav-item{
+    flex-grow: 1;
+}
+
 /**jquery-autocomplete*/
-.autocomplete-suggestions{
+.autocomplete-suggestions {
     max-width: 400px;
     border-radius: 4px;
-    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.075);
-    box-shadow: 0 1px 2px rgba(0,0,0,.075);
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, .075);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .075);
     padding-left: 0;
 }
 
-.autocomplete-suggestions .autocomplete-suggestion{
+.autocomplete-suggestions .autocomplete-suggestion {
     position: relative;
     display: block;
     padding: 10px 15px;

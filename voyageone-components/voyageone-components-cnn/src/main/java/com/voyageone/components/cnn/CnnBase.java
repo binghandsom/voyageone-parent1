@@ -28,7 +28,9 @@ public abstract class CnnBase extends ComponentBase {
         headers.put("access_token", SN_APP_TOKEN);
         headers.put("access_timestamp", accessTimestamp);
         headers.put("access_sign", accessSign);
+        logger.info(request.getClass().getSimpleName() + " request info:" + request);
         String jsonRes = reqApi(shop, apiAction, request.toString(), ComponentConstants.C_MAX_API_ERROR, ComponentConstants.C_CONNECT_TIMEOUT, headers);
+        logger.info(request.getClass().getSimpleName() + " response info:" + jsonRes);
         return request.getResponse(jsonRes);
     }
 
