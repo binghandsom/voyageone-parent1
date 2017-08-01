@@ -687,7 +687,7 @@ define([
                         "templateUrl": "views/pop/usa/feed/search/index.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/usa/feed/search/index.ctl",
                         "controller": 'batchApproveController as ctrl',
-                        "size": 'md'
+                        "size": 'lg'
                     }
                 },
                 detail: {

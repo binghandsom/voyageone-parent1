@@ -50,7 +50,7 @@ define([
                 downToLast: 'downToLast'
             };
             self.pageOption = {
-                curr: 1, total: 0, size: 1, fetch: function () {
+                curr: 1, total: 0, size: 10, fetch: function () {
                     self.search();
                 }
             };
