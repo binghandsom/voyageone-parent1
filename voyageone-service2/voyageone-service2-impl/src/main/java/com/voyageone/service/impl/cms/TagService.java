@@ -8,19 +8,23 @@ import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.dao.cms.CmsBtTagJmModuleExtensionDao;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtTagDaoExtCamel;
+import com.voyageone.service.fields.cms.CmsBtTagModelTagType;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtTagJmModuleExtensionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.service.model.util.MapModel;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -119,8 +123,20 @@ public class TagService extends BaseService {
         //标签类型
         String tagType = (String) params.get("tagTypeSelectValue");
         if ("4".equals(tagType)) {
-            // 查询自由标签
-            return cmsBtTagDaoExt.selectListByChannelIdAndTagType(params);
+            List<CmsBtTagBean> tagBeans = cmsBtTagDaoExt.selectListByChannelIdAndTagType(params);
+            Integer orgFlg = (Integer) params.get("orgFlg"); // 1：高级检索搜索条件中选择Tag
+            Integer withUs = (Integer) params.get("withUs"); // 1：中国高级检索Tag检索条件中显示USA Free tags
+            if (Objects.equals(orgFlg, Integer.valueOf(1)) && Objects.equals(withUs, Integer.valueOf(1))) {
+                params.put("tagTypeSelectValue", CmsBtTagModelTagType.usa_free_tags);
+                List<CmsBtTagBean> usTagBeans = cmsBtTagDaoExt.selectListByChannelIdAndTagType(params);
+                if (CollectionUtils.isNotEmpty(usTagBeans)) {
+                    if (tagBeans == null) {
+                        tagBeans = Collections.emptyList();
+                    }
+                    tagBeans.addAll(usTagBeans);
+                }
+            }
+            return tagBeans;
         } else if ("2".equals(tagType)) {
             // 查询Promotion标签
             List<CmsBtTagBean> categoryList = null;
@@ -350,4 +366,5 @@ public class TagService extends BaseService {
         queryModel.setActive(1);
         return cmsBtTagDao.selectOne(queryModel);
     }
+
 }
