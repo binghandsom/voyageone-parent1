@@ -23,10 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Edward, 15/12/2
@@ -117,9 +114,17 @@ public class CmsMenuController extends CmsController {
      * 返回categoryTypeList
      */
     @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CATE_TYPE)
-    public AjaxResponse getPlatformType() {
-        // 返回用户信息
-        return success(menuService.getPlatformTypeList(getUser().getSelChannelId(), getLang()));
+    public AjaxResponse getPlatformType(@RequestBody Map<String, Object> params) {
+
+        if(params.get("isUsa") != null && Objects.equals(params.get("isUsa"), true))
+        {
+            // 返回用户信息
+            return success(menuService.getUsPlatformTypeList(getUser().getSelChannelId(), getLang()));
+
+        }else{
+            // 返回用户信息
+            return success(menuService.getPlatformTypeList(getUser().getSelChannelId(), getLang()));
+        }
     }
 
     /**
