@@ -8,7 +8,6 @@ const remember = require('gulp-remember');
 const browserSync = require('browser-sync');
 const _ = require('lodash');
 const through = require('through2');
-const bsOption = require('../config/browser-sync');
 const paths = require('./env/path');
 
 const WORK_DIR = process.cwd();
@@ -62,6 +61,8 @@ gulp.task('dev:common:compile', () => gulp.src(common)
 );
 
 gulp.task('default', ['dev:common:compile', 'dev:compile'], function () {
+
+    const bsOption = require('../config/browser-sync');
 
     // 给 bs 配置增加从内存获取代码的中间件
     bsOption.middleware.push(function (req, res, next) {
