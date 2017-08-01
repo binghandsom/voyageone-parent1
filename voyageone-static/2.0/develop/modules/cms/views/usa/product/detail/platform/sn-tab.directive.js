@@ -301,7 +301,7 @@ define([
         // SKU可售选择
         selAllSku() {
             let self = this;
-            _.each(self.platform.skus, sku => {
+            _.each(self.platform.platform.skus, sku => {
                 sku.isSale = self.selAllSkuFlag;
             });
         }
