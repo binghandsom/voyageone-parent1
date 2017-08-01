@@ -1,3 +1,10 @@
-<nav class="nav-bar">
-    <div ng-transclude></div>
+<nav class="nav-bar nav-container">
+    <div class="nav-item cur-p" style="background: #ededed;" ng-click="blink()">
+        <div class="nav-slide">
+            <span><i class="glyphicon glyphicon-chevron-{{direction}}"></i></span>
+        </div>
+    </div>
+    <div class="nav-item" ng-transclude></div>
+
 </nav>
+
