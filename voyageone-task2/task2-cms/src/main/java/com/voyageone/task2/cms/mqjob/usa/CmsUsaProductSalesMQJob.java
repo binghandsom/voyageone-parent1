@@ -19,6 +19,7 @@ import java.util.List;
 
 /**
  * Created by dell on 2017/7/31.
+ * 接受美国销量数据
  */
 @Service
 @RabbitListener()
