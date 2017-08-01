@@ -1378,8 +1378,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         // add by desmond 2016/10/28 start
         // 以前的更新方法有错误，P27.skus里面追加了一个字段sizeNick之后，居然更新的时候会把它的值冲掉(因为没有手动往newSku里面设置)
         JongoUpdate updateProductQuery = new JongoUpdate();
-        updateProductQuery.setQuery("{\"common.fields.code\": #}");
-        updateProductQuery.setQueryParameters(product.getCommon().getFields().getCode());
+        updateProductQuery.setQuery("{\"prodId\": #}");
+        updateProductQuery.setQueryParameters(product.getProdId());
 
         updateProductQuery.setUpdate("{$set:{" +
 //                "\"platforms.P"+ CART_ID +".skus\": #, " +     // skus在后面单独更新
@@ -2320,8 +2320,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         String code = product.getCommon().getFields().getCode();
 
         JongoUpdate updateProductQuery = new JongoUpdate();
-        updateProductQuery.setQuery("{\"common.fields.code\": #}");
-        updateProductQuery.setQueryParameters(code);
+        updateProductQuery.setQuery("{\"prodId\": #}");
+        updateProductQuery.setQueryParameters(product.getProdId());
 
         // 上到聚美商城是默认在售的，所以只要成功上传到聚美商城，就把状态回写为OnSale
         updateProductQuery.setUpdate("{$set:{" +
