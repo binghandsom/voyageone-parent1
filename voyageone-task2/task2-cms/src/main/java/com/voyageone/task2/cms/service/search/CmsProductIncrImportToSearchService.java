@@ -144,10 +144,10 @@ public class CmsProductIncrImportToSearchService extends BaseListenService {
             BsonTimestamp ts = (BsonTimestamp) nextOp.get("ts");
 //            lastTimeStamp.set(new BSONTimestamp(ts.getTime(), ts.getInc()));
             if (this.shardId.get() != null) {
-                $info("正在处理shard(" + this.shardId.get() + ") : " + nextOp.toJson() + "  ts:" + ts.toString());
+                $debug("正在处理shard(" + this.shardId.get() + ") : " + nextOp.toJson() + "  ts:" + ts.toString());
                 shardLastTimestampMap.put(this.shardId.get(), new BSONTimestamp(ts.getTime(), ts.getInc()));
             } else {
-                $info("正在处理非shard : " + nextOp.toJson() + "  ts:" + ts.toString());
+                $debug("正在处理非shard : " + nextOp.toJson() + "  ts:" + ts.toString());
                 shardLastTimestampMap.put(NON_SHARD, new BSONTimestamp(ts.getTime(), ts.getInc()));
             }
             handleOp(nextOp);

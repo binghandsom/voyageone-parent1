@@ -88,6 +88,14 @@ class CmsProductIncrImportToCmsSearchService extends CmsBaseIncrImportSearchSubS
 
         SolrUpdateBean update;
         if (objectDoc.containsKey("$set")) {
+            Document object = (Document)objectDoc.get("$set");
+            if(object.size() == 2){
+                if(object.toJson().matches(".*platforms.P[0-9]{1,2}.skus.[0-9]{1,2}.qty.*platforms.P[0-9]{1,2}.quantity.*")){
+                    $debug("平台库存变更不同步solr  " + object.toJson());
+                    return true;
+                }
+            }
+
             Document object2Doc = ((Document) document.get("o2"));
             if (object2Doc != null) {
                 Object idObject = object2Doc.get("_id");
