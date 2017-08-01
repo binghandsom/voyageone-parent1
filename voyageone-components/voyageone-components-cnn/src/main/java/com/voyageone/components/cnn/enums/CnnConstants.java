@@ -10,6 +10,8 @@ public class CnnConstants {
         // 1 PRODUCT
         String PRODUCT_ADD         = "/product/add";             // 添加商品(商品上新)
         String PRODUCT_UPDATE      = "/product/update";          // 更新商品信息
+        String PRODUCT_DELETE      = "/product/delete/group/{numIId}"; // 删除商品
+        String PRODUCT_DELETE_CODE  = "/product/delete/product/{numIId}/{prodCode}"; // 删除CODE
 
         // 2 WARE
         String PRODUCT_ADD2WARE    = "/product/addToWare";       // 商品上架

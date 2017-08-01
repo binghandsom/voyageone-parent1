@@ -7,10 +7,13 @@ import com.voyageone.common.util.MD5;
 import com.voyageone.components.ComponentBase;
 import com.voyageone.components.ComponentConstants;
 import com.voyageone.components.cnn.request.AbstractCnnRequest;
+import com.voyageone.components.cnn.request.CnnUrlRequest;
 import com.voyageone.components.cnn.response.AbstractCnnResponse;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * 新独立域名调用基础类
@@ -21,7 +24,8 @@ public abstract class CnnBase extends ComponentBase {
 
     private static final String SN_APP_TOKEN = "mVaazc3R85qAU1ZTO3ezxVNtZNbIh4uU4QRtXaR04"; // 暂时写死吧，之后看看是不是放在shop的token_url字段里
 
-    protected <T extends AbstractCnnResponse> T reqApi(ShopBean shop, String apiAction, AbstractCnnRequest<T> request) throws Exception {
+    protected <T extends AbstractCnnResponse> T reqApi(ShopBean shop, AbstractCnnRequest<T> request) throws Exception {
+        String apiAction = request.getUrl();
         String accessTimestamp = Long.toString(System.currentTimeMillis());
         String accessSign = MD5.getMd5_16(SN_APP_TOKEN + accessTimestamp);
         Map<String, String> headers = new HashMap<>();
@@ -29,7 +33,18 @@ public abstract class CnnBase extends ComponentBase {
         headers.put("access_timestamp", accessTimestamp);
         headers.put("access_sign", accessSign);
         logger.info(request.getClass().getSimpleName() + " request info:" + request);
-        String jsonRes = reqApi(shop, apiAction, request.toString(), ComponentConstants.C_MAX_API_ERROR, ComponentConstants.C_CONNECT_TIMEOUT, headers);
+        String jsonRes;
+        if (request instanceof CnnUrlRequest) {
+            List<String> params = ((CnnUrlRequest) request).getParams();
+            for (String param : params) {
+//            Pattern pattern = Pattern.compile("[{][^/]*[}]");
+                Pattern pattern = Pattern.compile("\\{[^/]*\\}");
+                apiAction = pattern.matcher(apiAction).replaceFirst(param);
+            }
+            jsonRes = reqApi(shop, apiAction, null, ComponentConstants.C_MAX_API_ERROR, ComponentConstants.C_CONNECT_TIMEOUT, headers);
+        } else {
+            jsonRes = reqApi(shop, apiAction, request.toString(), ComponentConstants.C_MAX_API_ERROR, ComponentConstants.C_CONNECT_TIMEOUT, headers);
+        }
         logger.info(request.getClass().getSimpleName() + " response info:" + jsonRes);
         return request.getResponse(jsonRes);
     }
