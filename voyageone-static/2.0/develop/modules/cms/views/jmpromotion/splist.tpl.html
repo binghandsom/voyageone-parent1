@@ -162,7 +162,7 @@
 					<td class="text-center mfb-xxt">{{promotion.id}}</td>
 					<td class="text-center mfb-xxt">
 						<a href="javascript:void(0)" ng-click="openProdImagedetail(promotion)" ng-if="promotion.entryImg">
-							<img src="{{promotion.entryImg}}" class="thumb-sm-search m-r ng-isolate-scope" alt="暂无图片"/>
+							<img ng-src="{{promotion.entryImg}}" class="thumb-sm-search m-r ng-isolate-scope" alt="暂无图片"/>
 						</a>
 					</td>
 					<td class="text-left yellowLink mfb-xxt"><a href="#/jmpromotion/detail/{{promotion.promId}}/{{promotion.id}}" target="_blank">{{promotion.name}}</a></td>
