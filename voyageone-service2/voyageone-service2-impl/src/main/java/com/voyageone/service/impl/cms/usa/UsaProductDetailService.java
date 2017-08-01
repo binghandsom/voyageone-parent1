@@ -444,7 +444,6 @@ public class UsaProductDetailService extends BaseService {
         if (paraMap != null) {
             String selAll = (String) paraMap.get("selAll");
             List<String> codeList = (List<String>) paraMap.get("codeList");
-            //Integer cartId = (Integer) paraMap.get("cartId");
             Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
             mqMap.setCartId(cartId);
             HashMap<String, Object> params = new HashMap<>();
@@ -452,8 +451,6 @@ public class UsaProductDetailService extends BaseService {
             String changedPriceType = (String) paraMap.get("changedPriceType");
             String basePriceType = (String) paraMap.get("basePriceType");
             String optionType = (String) paraMap.get("optionType");
-            // Double value = (Double) paraMap.get("value");
-            //Double value = Double.parseDouble((String) paraMap.get("value"));
             String value = (String) paraMap.get("value");
             //"1":取整,"0":不取整
             String flag = (String) paraMap.get("flag");
@@ -505,15 +502,12 @@ public class UsaProductDetailService extends BaseService {
     public String listOrDelist(Map<String, Object> paraMap, String channelId, String userName) {
         CmsBtProductUpdateListDelistStatusMQMessageBody mqMap = new CmsBtProductUpdateListDelistStatusMQMessageBody();
         if (paraMap != null) {
-            //boolean selAll = (boolean) paraMap.get("selAll");
             String selAll = (String) paraMap.get("selAll");
             List<String> codeList = (List<String>) paraMap.get("codeList");
-            //Integer cartId = (Integer) paraMap.get("cartId");
             Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
             mqMap.setCartId(cartId);
             String activeStatus = (String) paraMap.get("activeStatus");
             mqMap.setActiveStatus(activeStatus);
-            //Integer days = (Integer) paraMap.get("days");
             Integer days = Integer.parseInt((String) paraMap.get("days"));
             mqMap.setDays(days);
             if ("true".equals(selAll)) {

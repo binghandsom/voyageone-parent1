@@ -19,6 +19,7 @@ import java.util.List;
 
 /**
  * Created by dell on 2017/7/31.
+ * 接受美国销量数据
  */
 @Service
 @RabbitListener()
@@ -79,7 +80,6 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
             }
         }
     }
-
     private String parseTime(Long time) {
         //美国西海岸时间,减八个小时
         Date date = new Date(time);

@@ -30,8 +30,8 @@ public class CmsBtProductUpdatePriceMQJobTest {
         map.setCartId(8);
         map.setProductCodes(Collections.singletonList("609973-010"));
         Map<String, Object> paraMap = new HashMap<>();
-        paraMap.put("changedPriceType","clientMsrpPrice");
-        paraMap.put("basePriceType","clientMsrpPrice");
+        paraMap.put("changedPriceType","clientRetailPrice");
+        paraMap.put("basePriceType","clientRetailPrice");
         paraMap.put("optionType","/");
         paraMap.put("value","100");
         paraMap.put("flag","1");

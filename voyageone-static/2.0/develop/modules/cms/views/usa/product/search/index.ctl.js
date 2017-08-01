@@ -55,6 +55,7 @@ define([
                     {status:'InStock', display:'Delist'}
                 ]
             };
+            self.tranferData = {};
             self.customColumns = {
                 selCommonProps:[],
                 selPlatformAttributes:[],
@@ -383,6 +384,7 @@ define([
                 tagType: '4',
                 orgChkStsMap:self.searchInfo.usFreeTags
             }).then(res => {
+                self.tranferData.usFreeTags = res.selectdTagList;
                 self.searchInfo.usFreeTags = _.pluck(res.selectdTagList,'tagPath');
             });
         }
