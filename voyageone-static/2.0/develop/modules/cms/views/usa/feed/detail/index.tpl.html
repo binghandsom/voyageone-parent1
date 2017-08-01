@@ -324,7 +324,7 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title vo_unreqfield">URL Key</label>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.urlkey" ng-disabled="ctrl.feed.urlkey">
+                                            <input type="text" class="form-control" ng-model="ctrl.feed.urlkey" ng-disabled="ctrl.feed.hasUrlkey">
                                         </div>
                                     </div>
                                 </div>
@@ -608,7 +608,7 @@
                                                             <div class="row">
                                                                 <label class="col-md-6 query-title">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
-                                                                    <input type="text" class="form-control" ng-model="ctrl.feed.boxImageNum" ng-keyup="ctrl.initBoxImage(ctrl.feed.boxImageNum)">
+                                                                    <input type="text" class="form-control" ng-model="ctrl.feed.boxImageNum" ng-enter="ctrl.initBoxImage(ctrl.feed.boxImageNum)">
                                                                 </div>
                                                             </div>
                                                         </div>

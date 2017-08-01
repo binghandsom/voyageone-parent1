@@ -447,12 +447,12 @@ define([
 
         initImage(num) {
             let self = this;
-            if (num <= 0) {
-                self.feed.image = [];
-                self.feed.imageNum = 0;
-                self.currentFeedImage = "";
-            } else {
-                if (self.feed.urlkey) {
+            self.confirm("Make sure of setting the image count to <strong style='color:red'> " + num + "</strong>").then(confirmed => {
+                if (num <= 0) {
+                    self.feed.image = [];
+                    self.feed.imageNum = 0;
+                    self.currentFeedImage = "";
+                } else {
                     if (!self.feed.image) {
                         self.feed.image = [];
                     }
@@ -460,8 +460,12 @@ define([
                     let add = num - count;
                     if (add != 0) {
                         if (add > 0) {
-                            for (let i = 1; i <= add; i++) {
-                                self.feed.image.push(self.imageUrl + self.feed.urlkey + "-" + (count + i));
+                            if (self.feed.urlkey) {
+                                for (let i = 1; i <= add; i++) {
+                                    self.feed.image.push(self.imageUrl + self.feed.urlkey + "-" + (count + i));
+                                }
+                            } else {
+                                self.alert("No urlkey!");
                             }
                         } else {
                             self.feed.image.splice(add);
@@ -472,7 +476,7 @@ define([
                         }
                     }
                 }
-            }
+            });
         }
 
         addImage() {
@@ -502,12 +506,12 @@ define([
 
         initBoxImage(num) {
             let self = this;
-            if (!num || num <= 0) {
-                self.feed.attribute.boximages = [];
-                self.feed.boxImageNum = 0;
-                self.currentBoxImage = "";
-            } else {
-                if (!!self.feed.urlkey) {
+            self.confirm("Make sure of setting the image count to <strong style='color:red'> " + num + "</strong>").then(confirmed => {
+                if (!num || num <= 0) {
+                    self.feed.attribute.boximages = [];
+                    self.feed.boxImageNum = 0;
+                    self.currentBoxImage = "";
+                } else {
                     if (!self.feed.attribute.boximages) {
                         self.feed.attribute.boximages = [];
                     }
@@ -515,8 +519,12 @@ define([
                     let add = num - count;
                     if (add != 0) {
                         if (add > 0) {
-                            for (let i = 1; i <= add; i++) {
-                                self.feed.attribute.boximages.push(self.imageUrl + self.feed.urlkey + "-2" + (count + i));
+                            if (self.feed.urlkey) {
+                                for (let i = 1; i <= add; i++) {
+                                    self.feed.attribute.boximages.push(self.imageUrl + self.feed.urlkey + "-2" + (count + i));
+                                }
+                            } else {
+                                self.alert("No urlkey!");
                             }
                         } else {
                             self.feed.attribute.boximages.splice(add);
@@ -527,7 +535,7 @@ define([
                         }
                     }
                 }
-            }
+            });
         }
 
         addBoxImage() {
