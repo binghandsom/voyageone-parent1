@@ -1918,7 +1918,18 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 if (!StringUtils.isEmpty(sku.getWeightCalc())) {
                     commonSku.setWeight(NumberUtils.toDouble(sku.getWeightCalc()));
                     commonSku.setWeightUnit(sku.getWeightOrgUnit());
+                }else if(product.getChannelId().equals("001") && !StringUtils.isEmpty(sku.getWeightOrg())){
+                    if("lb".equalsIgnoreCase(sku.getWeightOrgUnit())){
+                        commonSku.setWeight(NumberUtils.toDouble(sku.getWeightOrg()));
+                        commonSku.setWeightUnit(sku.getWeightOrgUnit());
+                    }else if("kg".equalsIgnoreCase(sku.getWeightOrgUnit())){
+                        Double weight = NumberUtils.toDouble(sku.getWeightOrg());
+                        BigDecimal b = new BigDecimal(weight * 2.204623);
+                        commonSku.setWeight(b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+                        commonSku.setWeightUnit("lb");
+                    }
                 }
+
 
                 commonSkuList.add(commonSku);
             }
