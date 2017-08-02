@@ -161,13 +161,13 @@
                         <div class="col-md-6" ng-if="ctrl.taskBean.config.beat_template && ctrl.taskBean.testPrice">
                             <span translate="TXT_TEMPLATE"></span>
                             <a href="" class="thumbnail">
-                                <img src="{{ctrl.taskBean.testImageUrl}}" alt="还未生成图片">
+                                <img ng-src="{{ctrl.taskBean.testImageUrl}}" alt="还未生成图片">
                             </a>
                         </div>
                         <div class="col-md-6" ng-if="ctrl.taskBean.config.revert_template">
                             <span translate="TXT_REVERT_TEMPLATE"></span>
                             <a href="" class="thumbnail">
-                                <img src="{{ctrl.taskBean.selectTemplate}}" alt="还未生成图片">
+                                <img ng-src="{{ctrl.taskBean.selectTemplate}}" alt="还未生成图片">
                             </a>
                         </div>
                     </div>
@@ -175,13 +175,13 @@
                         <div class="col-md-6" ng-if="ctrl.taskBean.config.beat_vtemplate && ctrl.taskBean.testPrice">
                             <span translate="TXT_VERTICAL_TEMPLATE"></span>
                             <a href="" class="thumbnail">
-                                <img src="{{ctrl.taskBean.testVteImageUrl}}" alt="还未生成图片">
+                                <img ng-src="{{ctrl.taskBean.testVteImageUrl}}" alt="还未生成图片">
                             </a>
                         </div>
                         <div class="col-md-6" ng-if="ctrl.taskBean.config.revert_vtemplate">
                             <span translate="TXT_VERTICAL_REVERT_TEMPLATE"></span>
                             <a href="" class="thumbnail">
-                                <img src="{{ctrl.taskBean.selectVteTemplateUrl}}" alt="还未生成图片">
+                                <img ng-src="{{ctrl.taskBean.selectVteTemplateUrl}}" alt="还未生成图片">
                             </a>
                         </div>
                     </div>

@@ -1,3 +1,7 @@
 <h3 style="font-size: 1.17em;font-weight: bold">HTTP status %s %s</h3>
+<ul>
+    <li>image name: %s</li>
+    <li>stream available: %s</li>
+</ul>
 <p>
 <pre>%s</pre>

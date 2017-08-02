@@ -145,7 +145,7 @@
 							<tbody>
 							<tr ng-repeat="info in ctrl.productList">
 								<td class="text-left">
-									<img ng-if="info.imageUrl" src="{{::info.imageUrl}}"  class="thumb-sm-search cur-p" ng-click="ctrl.bigImg(info.imageUrl)">
+									<img ng-if="info.imageUrl" ng-src="{{::info.imageUrl}}"  class="thumb-sm-search cur-p" ng-click="ctrl.bigImg(info.imageUrl)">
 								</td>
 								<td class="text-left">{{::info.productCode}}</td>
 								<td class="text-left">
