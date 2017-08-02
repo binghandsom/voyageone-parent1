@@ -135,6 +135,13 @@ public class ImageServer {
      * 替换 {@code imageUrl} 的域名，指向 Image Server，并代理下载
      */
     public static InputStream proxyDownloadImage(String imageUrl, String channel) throws IOException {
+
+        // 如果传入的地址符合 ImageServer 的请求地址，那么就不需要替换并代理了
+        // 所以直接处理下载
+        if (imageUrl.startsWith(imageServerUrl(channel))) {
+            return new URL(imageUrl).openStream();
+        }
+
         // use                https?://.+?:?\d*?/(.+)$
         // match              http://xxx.xxx.xxx/is/image.....
         // get groupValue(1)  is/image.....
