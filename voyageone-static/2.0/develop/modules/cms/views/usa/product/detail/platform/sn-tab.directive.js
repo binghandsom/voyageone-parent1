@@ -350,6 +350,17 @@ define([
             });
         }
 
+        // Edit Group
+        editGroup() {
+            let self = this;
+            let ctx = {
+
+            };
+            self.popups.openUsEditGroup({modelCodes:self.mastData.images}).then(res => {
+
+            });
+        }
+
         /**
          * 选择自由标签
          */
