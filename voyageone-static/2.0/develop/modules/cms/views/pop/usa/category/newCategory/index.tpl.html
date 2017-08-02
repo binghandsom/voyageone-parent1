@@ -2,34 +2,27 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="fa fa-codepen" translate="TXT_MSG_TAG_EDITOR"></i></h5>
+        <h5 class="modal-title"><i class="fa fa-codepen"></i>&nbsp;increase category</h5>
     </div>
     <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal" name="storeCategoryForm" novalidate>
+        <div class="row form-horizontal">
+            
             <div class="form-group">
-                <label class="col-sm-3 control-label" translate="TXT_MSG_TAG_PATH"></label>
-                <div class="col-sm-6">
-                    <span class="control-label">{{ctrl.catPath}}</span>
+                <div class="row">
+                    <label class="col-md-8">
+                        <h4 class="text-warnings">The Shop Category Added:</h4>
+                    </label>
                 </div>
             </div>
+            
             <div class="form-group">
-                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_MSG_TAG_NAME"></label>
-                <div class="col-sm-6">
-                    <input class="form-control" ng-model="ctrl.catName" required name="categoryName" maxlength="50">
+                <label class="pull-left text-left"><strong>{{ctrl.preCatPath}}</strong></label>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" ng-model="ctrl.result.catName">
                 </div>
             </div>
-            <div class="form-group">
-                <div class="col-sm-6 col-sm-offset-3">
-                    <vo-message target="storeCategoryForm.categoryName"></vo-message>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label" translate="urlKey"></label>
-                <div class="col-sm-6">
-                    <input class="form-control" ng-model="ctrl.urlKey" name="urlKey" maxlength="255">
-                </div>
-            </div>
-        </form>
+            
+        </div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove" translate="BTN_CANCEL"></i></button>
