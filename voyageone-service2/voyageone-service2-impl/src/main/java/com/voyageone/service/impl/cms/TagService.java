@@ -165,8 +165,9 @@ public class TagService extends BaseService {
             Comparator<CmsBtTagBean> comparator = (cl1, cl2) -> cl1.getModified().compareTo(cl2.getModified());
             categoryList.sort(comparator.reversed());
             return categoryList;
+        } else {
+            return cmsBtTagDaoExt.selectListByChannelIdAndTagType(params);
         }
-        return new ArrayList<>(0);
     }
 
     public List<CmsBtTagModel> getListByChannelIdAndParentTagIdAndTypeValue(String channelId, String parentTagId, String tagTypeValue) {
@@ -365,6 +366,11 @@ public class TagService extends BaseService {
         queryModel.setTagName(tagName);
         queryModel.setActive(1);
         return cmsBtTagDao.selectOne(queryModel);
+    }
+
+
+    public int replaceChildrenPathName(Integer tagType, String srcPathName, String newPathName) {
+        return cmsBtTagDaoExtCamel.replaceChildrenPathName(tagType, srcPathName, newPathName);
     }
 
 }

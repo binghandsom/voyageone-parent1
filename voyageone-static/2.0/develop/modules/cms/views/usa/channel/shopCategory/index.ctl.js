@@ -46,7 +46,7 @@ define([
         popEditCategory(model,$event){
             let self = this;
 
-            self.popups.openEditCategory().then(res => {
+            self.popups.openEditCategory(model).then(res => {
 
             });
 

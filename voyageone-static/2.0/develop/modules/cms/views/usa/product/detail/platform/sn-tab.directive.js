@@ -81,6 +81,20 @@ define([
                     if (!isSale) {
                         flag = false;
                     }
+                    // 去productComm.skus匹配重量和尺码等属性
+                    let commonSku = _.find(self.productComm.skus, commSku => {
+                        return sku.skuCode == commSku.skuCode;
+                    });
+                    if (commonSku) {
+                        let commAttr = {
+                            barcode:commonSku.barcode,
+                            clientSize:commonSku.clientSize,
+                            size:commonSku.size,
+                            weight:commonSku.weight,
+                            weightUnit:commonSku.weightUnit
+                        };
+                        _.extend(sku, commAttr);
+                    }
                 });
 
                 self.selAllSkuFlag = flag;
@@ -333,6 +347,17 @@ define([
                 model.value = res.model;
                 self.productComm.fields.model = res.model;
                 self.mastData.images = res.data;
+            });
+        }
+
+        // Edit Group
+        editGroup() {
+            let self = this;
+            let ctx = {
+
+            };
+            self.popups.openUsEditGroup({modelCodes:self.mastData.images}).then(res => {
+
             });
         }
 

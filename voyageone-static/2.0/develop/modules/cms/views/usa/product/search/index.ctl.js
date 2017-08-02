@@ -14,6 +14,7 @@ define([
         constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2,notify,$routeParams) {
             let self = this;
 
+            self.accordionOpen = false;
             self.popups = popups;
             self.srInstance = new selectRowsFactory();
             self.$parse = $parse;
@@ -111,6 +112,7 @@ define([
                     // 品牌列表
                     self.masterData.brandList = res.data.brandList;
                     self.masterData.freeTags = {};
+
                     _.each(res.data.freeTags,freeTag => {
                         self.masterData.freeTags[freeTag.tagPath] = freeTag;
                     });
@@ -161,7 +163,7 @@ define([
             productInfo.usFreeTags.forEach(tag => {
                 let _tag = self.masterData.freeTags[tag];
 
-                _usFreeTags.push(_tag.tagName);
+                _usFreeTags.push(_tag.tagPathName);
             });
 
             productInfo._usFreeTags = _usFreeTags;

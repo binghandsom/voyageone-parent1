@@ -1,0 +1,265 @@
+<div class="vo_modal"  ng-init="initialize()">
+    <form role="form" class="form-horizontal" name="feedForm" novalidate>
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$dismiss()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="glyphicon glyphicon-move"></i>&nbsp;Edit Group</h5>
+    </div>
+    <div class="modal-body">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <div class="row">
+                    <label class="col-md-4 control-label query-title vo_reqfield">Model</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" name="model" ng-model="ctrl.feed.model" required>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-default" ng-click="ctrl.getTopModel(5)">
+                            <i class="glyphicon glyphicon-refresh" class="fa" style="font-size: 16px;"></i>
+                        </button>
+                        <button type="button" class="btn btn-default" ng-click="ctrl.showTopModel(5)">
+                            <i ng-class="{'fa-angle-double-down':!ctrl.isShowModal,'fa-angle-double-up':ctrl.isShowModal}" class="fa" style="font-size: 16px;"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-md-4 control-label query-title"></label>
+                    <div class="col-md-6">
+                        <vo-message target="feedForm.model"></vo-message>
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-group" ng-if="ctrl.isShowModal">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-4" ng-if="ctrl.topFeedList.length > 0">
+                        <div class="col-xs-6 col-md-2" ng-repeat="item in ctrl.topFeedList">
+                            <a href="javascript:void(0);" class="thumbnail pos-relative" style="height: 88px;padding: 0px"
+                               ng-class="{'active':item.status=='Approved'}">
+                                <img class="thumb-sm-search" src="{{item.image[0]}}">
+                                <button type="button" class="btn btn-primary pos-absolute-right" ng-click="ctrl.copyAttr(item)">
+                                    <i class="fa fa-copy"></i>
+                                </button>
+                            </a>
+                            <span class="text-wrap"><strong>{{item.code}}</strong></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-md-offset-4" ng-if="ctrl.topFeedList.length == 0">
+                        <div class="alert alert-danger" role="alert">
+                            <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                            <span class="sr-only">Warning:</span>
+                            no query data
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4 text-right vo_reqfield">
+                        <button type="button" class="btn btn-info btn-pop"
+                                ng-click="ctrl.popUsCategory({cartId:8,from:ctrl.feed.category})">
+                            <i class="fa fa-arrow-right"></i>&nbsp;SN Primary Category
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" title="{{ctrl.feed.category}}"
+                               name="category" ng-model="ctrl.feed.category"  required readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-md-4 control-label query-title"></label>
+                    <div class="col-md-6">
+                        <vo-message target="feedForm.category"></vo-message>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4 text-right vo_unreqfield">
+                        <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory({cartId:8,froms:ctrl.feed.categoriesTree,muiti:true})">
+                            <i class="fa fa-arrow-right"></i>&nbsp;SN Other Category
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <select name="categories" chosen multiple width="'100%'"
+                                ng-options="cat as cat.catPath for cat in ctrl.feed.categoriesTree"
+                                ng-model="ctrl.feed.categoriesTree"></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4 text-right vo_reqfield">
+                        <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.popCategory({cartId:5},'amazonBrowseTree')">
+                            <i class="fa fa-arrow-right"></i>&nbsp;Amazon Browse Tree
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" name="amazonBrowseTree" ng-model="ctrl.feed.amazonBrowseTree" required readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-md-4 control-label query-title"></label>
+                    <div class="col-md-6">
+                        <vo-message target="feedForm.amazonBrowseTree"></vo-message>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4 text-right vo_unreqfield">
+                        <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:17,from:ctrl.feed.googleCategory},'googleCategory')">
+                            <i class="fa fa-arrow-right"></i>&nbsp;Google Category
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" title="{{ctrl.feed.googleCategory}}"
+                               name="googleCategory" ng-model="ctrl.feed.googleCategory" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4 text-right vo_unreqfield">
+                        <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:18,from:ctrl.feed.googleDepartment},'googleDepartment')">
+                            <i class="fa fa-arrow-right"></i>&nbsp;Google DepartMent
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" title="{{ctrl.feed.googleDepartment}}"
+                               name="googleDepartment" ng-model="ctrl.feed.googleDepartment" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-md-4 text-right vo_unreqfield">
+                        <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:19,from:ctrl.feed.priceGrabberCategory},'priceGrabberCategory')">
+                            <i class="fa fa-arrow-right"></i>&nbsp;PriceGrabber Category
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" title="{{ctrl.feed.priceGrabberCategory}}"
+                               name="priceGrabberCategory" ng-model="ctrl.feed.priceGrabberCategory" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <label class="col-md-4 control-label query-title vo_reqfield">Name</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" name="name" ng-model="ctrl.feed.name" ng-change="ctrl.generateUrlKey()" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-md-4 control-label query-title"></label>
+                    <div class="col-md-6">
+                        <vo-message target="feedForm.name"></vo-message>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label class="col-md-4 control-label query-title vo_reqfield">Brand</label>
+                    <div class="col-md-6">
+                        <select class="form-control" name="brand" chosen search-contain="true"
+                                ng-options="brand.value as brand.name for brand in ctrl.brandList"
+                                ng-model="ctrl.feed.brand" required>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-md-4 control-label query-title"></label>
+                    <div class="col-md-6">
+                        <vo-message target="feedForm.brand"></vo-message>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label class="col-md-4 control-label query-title vo_reqfield">Product Type</label>
+                    <div class="col-md-6">
+                        <select class="form-control" name="productType" chosen search-contain="true"
+                                ng-options="productType.value as productType.name for productType in ctrl.productTypeList"
+                                ng-model="ctrl.feed.productType" ng-change="ctrl.setSkuProperty(null,null,'1')" required>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-md-4 control-label query-title"></label>
+                    <div class="col-md-6">
+                        <vo-message target="feedForm.productType"></vo-message>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label class="col-md-4 control-label query-title vo_reqfield">Size Type</label>
+                    <div class="col-md-6">
+                        <select class="form-control" name="sizeType"  chosen search-contain="true"
+                                ng-options="sizeType.value as sizeType.name for sizeType in ctrl.sizeTypeList"
+                                ng-model="ctrl.feed.sizeType" required>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-md-4 control-label query-title"></label>
+                    <div class="col-md-6">
+                        <vo-message target="feedForm.sizeType"></vo-message>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label class="col-md-4 control-label query-title vo_reqfield">Material</label>
+                    <div class="col-md-6">
+                        <select class="form-control" name="material"  chosen search-contain="true"
+                                ng-options="material.value as material.name for material in ctrl.materialList"
+                                ng-model="ctrl.feed.material" required>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <label class="col-md-4 control-label query-title"></label>
+                    <div class="col-md-6">
+                        <vo-message target="feedForm.material"></vo-message>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label class="col-md-4 control-label query-title vo_unreqfield">Made in</label>
+                    <div class="col-md-6">
+                        <select class="form-control" name="origin"  chosen search-contain="true"
+                                ng-options="origin.value as origin.name for origin in ctrl.originList"
+                                ng-model="ctrl.feed.origin">
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label class="col-md-4 control-label query-title vo_unreqfield">Color Map</label>
+                    <div class="col-md-6">
+                        <select class="form-control" name="origin" chosen search-contain="true"
+                                ng-options="color.value as color.name for color in ctrl.colorMap"
+                                ng-model="ctrl.feed.colorMap">
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> CANCLE</button>
+        <button class="btn btn-vo" ng-click="ctrl.moveModel()"  ng-disabled="!ctrl.newModel"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE</button>
+    </div>
+    </form>
+</div>

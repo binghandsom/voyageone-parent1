@@ -50,7 +50,7 @@ define([
                 downToLast: 'downToLast'
             };
             self.pageOption = {
-                curr: 1, total: 0, size: 1, fetch: function () {
+                curr: 1, total: 0, size: 10, fetch: function () {
                     self.search();
                 }
             };
@@ -308,7 +308,7 @@ define([
             self.popups.openBatchPrice({
                 selAll: self._selall,
                 codeList: self.getSelectedProduct('code'),
-                queryMap: self.searchUtilService.handleQueryParams(),
+                queryMap: self.searchUtilService.handleQueryParams(self),
                 cartId: cartId ? cartId : 0
             }).then(res => {
                 //根据返回参数确定勾选状态,"1",需要清除勾选状态,"0"不需要清除勾选状态
@@ -341,7 +341,7 @@ define([
                 selTagType: '6',
                 selAllFlg: self._selall ? 1 : 0,
                 selCodeList: self.getSelectedProduct('code'),
-                searchInfo: self.searchUtilService.handleQueryParams()
+                searchInfo: self.searchUtilService.handleQueryParams(self)
             };
             self.popups.openUsFreeTag(params).then(res => {
                 let msg = '';
@@ -364,7 +364,7 @@ define([
                             "prodIdList": selCodeList,
                             "isSelAll": self._selall ? 1 : 0,
                             "orgDispTagList": res.orgDispTagList,
-                            'searchInfo': self.searchUtilService.handleQueryParams()
+                            'searchInfo': self.searchUtilService.handleQueryParams(self)
                         };
                         self.$searchAdvanceService2.addFreeTag(data).then(function () {
                             // notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
@@ -387,7 +387,7 @@ define([
             self.popups.openUsList({
                 selAll: self._selall,
                 codeList: self.getSelectedProduct('code'),
-                queryMap: self.searchUtilService.handleQueryParams(),
+                queryMap: self.searchUtilService.handleQueryParams(self),
                 cartId: cartId ? cartId : 0,
                 //操作状态1为上架,0为下架
                 activeStatus: activeStatus,
@@ -413,7 +413,7 @@ define([
             productInfo.usFreeTags.forEach(tag => {
                 let _tag = self.masterData.freeTags[tag];
 
-                _usFreeTags.push(_tag.tagName);
+                _usFreeTags.push(_tag.tagPathName);
             });
 
             productInfo._usFreeTags = _usFreeTags;

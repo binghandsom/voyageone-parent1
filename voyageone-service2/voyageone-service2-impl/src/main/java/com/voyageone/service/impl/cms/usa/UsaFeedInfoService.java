@@ -25,6 +25,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -437,6 +438,18 @@ public class UsaFeedInfoService extends BaseService {
             }
         }
 
+        feedInfoModel.getSkus().forEach(sku->{
+            if(StringUtil.isEmpty(sku.getWeightOrgUnit())) sku.setWeightOrgUnit("lb");
+            if(!StringUtils.isEmpty(sku.getWeightOrg())) {
+                if ("lb".equalsIgnoreCase(sku.getWeightOrgUnit())) {
+                    sku.setWeightCalc(sku.getWeightOrg());
+                } else if ("kg".equalsIgnoreCase(sku.getWeightOrgUnit())) {
+                    Double weight = NumberUtils.toDouble(sku.getWeightOrg());
+                    BigDecimal b = new BigDecimal(weight * 2.204623);
+                    sku.setWeightCalc(b.setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+                }
+            }
+        });
         feedInfoModel.setModifier(username);
         feedInfoModel.setModified(DateTimeUtil.getNow());
         WriteResult writeResult = cmsBtFeedInfoDao.update(feedInfoModel);

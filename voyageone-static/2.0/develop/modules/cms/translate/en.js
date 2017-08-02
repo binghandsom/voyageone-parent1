@@ -118,7 +118,7 @@ define(function () {
         "TXT_FUZZY_SEARCH": "模糊查询",
         "TXT_GROUP_LIST": "GROUP一览",
         "TXT_EXPORT_LIST": "Export 一览",
-        "TXT_SELECT_ALL": "全选",
+        "TXT_SELECT_ALL": "All",
         "TXT_SALE_PRICE": "最终售价",
         "TXT_PRIMARY_PRODUCT": "主产品",
         "TXT_BASE_PROPERTY": "基础属性",

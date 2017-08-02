@@ -687,7 +687,7 @@ define([
                         "templateUrl": "views/pop/usa/feed/search/index.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/usa/feed/search/index.ctl",
                         "controller": 'batchApproveController as ctrl',
-                        "size": 'md'
+                        "size": 'lg'
                     }
                 },
                 detail: {
@@ -738,6 +738,12 @@ define([
                         "controllerUrl": "modules/cms/views/pop/usa/product/detail/moveModel/index.ctl",
                         "controller": 'ProductModelMoveController as ctrl',
                         "size": 'md'
+                    },
+                    editGroup: {
+                        "templateUrl": "views/pop/usa/product/detail/editGroup/index.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/usa/product/detail/editGroup/index.ctl",
+                        "controller": 'ProductEditGroupController as ctrl',
+                        "size": 'lg'
                     }
                 }
             },
@@ -1670,6 +1676,10 @@ define([
 
         $scope.openMoveModel = function (context) {
             return openModal(popActions.us.product.detail.moveModel, context);
+        };
+
+        $scope.openUsEditGroup = function (context) {
+            return openModal(popActions.us.product.detail.editGroup, context);
         };
 
         $scope.editTag = function (context) {

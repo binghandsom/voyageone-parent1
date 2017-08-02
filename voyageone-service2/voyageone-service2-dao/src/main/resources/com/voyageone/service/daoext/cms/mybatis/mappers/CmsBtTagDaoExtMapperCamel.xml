@@ -13,4 +13,17 @@
         WHERE c.`parent_tag_id`=#{parentTagId} and c.active=1
         GROUP BY c.`id`
     </select>
+
+    <update id="replaceChildrenPathName">
+        UPDATE cms_bt_tag
+        SET tag_path_name = REPLACE (
+            tag_path_name,
+            #{srcPathName,jdbcType=VARCHAR},
+            #{newPathName,jdbcType=VARCHAR}
+        )
+        WHERE
+            tag_type = #{tagType,jdbcType=INTEGER}
+        AND active=1
+        AND tag_path_name LIKE CONCAT(#{srcPathName,jdbcType=VARCHAR}, '%')
+    </update>
 </mapper>

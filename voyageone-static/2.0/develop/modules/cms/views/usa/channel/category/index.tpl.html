@@ -115,7 +115,7 @@
                             <div class="form-group">
                                 <label class="col-sm-3 control-label query-title">Name</label>
                                 <div class="col-sm-8">
-                                    <textarea class="form-control no-resize" rows="2" ng-model="ctrl.searchInfo.fuzzyStr"></textarea>
+                                    <input type="text" class="form-control" ng-model="ctrl.searchInfo.fuzzyStr">
                                 </div>
                             </div>
                         </div>
@@ -252,7 +252,7 @@
 
                 <div class="row text-center" style="margin-top: 10px">
                     <button class="btn btn-default btn-pop" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;CLEAR</button>&emsp;
-                    <button class="btn btn-success btn-pop" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;SEARCH</button>
+                    <button class="btn btn-vo btn-pop" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;SEARCH</button>
                 </div>
             </div>
 
@@ -338,7 +338,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                                <tr><td colspan="6" if-no-rows="ctrl.searchResult.productList.length"></td></tr>
+                                <tr><td colspan="{{ctrl.customColumns.selCommonProps.length  + ctrl.customColumns.selPlatformAttributes.length + ctrl.customColumns.selPlatformSales.length + 2}}" if-no-rows="ctrl.searchResult.productList.length"></td></tr>
                             </tbody>
                             <tbody class="box-body" ng-repeat="productInfo in ctrl.searchResult.productList" style="border-bottom: 1px solid #ddd; height: 80px;">
                             <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;height: 40px;">

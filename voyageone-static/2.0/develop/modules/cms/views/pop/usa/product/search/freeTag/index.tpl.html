@@ -15,7 +15,7 @@
 
                         <div class="category_drag col-sm-3" ng-repeat="tree in ctrl.vm.trees" ng-init="$parentIndex = $index">
                             <div class="category_drag_main">
-                                <p class="text-center text-vo font-bold">{{$parentIndex + 1}}级标签</p>
+                                <p class="text-center text-vo font-bold">Level {{$parentIndex + 1}} Tag</p>
                                 <div class="form-inline m-l-xs">
                                     <input type="text" placeholder="快速检索" class="form-control" style="width:80%" ng-model="name[$parentIndex]">
                                     <button type="button" class="btn btn-vo btn-xxs"
@@ -56,7 +56,8 @@
     </div>
 
     <div class="modal-footer">
-        <button class="btn btn-default ng-binding" ng-click="$dismiss()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo ng-binding" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+        <button class="btn btn-default ng-binding" ng-click="$dismiss()"><i class="fa fa-remove"></i> cancel</button>
+        <button class="btn btn-vo ng-binding" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i> save</button>
+        <button class="btn btn-vo ng-binding" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i> save&continue</button>
     </div>
 </div>

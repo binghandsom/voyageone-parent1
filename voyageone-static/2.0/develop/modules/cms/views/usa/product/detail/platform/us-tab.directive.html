@@ -11,8 +11,15 @@
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>SneakerRx</strong></label>
                                 <div class="col-md-8">
+                                    <label class="label" ng-class="{
+                                   'label-default':!ctrl.platform.pStatus || ctrl.platform.pStatus == 'Pending',
+                                    'label-warning':ctrl.platform.pStatus == 'InStock',
+                                    'label-success':ctrl.platform.pStatus == 'OnSale'
+                                }">
+                                    {{ctrl.platformStatus[ctrl.platform.pStatus]}}
+                                    </label>
                                     <!--<platForm-status data="ctrl.platform"></platForm-status>-->
-                                    <label class="label label-warning">{{ctrl.platformStatus[ctrl.platform.pStatus]}}</label>
+                                    <!--<label class="label label-warning">{{ctrl.platformStatus[ctrl.platform.pStatus]}}</label>-->
                                 </div>
                             </div>
 
@@ -88,7 +95,7 @@
                                             <td class="text-left">{{sku.size}}</td>
                                             <td class="text-left">{{sku.skuCode}}</td>
                                             <td class="text-left">{{sku.barcode}}</td>
-                                            <td class="text-center">{{sku.qty}}</td>
+                                            <td class="text-center">{{sku.qty || 0}}</td>
                                             <td class="text-center">{{sku.weight}}</td>
                                             <td class="text-center">{{sku.weightUnit}}</td>
                                             <td class="text-right">
