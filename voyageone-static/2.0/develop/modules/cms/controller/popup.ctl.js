@@ -761,6 +761,12 @@ define([
                     "controllerUrl": "modules/cms/views/pop/usa/category/editCategory/index.ctl",
                     "controller": 'EditCategoryController as ctrl',
                     "size": 'md'
+                },
+                increaseCategory:{
+                    "templateUrl": "views/pop/usa/category/newCategory/index.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/usa/category/newCategory/index.ctl",
+                    "controller": 'IncreaseCategoryController as ctrl',
+                    "size": 'md'
                 }
             }
         }
@@ -1687,7 +1693,11 @@ define([
         };
 
         $scope.openEditCategory = function (context) {
-            return openModal(popActions.us.category.editCategory, context)
+            return openModal(popActions.us.category.editCategory, context);
+        };
+
+        $scope.openIncreaseCategory = function (context) {
+            return openModal(popActions.us.category.increaseCategory, context);
         };
 
         /**
@@ -1697,6 +1707,7 @@ define([
             _.extend(context, {id: id});
             return openModal(popActions.task.addJiagepiluProduct, context);
         };
+
 
     }).factory('popups', function ($controller, $rootScope) {
 

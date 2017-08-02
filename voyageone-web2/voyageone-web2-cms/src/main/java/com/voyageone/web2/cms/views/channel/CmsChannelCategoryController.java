@@ -65,10 +65,12 @@ public class CmsChannelCategoryController extends CmsController {
         Integer cartId = Integer.valueOf(param.get("cartId").toString());
         String cName = String.valueOf(param.get("catName"));
         String cId = String.valueOf(param.get("catId"));
+
+        Map<String, Object> mapping = (Map<String, Object>) param.get("mapping");
         //创建者/更新者
         String modifier = this.getUser().getUserName();
 
-        sellerCatService.updateSellerCat(channelId, cartId, cName, cId, modifier);
+        sellerCatService.updateSellerCat(channelId, cartId, cName, cId, mapping, modifier);
 
         List<CmsBtSellerCatModel> list = sellerCatService.getSellerCatsByChannelCart(channelId, cartId);
         Map<String, Object> result = new HashMap<>();

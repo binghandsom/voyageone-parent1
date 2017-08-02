@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
@@ -172,59 +173,58 @@ public class CmsBtSellerCatDao extends BaseMongoDao<CmsBtSellerCatModel> {
     }
 
     /**
-     *
-     * @param channelId
+     *  @param channelId
      * @param cartId
      * @param cName 分类自定义分类名
+     * @param mapping
      * @param cId   店铺自定义分类Id
      * @param modifier 更新者
      */
-    public  List<CmsBtSellerCatModel> update(String channelId, int cartId, String cName, String cId , String modifier) {
+    public  List<CmsBtSellerCatModel> update(String channelId, int cartId, String cName, Map<String, Object> mapping, String cId, String modifier) {
 
         String queryStr = "{'channelId':'" + channelId + "','cartId':" + cartId + "}";
 
         List<CmsBtSellerCatModel> allCat = select(queryStr);
         List<CmsBtSellerCatModel> resultList =  findCId(allCat, cId);
+        List<CmsBtSellerCatModel> changedList = new ArrayList<>();
         if(resultList.size() > 0)
         {
             CmsBtSellerCatModel result = resultList.get(0);
 
-            result.setCatName(cName);
-            String oldPath = result.getCatPath();
+            // 类目名称发生变化
+            if(!result.getCatName().equals(cName)) {
+                result.setCatName(cName);
+                String oldPath = result.getCatPath();
 
-            String[] paths = oldPath.split(">");
-            if( paths.length > 0)
-            {
-                paths[paths.length -1] = cName;
-            }
-
-            String catPath= "";
-            for (String path:paths) {
-                if(catPath.equals(""))
-                {
-                    catPath = path;
+                String[] paths = oldPath.split(">");
+                if (paths.length > 0) {
+                    paths[paths.length - 1] = cName;
                 }
-                else {
-                    catPath = catPath + ">" + path;
-                }
-            }
 
-            result.setCatPath(catPath);
+                String catPath = "";
+                for (String path : paths) {
+                    if (catPath.equals("")) {
+                        catPath = path;
+                    } else {
+                        catPath = catPath + ">" + path;
+                    }
+                }
+                result.setCatPath(catPath);
+                //递归更新子节点
+                updateChildren(result.getChildren(), result.getCatPath(), modifier);
+                //展开result的所有node
+                changedList = expandNode(result);
+            }
+            if(mapping != null){
+                result.setMapping(mapping);
+            }
             result.setModifier(modifier);
             result.setModified(DateTimeUtil.getNow());
-
-
-            //递归更新子节点
-            updateChildren(result.getChildren(), result.getCatPath(), modifier);
 
             //更新Document
             for (CmsBtSellerCatModel model: allCat) {
                 update(model);
             }
-
-            //展开result的所有node
-            List<CmsBtSellerCatModel> changedList = expandNode(result);
-
             return changedList;
         }
         return null;

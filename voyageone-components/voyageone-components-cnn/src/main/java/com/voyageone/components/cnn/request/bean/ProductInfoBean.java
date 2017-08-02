@@ -20,7 +20,7 @@ public class ProductInfoBean {
 
     private CommonFields commonFields; // 共通级属性
     private Map<String, Object> customFields; // 自定义属性
-    private List<SkuIem> skuList; // sku级属性
+    private List<SkuItem> skuList; // sku级属性
     private List<OptionItem> optionsList; // sku级option属性
 
     public CommonFields getCommonFields() {
@@ -39,11 +39,11 @@ public class ProductInfoBean {
         this.customFields = customFields;
     }
 
-    public List<SkuIem> getSkuList() {
+    public List<SkuItem> getSkuList() {
         return skuList;
     }
 
-    public void setSkuList(List<SkuIem> skuList) {
+    public void setSkuList(List<SkuItem> skuList) {
         this.skuList = skuList;
     }
 
@@ -59,10 +59,10 @@ public class ProductInfoBean {
         customFields.put(key, val);
     }
 
-    public SkuIem createAddSkuIem() {
-        SkuIem skuIem = new SkuIem();
-        skuList.add(skuIem);
-        return skuIem;
+    public SkuItem createAddSkuIem() {
+        SkuItem skuItem = new SkuItem();
+        skuList.add(skuItem);
+        return skuItem;
     }
 
     public OptionItem createAddOptionItem() {
@@ -245,8 +245,8 @@ public class ProductInfoBean {
     /**
      * sku级属性
      */
-    public class SkuIem {
-        private SkuIem() {
+    public class SkuItem {
+        private SkuItem() {
         }
 
         private String skuCode; // skuCode
