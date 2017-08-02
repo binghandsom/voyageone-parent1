@@ -1,6 +1,7 @@
 package com.voyageone.components.cnn.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.voyageone.components.cnn.response.AbstractCnnResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * Created by morse on 2017/7/31.
  */
-public abstract class CnnUrlRequest<T> extends AbstractCnnRequest<T> {
+public abstract class CnnUrlRequest<T extends AbstractCnnResponse> extends AbstractCnnRequest<T> {
 
     protected List<String> params;
 

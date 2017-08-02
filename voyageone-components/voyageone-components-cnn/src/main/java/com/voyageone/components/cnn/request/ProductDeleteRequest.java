@@ -4,6 +4,7 @@ import com.voyageone.components.cnn.enums.CnnConstants;
 import com.voyageone.components.cnn.response.ProductDeleteResponse;
 
 /**
+ * group下线
  * Created by morse on 2017/7/31.
  */
 public class ProductDeleteRequest extends CnnUrlRequest<ProductDeleteResponse> {

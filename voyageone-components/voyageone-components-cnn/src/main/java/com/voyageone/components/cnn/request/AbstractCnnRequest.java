@@ -3,11 +3,12 @@ package com.voyageone.components.cnn.request;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.voyageone.common.util.GenericSuperclassUtils;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.components.cnn.response.AbstractCnnResponse;
 
 /**
  * Created by morse on 2017/7/31.
  */
-public abstract class AbstractCnnRequest<T> {
+public abstract class AbstractCnnRequest<T extends AbstractCnnResponse> {
 
     @JsonIgnore
     public abstract String getUrl();
