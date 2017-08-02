@@ -3,17 +3,17 @@
  */
 define([
     'cms'
-],function (cms) {
+], function (cms) {
 
-    cms.controller('shopCategoryController',class ShopCategoryController{
+    cms.controller('shopCategoryController', class ShopCategoryController {
 
-        constructor(sellerCatService,popups){
+        constructor(sellerCatService, popups) {
             this.sellerCatService = sellerCatService;
             this.popups = popups;
             this.totalCategory = [];
         }
 
-        init(){
+        init() {
             let self = this;
 
             self.sellerCatService.getCat({cartId: 8}).then(res => {
@@ -43,7 +43,7 @@ define([
 
         }
 
-        popEditCategory(model,$event){
+        popEditCategory(model, $event) {
             let self = this;
 
             self.popups.openEditCategory(model).then(res => {
@@ -51,6 +51,20 @@ define([
             });
 
             $event.stopPropagation();
+        }
+
+        popIncreaseCategory(categoryItem) {
+            let self = this,
+                isRoot = false;
+
+            if(categoryItem.index === 0)
+                isRoot = true;
+            self.popups.openIncreaseCategory({
+                root: isRoot,
+                selectObject: categoryItem.children
+            }).then(res => {
+
+            })
         }
 
     })

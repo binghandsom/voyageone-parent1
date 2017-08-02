@@ -29,26 +29,26 @@ define(['underscore'], function (_) {
          * Feed
          */
         FEED:new Cart('FEED' , 1 , 'Feed数据','', ''),
-        /**
-         * Feed
-         */
-        FEED:new Cart('SN' , 1 , 'Sneakerhead','', '5'),
-        /**
-         * Feed
-         */
-        FEED:new Cart('WS' , 3 , 'Sneakerhead WS','', '5'),
-        /**
-         * Feed
-         */
-        FEED:new Cart('AM' , 5 , 'Amazon','', '5'),
-        /**
-         * Feed
-         */
-        FEED:new Cart('RX' , 7 , 'Sneaker RX','', ''),
-        /**
-         * Feed
-         */
-        FEED:new Cart('SM' , 9 , 'Sneakerhead Mobile','', ''),
+        // /**
+        //  * Feed
+        //  */
+        // FEED:new Cart('SN' , 1 , 'Sneakerhead','', '5'),
+        // /**
+        //  * Feed
+        //  */
+        // FEED:new Cart('WS' , 3 , 'Sneakerhead WS','', '5'),
+        // /**
+        //  * Feed
+        //  */
+        // FEED:new Cart('AM' , 5 , 'Amazon','', '5'),
+        // /**
+        //  * Feed
+        //  */
+        // FEED:new Cart('RX' , 7 , 'Sneaker RX','', ''),
+        // /**
+        //  * Feed
+        //  */
+        // FEED:new Cart('SM' , 9 , 'Sneakerhead Mobile','', ''),
         /**
          * 天猫
          */
@@ -145,33 +145,23 @@ define(['underscore'], function (_) {
         /**
          * Mini Mall
          */
-        MM: new Cart('MM', 99, 'US Joi', '', ''),
+         SN: new Cart('SN', 1, 'Sneakerhead', '', '5'),
 
-        SN: new Cart('SN', 1, 'Sneakerhead', '', '5'),
+        AMZN: new Cart('SNKRHDa', 5, 'Amazon', '', ''),
 
-        SNWS: new Cart('SNWS', 3, 'Sneakerhead WS', '', ''),
+        SNKRx: new Cart('SNKRx', 6, 'Sneaker RX', '', ''),
 
-        AMZN: new Cart('AMZN', 5, 'Amazon', '', ''),
+        SNKRxM: new Cart('SNKRxM', 7, 'military', ''),
 
-        SRX: new Cart('SRX', 7, 'Sneaker RX', '', ''),
+        SNKRHDp: new Cart('SNKRHDp', 8, 'Sneakerhead', ''),
 
-        SNM: new Cart('SNM', 9, 'Sneakerhead Mobile', '', ''),
+        SNKRHDm: new Cart('SNKRHDm', 9, 'mSneaker', ''),
 
-        military: new Cart('military', 7, 'military', ''),
+        xSNKR: new Cart('xSNKR', 12, 'xsneakers', ''),
 
-        Sneakerhead: new Cart('Sneakerhead', 8, 'Sneakerhead', ''),
+        SNKRHDe: new Cart('SNKRHDe', 10, 'eBay', ''),
 
-        mSneaker: new Cart('mSneaker', 9, 'mSneaker', ''),
-
-        xsneakers: new Cart('xsneakers', 12, 'xsneakers', ''),
-
-        AM: new Cart('AM', 5, 'Amazon', ''),
-
-        RX: new Cart('RX', 6, 'Sneaker RX', ''),
-
-        eBay: new Cart('eBay', 10, 'eBay', ''),
-
-        ikicks: new Cart('ikicks', 11, 'ikicks', ''),
+        DJKix: new Cart('DJKix', 11, 'ikicks', ''),
 
 
         /**

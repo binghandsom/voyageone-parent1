@@ -58,6 +58,9 @@ define([
             };
             self.tranferData = {};
             self.customColumns = {
+                commonProps:[],
+                platformAttributes:[],
+                platformSales:[],
                 selCommonProps:[],
                 selPlatformAttributes:[],
                 selPlatformSales:[]
@@ -344,7 +347,11 @@ define([
         // 自定义列弹出
         popCustomAttributes() {
             let self = this;
-            self.popups.openCustomAttributes().then(res => {
+            let ctx = {
+                customColumns:self.customColumns,
+                usPlatforms:self.masterData.usPlatforms
+            };
+            self.popups.openCustomAttributes(ctx).then(res => {
                 self.customColumnNames = {};
                 self.customColumns.selCommonProps = self.getSelectedProps(self.customColumns.commonProps,res.selCommonProps,'propId');
                 self.customColumns.selPlatformAttributes = self.getSelectedProps(self.customColumns.platformAttributes, res.selPlatformAttributes,'value');

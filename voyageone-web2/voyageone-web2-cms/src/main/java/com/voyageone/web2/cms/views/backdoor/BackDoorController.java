@@ -57,7 +57,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.voyageone.common.configs.Enums.CartEnums.Cart.SN;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -2158,10 +2157,10 @@ public class BackDoorController extends CmsController {
             BaseMongoMap<String, Object> fields = new BaseMongoMap<>();
             platform.setFields(fields);
             switch (CartEnums.Cart.getValueByID(iCartId+"")){
-                case SN:
-                case MSN:
-                case military:
-                    CmsBtProductModel_SellerCat seller = sellerCatService.getSellerCat(feed.getChannelId(), SN.getValue(), feed.getCategory());
+                case SNKRHDp:
+                case SNKRHDm:
+                case SNKRxM:
+                    CmsBtProductModel_SellerCat seller = sellerCatService.getSellerCat(feed.getChannelId(), CartEnums.Cart.SNKRHDp.getValue(), feed.getCategory());
                     if(seller != null){
                         platform.setpCatId(seller.getcId());
                     }
@@ -2207,14 +2206,14 @@ public class BackDoorController extends CmsController {
                     // 店铺内分类设置
                     List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
                     catPath.forEach(cat -> {
-                        CmsBtProductModel_SellerCat sellerCat = sellerCatService.getSellerCat(feed.getChannelId(), SN.getValue(), cat);
+                        CmsBtProductModel_SellerCat sellerCat = sellerCatService.getSellerCat(feed.getChannelId(), CartEnums.Cart.SNKRHDp.getValue(), cat);
                         if (sellerCat != null) {
                             sellerCats.add(sellerCat);
                         }
                     });
                     platform.setSellerCats(sellerCats);
                     break;
-                case Xsneakers:
+                case xSNKR:
                     platform.setpCatId(feed.getCategoryCatId());
                     platform.setpCatPath(feed.getCategory());
                     platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
@@ -2224,7 +2223,7 @@ public class BackDoorController extends CmsController {
                     platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
                     platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
                     break;
-                case SneakerRx:
+                case SNKRx:
                     platform.setpCatId(feed.getCategoryCatId());
                     platform.setpCatPath(feed.getCategory());
                     platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
@@ -2234,7 +2233,7 @@ public class BackDoorController extends CmsController {
                     platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
                     platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
                     break;
-                case iKicks:
+                case DJKix:
                     platform.setpCatId(feed.getCategoryCatId());
                     platform.setpCatPath(feed.getCategory());
                     platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
@@ -2244,7 +2243,7 @@ public class BackDoorController extends CmsController {
                     platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
                     platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
                     break;
-                case Amazon:
+                case SNKRHDa:
                     platform.setpCatPath(feed.getAttribute().get("amazonBrowseTree")==null?"":feed.getAttribute().get("amazonBrowseTree").get(0));
                     platform.getFields().setAttribute("sellerFulfilledPrime", true);
                     break;

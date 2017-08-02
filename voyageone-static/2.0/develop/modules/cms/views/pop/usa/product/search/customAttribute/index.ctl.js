@@ -4,10 +4,15 @@ define([
 
     cms.controller('usaCustomAttributeController',class usaCustomAttributeController{
 
-        constructor(advanceSearch,$modalInstance,notify){
+        constructor(context,advanceSearch,$modalInstance,notify){
+            this.context = context;
             this.advanceSearch = advanceSearch;
             this.$modalInstance = $modalInstance;
             this.notify = notify;
+
+            // 数据重新请求
+            // this.customColumns = this.context.customColumns;
+            // this.usPlatforms = this.context.usPlatforms;
 
             this.customColumns = {
                 commonProps:[],

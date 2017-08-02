@@ -203,6 +203,9 @@ public class SellerCatService extends BaseService {
      * updateSellerCat
      */
     public void updateSellerCat(String channelId, int cartId, String cName, String cId, String modifier) {
+        updateSellerCat(channelId, cartId, cName, cId, null, modifier);
+    }
+    public void updateSellerCat(String channelId, int cartId, String cName, String cId, Map<String, Object> mapping, String modifier) {
 
 
         /*List<CmsBtSellerCatModel> sellercats = getSellerCatsByChannelCart(channelId, cartId, false);
@@ -242,7 +245,7 @@ public class SellerCatService extends BaseService {
             cnCategoryService.updateSnSellerCat(currentNode, shopBean, index + 1);
         }
 
-        List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, cId, modifier);
+        List<CmsBtSellerCatModel> changedList = cmsBtSellerCatDao.update(channelId, cartId, cName, mapping, cId, modifier);
 
         //更新product表中所有的店铺内分类
         if (changedList != null) {

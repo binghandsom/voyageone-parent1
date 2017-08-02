@@ -33,7 +33,7 @@ define([
             self.catInfo = angular.fromJson(this.$routeParams.category);
             self.popups = popups;
             self.searchInfo = {
-                cartId: carts.Sneakerhead.id,
+                cartId: carts.SNKRHDp.id,
                 codeList: ''
             };
             self.carts = carts;
@@ -92,7 +92,7 @@ define([
             });
 
             //获取保存的排序结果
-            self.productTopService.init({cartId: carts.Sneakerhead.id, catId: catInfo.catId}).then(function (res) {
+            self.productTopService.init({cartId: carts.SNKRHDp.id, catId: catInfo.catId}).then(function (res) {
                 let _sortName = res.data.sortColumnName,
                     _sortType = res.data.sortType;
 
@@ -175,7 +175,7 @@ define([
         getTopList() {
             let self = this;
             self.productTopService.getTopList({
-                "cartId": carts.Sneakerhead.id,
+                "cartId": carts.SNKRHDp.id,
                 "sellerCatId": self.catInfo.catId
             }).then(res => {
                 if (res.data) {
@@ -189,7 +189,7 @@ define([
                 parameter = {};
             parameter.codeList = [productInfo.common.fields.code];
 
-            parameter.cartId = carts.Sneakerhead.id;
+            parameter.cartId = carts.SNKRHDp.id;
             parameter.sellerCatId = self.catInfo.catId;
             self.callAddTopProduct(parameter);
         };

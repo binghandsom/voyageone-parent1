@@ -2,10 +2,8 @@ package com.voyageone.task2.cms.usa.job;
 
 import com.voyageone.base.dao.mongodb.JongoAggregate;
 import com.voyageone.common.CmsConstants;
-import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.components.solr.query.SimpleQueryBean;
 import com.voyageone.components.solr.service.CmsProductSearchService;
@@ -14,25 +12,18 @@ import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumFeedSum;
 import com.voyageone.service.bean.cms.CmsBtDataAmount.EnumPlatformInfoSum;
 import com.voyageone.service.dao.cms.CmsBtDataAmountDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.cms.TypeChannelsService;
 import com.voyageone.service.model.cms.CmsBtDataAmountModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.solr.core.query.Criteria;
-import org.springframework.data.solr.core.query.Join;
-import org.springframework.data.solr.core.query.SolrDataQuery;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 美国CMS2 data amount 相关Job
@@ -48,9 +39,9 @@ public class UsaCmsDataAmountJobService extends BaseCronTaskService {
     @Autowired
     private CmsBtDataAmountDao cmsBtDataAmountDao;
     @Autowired
-    private CmsBtProductDao cmsBtProductDao;
+    private CmsProductSearchService cmsProductSearchService;
     @Autowired
-    CmsProductSearchService cmsProductSearchService;
+    private TypeChannelsService typeChannelsService;
 
     /**
      * 获取子系统
@@ -123,12 +114,9 @@ public class UsaCmsDataAmountJobService extends BaseCronTaskService {
         // =========================================================================================
         // =================================统计美国各平台Product信息===================================
         // =========================================================================================
-        List<TypeChannelBean> cartsBeanList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, "en");
-        // 过滤到美国平台, cartId<20
-        List<TypeChannelBean> usaCartBeanList = cartsBeanList.stream().filter(
-                cart -> StringUtils.isNotBlank(cart.getValue()) && Integer.valueOf(cart.getValue()) > 0 && Integer.valueOf(cart.getValue()) < 20).collect(Collectors.toList());
-        if (CollectionUtils.isNotEmpty(usaCartBeanList)) {
-            for (TypeChannelBean usaCart : usaCartBeanList) {
+        List<TypeChannelBean> cartsBeanList = typeChannelsService.getOnlyUsPlatformTypeList(channelId, "en");
+        if (CollectionUtils.isNotEmpty(cartsBeanList)) {
+            for (TypeChannelBean usaCart : cartsBeanList) {
                 /*List<JongoAggregate> productAggregateList = new ArrayList<>();
                 productAggregateList.add(new JongoAggregate(
                         String.format("{$match:{\"channelId\":#,\"usPlatforms.P%s\":{$exists:true},\"usPlatforms.P%s.status\":{$exists:true}}}", usaCart.getValue(), usaCart.getValue()),

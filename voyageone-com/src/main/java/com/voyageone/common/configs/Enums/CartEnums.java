@@ -12,21 +12,21 @@ public class CartEnums {
      */
     public enum Cart {
 
-        SN("8"),
+        SNKRHDp("8"),
 
-        MSN("9"),
+        SNKRHDm("9"),
 
-        military("7"),
+        SNKRxM("7"),
 
-        Xsneakers("12"),
+        xSNKR("12"),
 
-        iKicks("11"),
+        DJKix("11"),
 
-        eBay("10"),
+        SNKRHDe("10"),
 
-        Amazon("5"),
+        SNKRHDa("5"),
 
-        SneakerRx("6"),
+        SNKRx("6"),
 
         /**
          * 天猫
@@ -133,21 +133,21 @@ public class CartEnums {
             switch(id)
             {
                 case "8":
-                    return SN;
+                    return SNKRHDp;
                 case "9":
-                    return MSN;
+                    return SNKRHDm;
                 case "7":
-                    return military;
+                    return SNKRxM;
                 case "12":
-                    return Xsneakers;
+                    return xSNKR;
                 case "11":
-                    return iKicks;
+                    return DJKix;
                 case "10":
-                    return eBay;
+                    return SNKRHDe;
                 case "5":
-                    return Amazon;
+                    return SNKRHDa;
                 case "6":
-                    return SneakerRx;
+                    return SNKRx;
                 case "20":
                     return TM;
                 case "21":
