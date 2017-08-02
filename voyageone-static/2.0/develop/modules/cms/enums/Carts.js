@@ -29,26 +29,26 @@ define(['underscore'], function (_) {
          * Feed
          */
         FEED:new Cart('FEED' , 1 , 'Feed数据','', ''),
-        /**
-         * Feed
-         */
-        FEED:new Cart('SN' , 1 , 'Sneakerhead','', '5'),
-        /**
-         * Feed
-         */
-        FEED:new Cart('WS' , 3 , 'Sneakerhead WS','', '5'),
-        /**
-         * Feed
-         */
-        FEED:new Cart('AM' , 5 , 'Amazon','', '5'),
-        /**
-         * Feed
-         */
-        FEED:new Cart('RX' , 7 , 'Sneaker RX','', ''),
-        /**
-         * Feed
-         */
-        FEED:new Cart('SM' , 9 , 'Sneakerhead Mobile','', ''),
+        // /**
+        //  * Feed
+        //  */
+        // FEED:new Cart('SN' , 1 , 'Sneakerhead','', '5'),
+        // /**
+        //  * Feed
+        //  */
+        // FEED:new Cart('WS' , 3 , 'Sneakerhead WS','', '5'),
+        // /**
+        //  * Feed
+        //  */
+        // FEED:new Cart('AM' , 5 , 'Amazon','', '5'),
+        // /**
+        //  * Feed
+        //  */
+        // FEED:new Cart('RX' , 7 , 'Sneaker RX','', ''),
+        // /**
+        //  * Feed
+        //  */
+        // FEED:new Cart('SM' , 9 , 'Sneakerhead Mobile','', ''),
         /**
          * 天猫
          */
