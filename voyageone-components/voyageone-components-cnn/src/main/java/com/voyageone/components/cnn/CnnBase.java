@@ -38,7 +38,7 @@ public abstract class CnnBase extends ComponentBase {
             jsonRes = reqApi(shop, apiAction, null, ComponentConstants.C_MAX_API_ERROR, ComponentConstants.C_CONNECT_TIMEOUT, headers);
         } else {
             // body参数
-            jsonRes = reqApi(shop, apiAction, request.toString(), ComponentConstants.C_MAX_API_ERROR, ComponentConstants.C_CONNECT_TIMEOUT, headers);
+            jsonRes = reqApi(shop, apiAction, request.toJsonStr(), ComponentConstants.C_MAX_API_ERROR, ComponentConstants.C_CONNECT_TIMEOUT, headers);
         }
         logger.info(request.getClass().getSimpleName() + " response info:" + jsonRes);
         return request.getResponse(jsonRes);

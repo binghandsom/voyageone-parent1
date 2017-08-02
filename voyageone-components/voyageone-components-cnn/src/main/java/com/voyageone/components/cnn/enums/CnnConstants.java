@@ -25,9 +25,11 @@ public class CnnConstants {
         // 3 CATALOG
         String CATALOG_ADD         = "/catalog/add";             // 添加店铺内分类
         String CATALOG_UPDATE      = "/catalog/update";          // 修改店铺内分类名称
+        String CATALOG_UPDATE_NAME  = "/catalog/updateName";          // 修改店铺内分类名称
         String CATALOG_DELETE      = "/catalog/delete/";         // 删除店铺内分类
         String CATALOG_PRODUCT_SET = "/catalog/product/set";     // 设置商品的店铺内分类
         String CATALOG_GET         = "/catalog/get";             // 查询店铺内分类信息
+        String CATALOG_SEARCH      = "/catalog/get/{catalogId}";   // 查询店铺内分类信息
         String CATALOG_RESET         = "/catalog/reset";           // 重置所有店铺内分类
         String CATALOG_PRODUCT_RESET = "/catalog/product/reset";   // 重置所有商品的店铺内分类
 

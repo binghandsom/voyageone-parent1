@@ -33,7 +33,7 @@ public class ProductAddRequest extends AbstractCnnRequest<ProductAddResponse> {
     }
 
     @Override
-    public String toString() {
+    public String toJsonStr() {
         return JacksonUtil.bean2Json(productInfoBean);
     }
 }

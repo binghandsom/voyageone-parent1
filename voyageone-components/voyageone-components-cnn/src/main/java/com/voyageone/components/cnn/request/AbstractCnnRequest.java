@@ -18,8 +18,7 @@ public abstract class AbstractCnnRequest<T extends AbstractCnnResponse> {
         return JacksonUtil.json2Bean(json, messageBodyClass);
     }
 
-    @Override
-    public String toString() {
+    public String toJsonStr() {
         int len = this.getClass().getDeclaredFields().length;
         if (len == 0) {
             return null; // 没有参数的请求

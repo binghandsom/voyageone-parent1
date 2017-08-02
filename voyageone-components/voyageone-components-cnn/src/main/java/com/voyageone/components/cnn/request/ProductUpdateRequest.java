@@ -44,7 +44,7 @@ public class ProductUpdateRequest extends AbstractCnnRequest<ProductUpdateRespon
     }
 
     @Override
-    public String toString() {
+    public String toJsonStr() {
         Map<String, Object> map = JacksonUtil.bean2Map(productInfoBean);
         map.putAll(JacksonUtil.bean2Map(this));
         return JacksonUtil.bean2Json(map);
