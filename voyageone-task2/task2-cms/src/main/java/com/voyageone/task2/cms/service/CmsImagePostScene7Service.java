@@ -10,6 +10,7 @@ import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import org.apache.http.client.fluent.Request;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -164,16 +165,29 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
 
                     $info("thread-" + threadNo + ":" + imageUrl + "流取得开始");
 
-                    URL url = new URL(imageUrl);
-                    try (InputStream stream = url.openStream()) {
-                        String fileName = imagesModel.getImgName();
-                        $info("thread-" + threadNo + ":" + imageUrl + "http上传开始");
-                        ImageServer.uploadImage(orderChannelId, fileName, stream);
-                    } catch (Exception ex) {
-                        // 图片url错误
-                        $error("上传图片到 imageServer 时出现了错误", ex);
-                        urlErrorList.add(imagesModel);
-                        continue;
+                    if(imageUrl.indexOf("https") != -1){
+                        try (InputStream stream = Request.Get(imageUrl).execute().returnContent().asStream()) {
+                            String fileName = imagesModel.getImgName();
+                            $info("thread-" + threadNo + ":" + imageUrl + "http上传开始");
+                            ImageServer.uploadImage(orderChannelId, fileName, stream);
+                        } catch (Exception ex) {
+                            // 图片url错误
+                            $error("上传图片到 imageServer 时出现了错误", ex);
+                            urlErrorList.add(imagesModel);
+                            continue;
+                        }
+                    }else {
+                        URL url = new URL(imageUrl);
+                        try (InputStream stream = url.openStream()) {
+                            String fileName = imagesModel.getImgName();
+                            $info("thread-" + threadNo + ":" + imageUrl + "http上传开始");
+                            ImageServer.uploadImage(orderChannelId, fileName, stream);
+                        } catch (Exception ex) {
+                            // 图片url错误
+                            $error("上传图片到 imageServer 时出现了错误", ex);
+                            urlErrorList.add(imagesModel);
+                            continue;
+                        }
                     }
 
                     successImageUrlList.add(imagesModel);
@@ -192,8 +206,7 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
 
     private boolean usingHttps(String channel) {
         return ChannelConfigEnums.Channel.Modotex.getId().equalsIgnoreCase(channel) ||
-                ChannelConfigEnums.Channel.WMF.getId().equalsIgnoreCase(channel) ||
-                ChannelConfigEnums.Channel.JEWELRY.getId().equalsIgnoreCase(channel);
+                ChannelConfigEnums.Channel.WMF.getId().equalsIgnoreCase(channel);
     }
 }
 
