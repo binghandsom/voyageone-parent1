@@ -138,7 +138,7 @@ public class ImageServer {
         // use                https?://.+?:?\d*?/(.+)$
         // match              http://xxx.xxx.xxx/is/image.....
         // get groupValue(1)  is/image.....
-        final Pattern pattern = Pattern.compile("https?://.+?:?\\d*?/(.+)$");
+        final Pattern pattern = Pattern.compile("^https?://.+?:?\\d*?/(.+)$");
         final Matcher matcher = pattern.matcher(imageUrl);
 
         // 不能匹配，那就算了，提出警告，并直接代理
