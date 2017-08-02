@@ -50,16 +50,6 @@ define([
             self.itemDetailService.detail({id: self.id}).then((resp) => {
                 if (resp.data && resp.data.feed) {
                     self.feed = resp.data.feed;
-
-                    // 记录Feed数据原始是否有URL Key
-                    let hasUrlkey = !!self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
-                    _.extend(self.feed, {hasUrlkey:hasUrlkey});
-                    if (hasUrlkey) {
-                        _.extend(self.feed, {urlkey:self.feed.attribute.urlkey[0]});
-                    }
-                    // 处理Feed数据
-                    self.filterFeed();
-
                     self.brandList = resp.data.brandList;
                     self.productTypeList = resp.data.productTypeList;
                     self.sizeTypeList = resp.data.sizeTypeList;
@@ -67,15 +57,10 @@ define([
                     self.originList = resp.data.originList;
                     self.colorMap = resp.data.colorMap;
 
-                    if (_.size(self.feed.image) > 0) {
-                        self.currentFeedImage = self.feed.image[0];
-                        _.extend(self.feed, {imageNum: _.size(self.feed.image)});
-                    }
-
-                    if (self.feed.attribute.boximages && _.size(self.feed.attribute.boximages) > 0) {
-                        self.currentBoxImage = self.feed.attribute.boximages[0];
-                        _.extend(self.feed, {boxImageNum: _.size(self.feed.attribute.boximages)});
-                    }
+                    // 记录原始Feed数据中是否有urlkey
+                    self.hasUrlkey();
+                    // 处理Feed数据
+                    self.filterFeed();
 
                     // 如果有SKU不存在中国价格,则重新计算一次价格
                     let noCNPriceSku = _.find(self.feed.sku, sku => {
@@ -88,9 +73,15 @@ define([
                     let id = self.id;
                     let message = `Feed(id:${id}) not exists.`;
                     self.alert(message);
-
                 }
             });
+        }
+
+        // 判断Feed是否已有urlkey
+        hasUrlkey() {
+            let self = this;
+            let hasUrlkey = !!self.feed.attribute.urlkey && _.size(self.feed.attribute.urlkey) > 0;
+            _.extend(self.feed, {hasUrlkey:hasUrlkey});
         }
 
         // 处理Feed数据
@@ -113,6 +104,8 @@ define([
 
             if (!self.feed.hasUrlkey) {
                 self.generateUrlKey();
+            } else {
+                _.extend(self.feed, {urlkey:self.feed.attribute.urlkey[0]});
             }
             // 将sku->weightOrg转换成float,如果各价格为空默认设置成0
             angular.forEach(self.feed.skus, function (sku) {
@@ -215,6 +208,17 @@ define([
                 _.extend(self.feed, {taxable: self.feed.attribute.taxable[0]});
             } else {
                 _.extend(self.feed, {taxable: "1"});
+            }
+
+            // 处理Item和Box Image
+            if (_.size(self.feed.image) > 0) {
+                self.currentFeedImage = self.feed.image[0];
+                _.extend(self.feed, {imageNum: _.size(self.feed.image)});
+            }
+
+            if (self.feed.attribute.boximages && _.size(self.feed.attribute.boximages) > 0) {
+                self.currentBoxImage = self.feed.attribute.boximages[0];
+                _.extend(self.feed, {boxImageNum: _.size(self.feed.attribute.boximages)});
             }
         }
 
@@ -378,6 +382,8 @@ define([
                 if (res.data) {
                     self.notify.success("Operation succeeded.");
                     _.extend(self.feed, res.data);
+                    // 如果保存时有urlKey,那之后对应的input就disabled了
+                    self.hasUrlkey();
                     // 处理Feed数据
                     self.filterFeed();
                 }
