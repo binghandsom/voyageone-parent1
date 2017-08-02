@@ -153,7 +153,7 @@ public class SellerCatService extends BaseService {
     /**
      * addSellerCat
      */
-    public void addSellerCat(String channelId, int cartId, String cName, String parentCId, String creator, String urlKey) {
+    public void addSellerCat(String channelId, int cartId, String cName, String parentCId, Map<String, Object> mapping, String creator, String urlKey) {
         /*List<CmsBtSellerCatModel> sellerCats = getSellerCatsByChannelCart(channelId, cartId, false);
         if (isDuplicateNode(sellerCats, cName, parentCId, null)) {
             throw new BusinessException("重复的店铺内分类名!");
@@ -170,7 +170,7 @@ public class SellerCatService extends BaseService {
         }
 
         ShopBean shopBean = Shops.getShop(channelId, cartId);
-        if (shopBean == null) {
+        if (shopBean == null && cartId >= 20) {
             throw new BusinessException("未配置店铺的销售平台!");
         }
         String cId = "";
@@ -192,10 +192,12 @@ public class SellerCatService extends BaseService {
         // sneakerhead旗舰店创建店铺内分类
         else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
             cId = cnCategoryService.addSnSellerCat(channelId, parentCId, cName, shopBean);
+        }else if(cartId < 20){
+            cId = Long.toString(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_CnShopCategory_ID));
         }
         if (!StringUtils.isNullOrBlank2(cId)) {
             // 2016-12-08 传入参数新增urlKey
-            cmsBtSellerCatDao.add(channelId, cartId, cName, urlKey, parentCId, cId, creator);
+            cmsBtSellerCatDao.add(channelId, cartId, cName, urlKey, mapping, parentCId, cId, creator);
         }
     }
 

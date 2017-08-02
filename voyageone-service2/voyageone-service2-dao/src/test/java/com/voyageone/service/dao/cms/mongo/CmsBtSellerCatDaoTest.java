@@ -66,9 +66,9 @@ public class CmsBtSellerCatDaoTest {
 
     @Test
     public void testAdd() throws Exception {
-        cmsBtSellerCatDao.add("010", 20, "大家电", "", "0", "103","testUser");
-        cmsBtSellerCatDao.add("010", 20, "电视机", "", "103", "221","testUser");
-        cmsBtSellerCatDao.add("010", 20, "电冰箱", "", "103", "222","testUser");
+        cmsBtSellerCatDao.add("010", 20, "大家电", "",null, "0", "103","testUser");
+        cmsBtSellerCatDao.add("010", 20, "电视机", "", null,"103", "221","testUser");
+        cmsBtSellerCatDao.add("010", 20, "电冰箱", "", null, "103", "222","testUser");
     }
 
 }

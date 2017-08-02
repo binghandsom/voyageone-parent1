@@ -7,49 +7,26 @@ define([
 ], function (cms) {
 
     cms.controller('IncreaseCategoryController',class IncreaseCategoryController{
-        constructor($scope, context, alert){
-            this.scope = $scope;
+        constructor(context,$modalInstance){
             this.context = context;
+            this.$modalInstance = $modalInstance;
             this.selectObject = context.selectObject;
-            this.alert = alert;
-            this.catName = "";
-            this.catPath = "";
-            this.urlKey = "";
+            this.result = {};
         }
 
         init(){
             let self = this,
-                selectObject = self.selectObject,
-                context = self.context;
+                selectObject = self.selectObject;
 
-            if (selectObject) {
-                //页面有数据的情况
-                if (context.root == true) {
-                    self.catPath = "";
-                } else {
-                    self.catPath = selectObject.catPath;
-                }
-            } else {
-                //页面没有数据的情况
-                if (context.root == true) {
-                    self.catPath = "";
-                } else {
-                    self.scope.$dismiss();
-                    self.alert('TXT_MSG_TAG');
-                }
+            if(selectObject){
+                self.preCatPath = `${selectObject.catPath}>`;
             }
         }
 
         save(){
-            let self = this,
-                selectObject = self.selectObject,
-                parentCatId,
-                context = self.context;
+            let self = this;
 
-            parentCatId = context.root ? "0" : selectObject.catId;
-
-            self.context.ctrl.save(context.root,selectObject, parentCatId, self.catName, self.urlKey);
-            self.scope.$dismiss();
+            self.$modalInstance.close(self.result);
         }
 
     });
