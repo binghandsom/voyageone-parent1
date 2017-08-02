@@ -469,6 +469,10 @@ public class CmsChannelTagService extends BaseViewService {
                     throw new BusinessException("A sibling tag with the same name exists.");
                 }
 
+                // 记录原来tagPathName, tagPathName%s 去replace子节点tagPathName
+                String oldTagPathName = tag.getTagPathName();
+
+                // 更新Tag name 和 pathName
                 CmsBtTagModel updateModel = new CmsBtTagModel();
                 updateModel.setId(tag.getId());
                 updateModel.setTagName(tagName);
@@ -478,13 +482,14 @@ public class CmsChannelTagService extends BaseViewService {
                     CmsBtTagModel parentTag = tagService.getTagByTagId(parentTagId);
                     updateModel.setTagPathName(parentTag.getTagPathName() + " > " + tagName);
                 }
+
                 updateModel.setModified(new Date());
                 updateModel.setModifier(modifier);
                 int affected = tagService.updateTagModel(updateModel);
                 if (affected > 0) {
-                    // 如果修改的是父节点, 还必须同步修改所有子节点的tagPathName
+                    // replace 子节点tagPathName
+                    tagService.replaceChildrenPathName(tag.getTagType(), oldTagPathName, updateModel.getTagPathName());
                     BeanUtils.copy(updateModel, tag);
-                    syncChildrenTagPathName(tag);
                     return tag;
                 }
             }
@@ -492,21 +497,4 @@ public class CmsChannelTagService extends BaseViewService {
         return null;
     }
 
-    /**
-     * 同步更新Tag所有子节点的tagPathName
-     */
-    private void syncChildrenTagPathName(CmsBtTagModel tag) {
-        List<CmsBtTagModel> childrenTags = tagService.getListByParentTagId(tag.getId());
-        if (CollectionUtils.isNotEmpty(childrenTags)) {
-            for (CmsBtTagModel child : childrenTags) {
-                CmsBtTagModel childUpdateModel = new CmsBtTagModel();
-                childUpdateModel.setId(child.getId());
-                childUpdateModel.setModified(new Date());
-                childUpdateModel.setModifier(tag.getModifier());
-                childUpdateModel.setTagPathName(tag.getTagPathName() + " > " + child.getTagName());
-                tagService.updateTagModel(childUpdateModel);
-                syncChildrenTagPathName(childUpdateModel);
-            }
-        }
-    }
 }
