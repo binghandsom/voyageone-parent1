@@ -5,11 +5,36 @@ define([
     'cms'
 ], function (cms) {
 
+    function getNodeByName(catName, tree) {
+
+        if (tree == null)
+            return null;
+
+        let result = null;
+
+        _.find(tree, function (element) {
+            if (element.catName && element.catName == catName) {
+                result = element;
+                return true;
+            }
+
+            if (element.children && element.children.length) {
+                result = getNodeByName(catName, element.children);
+                if (result)
+                    return true;
+            }
+
+        });
+
+        return result;
+    }
+
     cms.controller('shopCategoryController', class ShopCategoryController {
 
-        constructor(sellerCatService, popups) {
+        constructor(sellerCatService, popups, notify) {
             this.sellerCatService = sellerCatService;
             this.popups = popups;
+            this.notify = notify;
             this.totalCategory = [];
         }
 
@@ -48,6 +73,15 @@ define([
 
             self.popups.openEditCategory(model).then(res => {
 
+                self.sellerCatService.updateCat({
+                    cartId: 8,
+                    catId: res.catId,
+                    catName: res.catName,
+                    mapping: res.mapping
+                }).then(() => {
+                    self.notify.success('update success');
+                });
+
             });
 
             $event.stopPropagation();
@@ -55,16 +89,62 @@ define([
 
         popIncreaseCategory(categoryItem) {
             let self = this,
-                isRoot = false;
+                index = categoryItem.index,
+                selectedCat = {},
+                totalCategory = self.totalCategory;
 
-            if(categoryItem.index === 0)
-                isRoot = true;
-            self.popups.openIncreaseCategory({
-                root: isRoot,
-                selectObject: categoryItem.children
+            if (index !== 0) {
+                selectedCat = totalCategory[index - 1].selectedCat;
+            }
+
+            self.popups.openEditCategory({
+                type:'add',
+                parentCatPath: selectedCat.catPath
             }).then(res => {
 
-            })
+                self.sellerCatService.updateCat({
+                    cartId: 8,
+                    catId: res.catId,
+                    catName: res.catName,
+                    mapping: res.mapping
+                }).then(res => {
+
+                    console.log(res);
+
+                });
+
+            });
+
+            // self.popups.openIncreaseCategory({
+            //     selectObject: selectedCat
+            // }).then(response => {
+            //
+            //     let parentCatId = index === 0 ? 0 : selectedCat.catId;
+            //
+            //     self.sellerCatService.addCat({
+            //         "cartId": 8,
+            //         "catName": response.catName,
+            //         "parentCatId": parentCatId
+            //     }).then(function (res) {
+            //         let newNode = getNodeByName(response.catName, res.data.catTree);
+            //
+            //         if (index === 0)
+            //             self.totalCategory[0].children.push(newNode);
+            //         else
+            //             selectedCat.children.push(newNode);
+            //
+            //     });
+            // })
+        }
+
+        saveSorts() {
+            let self = this,
+                sellerCatService = self.sellerCatService;
+
+            sellerCatService.sortableCat({tree: self.totalCategory[0].children, cartId: 8}).then(() => {
+                self.notify.success('sort success');
+            });
+
         }
 
     })
