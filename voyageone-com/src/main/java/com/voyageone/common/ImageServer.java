@@ -76,11 +76,16 @@ public class ImageServer {
             String content = IOUtils.toString(response.getEntity().getContent());
             String reasonPhrase = statusLine.getReasonPhrase();
 
-            final String main = String.format(httpTemplate, code, reasonPhrase, content);
+            final String main = String.format(httpTemplate, code, reasonPhrase, imageName, inputStream.available(),
+                    content);
 
             sendUploadFailNotify(main);
 
             throw new FailUploadingException(code, statusLine.getReasonPhrase(), content);
+
+        } catch (FailUploadingException fe) {
+
+            throw fe;
 
         } catch (Exception e) {
 
@@ -130,10 +135,17 @@ public class ImageServer {
      * 替换 {@code imageUrl} 的域名，指向 Image Server，并代理下载
      */
     public static InputStream proxyDownloadImage(String imageUrl, String channel) throws IOException {
+
+        // 如果传入的地址符合 ImageServer 的请求地址，那么就不需要替换并代理了
+        // 所以直接处理下载
+        if (imageUrl.startsWith(imageServerUrl(channel))) {
+            return new URL(imageUrl).openStream();
+        }
+
         // use                https?://.+?:?\d*?/(.+)$
         // match              http://xxx.xxx.xxx/is/image.....
         // get groupValue(1)  is/image.....
-        final Pattern pattern = Pattern.compile("https?://.+?:?\\d*?/(.+)$");
+        final Pattern pattern = Pattern.compile("^https?://.+?:?\\d*?/(.+)$");
         final Matcher matcher = pattern.matcher(imageUrl);
 
         // 不能匹配，那就算了，提出警告，并直接代理

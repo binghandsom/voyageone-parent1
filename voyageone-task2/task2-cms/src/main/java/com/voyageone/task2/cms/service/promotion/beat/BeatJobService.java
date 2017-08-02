@@ -350,7 +350,7 @@ public class BeatJobService extends BaseCronTaskService {
                             .replace("{key}", imageName)
                             .replace("{price}", new DecimalFormat("#.##").format(promotionPrice));
                 else
-                    imageUrl = templateUrl.replace("{key}", imageName);
+                    imageUrl = templateUrl.replace("%s", imageName);
 
                 // 对于下载请求，替换域名，转移到图片服务上，让图片服务来判断是从 s7 下载，还是七牛
                 return ImageServer.proxyDownloadImage(imageUrl, shopBean.getOrder_channel_id());

@@ -208,7 +208,7 @@ public class CmsBeatJDService extends BaseCronTaskService {
         if (promotionPrice != null)
             imageUrl = templateUrl.replace("{key}", imageName).replace("{price}", new DecimalFormat("#.##").format(promotionPrice));
         else
-            imageUrl = templateUrl.replace("{key}", imageName);
+            imageUrl = templateUrl.replace("%s", imageName);
 
         $info("尝试下载并上传：[ %s ] -> [ %s ] -> [ %s ]", imageUrl, imageName, categoryModel.getCategory_name());
 
