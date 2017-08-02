@@ -97,8 +97,9 @@ public class SellerCatServiceTest {
     @Test
     public void updateCategoryByPath() throws Exception {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("name","xusong");
-        sellerCatService.updateCategoryByPath("001",8,"Women's>Puma>xusong","9-45-3164",map);
+        map.put("name","lisi");
+        map.put("age","26");
+        sellerCatService.updateCategoryByPath("001",8,"Gear>xusong","75-128",map);
 
     }
 
