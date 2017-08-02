@@ -1,24 +1,21 @@
 package com.voyageone.service.impl.cms.usa;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.Constants;
-import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CommonPropService;
 import com.voyageone.service.impl.cms.PropService;
+import com.voyageone.service.impl.cms.TypeChannelsService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsSaleDataStatisticsMQMessageBody;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +33,8 @@ public class UsaCustomColumnService extends BaseService {
     private PropService propService;
     @Autowired
     private CommonPropService commonPropService;
+    @Autowired
+    private TypeChannelsService typeChannelsService;
     @Autowired
     private CmsMqSenderService cmsMqSenderService;
 
@@ -130,7 +129,7 @@ public class UsaCustomColumnService extends BaseService {
      */
     public List<Map<String, String>> getPlatformAttributesCustColumns(String channelId, String language, List<String> filterList) {
         // 设置按销量排序的选择列表
-        List<TypeChannelBean> cartList = this.getUsaCartTypeBean(channelId, language);
+        List<TypeChannelBean> cartList = typeChannelsService.getOnlyUsPlatformTypeList(channelId, language);
 
         List<Map<String, String>> platformAttrList = new ArrayList<>();
 
@@ -210,7 +209,7 @@ public class UsaCustomColumnService extends BaseService {
      */
     public List<Map<String, String>> getPlatformSalesCustColumns(String channelId, String language) {
         // 设置按销量排序的选择列表
-        List<TypeChannelBean> cartList = this.getUsaCartTypeBean(channelId, language);
+        List<TypeChannelBean> cartList = typeChannelsService.getOnlyUsPlatformTypeList(channelId, language);
         List<Map<String, String>> platformsSales = new ArrayList<>();
         for (TypeChannelBean cartObj : cartList) {
             Map<String, String> cartSaleMap = new HashMap<>();
@@ -221,26 +220,6 @@ public class UsaCustomColumnService extends BaseService {
             platformsSales.add(cartSaleMap);
         }
         return platformsSales;
-    }
-
-    /**
-     * 获取USA Cart
-     *
-     * @param channelId 渠道ID
-     * @param language  语言
-     */
-    private List<TypeChannelBean> getUsaCartTypeBean(String channelId, String language) {
-        List<TypeChannelBean> cartBeanList = TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.SKU_CARTS_53, channelId, language);
-        if (cartBeanList == null) {
-            return Collections.emptyList();
-        }
-        List<TypeChannelBean> resultCartBeanList = new ArrayList<>();
-        for (TypeChannelBean cartBean : cartBeanList) {
-            int cartId = NumberUtils.toInt(cartBean.getValue(), -1);
-            if (cartId <= 0 || cartId >= 20) continue;
-            resultCartBeanList.add(cartBean);
-        }
-        return resultCartBeanList;
     }
 
     public void saveUserCustomColumns(String channelId, Integer userId, String username, Map<String, Object> params) {

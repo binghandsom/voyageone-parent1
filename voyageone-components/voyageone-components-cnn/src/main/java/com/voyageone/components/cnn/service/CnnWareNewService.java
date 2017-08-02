@@ -34,6 +34,13 @@ public class CnnWareNewService extends CnnBase {
     }
 
     /**
+     * sn app批量更新商品价格，每次请求最多处理100个商品
+     */
+    public ProductBatchUpdatePriceResponse updateMultiProductPrice(ShopBean shop, ProductBatchUpdatePriceRequest request) throws Exception {
+        return reqApi(shop, request, getHeadersForSnApp());
+    }
+
+    /**
      * sn app删除商品 group下线
      */
     public ProductDeleteResponse deleteProduct(ShopBean shop, ProductDeleteRequest request) throws Exception {
@@ -59,6 +66,33 @@ public class CnnWareNewService extends CnnBase {
         request.resetParams();
         request.addParam(request.getNumIId());
         request.addParam(request.getSkuCode());
+        return reqApi(shop, request, getHeadersForSnApp());
+    }
+
+    /**
+     * sn app 上架
+     */
+    public ProductListingResponse doProductListing(ShopBean shop, ProductListingRequest request) throws Exception {
+        request.resetParams();
+        request.addParam(request.getNumIId());
+        return reqApi(shop, request, getHeadersForSnApp());
+    }
+
+    /**
+     * sn app 下架
+     */
+    public ProductDeListingResponse doProductDeListing(ShopBean shop, ProductDeListingRequest request) throws Exception {
+        request.resetParams();
+        request.addParam(request.getNumIId());
+        return reqApi(shop, request, getHeadersForSnApp());
+    }
+
+    /**
+     * sn app 获取商品上下架状态
+     */
+    public ProductGetStatusResponse getProductPlatformStatus(ShopBean shop, ProductGetStatusRequest request) throws Exception {
+        request.resetParams();
+        request.addParam(request.getNumIId());
         return reqApi(shop, request, getHeadersForSnApp());
     }
 

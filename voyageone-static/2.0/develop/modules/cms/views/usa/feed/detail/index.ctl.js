@@ -76,6 +76,14 @@ define([
                         self.currentBoxImage = self.feed.attribute.boximages[0];
                         _.extend(self.feed, {boxImageNum: _.size(self.feed.attribute.boximages)});
                     }
+
+                    // 如果有SKU不存在中国价格,则重新计算一次价格
+                    let noCNPriceSku = _.find(self.feed.sku, sku => {
+                        return !sku.priceMsrp || !priceCurrent;
+                    });
+                    if (noCNPriceSku) {
+                        self.setSkuCNPrice();
+                    }
                 } else {
                     let id = self.id;
                     let message = `Feed(id:${id}) not exists.`;
@@ -138,7 +146,7 @@ define([
             }
             // 处理orderlimitcount
             if (!!self.feed.attribute.orderlimitcount && _.size(self.feed.attribute.orderlimitcount) > 0) {
-                _.extend(self.feed, {orderlimitcount: self.feed.attribute.orderlimitcount[0]});
+                _.extend(self.feed, {orderlimitcount: parseInt(self.feed.attribute.orderlimitcount[0])});
             }
             // 处理colorMap
             if (!!self.feed.attribute.colorMap && _.size(self.feed.attribute.colorMap) > 0) {

@@ -5,6 +5,30 @@ define([
     'cms'
 ], function (cms) {
 
+    function getNodeByName(catName, tree) {
+
+        if (tree == null)
+            return null;
+
+        let result = null;
+
+        _.find(tree, function (element) {
+            if (element.catName && element.catName == catName) {
+                result = element;
+                return true;
+            }
+
+            if (element.children && element.children.length) {
+                result = getNodeByName(catName, element.children);
+                if (result)
+                    return true;
+            }
+
+        });
+
+        return result;
+    }
+
     cms.controller('shopCategoryController', class ShopCategoryController {
 
         constructor(sellerCatService, popups) {
@@ -55,17 +79,48 @@ define([
 
         popIncreaseCategory(categoryItem) {
             let self = this,
-                isRoot = false;
+                index = categoryItem.index,
+                selectedCat,
+                totalCategory = self.totalCategory;
 
-            if(categoryItem.index === 0)
-                isRoot = true;
+            if(index !== 0){
+                selectedCat = totalCategory[index-1].selectedCat;
+            }
+
             self.popups.openIncreaseCategory({
-                root: isRoot,
-                selectObject: categoryItem.children
-            }).then(res => {
+                selectObject: selectedCat
+            }).then(response => {
 
+                let parentCatId = index === 0 ? 0 : selectedCat.catId;
+
+                self.sellerCatService.addCat({
+                    "cartId": 8,
+                    "catName": response.catName,
+                    "parentCatId": parentCatId
+                }).then(function (res) {
+                    let newNode = getNodeByName(response.catName, res.data.catTree);
+
+                    if (index === 0)
+                        self.totalCategory[0].children.push(newNode);
+                    else
+                        selectedCat.children.push(newNode);
+
+                });
             })
         }
+
+        /**
+         *
+         * @param parentNode    父节点
+         * @param parentCatId   父节点catId
+         * @param catName
+         */
+        save(root, parentNode, parentCatId, catName) {
+            var self = this;
+
+            this.selected[this.newIndex.value] = catName;
+
+        };
 
     })
 
