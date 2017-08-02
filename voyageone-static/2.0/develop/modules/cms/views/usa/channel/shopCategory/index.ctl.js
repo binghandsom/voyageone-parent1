@@ -31,9 +31,10 @@ define([
 
     cms.controller('shopCategoryController', class ShopCategoryController {
 
-        constructor(sellerCatService, popups) {
+        constructor(sellerCatService, popups,notify) {
             this.sellerCatService = sellerCatService;
             this.popups = popups;
+            this.notify = notify;
             this.totalCategory = [];
         }
 
@@ -72,6 +73,15 @@ define([
 
             self.popups.openEditCategory(model).then(res => {
 
+                self.sellerCatService.updateCat({
+                    cartId: 8,
+                    catId: res.catId,
+                    catName: res.catName,
+                    mapping:res.mapping
+                }).then(function (res) {
+                    self.notify.success('update success');
+                });
+
             });
 
             $event.stopPropagation();
@@ -108,19 +118,6 @@ define([
                 });
             })
         }
-
-        /**
-         *
-         * @param parentNode    父节点
-         * @param parentCatId   父节点catId
-         * @param catName
-         */
-        save(root, parentNode, parentCatId, catName) {
-            var self = this;
-
-            this.selected[this.newIndex.value] = catName;
-
-        };
 
     })
 
