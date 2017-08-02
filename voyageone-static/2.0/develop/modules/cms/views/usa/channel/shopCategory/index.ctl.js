@@ -31,7 +31,7 @@ define([
 
     cms.controller('shopCategoryController', class ShopCategoryController {
 
-        constructor(sellerCatService, popups,notify) {
+        constructor(sellerCatService, popups, notify) {
             this.sellerCatService = sellerCatService;
             this.popups = popups;
             this.notify = notify;
@@ -77,7 +77,7 @@ define([
                     cartId: 8,
                     catId: res.catId,
                     catName: res.catName,
-                    mapping:res.mapping
+                    mapping: res.mapping
                 }).then(function (res) {
                     self.notify.success('update success');
                 });
@@ -93,8 +93,8 @@ define([
                 selectedCat,
                 totalCategory = self.totalCategory;
 
-            if(index !== 0){
-                selectedCat = totalCategory[index-1].selectedCat;
+            if (index !== 0) {
+                selectedCat = totalCategory[index - 1].selectedCat;
             }
 
             self.popups.openIncreaseCategory({
@@ -117,6 +117,16 @@ define([
 
                 });
             })
+        }
+
+        saveSorts() {
+            let self = this,
+                sellerCatService = self.sellerCatService;
+
+            sellerCatService.sortableCat({tree: self.totalCategory[0].children, cartId: 8}).then(() => {
+                self.notify.success('sort success');
+            });
+
         }
 
     })

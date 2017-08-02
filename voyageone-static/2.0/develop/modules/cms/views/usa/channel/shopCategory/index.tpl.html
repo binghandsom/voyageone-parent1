@@ -42,7 +42,7 @@
                             </div>
                         </div>
                         <div class="category_drag_list_dp category_popup">
-                            <ul sv-root sv-part="categoryItem.children" >
+                            <ul sv-root sv-part="categoryItem.children" sv-on-sort="ctrl.saveSorts()">
                                 <li ng-repeat="category in categoryItem.children | filter:{catName:search.catName}" sv-element="opts">
                                     <div ng-click="ctrl.openCategory(category,categoryItem)" style="padding: 0;line-height: 28px"
                                          ng-class="{indexSelected:categoryItem.selectedCat == category}">
