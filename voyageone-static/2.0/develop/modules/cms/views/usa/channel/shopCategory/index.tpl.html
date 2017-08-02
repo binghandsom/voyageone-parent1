@@ -32,7 +32,8 @@
                         <p class="text-left text-vo font-bold">
                             &emsp;{{:: categoryItem.index + 1 }}&nbsp;Level
 
-                            <button type="button" class="btn btn-info pull-right" style="margin-right: 7px;"><i class="fa fa-plus"></i></button>
+                            <button type="button" class="btn btn-info pull-right" ng-click="ctrl.popIncreaseCategory()"
+                                    style="margin-right: 7px;"><i class="fa fa-plus"></i></button>
                         </p>
                         <div class="input-group" style="padding: 0 4px;">
                             <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control" ng-model="catName">

@@ -53,6 +53,14 @@ define([
             $event.stopPropagation();
         }
 
+        popIncreaseCategory(){
+            let self = this;
+
+            self.popups.openIncreaseCategory().then(res => {
+
+            })
+        }
+
     })
 
 });
