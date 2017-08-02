@@ -165,7 +165,7 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
 
                     $info("thread-" + threadNo + ":" + imageUrl + "流取得开始");
 
-                    if(imageUrl.indexOf("https") != -1){
+                    if(imageUrl.contains("https")){
                         try (InputStream stream = Request.Get(imageUrl).execute().returnContent().asStream()) {
                             String fileName = imagesModel.getImgName();
                             $info("thread-" + threadNo + ":" + imageUrl + "http上传开始");
