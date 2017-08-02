@@ -4,6 +4,7 @@ import com.voyageone.components.cnn.enums.CnnConstants;
 import com.voyageone.components.cnn.response.ProductDeleteCodeResponse;
 
 /**
+ * 单CODE下线
  * Created by morse on 2017/7/31.
  */
 public class ProductDeleteCodeRequest extends CnnUrlRequest<ProductDeleteCodeResponse> {
