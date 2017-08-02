@@ -883,44 +883,69 @@ public class SellerCatService extends BaseService {
         CmsBtSellerCatModel cmsBtSellerCatModel = cmsBtSellerCatDao.selectByRootCatId(channelId, cartId, catIds[0]);
         if (cmsBtSellerCatModel != null) {
             List<CmsBtSellerCatModel> childrens = cmsBtSellerCatModel.getChildren();
-            match(childrens, totalPaths, catIds, fullCatId, map, cmsBtSellerCatModel);
+            //获取到目标节点
+            CmsBtSellerCatModel targetNode = match(childrens, fullCatId);
+            //修改mapping信息
+            targetNode.setMapping(map);
+            //备份原来的名字
+            String catName = targetNode.getCatName();
+
+            StringBuilder pathBuilder = new StringBuilder(totalPaths[0]);
+            String[] currentCatId = targetNode.getFullCatId().split("-");
+            for (int i = 1; i < currentCatId.length; i++) {
+                pathBuilder.append(">" + totalPaths[i]);
+            }
+            //获取到当前层级的path
+            String path = pathBuilder.toString();
+            //修改catPath和catName
+            if (!path.equals(targetNode.getCatPath())) {
+                //path路径不匹配,需要修改
+                targetNode.setCatPath(path);
+                //获取路径中的最后一个,即catName
+                targetNode.setCatName(totalPaths[currentCatId.length - 1]);
+            }
+            //因为当前节点的名字修改了之后,对应子节点的名字也要进行修改,这里要对子节点再进行递归修改
+            updateChilds(targetNode.getChildren(), catName, totalPaths[currentCatId.length - 1]);
+            cmsBtSellerCatDao.update(cmsBtSellerCatModel);
         }
     }
 
-    private void match(List<CmsBtSellerCatModel> childrens, String[] totalPaths, String[] catIds, String fullCatId, Map<String, Object> map, CmsBtSellerCatModel cmsBtSellerCatModel) {
+    private CmsBtSellerCatModel match(List<CmsBtSellerCatModel> childrens, String fullCatId) {
         if (ListUtils.notNull(childrens)) {
+            //解析路径
+            String[] catIds = fullCatId.split("-");
             for (CmsBtSellerCatModel children : childrens) {
-                StringBuilder pathBuilder = new StringBuilder(totalPaths[0]);
                 StringBuilder catIdBuilder = new StringBuilder(catIds[0]);
                 String[] currentCatId = children.getFullCatId().split("-");
                 for (int i = 1; i < currentCatId.length; i++) {
-                    pathBuilder.append(">" + totalPaths[i]);
                     catIdBuilder.append("-" + catIds[i]);
                 }
                 //获取到当前层级的path和catId
-                String path = pathBuilder.toString();
                 String catId = catIdBuilder.toString();
                 if (catId.equals(children.getFullCatId())) {
                     //catId匹配成功
                     if (fullCatId.equals(children.getFullCatId())) {
-                        //完全匹配
-                        //修改mapping信息
-                        children.setMapping(map);
-                        //修改catPath和catName
-                        if (!path.equals(children.getCatPath())) {
-                            //path路径不匹配,需要修改
-                            children.setCatPath(path);
-                            //获取路径中的最后一个,即catName
-                            children.setCatName(totalPaths[currentCatId.length - 1]);
-                        }
-                        cmsBtSellerCatDao.update(cmsBtSellerCatModel);
+                        //完全匹配,返回目标节点
+                        return children;
                     } else {
                         //不完全匹配,递归
-                        match(children.getChildren(), totalPaths, catIds, fullCatId, map, cmsBtSellerCatModel);
+                        match(children.getChildren(), fullCatId);
                     }
                 }
             }
         }
+        return null;
     }
 
+    //更新子节点的名字
+    private void updateChilds(List<CmsBtSellerCatModel> childrens, String targetCatName, String replaceCatName) {
+        if (ListUtils.notNull(childrens)) {
+            //子节点存在,遍历修改,并递归
+            for (CmsBtSellerCatModel children : childrens) {
+                children.setCatPath(children.getCatPath().replace(targetCatName, replaceCatName));
+                //递归
+                updateChilds(children.getChildren(), targetCatName, replaceCatName);
+            }
+        }
+    }
 }
