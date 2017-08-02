@@ -19,10 +19,10 @@
                     <div class="form-group">
                         <div class="row">
                             <label class="col-md-6 control-label query-title">
-                                Clothing > Accessories >
+                                {{ctrl.parentCatPath}}
                             </label>
                             <div class="col-md-6">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" ng-model="ctrl.category.catName">
                             </div>
                         </div>
                     </div>
@@ -35,12 +35,12 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-6">
-                                <button type="button" class="btn btn-info">
+                                <button type="button" class="btn btn-info" ng-click = "ctrl.popCategory({cartId:5},'amazon')">
                                     Amazon Browse Tree
                                 </button>
                             </div>
                             <div class="col-md-6">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" ng-model="ctrl.category.mapping.amazon">
                             </div>
                         </div>
                     </div>
@@ -48,12 +48,12 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-6">
-                                <button type="button" class="btn btn-info">
+                                <button type="button" class="btn btn-info" ng-click="ctrl.popCategory({cartId:17,from:ctrl.feed.googleCategory},'googleCategory')">
                                     Google Category
                                 </button>
                             </div>
                             <div class="col-md-6">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" ng-model="ctrl.category.mapping.googleCategory">
                             </div>
                         </div>
                     </div>
@@ -61,12 +61,12 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-6">
-                                <button type="button" class="btn btn-info">
+                                <button type="button" class="btn btn-info" ng-click="ctrl.popCategory({cartId:18,from:ctrl.feed.googleDepartment},'googleDepartment')">
                                     Google Department
                                 </button>
                             </div>
                             <div class="col-md-6">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" ng-model="ctrl.category.mapping.googleDepartment">
                             </div>
                         </div>
                     </div>
@@ -74,13 +74,13 @@
                     <div class="form-group">
                         <div class="row">
                             <div class="col-md-6">
-                                <button type="button" class="btn btn-info">
+                                <button type="button" class="btn btn-info" ng-click="ctrl.popCategory({cartId:19,from:ctrl.feed.priceGrabberCategory},'priceGrabber')">
                                     PriceGrabber Cagegory
                                 </button>
                             </div>
 
                             <div class="col-md-6">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" ng-model="ctrl.category.mapping.priceGrabber">
                             </div>
                         </div>
                     </div>
@@ -95,7 +95,7 @@
                         <div class="row">
                             <label class="col-md-4 control-label query-title">URL Key</label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" ng-model="ctrl.category.urlKey">
                             </div>
                         </div>
                     </div>
@@ -106,8 +106,7 @@
                             <div class="col-md-1">
                                 <div class="onoffswitch" style="margin: 0px auto;">
                                     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="visibleOnMenu"
-                                           ng-true-value="'1'" ng-false-value="'0'"
-                                           ng-model="ctrl.feed.freeShipping">
+                                           ng-model="ctrl.category.mapping.isVisibleOnMenu">
                                     <label class="onoffswitch-label" for="visibleOnMenu">
                                         <span class="onoffswitch-inner"></span>
                                         <span class="onoffswitch-switch"></span>
@@ -124,8 +123,7 @@
                             <div class="col-md-1">
                                 <div class="onoffswitch" style="margin: 0px auto;">
                                     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="enableFilter"
-                                           ng-true-value="'1'" ng-false-value="'0'"
-                                           ng-model="ctrl.feed.freeShipping">
+                                           ng-model="ctrl.category.mapping.isEnableFilter">
                                     <label class="onoffswitch-label" for="enableFilter">
                                         <span class="onoffswitch-inner"></span>
                                         <span class="onoffswitch-switch"></span>
@@ -142,8 +140,7 @@
                             <div class="col-md-1">
                                 <div class="onoffswitch" style="margin: 0px auto;">
                                     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="publish"
-                                           ng-true-value="'1'" ng-false-value="'0'"
-                                           ng-model="ctrl.feed.freeShipping">
+                                           ng-model="ctrl.category.mapping.isPublished">
                                     <label class="onoffswitch-label" for="publish">
                                         <span class="onoffswitch-inner"></span>
                                         <span class="onoffswitch-switch"></span>
@@ -163,7 +160,7 @@
                         <div class="row">
                             <label class="col-md-4 control-label query-title">Title</label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" ng-model="ctrl.category.mapping.seoTitle">
                             </div>
                         </div>
                     </div>
@@ -172,7 +169,7 @@
                         <div class="row">
                             <label class="col-md-4 control-label query-title">Description</label>
                             <div class="col-md-8">
-                                <textarea class="form-control" rows="3"></textarea>
+                                <textarea class="form-control" rows="3" ng-model="ctrl.category.mapping.seoDescription"></textarea>
                             </div>
                         </div>
                     </div>
@@ -181,7 +178,7 @@
                         <div class="row">
                             <label class="col-md-4 control-label query-title">Keywords</label>
                             <div class="col-md-8">
-                                <textarea class="form-control" rows="3"></textarea>
+                                <textarea class="form-control" rows="3" ng-model="ctrl.category.mapping.seoKeywords"></textarea>
                             </div>
                         </div>
                     </div>
@@ -190,7 +187,7 @@
                         <div class="row">
                             <label class="col-md-4 control-label query-title">Canonical</label>
                             <div class="col-md-8">
-                                <textarea class="form-control" rows="3"></textarea>
+                                <textarea class="form-control" rows="3" ng-model="ctrl.category.mapping.seoCanonical"></textarea>
                             </div>
                         </div>
                     </div>
