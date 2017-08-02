@@ -368,4 +368,9 @@ public class TagService extends BaseService {
         return cmsBtTagDao.selectOne(queryModel);
     }
 
+
+    public int replaceChildrenPathName(Integer tagType, String srcPathName, String newPathName) {
+        return cmsBtTagDaoExtCamel.replaceChildrenPathName(tagType, srcPathName, newPathName);
+    }
+
 }

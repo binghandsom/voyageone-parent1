@@ -17,4 +17,6 @@ import java.util.List;
 @Repository
 public interface CmsBtTagDaoExtCamel {
     List<TagCodeCountInfo> selectListTagCodeCount(@Param("promotionId") int promotionId,@Param("parentTagId") int parentTagId, @Param("codeList") List<String> codeList);
+
+    int replaceChildrenPathName(@Param("tagType") Integer tagType, @Param("srcPathName") String srcPathName, @Param("newPathName") String newPathName);
 }
