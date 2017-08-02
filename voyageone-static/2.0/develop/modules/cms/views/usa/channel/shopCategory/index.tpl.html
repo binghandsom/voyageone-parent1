@@ -30,7 +30,7 @@
                 <div class="category_drag col-sm-3 category-div" ng-repeat="categoryItem in ctrl.totalCategory">
                     <div class="category_drag_main">
                         <p class="text-left text-vo font-bold">
-                            &emsp;{{:: categoryItem.index + 1 }}&nbsp;Level
+                            &emsp;{{ categoryItem.index + 1 }}&nbsp;Level
 
                             <button type="button" class="btn btn-info pull-right" ng-click="ctrl.popIncreaseCategory(categoryItem)"
                                     style="margin-right: 7px;"><i class="fa fa-plus"></i></button>
@@ -49,7 +49,7 @@
                                             <input type="checkbox" ng-click="ctrl.selectCat(category)"
                                                    ng-checked="category.catPath == ctrl.selectObj[category.catId]">{{ctrl.exitPath(category.catPath)}}
                                         </span>
-                                        <span>{{::category.catName}}</span>
+                                        <span>{{category.catName}}</span>
                                         <span class="pull-right">
                                             <button type="button" class="btn btn-success" ng-click="ctrl.popEditCategory(category,$event)">
                                                 <i class="glyphicon glyphicon-edit"></i>

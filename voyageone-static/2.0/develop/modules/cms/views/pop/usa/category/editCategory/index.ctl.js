@@ -7,11 +7,10 @@ define([
 
     cms.controller('EditCategoryController',class EditCategoryController{
 
-        constructor(context,$modalInstance,popups,confirm){
-            this.category = angular.copy(context);
+        constructor(context,$modalInstance,popups){
+            this.category = context;
             this.$modalInstance = $modalInstance;
             this.popups = popups;
-            this.confirm = confirm;
         }
 
         init(){
@@ -23,7 +22,6 @@ define([
             if(parentCatPaths.length  > 0)
                 self.parentCatPath = `${parentCatPaths.join('>')} >`;
 
-            console.log(this.category);
         }
 
         popCategory(option, attrName) {
@@ -37,9 +35,8 @@ define([
         finish(){
             let self = this;
 
-            self.confirm('Are you sure you want to do it?').then(() => {
+            self.$modalInstance.close(self.category);
 
-            });
         }
 
     })
