@@ -42,13 +42,10 @@
                             </div>
                         </div>
                         <div class="category_drag_list_dp category_popup">
-                            <ul>
-                                <li ng-repeat="category in categoryItem.children | filter:{catName:search.catName}">
+                            <ul sv-root sv-part="categoryItem.children" >
+                                <li ng-repeat="category in categoryItem.children | filter:{catName:search.catName}" sv-element="opts">
                                     <a href="javascript:void(0)" ng-click="ctrl.openCategory(category,categoryItem)" ng-class="{indexSelected:categoryItem.selectedCat == category}">
-                                        <span ng-if="ctrl.context.muiti">
-                                            <input type="checkbox" ng-click="ctrl.selectCat(category)"
-                                                   ng-checked="category.catPath == ctrl.selectObj[category.catId]">{{ctrl.exitPath(category.catPath)}}
-                                        </span>
+                                        <label class="label label-info"><i class="fa fa-arrows"></i></label>&emsp;
                                         <span>{{category.catName}}</span>
                                         <span class="pull-right">
                                             <button type="button" class="btn btn-success" ng-click="ctrl.popEditCategory(category,$event)">
