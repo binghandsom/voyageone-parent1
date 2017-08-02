@@ -5,13 +5,13 @@ package com.voyageone.components.cnn.response.data;
  */
 public class ProductAddResDataBean implements DataBean {
 
-    private String numIId;
+    private Long numIId;
 
-    public String getNumIId() {
+    public Long getNumIId() {
         return numIId;
     }
 
-    public void setNumIId(String numIId) {
+    public void setNumIId(Long numIId) {
         this.numIId = numIId;
     }
 }
