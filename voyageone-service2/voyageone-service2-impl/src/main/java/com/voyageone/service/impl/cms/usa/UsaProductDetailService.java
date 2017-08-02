@@ -131,7 +131,7 @@ public class UsaProductDetailService extends BaseService {
 
         result.put("productComm", productComm);
         result.put("mastData", mastData);
-        Map<String, Object> plarform = getProductPlatform(channelId, prodId, CartEnums.Cart.SN.getValue());
+        Map<String, Object> plarform = getProductPlatform(channelId, prodId, CartEnums.Cart.SNKRHDp.getValue());
         result.put("platform", plarform);
 
 

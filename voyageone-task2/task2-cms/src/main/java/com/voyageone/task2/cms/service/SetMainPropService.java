@@ -89,8 +89,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.voyageone.common.configs.Enums.CartEnums.Cart.SN;
-
 /**
  * feed->master导入服务
  *
@@ -1202,12 +1200,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
         // 新code插入美国sneakhead官网相应类目的第一个
         private void doInsertTop50(CmsBtProductModel cmsProduct){
-            CmsBtProductModel_Platform_Cart platform = cmsProduct.getUsPlatform(CartEnums.Cart.SN.getValue());
+            CmsBtProductModel_Platform_Cart platform = cmsProduct.getUsPlatform(CartEnums.Cart.SNKRHDp.getValue());
             if(platform != null && ListUtils.notNull(platform.getSellerCats())){
                 List<String> sellerCatIds = new ArrayList<>();
                 platform.getSellerCats().stream().map(CmsBtProductModel_SellerCat::getcIds).collect(Collectors.toList()).forEach(sellerCatIds::addAll);
                 sellerCatIds = sellerCatIds.stream().distinct().collect(Collectors.toList());
-                sellerCatIds.forEach(sellerCatId->productTopService.insertTop50(cmsProduct.getChannelId(), sellerCatId, cmsProduct.getCommon().getFields().getCode(), CartEnums.Cart.SN.getValue()));
+                sellerCatIds.forEach(sellerCatId->productTopService.insertTop50(cmsProduct.getChannelId(), sellerCatId, cmsProduct.getCommon().getFields().getCode(), CartEnums.Cart.SNKRHDp.getValue()));
             }
         }
         private void doCreateUsaPlatform(CmsBtProductModel cmsProduct, CmsBtFeedInfoModel feed) {
@@ -1271,10 +1269,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 BaseMongoMap<String, Object> fields = new BaseMongoMap<>();
                 platform.setFields(fields);
                 switch (CartEnums.Cart.getValueByID(iCartId+"")){
-                    case SN:
-                    case MSN:
-                    case military:
-                        CmsBtProductModel_SellerCat seller = sellerCatService.getSellerCat(feed.getChannelId(), SN.getValue(), feed.getCategory());
+                    case SNKRHDp:
+                    case SNKRHDm:
+                    case SNKRxM:
+                        CmsBtProductModel_SellerCat seller = sellerCatService.getSellerCat(feed.getChannelId(), CartEnums.Cart.SNKRHDp.getValue(), feed.getCategory());
                         if(seller != null){
                             platform.setpCatId(seller.getcId());
                         }
@@ -1320,14 +1318,14 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         // 店铺内分类设置
                         List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
                         catPath.forEach(cat -> {
-                            CmsBtProductModel_SellerCat sellerCat = sellerCatService.getSellerCat(feed.getChannelId(), SN.getValue(), cat);
+                            CmsBtProductModel_SellerCat sellerCat = sellerCatService.getSellerCat(feed.getChannelId(), CartEnums.Cart.SNKRHDp.getValue(), cat);
                             if (sellerCat != null) {
                                 sellerCats.add(sellerCat);
                             }
                         });
                         platform.setSellerCats(sellerCats);
                         break;
-                    case Xsneakers:
+                    case xSNKR:
                         platform.setpCatId(feed.getCategoryCatId());
                         platform.setpCatPath(feed.getCategory());
                         platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
@@ -1337,7 +1335,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
                         platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
                         break;
-                    case SneakerRx:
+                    case SNKRx:
                         platform.setpCatId(feed.getCategoryCatId());
                         platform.setpCatPath(feed.getCategory());
                         platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
@@ -1347,7 +1345,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
                         platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
                         break;
-                    case iKicks:
+                    case DJKix:
                         platform.setpCatId(feed.getCategoryCatId());
                         platform.setpCatPath(feed.getCategory());
                         platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
@@ -1357,7 +1355,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         platform.getFields().setFeedAttribute("seoKeywords", feed.getAttribute().get("seoKeywords"));
                         platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
                         break;
-                    case Amazon:
+                    case SNKRHDa:
                         platform.setpCatPath(feed.getAttribute().get("amazonBrowseTree")==null?"":feed.getAttribute().get("amazonBrowseTree").get(0));
                         platform.getFields().setAttribute("sellerFulfilledPrime", true);
                         break;

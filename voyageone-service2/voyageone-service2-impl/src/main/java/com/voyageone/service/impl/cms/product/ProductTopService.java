@@ -193,7 +193,7 @@ public class ProductTopService extends BaseService {
         }
         if (topModel.getProductCodeList().size() < 50){
             CmsSearchInfoBean2 params = new CmsSearchInfoBean2();
-            params.setCartId(CartEnums.Cart.SN.getValue());
+            params.setCartId(CartEnums.Cart.SNKRHDp.getValue());
             params.setCidValue(Collections.singletonList(parameter.getSellerCatId()));
             params.setShopCatType(1);
             params.setProductPageNum(1);

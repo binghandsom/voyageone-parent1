@@ -167,14 +167,14 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
                         for (String channelId : channelIdList) {
                             t.execute(() -> {
                                 try {
-                                    doProductUpload(channelId, CartEnums.Cart.SN.getValue(), threadCount, rowCount);
-                                    doProductUpload(channelId, CartEnums.Cart.MSN.getValue(), threadCount, rowCount);
-                                    doProductUpload(channelId, CartEnums.Cart.military.getValue(), threadCount, rowCount);
-                                    doProductUpload(channelId, CartEnums.Cart.Xsneakers.getValue(), threadCount, rowCount);
-                                    doProductUpload(channelId, CartEnums.Cart.iKicks.getValue(), threadCount, rowCount);
-                                    doProductUpload(channelId, CartEnums.Cart.eBay.getValue(), threadCount, rowCount);
-                                    doProductUpload(channelId, CartEnums.Cart.Amazon.getValue(), threadCount, rowCount);
-                                    doProductUpload(channelId, CartEnums.Cart.SneakerRx.getValue(), threadCount, rowCount);
+                                    doProductUpload(channelId, CartEnums.Cart.SNKRHDp.getValue(), threadCount, rowCount);
+                                    doProductUpload(channelId, CartEnums.Cart.SNKRHDm.getValue(), threadCount, rowCount);
+                                    doProductUpload(channelId, CartEnums.Cart.SNKRxM.getValue(), threadCount, rowCount);
+                                    doProductUpload(channelId, CartEnums.Cart.xSNKR.getValue(), threadCount, rowCount);
+                                    doProductUpload(channelId, CartEnums.Cart.DJKix.getValue(), threadCount, rowCount);
+                                    doProductUpload(channelId, CartEnums.Cart.SNKRHDe.getValue(), threadCount, rowCount);
+                                    doProductUpload(channelId, CartEnums.Cart.SNKRHDa.getValue(), threadCount, rowCount);
+                                    doProductUpload(channelId, CartEnums.Cart.SNKRx.getValue(), threadCount, rowCount);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -381,8 +381,8 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
     private void setCommonInfo(TransferUsProductModel productModel, CmsBtProductModel mainProduct, CmsBtProductModel_Platform_Cart platformInfo) {
         CmsBtProductModel_Field commonFields = mainProduct.getCommon().getFields();
         String amazonCatPath = "";
-        if (mainProduct.getUsPlatform(CartEnums.Cart.Amazon.getValue()) != null) {
-            amazonCatPath = mainProduct.getUsPlatform(CartEnums.Cart.Amazon.getValue()).getpCatPath();
+        if (mainProduct.getUsPlatform(CartEnums.Cart.SNKRHDa.getValue()) != null) {
+            amazonCatPath = mainProduct.getUsPlatform(CartEnums.Cart.SNKRHDa.getValue()).getpCatPath();
             productModel.setAmazonBrowseTree(amazonCatPath);
         }
         productModel.setSizeType(commonFields.getSizeType());
