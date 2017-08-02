@@ -78,7 +78,7 @@ define([
                     catId: res.catId,
                     catName: res.catName,
                     mapping: res.mapping
-                }).then(function (res) {
+                }).then(() => {
                     self.notify.success('update success');
                 });
 
@@ -90,33 +90,51 @@ define([
         popIncreaseCategory(categoryItem) {
             let self = this,
                 index = categoryItem.index,
-                selectedCat,
+                selectedCat = {},
                 totalCategory = self.totalCategory;
 
             if (index !== 0) {
                 selectedCat = totalCategory[index - 1].selectedCat;
             }
 
-            self.popups.openIncreaseCategory({
-                selectObject: selectedCat
-            }).then(response => {
+            self.popups.openEditCategory({
+                type:'add',
+                parentCatPath: selectedCat.catPath
+            }).then(res => {
 
-                let parentCatId = index === 0 ? 0 : selectedCat.catId;
+                self.sellerCatService.updateCat({
+                    cartId: 8,
+                    catId: res.catId,
+                    catName: res.catName,
+                    mapping: res.mapping
+                }).then(res => {
 
-                self.sellerCatService.addCat({
-                    "cartId": 8,
-                    "catName": response.catName,
-                    "parentCatId": parentCatId
-                }).then(function (res) {
-                    let newNode = getNodeByName(response.catName, res.data.catTree);
-
-                    if (index === 0)
-                        self.totalCategory[0].children.push(newNode);
-                    else
-                        selectedCat.children.push(newNode);
+                    console.log(res);
 
                 });
-            })
+
+            });
+
+            // self.popups.openIncreaseCategory({
+            //     selectObject: selectedCat
+            // }).then(response => {
+            //
+            //     let parentCatId = index === 0 ? 0 : selectedCat.catId;
+            //
+            //     self.sellerCatService.addCat({
+            //         "cartId": 8,
+            //         "catName": response.catName,
+            //         "parentCatId": parentCatId
+            //     }).then(function (res) {
+            //         let newNode = getNodeByName(response.catName, res.data.catTree);
+            //
+            //         if (index === 0)
+            //             self.totalCategory[0].children.push(newNode);
+            //         else
+            //             selectedCat.children.push(newNode);
+            //
+            //     });
+            // })
         }
 
         saveSorts() {
