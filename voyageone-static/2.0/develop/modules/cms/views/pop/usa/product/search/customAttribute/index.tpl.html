@@ -104,9 +104,20 @@
                                 <label class="col-sm-3 control-label query-title">Platform</label>
                                 <div class="col-sm-9 form-inline">
                                     <label class="checkbox-inline c-checkbox" style="min-width: 100px;margin-left: 10px;"
-                                           ng-repeat="platformSale in ctrl.platformSales | filter:{cartName:platformSales}">
+                                           ng-repeat="platformSale in ctrl.platformSales | filter:{cartName:platformSales}" ng-if="platformSale.value>0 && platformSale.value<20">
                                         <input type="checkbox" ng-model="ctrl.saleInfo.selCartObj[platformSale.cartId]" ng-click="ctrl.selSaleCart()">
                                         <span class="fa fa-check"></span>&nbsp;{{platformSale.cartName}}</label>
+                                    <hr/>
+                                    <label class="checkbox-inline c-checkbox" style="min-width: 100px;margin-left: 10px;"
+                                           ng-repeat="platformSale in ctrl.platformSales | filter:{cartName:platformSales}" ng-if="platformSale.value>=20">
+                                        <input type="checkbox" ng-model="ctrl.saleInfo.selCartObj[platformSale.cartId]" ng-click="ctrl.selSaleCart()">
+                                        <span class="fa fa-check"></span>&nbsp;{{platformSale.cartName}}</label>
+                                    <hr/>
+                                    <label class="checkbox-inline c-checkbox" style="min-width: 100px;margin-left: 10px;"
+                                           ng-repeat="platformSale in ctrl.platformSales | filter:{cartName:platformSales}" ng-if="platformSale.value==0">
+                                        <input type="checkbox" ng-model="ctrl.saleInfo.selCartObj[platformSale.cartId]" ng-click="ctrl.selSaleCart()">
+                                        <span class="fa fa-check"></span>&nbsp;{{platformSale.cartName}}</label>
+
                                     <input type="hidden" name="checkFlag" ng-model="ctrl.checkFlag"
                                            ng-required="ctrl.saleInfo.selCarts.length == 0 && (ctrl.saleInfo.beginTime || ctrl.saleInfo.endTime)">
                                 </div>

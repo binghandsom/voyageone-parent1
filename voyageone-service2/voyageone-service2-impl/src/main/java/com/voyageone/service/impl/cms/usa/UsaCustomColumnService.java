@@ -13,6 +13,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sales;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -209,16 +210,28 @@ public class UsaCustomColumnService extends BaseService {
      */
     public List<Map<String, String>> getPlatformSalesCustColumns(String channelId, String language) {
         // 设置按销量排序的选择列表
-        List<TypeChannelBean> cartList = typeChannelsService.getOnlyUsPlatformTypeList(channelId, language);
+        //  List<TypeChannelBean> cartList = typeChannelsService.getOnlyUsPlatformTypeList(channelId, language);
+        // USA CMS 动态销量统计, 追加中国平台
+        List<TypeChannelBean> cartList = typeChannelsService.getUsPlatformTypeList(channelId, language);
         List<Map<String, String>> platformsSales = new ArrayList<>();
         for (TypeChannelBean cartObj : cartList) {
+            int cartId = NumberUtils.toInt(cartObj.getValue(), -1);
+            if (cartId <= 0) continue;
             Map<String, String> cartSaleMap = new HashMap<>();
             cartSaleMap.put("cartId", cartObj.getValue());
-            cartSaleMap.put("cartName", cartObj.getName());
+            cartSaleMap.put("cartName", cartId < 20 ? cartObj.getName() : cartObj.getAdd_name2());
             cartSaleMap.put("beginTime", "");
             cartSaleMap.put("endTime", "");
             platformsSales.add(cartSaleMap);
         }
+
+        // 追加一个Total
+        Map<String, String> totalSaleMap = new HashMap<>();
+        totalSaleMap.put("cartId", "0");
+        totalSaleMap.put("cartName", "Total");
+        totalSaleMap.put("beginTime", "");
+        totalSaleMap.put("endTime", "");
+        platformsSales.add(totalSaleMap);
         return platformsSales;
     }
 

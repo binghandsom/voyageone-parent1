@@ -69,6 +69,10 @@ define([
                        }
                    });
 
+                   _.each(self.platformSales, platformSale => {
+                        _.extend(platformSale, {value: parseInt(platformSale.cartId)});
+                   });
+
                    if (_.size(self.selPlatformSales) > 0) {
                        let platformSaleOne = self.selPlatformSales[0];
                        self.saleInfo.beginTime = platformSaleOne.beginTime;
