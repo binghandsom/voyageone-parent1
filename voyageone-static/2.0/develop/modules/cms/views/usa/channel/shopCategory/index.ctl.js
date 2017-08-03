@@ -99,42 +99,30 @@ define([
 
             self.popups.openEditCategory({
                 type:'add',
-                parentCatPath: selectedCat.catPath
-            }).then(res => {
+                parentCatPath: selectedCat.catPath ? selectedCat.catPath : ''
+            }).then(response => {
 
-                self.sellerCatService.updateCat({
-                    cartId: 8,
-                    catId: res.catId,
-                    catName: res.catName,
-                    mapping: res.mapping
-                }).then(res => {
+                let parentCatId = index === 0 ? 0 : selectedCat.catId;
 
-                    console.log(res);
+                self.sellerCatService.addCat({
+                    "cartId": 8,
+                    "catName": response.catName,
+                    "mapping":response.mapping,
+                    "parentCatId": parentCatId
+                }).then(function (res) {
+                    let newNode = getNodeByName(response.catName, res.data.catTree);
+
+                    if (index === 0)
+                        self.totalCategory[0].children.push(newNode);
+                    else
+                        selectedCat.children.push(newNode);
+
+                    self.notify.success('category add success');
 
                 });
 
             });
 
-            // self.popups.openIncreaseCategory({
-            //     selectObject: selectedCat
-            // }).then(response => {
-            //
-            //     let parentCatId = index === 0 ? 0 : selectedCat.catId;
-            //
-            //     self.sellerCatService.addCat({
-            //         "cartId": 8,
-            //         "catName": response.catName,
-            //         "parentCatId": parentCatId
-            //     }).then(function (res) {
-            //         let newNode = getNodeByName(response.catName, res.data.catTree);
-            //
-            //         if (index === 0)
-            //             self.totalCategory[0].children.push(newNode);
-            //         else
-            //             selectedCat.children.push(newNode);
-            //
-            //     });
-            // })
         }
 
         saveSorts() {

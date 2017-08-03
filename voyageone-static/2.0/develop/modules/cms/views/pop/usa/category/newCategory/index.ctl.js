@@ -7,9 +7,9 @@ define([
 ], function (cms) {
 
     cms.controller('IncreaseCategoryController',class IncreaseCategoryController{
-        constructor(context,$modalInstance){
+        constructor(context,$uibModalInstance){
             this.context = context;
-            this.$modalInstance = $modalInstance;
+            this.$uibModalInstance = $uibModalInstance;
             this.selectObject = context.selectObject;
             this.result = {};
         }
@@ -26,7 +26,7 @@ define([
         save(){
             let self = this;
 
-            self.$modalInstance.close(self.result);
+            self.$uibModalInstance.close(self.result);
         }
 
     });

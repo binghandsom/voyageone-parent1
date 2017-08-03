@@ -3,29 +3,36 @@
  */
 define([
     'cms'
-],function (cms) {
+], function (cms) {
 
-    cms.controller('EditCategoryController',class EditCategoryController{
+    function isEmpty(attribute) {
+        return attribute === undefined || attribute === '';
+    }
 
-        constructor(context,$modalInstance,popups){
+    cms.controller('EditCategoryController', class EditCategoryController {
+
+        constructor(context, $uibModalInstance, popups,alert) {
             this.context = context;
             this.category = context;
-            this.$modalInstance = $modalInstance;
+            this.$uibModalInstance = $uibModalInstance;
             this.popups = popups;
+            this.alert = alert;
         }
 
-        init(){
+        init() {
             let self = this;
 
-            if(self.context.type === 'add'){
+            if (self.context.type === 'add') {
                 self.parentCatPath = `${self.context.parentCatPath} >`;
-                self.category = {};
-            }else{
+                self.category = {
+                    mapping: {}
+                };
+            } else {
                 let catPath = self.category.catPath,
                     parentCatPaths = catPath.split('>');
 
                 parentCatPaths.splice(catPath.split('>').length - 1);
-                if(parentCatPaths.length  > 0)
+                if (parentCatPaths.length > 0)
                     self.parentCatPath = `${parentCatPaths.join('>')} >`;
             }
 
@@ -39,10 +46,18 @@ define([
             });
         }
 
-        finish(){
+        finish() {
             let self = this;
 
-            self.$modalInstance.close(self.category);
+            if (self.context.type === 'add') {
+                if (isEmpty(self.category.urlKey) || isEmpty(self.category.catName)) {
+                    self.alert('please check category name & category\'s urlKey');
+                    return false;
+                }
+            }
+
+
+            self.$uibModalInstance.close(self.category);
 
         }
 
