@@ -8,7 +8,8 @@
         prop_id AS propId,
         prop_name AS propName,
         sort_name AS sortName,
-        sort_flag AS sortFlag
+        sort_flag AS sortFlag,
+        to_label AS toLabel
         from cms_mt_prop
         WHERE type=#{type,jdbcType=INTEGER}
     </select>

@@ -39,6 +39,11 @@ public class CmsMtPropModel extends BaseModel {
     protected Integer sortFlag;
 
     /**
+     * 页面展示时是否转成Yes/No的Label，如果to_label=1并且prop_id对应值是1则显示Yes，如果to_label=1但prop_id对应值非1显示No
+     */
+    protected Integer toLabel;
+
+    /**
      * 语言：中文cn,英文en
      */
     protected String lang;
@@ -81,6 +86,14 @@ public class CmsMtPropModel extends BaseModel {
 
     public void setSortFlag(Integer sortFlag) {
         this.sortFlag = sortFlag;
+    }
+
+    public Integer getToLabel() {
+        return toLabel;
+    }
+
+    public void setToLabel(Integer toLabel) {
+        this.toLabel = toLabel;
     }
 
     public String getLang() {

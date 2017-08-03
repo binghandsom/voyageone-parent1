@@ -3,8 +3,8 @@
 <mapper namespace="com.voyageone.service.dao.cms.CmsMtPropDao" >
     <resultMap id="BaseResultMap" type="com.voyageone.service.model.cms.CmsMtPropModel" />
     <sql id="Base_Column_List" >
-        `id`, `prop_id`, `prop_name`, `type`, `sort_name`, `sort_flag`, `lang`, `created`, 
-        `creater`, `modified`, `modifier`
+        `id`, `prop_id`, `prop_name`, `type`, `sort_name`, `sort_flag`, `to_label`, `lang`, 
+        `created`, `creater`, `modified`, `modifier`
     </sql>
 
     <select id="select" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
@@ -31,6 +31,9 @@
             </if>
             <if test="sortFlag != null" >
                 `sort_flag` = #{sortFlag,jdbcType=INTEGER},
+            </if>
+            <if test="toLabel != null" >
+                `to_label` = #{toLabel,jdbcType=INTEGER},
             </if>
             <if test="lang != null" >
                 `lang` = #{lang,jdbcType=VARCHAR},
@@ -79,6 +82,9 @@
             <if test="sortFlag != null" >
                 and `sort_flag` = #{sortFlag,jdbcType=INTEGER}
             </if>
+            <if test="toLabel != null" >
+                and `to_label` = #{toLabel,jdbcType=INTEGER}
+            </if>
             <if test="lang != null" >
                 and `lang` = #{lang,jdbcType=VARCHAR}
             </if>
@@ -118,6 +124,9 @@
             <if test="sortFlag != null" >
                 and `sort_flag` = #{sortFlag,jdbcType=INTEGER}
             </if>
+            <if test="toLabel != null" >
+                and `to_label` = #{toLabel,jdbcType=INTEGER}
+            </if>
             <if test="lang != null" >
                 and `lang` = #{lang,jdbcType=VARCHAR}
             </if>
@@ -153,6 +162,9 @@
             </if>
             <if test="sortFlag != null" >
                 and `sort_flag` = #{sortFlag,jdbcType=INTEGER}
+            </if>
+            <if test="toLabel != null" >
+                and `to_label` = #{toLabel,jdbcType=INTEGER}
             </if>
             <if test="lang != null" >
                 and `lang` = #{lang,jdbcType=VARCHAR}
@@ -190,6 +202,9 @@
             <if test="sortFlag != null" >
                 `sort_flag`,
             </if>
+            <if test="toLabel != null" >
+                `to_label`,
+            </if>
             <if test="lang != null" >
                 `lang`,
             </if>
@@ -221,6 +236,9 @@
             <if test="sortFlag != null" >
                 #{sortFlag,jdbcType=INTEGER},
             </if>
+            <if test="toLabel != null" >
+                #{toLabel,jdbcType=INTEGER},
+            </if>
             <if test="lang != null" >
                 #{lang,jdbcType=VARCHAR},
             </if>
@@ -247,26 +265,5 @@
             </if>
         </trim>
     </insert>
-
-    <select id="selectByType" parameterType="java.lang.Integer" resultType="java.util.Map">
-        select
-        prop_id AS propId,
-        prop_name AS propName
-        from cms_mt_prop
-        WHERE type=#{type,jdbcType=INTEGER}
-        <!--where-->
-        <!--<if test="selType == 1" >-->
-            <!--AND (prop_id != 'code'-->
-            <!--AND prop_id != 'priceMsrpSt' AND prop_id != 'priceMsrpEd' AND prop_id != 'priceRetailSt' AND prop_id != 'priceRetailEd' AND prop_id != 'priceSaleSt' AND prop_id != 'priceSaleEd')-->
-        <!--</if>-->
-        <!--<if test="selType == 2" >-->
-            <!--AND (prop_id != 'code' AND prop_id != 'originalTitleCn'-->
-            <!--AND prop_id != 'priceMsrpSt' AND prop_id != 'priceMsrpEd' AND prop_id != 'priceRetailSt' AND prop_id != 'priceRetailEd' AND prop_id != 'priceSaleSt' AND prop_id != 'priceSaleEd')-->
-        <!--</if>-->
-        <!--<if test="selType == 3" >-->
-            <!--AND (prop_id != 'priceMsrpSt' AND prop_id != 'priceMsrpEd' AND prop_id != 'priceRetailSt' AND prop_id != 'priceRetailEd' AND prop_id != 'priceSaleSt' AND prop_id != 'priceSaleEd')-->
-        <!--</if>-->
-        <!--order by creater-->
-    </select>
 
 </mapper>
