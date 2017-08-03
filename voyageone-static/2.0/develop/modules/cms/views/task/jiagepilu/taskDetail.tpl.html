@@ -154,8 +154,12 @@
 								<td class="text-right">{{::info.price | number: 2 || '无'}}</td>
 								<td class="text-left">{{::info.synFlagEnum | translate}}</td>
 								<td class="text-left" title="{{::info.imageTaskId}}">{{::info.imageStatusEnum | translate}}</td>
-								<td class="text-left">{{::info.message}}</td>
-								<td class="text-left">{{::info.modified.substring(0, 19)}}</td>
+
+								<td class="text-left">
+									<span ng-if = "info.message <= 50">{{::info.message}}</span>
+									<span ng-if = "info.message > 50"><popover-text content="info.message" direct="left" size="50"></popover-text></span>
+								</td>
+								<td class="text-left">{{::info.modified.substring(0, 19)  | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
 								<td class="text-center">
 									<div class="btn-group text-center">
 										<button title="启动" ng-click="popAddJiagepiluProduct(ctrl, info.id)" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-pencil"></i>&nbsp;<span translate="TXT_EDIT"></span></button>
