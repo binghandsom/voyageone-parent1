@@ -190,7 +190,7 @@ public class UsaTagService extends BaseService {
                         }
                         // 本页数据全选
                         orgChkStsMap.put(tagBean.getTagPath(), true);
-                    } else if (0 < selCnt && selCnt < prodList.size()) {
+                    } else {
                         // 如果在全选中则移除
                         if (orgChkStsMap.containsKey(tagBean.getTagPath())) {
                             orgChkStsMap.remove(tagBean.getTagPath());
