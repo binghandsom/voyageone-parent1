@@ -3,8 +3,9 @@
  */
 define([
     'cms',
+    'modules/cms/enums/Carts',
     'modules/cms/directives/platFormStatus.directive'
-], function (cms) {
+], function (cms,cartEntity) {
 
     class usTabController {
 
@@ -48,6 +49,10 @@ define([
 
                 self.platform = res.data.platform;
                 self.productComm = res.data.productComm;
+
+                if(!self.platform.pStatus){
+                    self.platform.pStatus = 'Pending';
+                }
 
                 // SKU 是否全选
                 let flag = true;

@@ -51,6 +51,11 @@ define([
 
                 self.mastData = res.data.mastData;
                 self.platform = res.data.platform;
+
+                if(!self.platform.platform.pStatus){
+                    self.platform.platform.pStatus = 'Pending';
+                }
+
                 self.productComm = res.data.productComm;
                 self.freeTagList = res.data.freeTagList;
 
