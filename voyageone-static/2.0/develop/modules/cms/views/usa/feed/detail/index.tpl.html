@@ -478,24 +478,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!--特殊属性 End-->
 
-                                <div class="form-group" ng-if="ctrl.feed.status!='New'">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title text-left vo_unreqfield">Approve Pricing ?</label>
-                                        <div class="col-md-1">
-                                            <div class="onoffswitch" style="margin: 0px auto;">
-                                                <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="approvePricing"
-                                                       ng-true-value="'1'" ng-false-value="'0'"
-                                                       ng-model="ctrl.feed.approvePricing">
-                                                <label class="onoffswitch-label" for="approvePricing">
-                                                    <span class="onoffswitch-inner"></span>
-                                                    <span class="onoffswitch-switch"></span>
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -684,20 +667,25 @@
                                                        ng-enter="ctrl.setSkuProperty('','priceNet','1')">
                                             </div>
                                         </td>
-                                        <td ng-if="ctrl.auth!=1"></td>
-                                        <td ng-if="ctrl.auth!=1"></td>
-                                        <!--<td class="text-right form-horizontal">
-                                            <div class="form-group query-title">default:</div>
-                                            <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceMsrp" ng-change="ctrl.setSkuProperty('','priceMsrp')">
-                                            </div>
+                                        <td colspan="2" ng-if="ctrl.auth!=1">
+
+                                                <div class="row form-group pull-right">
+                                                    <label class="col-md-8 control-label query-title text-left vo_unreqfield">Approve Pricing :</label>
+                                                    <div class="col-md-1">
+                                                        <div class="onoffswitch" style="margin: 0px auto;">
+                                                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="approvePricing"
+                                                                   ng-true-value="'1'" ng-false-value="'0'"
+                                                                   ng-model="ctrl.feed.approvePricing">
+                                                            <label class="onoffswitch-label" for="approvePricing">
+                                                                <span class="onoffswitch-inner"></span>
+                                                                <span class="onoffswitch-switch"></span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                         </td>
-                                        <td class="text-right form-horizontal">
-                                            <div class="form-group query-title">default:</div>
-                                            <div class="form-group">
-                                                <input type="number" class="form-control" ng-model="ctrl.setting.priceCurrent" ng-change="ctrl.setSkuProperty('','priceCurrent')">
-                                            </div>
-                                        </td>-->
+
                                     </tr>
                                     <tr>
                                         <th class="text-left">Size</th>
