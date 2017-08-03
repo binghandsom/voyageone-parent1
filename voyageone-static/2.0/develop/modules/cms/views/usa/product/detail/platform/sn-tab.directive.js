@@ -325,7 +325,7 @@ define([
             if (!isSale) {
                 self.selAllSkuFlag = false;
             } else {
-                let notSelOne = _.find(self.platform.skus, sku => {
+                let notSelOne = _.find(self.platform.platform.skus, sku => {
                     return !sku.isSale;
                 });
                 self.selAllSkuFlag = !notSelOne;
