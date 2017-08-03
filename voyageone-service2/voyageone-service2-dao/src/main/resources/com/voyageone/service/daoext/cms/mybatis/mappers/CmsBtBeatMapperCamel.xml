@@ -288,7 +288,7 @@
 
         FROM voyageone_cms2.cms_bt_task_jiagepilu b
             JOIN voyageone_cms2.cms_bt_tasks t ON t.id = b.task_id
-        WHERE (
+        WHERE ((
                   #{now} > t.activity_start
                   AND #{now} &lt; t.activity_end
                   AND b.syn_flag = #{upFlag}
@@ -297,7 +297,7 @@
               ) OR (
                   b.syn_flag = #{downFlag}
                   AND #{now} > t.activity_end
-              )
+              ))
         and t.cart_id in
         <foreach item="item" index="index" collection="cartIds" open="(" separator="," close=")">
             #{item}
