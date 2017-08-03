@@ -79,10 +79,6 @@ public class CmsUsaProductSalesMQMessageBody extends BaseMQMessageBody {
         if (StringUtils.isBlank(super.getChannelId())) {
             throw new MQMessageRuleException("参数channelId为空.");
         }
-
-        if (StringUtils.isEmpty(getSender())) {
-            throw new MQMessageRuleException(" 发送者为空.");
-        }
         if (ListUtils.notNull(items)) {
             throw new MQMessageRuleException(" items为空.");
         }
