@@ -9,9 +9,6 @@
             <form role="form" class="form-horizontal" name="customColumnForm" novalidate>
                 <div class="col-sm-3">
                     <h4 class="m-l-xss text-vo">
-                        <!--<label class="checkbox-inline c-checkbox m-t-sm" style="margin-left: 0px;">
-                            <input type="checkbox" ng-model="cus.all_commonData" ng-change="chkSelStatus(1)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
-                        </label>-->
                         Common Attributes
                     </h4>
                     <h4 class="m-l-xss">
@@ -23,25 +20,19 @@
                                     </div>
                                     <input type="text" class="form-control" ng-model="commonName">
                                 </div>
-                                <!-- /.input-group -->
                             </div>
                         </div>
                     </h4>
                     <div class="column_overflow column_overflow_2">
                         <div ng-repeat="commonProp in ctrl.commonProps | filter:{propName:commonName}" class="m-t-xs">
-                            <!--<div ng-if="commonData.propId != 'skuCnt'">-->
                             <label class="checkbox-inline c-checkbox">
                                 <input type="checkbox" name="commonAttrSels" value="{{commonProp.propId}}" ng-model="commonProp.checked">
                                 <span class="fa fa-check"></span>&nbsp;{{commonProp.propName}}</label>
-                            <!--</div>-->
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-3">
                     <h4 class="m-l-xss text-vo">
-                        <!--<label class="checkbox-inline c-checkbox m-t-sm" style="margin-left: 0px;">
-                            <input type="checkbox" ng-model="cus.all_customData" ng-change="chkSelStatus(2)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
-                        </label>-->
                         Platform  Attributes
                     </h4>
                     <h4 class="m-l-xss">
@@ -53,7 +44,6 @@
                                     </div>
                                     <input type="text" class="form-control" ng-model="platformAttribute">
                                 </div>
-                                <!-- /.input-group -->
                             </div>
                         </div>
                     </h4>
@@ -67,74 +57,67 @@
                 </div>
                 <div class="col-sm-6">
                     <h4 class="m-l-xss text-vo">
-                        <!--<label class="checkbox-inline c-checkbox m-t-sm" style="margin-left: 0px;">
-                            <input type="checkbox" ng-model="cus.all_salesType" ng-change="chkSelStatus(3)"><span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL'| translate}}&nbsp;
-                        </label>-->
                         Platform  Sales
                     </h4>
                     <h4 class="m-l-xss">
                         <div class="row">
-                            <div class="col-lg-10">
+                            <div class="col-lg-12">
                                 <div class="input-group">
                                     <div class="input-group-btn">
                                         <button type="button" class="btn btn-default" disabled><span class="fa fa-filter"></span></button>
                                     </div>
                                     <input type="text" class="form-control" ng-model="platformSales">
                                 </div>
-                                <!-- /.input-group -->
                             </div>
                         </div>
                     </h4>
                     <div class="column_overflow_2">
-
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label query-title">Sale Time</label>
-                            <div class="col-sm-9 form-inline">
-                                <div class="col-sm-5 input-group">
-                                    <input type="text" class="form-control" uib-datepicker-popup
-                                           ng-model="ctrl.saleInfo.beginTime" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                           date-model-format="yyyy-MM-dd" is-open="datePicker1" close-text="Close" ng-required="ctrl.saleInfo.selCarts.length > 0"/>
-                                    <span class="input-group-btn">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label query-title">Sale Time</label>
+                                <div class="col-sm-9 form-inline">
+                                    <div class="col-sm-5 input-group">
+                                        <input type="text" class="form-control" uib-datepicker-popup
+                                               ng-model="ctrl.saleInfo.beginTime" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                               date-model-format="yyyy-MM-dd" is-open="datePicker1" close-text="Close" ng-required="ctrl.saleInfo.selCarts.length > 0"/>
+                                        <span class="input-group-btn">
                                         <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
                                     </span>
-                                </div>
-                                <strong>&nbsp;~&nbsp;</strong>
-                                <div class="col-sm-5 input-group">
-                                    <input type="text" class="form-control" uib-datepicker-popup
-                                           ng-model="ctrl.saleInfo.endTime" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                           date-model-format="yyyy-MM-dd" is-open="datePicker2" close-text="Close" ng-required="ctrl.saleInfo.selCarts.length > 0"/>
-                                    <span class="input-group-btn">
+                                    </div>
+                                    <strong>&nbsp;~&nbsp;</strong>
+                                    <div class="col-sm-5 input-group">
+                                        <input type="text" class="form-control" uib-datepicker-popup
+                                               ng-model="ctrl.saleInfo.endTime" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                               date-model-format="yyyy-MM-dd" is-open="datePicker2" close-text="Close" ng-required="ctrl.saleInfo.selCarts.length > 0"/>
+                                        <span class="input-group-btn">
                                     <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
                                 </span>
+                                    </div>
+                                </div>
+                                <div class="col-md-9" ng-if="ctrl.saleInfo.selCarts.length > 0 && (!ctrl.saleInfo.beginTime || !ctrl.saleInfo.endTime)">
+                                    <label class="col-sm-3 control-label query-title"></label>
+                                    <div class="col-sm-5 input-group" style="color:red;">Please set the time</div>
                                 </div>
                             </div>
-                            <div class="col-md-9" ng-if="ctrl.saleInfo.selCarts.length > 0 && (!ctrl.saleInfo.beginTime || !ctrl.saleInfo.endTime)">
-                                <label class="col-sm-3 control-label query-title"></label>
-                                <div class="col-sm-5 input-group" style="color:red;">Please set the time</div>
-                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label query-title">Platform</label>
-                            <div class="col-sm-9 form-inline">
-                                <div class="col-sm-10 input-group">
-                                    <label class="checkbox-inline c-checkbox" ng-repeat="platformSale in ctrl.platformSales | filter:{cartName:platformSales}">
+                        <div class="col-lg-12" style="margin-top:20px">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label query-title">Platform</label>
+                                <div class="col-sm-9 form-inline">
+                                    <label class="checkbox-inline c-checkbox" style="min-width: 100px;margin-left: 10px;"
+                                           ng-repeat="platformSale in ctrl.platformSales | filter:{cartName:platformSales}">
                                         <input type="checkbox" ng-model="ctrl.saleInfo.selCartObj[platformSale.cartId]" ng-click="ctrl.selSaleCart()">
                                         <span class="fa fa-check"></span>&nbsp;{{platformSale.cartName}}</label>
                                     <input type="hidden" name="checkFlag" ng-model="ctrl.checkFlag"
                                            ng-required="ctrl.saleInfo.selCarts.length == 0 && (ctrl.saleInfo.beginTime || ctrl.saleInfo.endTime)">
                                 </div>
-                            </div>
-                            <div class="col-md-9" ng-if="ctrl.saleInfo.selCarts.length == 0 && (ctrl.saleInfo.beginTime || ctrl.saleInfo.endTime)">
-                                <label class="col-sm-3 control-label query-title"></label>
-                                <div class="col-sm-5 input-group" style="color:red;">Please select the platform</div>
+                                <div class="col-md-9" ng-if="ctrl.saleInfo.selCarts.length == 0 && (ctrl.saleInfo.beginTime || ctrl.saleInfo.endTime)">
+                                    <label class="col-sm-3 control-label query-title"></label>
+                                    <div class="col-sm-5 input-group" style="color:red;">Please select the platform</div>
+                                </div>
                             </div>
                         </div>
 
-                        <!--<div ng-repeat="platformSale in ctrl.platformSales | filter:{cartName:platformSales}" class="m-t-xs">-->
-                            <!--<label class="checkbox-inline c-checkbox">-->
-                                <!--<input type="checkbox" name="platformSale" value="{{platformSale.cartId}}" ng-model="platformSale.checked" ng-change="chkItemStatus(3)">-->
-                                <!--<span class="fa fa-check"></span>&nbsp;{{platformSale.cartName}}</label>-->
-                        <!--</div>-->
                     </div>
                 </div>
             </form>
