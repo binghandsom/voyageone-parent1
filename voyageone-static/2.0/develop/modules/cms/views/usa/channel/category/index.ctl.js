@@ -38,9 +38,12 @@ define([
             };
             self.carts = carts;
             self.customColumns = {
-                selCommonProps: [],
-                selPlatformAttributes: [],
-                selPlatformSales: []
+                commonProps:[],
+                platformAttributes:[],
+                platformSales:[],
+                selCommonProps:[],
+                selPlatformAttributes:[],
+                selPlatformSales:[]
             };
             self.columnArrow = {};
             self.moveKeys = {
