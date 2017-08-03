@@ -54,7 +54,7 @@ define([
             };
             self.pageOption = {
                 curr: 1, total: 0, size: 10, fetch: function () {
-                    self.search();
+                    self.query();
                 }
             };
             self.searchUtilService = searchUtilService;
@@ -146,6 +146,12 @@ define([
         }
 
         search() {
+            let self = this;
+            self.pageOption.curr = 1;
+            self.query();
+        }
+
+        query() {
             let self = this,
                 upEntity = self.searchUtilService.handleQueryParams(self);
 

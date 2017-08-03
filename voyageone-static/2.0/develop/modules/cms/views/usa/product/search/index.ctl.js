@@ -27,7 +27,7 @@ define([
             self.$routeParams = $routeParams;
 
             self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
-                self.search();
+                self.query();
             }};
 
             self.defaultSearchInfo = {
@@ -136,6 +136,14 @@ define([
         }
 
         search() {
+            let self = this;
+            self.pageOption.curr = 1;
+            self.query();
+        }
+
+        // 获取数据
+        query() {
+
             let self = this;
             let searchInfo = self.handleQueryParams();
 
