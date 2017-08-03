@@ -11,19 +11,19 @@
                             <div class="form-horizontal">
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_unreqfield">Sneakerhead</label>
+                                        <label class="col-md-4 control-label text-left query-title vo_unreqfield">Sneakerhead</label>
                                         <label style="padding-top:4px" class="label" ng-class="{
-                                   'label-default':!ctrl.platform.platform.pStatus || ctrl.platform.platform.pStatus == 'Pending',
-                                    'label-warning':ctrl.platform.platform.pStatus == 'InStock',
-                                    'label-success':ctrl.platform.platform.pStatus == 'OnSale'
-                                }">
+                                           'label-default':!ctrl.platform.platform.pStatus || ctrl.platform.platform.pStatus == 'Pending',
+                                            'label-warning':ctrl.platform.platform.pStatus == 'InStock',
+                                            'label-success':ctrl.platform.platform.pStatus == 'OnSale'
+                                        }">
                                             {{ctrl.platformStatus[ctrl.platform.platform.pStatus]}}
                                         </label>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_reqfield">Code</label>
+                                        <label class="col-md-4 control-label text-left query-title vo_reqfield">Code</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" name="code" ng-model="ctrl.productComm.fields.code" required readonly>
                                         </div>
@@ -32,7 +32,7 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title"></label>
+                                        <label class="col-md-4 control-label text-left query-title"></label>
                                         <div class="col-md-6">
                                             <vo-message target="productForm.code"></vo-message>
                                         </div>
@@ -40,7 +40,7 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title vo_reqfield">Model</label>
+                                        <label class="col-md-4 control-label text-left query-title vo_reqfield">Model</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" name="model" ng-model="ctrl.productComm.fields.model" required readonly>
                                         </div>
@@ -53,7 +53,7 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title"></label>
+                                        <label class="col-md-4 control-label text-left query-title"></label>
                                         <div class="col-md-6">
                                             <vo-message target="productForm.model"></vo-message>
                                         </div>
@@ -83,7 +83,7 @@
 
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-md-4 text-right vo_unreqfield">
+                                        <div class="col-md-4 text-left vo_unreqfield">
                                             <button type="button" class="btn btn-info btn-pop" ng-click = "ctrl.setFreeTag()">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;Tag
                                             </button>
@@ -99,10 +99,10 @@
 
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-md-4 text-right vo_reqfield">
+                                        <div class="col-md-4 text-left vo_reqfield">
                                             <button type="button" class="btn btn-info btn-pop"
                                                     ng-click="ctrl.popUsCategory({cartId:8,from:ctrl.productComm.pCatPath})">
-                                                <i class="fa fa-arrow-right"></i>&nbsp;SN Primary Category`
+                                                <i class="fa fa-arrow-right"></i>&nbsp;SN Primary Category
                                             </button>
                                         </div>
                                         <div class="col-md-6">
@@ -111,7 +111,7 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title"></label>
+                                        <label class="col-md-4 control-label text-left query-title"></label>
                                         <div class="col-md-6">
                                             <vo-message target="productForm.pCatPath"></vo-message>
                                         </div>
@@ -120,7 +120,7 @@
 
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-md-4 text-right vo_unreqfield">
+                                        <div class="col-md-4 text-left vo_unreqfield">
                                             <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popUsCategory({cartId:8,froms:ctrl.platform.sellerCarts,muiti:true})">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;SN Other Category
                                             </button>
@@ -135,7 +135,7 @@
 
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-md-4 text-right vo_unreqfield">
+                                        <div class="col-md-4 text-left vo_unreqfield">
                                             <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:17,from:ctrl.feed.googleCategory},'googleCategory')">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;Google Category
                                             </button>
@@ -149,7 +149,7 @@
 
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-md-4 text-right vo_unreqfield">
+                                        <div class="col-md-4 text-left vo_unreqfield">
                                             <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:18,from:ctrl.feed.googleDepartment},'googleDepartment')">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;Google DepartMent
                                             </button>
@@ -163,7 +163,7 @@
 
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-md-4 text-right vo_unreqfield">
+                                        <div class="col-md-4 text-left vo_unreqfield">
                                             <button type="button" class="btn btn-info btn-pop" ng-click="ctrl.popCategory({cartId:19,from:ctrl.feed.priceGrabberCategory},'priceGrabberCategory')">
                                                 <i class="fa fa-arrow-right"></i>&nbsp;PriceGrabber Category
                                             </button>
