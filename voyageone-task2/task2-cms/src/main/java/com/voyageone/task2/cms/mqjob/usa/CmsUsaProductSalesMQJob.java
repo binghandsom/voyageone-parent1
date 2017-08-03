@@ -35,7 +35,7 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
         for (CmsUsaProductSalesMQMessageBody.TargetParam item : items) {
             JongoQuery jongoQuery = new JongoQuery();
             String time = parseTime(item.getOrderDate());
-            Criteria criteria = new Criteria("cart_id").is(item.getCartId()).and("channel_id").is(messageBody.getChannelId()).
+            Criteria criteria = new Criteria("cart_id").is(item.getCartId()).and("channel_id").is(item.getChannelId()).
                     and("sku").is(item.getSku()).and("date").is(time);
             jongoQuery.setQuery(criteria);
             CmsMtProdSalesHisModel cmsMtProdSalesHisModel = cmsMtProdSalesHisDao.selectOneWithQuery(jongoQuery);
@@ -55,7 +55,7 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
             } else {
                 //没有查到对应的数据,新建一条数据
                 String code = null;
-                CmsBtProductModel cmsBtProductModel = productService.getProductBySku(messageBody.getChannelId(), item.getSku());
+                CmsBtProductModel cmsBtProductModel = productService.getProductBySku(item.getChannelId(), item.getSku());
                 if (cmsBtProductModel != null) {
                     code = cmsBtProductModel.getCommon().getFields().getCode();
                 }
@@ -65,7 +65,7 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
                 cmsMtProdSalesHisModel.setModifier(getTaskName());
                 cmsMtProdSalesHisModel.setProdCode(code);
                 cmsMtProdSalesHisModel.setCart_id(item.getCartId());
-                cmsMtProdSalesHisModel.setChannel_id(messageBody.getChannelId());
+                cmsMtProdSalesHisModel.setChannel_id(item.getChannelId());
                 cmsMtProdSalesHisModel.setDate(parseTime(item.getOrderDate()));
                 cmsMtProdSalesHisModel.setCreated(DateTimeUtil.format(new Date(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
                 cmsMtProdSalesHisModel.setCreater(getTaskName());

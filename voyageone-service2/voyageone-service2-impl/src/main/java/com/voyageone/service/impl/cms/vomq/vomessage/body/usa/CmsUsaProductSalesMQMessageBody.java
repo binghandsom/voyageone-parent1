@@ -26,12 +26,21 @@ public class CmsUsaProductSalesMQMessageBody extends BaseMQMessageBody {
     }
 
     public static class TargetParam {
+        private String channelId;
         private Integer cartId;
         private Long orderDate;
         private String sku;
         private Integer qty;
         //1:下单 / 0:取消
         private Integer status;
+
+        public String getChannelId() {
+            return channelId;
+        }
+
+        public void setChannelId(String channelId) {
+            this.channelId = channelId;
+        }
 
         public Integer getCartId() {
             return cartId;
