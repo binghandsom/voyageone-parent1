@@ -15,7 +15,7 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_USA_PRODUCT_SALES_UPDATE)
 public class CmsUsaProductSalesMQMessageBody extends BaseMQMessageBody {
 
-    private List<CmsUsaProductSalesMQMessageBody.Param> items;
+    private List<Param> items;
 
     public List<Param> getItems() {
         return items;
@@ -25,7 +25,7 @@ public class CmsUsaProductSalesMQMessageBody extends BaseMQMessageBody {
         this.items = items;
     }
 
-    public class Param {
+    public static class Param {
         private Integer cartId;
         private Long orderDate;
         private String sku;
