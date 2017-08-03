@@ -163,7 +163,7 @@ public class SellerCatService extends BaseService {
             throw new BusinessException("重复的店铺内分类名!");
         }
         // 如果urlKey不为空，则校验唯一性
-        if (org.apache.commons.lang.StringUtils.isNotBlank(urlKey)) {
+        if (!StringUtils.isNullOrBlank2(urlKey)) {
             if (isDuplicateUrlKey(sellerCats, urlKey)) {
                 throw new BusinessException("重复的目录urlKey!");
             }
