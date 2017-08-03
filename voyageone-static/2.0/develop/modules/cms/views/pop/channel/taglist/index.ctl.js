@@ -8,27 +8,26 @@ define([
     'modules/cms/directives/noticeTip.directive'
 ], function (cms) {
 
-    cms.controller('EditTagController', (function () {
+    cms.controller('EditTagController',class EditTagController{
 
-        function EditTagController(channelTagService, confirm, context, notify, alert, $modalInstance) {
-            this.channelTagService = channelTagService;
-            this.confirm = confirm;
-            this.context = context;
-            this.notify = notify;
-            this.alert = alert;
-            this.$modalInstance = $modalInstance;
+       constructor(channelTagService, confirm, context, notify, alert, $modalInstance){
+           this.channelTagService = channelTagService;
+           this.confirm = confirm;
+           this.context = context;
+           this.notify = notify;
+           this.alert = alert;
+           this.$modalInstance = $modalInstance;
 
-            this.tag = context.tag;
-            this.tagName = "";
-            this.parentTag = {};
-            this.init();
-        }
+           this.tag = context.tag;
+           this.tagName = "";
+           this.parentTag = {};
+           this.init();
+       }
 
         /**
          * 初始化    构建tag树形结构
-         * @param parentIndex
          */
-        EditTagController.prototype.init = function () {
+        init() {
             var self = this;
             if (self.tag && self.tag.parentTagId) {
                 self.channelTagService.getTag({tagId:self.tag.parentTagId}).then(res => {
@@ -42,8 +41,9 @@ define([
         /**
          * 修改tagPathName
          */
-        EditTagController.prototype.editTag = function () {
-            var self = this;
+        editTag() {
+            let self = this;
+
             if (self.tagName) {
                 let parameter = {
                     tagId:self.tag.id,
@@ -55,8 +55,7 @@ define([
             }
         };
 
-        return EditTagController;
+    });
 
-    })());
 
 });

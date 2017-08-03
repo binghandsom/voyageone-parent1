@@ -86,12 +86,14 @@ define([
 
         };
 
-        TagListCtl.prototype.editTag = function (tag, parentIndex) {
+        TagListCtl.prototype.editTag = function (tag, parentIndex,$event) {
             var self = this;
             self.popups.editTag({tag:tag}).then(res => {
                 self.notify.success("TagName modified successfully.");
                 self.init(parentIndex);
             });
+
+            $event.stopPropagation();
         };
 
         /**
