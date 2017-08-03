@@ -340,10 +340,7 @@
 
                                     </span>
 
-                                    <span class="label m-t-xs m-r-sm m-l-sm" style="font-size:12px;background-color:black;" ng-if="productInfo.lock == 1">&nbsp;锁定&nbsp;</span>
-                                    <span class="text-right">
-                                                    <span class="pull-right" style="margin-right:10px">{{'TXT_MATER_CATEGORY_WITH_COLON' | translate}}&nbsp;{{productInfo.common.catPath}}</span>
-                                            </span>
+                                        <span class="label m-t-xs m-r-sm m-l-sm" style="font-size:12px;background-color:black;" ng-if="productInfo.lock == 1">&nbsp;锁定&nbsp;</span>
                                         </td>
                                     </tr>
                                     <tr class="table_bg_gray" style="height: 66px">
@@ -353,8 +350,7 @@
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selCommonProps">{{ctrl.getProductValue(productInfo,prop)}}</td>
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes track by $index">{{ctrl.getProductValue(productInfo,prop)}}</td>
                                         <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformSales track by $index">{{productInfo.sales["P"+prop.cartId]?productInfo.sales["P"+prop.cartId]:0}}</td>
-
-                            </tr>
+                                    </tr>
                             </tbody>
                         </table>
 
