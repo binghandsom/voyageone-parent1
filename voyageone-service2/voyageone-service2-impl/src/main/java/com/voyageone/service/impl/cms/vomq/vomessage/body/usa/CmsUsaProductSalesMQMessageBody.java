@@ -15,17 +15,17 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_USA_PRODUCT_SALES_UPDATE)
 public class CmsUsaProductSalesMQMessageBody extends BaseMQMessageBody {
 
-    private List<Param> items;
+    private List<TargetParam> items;
 
-    public List<Param> getItems() {
+    public List<TargetParam> getItems() {
         return items;
     }
 
-    public void setItems(List<Param> items) {
+    public void setItems(List<TargetParam> items) {
         this.items = items;
     }
 
-    public static class Param {
+    public static class TargetParam {
         private Integer cartId;
         private Long orderDate;
         private String sku;
@@ -78,6 +78,10 @@ public class CmsUsaProductSalesMQMessageBody extends BaseMQMessageBody {
     public void check() throws MQMessageRuleException {
         if (StringUtils.isBlank(super.getChannelId())) {
             throw new MQMessageRuleException("参数channelId为空.");
+        }
+
+        if (StringUtils.isEmpty(getSender())) {
+            throw new MQMessageRuleException(" 发送者为空.");
         }
         if (ListUtils.notNull(items)) {
             throw new MQMessageRuleException(" items为空.");

@@ -31,8 +31,8 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
 
     @Override
     public void onStartup(CmsUsaProductSalesMQMessageBody messageBody) throws Exception {
-        List<CmsUsaProductSalesMQMessageBody.Param> items = messageBody.getItems();
-        for (CmsUsaProductSalesMQMessageBody.Param item : items) {
+        List<CmsUsaProductSalesMQMessageBody.TargetParam> items = messageBody.getItems();
+        for (CmsUsaProductSalesMQMessageBody.TargetParam item : items) {
             JongoQuery jongoQuery = new JongoQuery();
             String time = parseTime(item.getOrderDate());
             Criteria criteria = new Criteria("cart_id").is(item.getCartId()).and("channel_id").is(messageBody.getChannelId()).
@@ -41,7 +41,7 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
             CmsMtProdSalesHisModel cmsMtProdSalesHisModel = cmsMtProdSalesHisDao.selectOneWithQuery(jongoQuery);
             if (cmsMtProdSalesHisModel != null) {
                 //查到了对应的数据
-                cmsMtProdSalesHisModel.setModifier(messageBody.getSender());
+                cmsMtProdSalesHisModel.setModifier(getTaskName());
                 cmsMtProdSalesHisModel.setModified(DateTimeUtil.format(new Date(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
                 //1:下单 / 0:取消
                 if (item.getStatus() == 1) {
@@ -62,13 +62,13 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
                 cmsMtProdSalesHisModel = new CmsMtProdSalesHisModel();
                 cmsMtProdSalesHisModel.setModified(DateTimeUtil.format(new Date(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
                 cmsMtProdSalesHisModel.setSku(item.getSku());
-                cmsMtProdSalesHisModel.setModifier(messageBody.getSender());
+                cmsMtProdSalesHisModel.setModifier(getTaskName());
                 cmsMtProdSalesHisModel.setProdCode(code);
                 cmsMtProdSalesHisModel.setCart_id(item.getCartId());
                 cmsMtProdSalesHisModel.setChannel_id(messageBody.getChannelId());
                 cmsMtProdSalesHisModel.setDate(parseTime(item.getOrderDate()));
                 cmsMtProdSalesHisModel.setCreated(DateTimeUtil.format(new Date(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
-                cmsMtProdSalesHisModel.setCreater(messageBody.getSender());
+                cmsMtProdSalesHisModel.setCreater(getTaskName());
                 if (item.getStatus() == 1) {
                     //下单
                     cmsMtProdSalesHisModel.setQty(item.getQty());
