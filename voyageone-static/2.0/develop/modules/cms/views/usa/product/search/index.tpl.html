@@ -1,229 +1,230 @@
 <div class="wrapper-md hasNavBar" ng-init="ctrl.init()" id="usProductSearch">
 
     <uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
-        <uib-accordion-group is-open="true">
-            <uib-accordion-heading>
-                <i class="fa fa-search"></i>&nbsp;Advanced Search
-                <i class="pull-right glyphicon glyphicon-menu-down"
-                   ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
-            </uib-accordion-heading>
-            <uib-tabset class="tab-container vo_nav-tabs" style="background-color: #EEEDED;">
+    <uib-accordion-group is-open="true">
+        <uib-accordion-heading>
+            <i class="fa fa-search"></i>&nbsp;Advanced Search
+            <i class="pull-right glyphicon glyphicon-menu-down"
+               ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
+        </uib-accordion-heading>
+        <uib-tabset class="tab-container vo_nav-tabs" style="background-color: #EEEDED;">
 
-                <uib-tab>
-                    <tab-heading><i class="fa fa-search-plus text-default"></i>&nbsp;Query Terms</tab-heading>
+            <uib-tab>
+                <tab-heading><i class="fa fa-search-plus text-default"></i>&nbsp;Query Terms</tab-heading>
 
-                    <div class="tab-title">
-                        <h3 class="text-md">Common Attribute</h3>
-                    </div>
-                    <div class="row form-horizontal">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label query-title text-wrap">SKU/Barcode/Code/Model</label>
-                                <div class="col-sm-8">
-                                    <textarea class="form-control inherited no-resize" rows="3" ng-model="ctrl.searchInfo.codeList" ></textarea>
-                                </div>
+                <div class="tab-title">
+                    <h3 class="text-md">Common Attribute</h3>
+                </div>
+                <div class="row form-horizontal">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label query-title text-wrap">SKU/Barcode/Code/Model</label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control inherited no-resize" rows="3" ng-model="ctrl.searchInfo.codeList" ></textarea>
                             </div>
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label query-title">Name</label>
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" ng-model="ctrl.searchInfo.fuzzyStr">
-                                    </div>
-                                </div>
-                            </div>
+                        </div>
+                        <div class="form-horizontal">
                             <div class="form-group">
-                                <label class="col-sm-3 control-label query-title">Brand</label>
+                                <label class="col-sm-3 control-label query-title">Name</label>
                                 <div class="col-sm-8">
-                                    <label class="checkbox-inline c-radio">
-                                        <input type="radio" name="brandSelOperation" value="1" ng-model="ctrl.searchInfo.brandSelType"><span class="fa fa-check" ></span> include
-                                    </label>
-                                    <label class="checkbox-inline c-radio">
-                                        <input type="radio" name="brandSelOperation" value="2" ng-model="ctrl.searchInfo.brandSelType"><span class="fa fa-check"></span> not include
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-3"></div>
-                                <div class="col-sm-8">
-                                    <div class="input-group">
-                                        <select multiple chosen width="'100%'" class="form-control"
-                                                ng-model="ctrl.searchInfo.brandList" search-contains = "true"
-                                                ng-options="brand.value as brand.name for brand in ctrl.masterData.brandList">
-                                        </select>
-                                        <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('brandList')">reset</span>
-                                    </div>
+                                    <input type="text" class="form-control" ng-model="ctrl.searchInfo.fuzzyStr">
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group"><!-- 查询标签 -->
-                                <div class="col-sm-3 text-right">
-                                    <!--4 是标签-->
-                                    <button class="btn btn-pop btn-vo" ng-click="ctrl.popUsFreeTag()">
-                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;Tag
-                                    </button>
-                                </div>
-                                <div class="col-sm-8">
-                                    <div class="input-group">
-                                        <select multiple chosen width="'100%'" class="form-control"
-                                                ng-model="ctrl.searchInfo.usFreeTags"
-                                                ng-options="tag.tagPath as tag.tagPathName for tag in ctrl.tranferData.usFreeTags">
-                                        </select>
-                                        <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('usFreeTags')">reset</span>
-                                    </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label query-title">Brand</label>
+                            <div class="col-sm-8">
+                                <label class="checkbox-inline c-radio">
+                                    <input type="radio" name="brandSelOperation" value="1" ng-model="ctrl.searchInfo.brandSelType"><span class="fa fa-check" ></span> include
+                                </label>
+                                <label class="checkbox-inline c-radio">
+                                    <input type="radio" name="brandSelOperation" value="2" ng-model="ctrl.searchInfo.brandSelType"><span class="fa fa-check"></span> not include
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <select multiple chosen width="'100%'" class="form-control"
+                                            ng-model="ctrl.searchInfo.brandList" search-contains = "true"
+                                            ng-options="brand.value as brand.name for brand in ctrl.masterData.brandList">
+                                    </select>
+                                    <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('brandList')">reset</span>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group"><!-- 查询标签 -->
+                            <div class="col-sm-3 text-right">
+                                <!--4 是标签-->
+                                <button class="btn btn-pop btn-vo" ng-click="ctrl.popUsFreeTag()">
+                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;Tag
+                                </button>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="input-group">
+                                    <select multiple chosen width="'100%'" class="form-control"
+                                            ng-model="ctrl.searchInfo.usFreeTags"
+                                            ng-options="tag.tagPath as tag.tagPathName for tag in ctrl.tranferData.usFreeTags">
+                                    </select>
+                                    <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('usFreeTags')">reset</span>
+                                </div>
+                            </div>
+                        </div>
 
-                            <div class="form-group"><!-- 查询创建时间 -->
-                                <label class="col-sm-3 control-label query-title">Last Received Time</label>
-                                <div class="col-sm-9 form-inline">
-                                    <div class="col-sm-5 input-group">
-                                        <input type="text" class="form-control" uib-datepicker-popup
-                                               ng-model="ctrl.searchInfo.lastReceivedOnFrom" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePickerLr1" close-text="Close"/>
-                                        <span class="input-group-btn">
+                        <div class="form-group"><!-- 查询创建时间 -->
+                            <label class="col-sm-3 control-label query-title">Last Received Time</label>
+                            <div class="col-sm-9 form-inline">
+                                <div class="col-sm-5 input-group">
+                                    <input type="text" class="form-control" uib-datepicker-popup
+                                           ng-model="ctrl.searchInfo.lastReceivedOnFrom" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                           date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.createTimeTo" is-open="datePickerLr1" close-text="Close"/>
+                                    <span class="input-group-btn">
                                                         <button type="button" class="btn btn-default" ng-click="datePickerLr1 = !datePickerLr1"><i class="glyphicon glyphicon-calendar"></i></button>
                                                       </span>
-                                    </div>
-                                    &nbsp;~&nbsp;
-                                    <div class="col-sm-5 input-group">
-                                        <input type="text" class="form-control" uib-datepicker-popup
-                                               ng-model="ctrl.searchInfo.lastReceivedOnTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                               date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.createTimeStart" is-open="datePickerLr2" close-text="Close"/>
-                                        <span class="input-group-btn">
+                                </div>
+                                &nbsp;~&nbsp;
+                                <div class="col-sm-5 input-group">
+                                    <input type="text" class="form-control" uib-datepicker-popup
+                                           ng-model="ctrl.searchInfo.lastReceivedOnTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                           date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.createTimeStart" is-open="datePickerLr2" close-text="Close"/>
+                                    <span class="input-group-btn">
                                                         <button type="button" class="btn btn-default" ng-click="datePickerLr2 = !datePickerLr2"><i class="glyphicon glyphicon-calendar"></i></button>
                                                       </span>
-                                    </div>
                                 </div>
-                            </div>
-
-                            <div class="form-group">
-
-                                <label class="col-sm-3 control-label query-title">Total Qty</label>
-                                <div class="col-sm-9 form-inline">
-                                    <div class="col-sm-5 input-group">
-                                        <input type="number" min="1" max="ctrl.searchInfo.inventoryTo" class="form-control" ng-model="ctrl.searchInfo.inventoryFrom">
-                                    </div>
-                                        &nbsp;~&nbsp;
-                                    <div class="col-sm-5 input-group">
-                                        <input type="number" max="ctrl.searchInfo.inventoryFrom" class="form-control" ng-model="ctrl.searchInfo.inventoryTo">
-                                    </div>
-                                </div>
-
-
                             </div>
                         </div>
-                    </div>
 
+                        <div class="form-group">
 
-                    <div class="tab-title">
-                        <h3 class="text-md text-md">Platform Attribute</h3>
-                    </div>
-                    <div class="row form-horizontal">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label query-title">Platform</label>
-                                <div class="col-sm-8 checkbox">
-                                    <label ng-repeat="platform in ctrl.masterData.usPlatforms" style="min-width: 120px;">
-                                        <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp&nbsp;{{platform.name}}
-                                    </label>
+                            <label class="col-sm-3 control-label query-title">Total Qty</label>
+                            <div class="col-sm-9 form-inline">
+                                <div class="col-sm-5 input-group">
+                                    <input type="number" min="1" max="ctrl.searchInfo.inventoryTo" class="form-control" ng-model="ctrl.searchInfo.inventoryFrom">
+                                </div>
+                                &nbsp;~&nbsp;
+                                <div class="col-sm-5 input-group">
+                                    <input type="number" max="ctrl.searchInfo.inventoryFrom" class="form-control" ng-model="ctrl.searchInfo.inventoryTo">
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <div class="col-md-8 col-lg-offset-3 checkbox">
-                                    <label ng-repeat="platform in ctrl.masterData.platforms" style="min-width: 60px;">
-                                        <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;&nbsp;{{platform.add_name2}}
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label query-title">Status</label>
-                                <div class="col-sm-8 checkbox">
-                                    <label ng-repeat="platform in ctrl.masterData.platformStatus">
-                                        <input type="checkbox" ng-disabled="!ctrl.searchInfo.cartId"
-                                               ng-model="ctrl.searchInfo.platformStatus[platform.status]">{{platform.display}}&emsp;
-                                    </label>
-                                </div>
-                            </div>
 
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <div class="col-sm-3 text-right">
-                                    <button class="btn btn-pop btn-vo" ng-click="ctrl.popCategory()" ng-disabled="ctrl.canCategory()">
-                                        <i class="fa fa-arrow-circle-right"></i>&nbsp;Category
-                                    </button>
+                    </div>
+                </div>
+
+
+                <div class="tab-title">
+                    <h3 class="text-md text-md">Platform Attribute</h3>
+                </div>
+                <div class="row form-horizontal">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label query-title">Platform</label>
+                            <div class="col-sm-8 checkbox">
+                                <label ng-repeat="platform in ctrl.masterData.usPlatforms" style="min-width: 120px;">
+                                    <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp&nbsp;{{platform.name}}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-8 col-lg-offset-3 checkbox">
+                                <label ng-repeat="platform in ctrl.masterData.platforms" style="min-width: 60px;">
+                                    <input type="radio" name="platform" ng-model="ctrl.searchInfo.cartId" value="{{platform.value}}">&nbsp;&nbsp;{{platform.add_name2}}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label query-title">Status</label>
+                            <div class="col-sm-8 checkbox">
+                                <label ng-repeat="platform in ctrl.masterData.platformStatus">
+                                    <input type="checkbox" ng-disabled="!ctrl.searchInfo.cartId"
+                                           ng-model="ctrl.searchInfo.platformStatus[platform.status]">{{platform.display}}&emsp;
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <div class="col-sm-3 text-right">
+                                <button class="btn btn-pop btn-vo" ng-click="ctrl.popCategory()" ng-disabled="ctrl.canCategory()">
+                                    <i class="fa fa-arrow-circle-right"></i>&nbsp;Category
+                                </button>
+                            </div>
+                            <div class="col-sm-8">
+                                <div class="input-group" ng-if="ctrl.searchInfo.cartId == 5">
+                                    <select multiple chosen width="'100%'" class="form-control"
+                                            ng-model="ctrl.tempUpEntity.pCatPathListTmp"
+                                            ng-options="category as category.catPath for category in ctrl.tempUpEntity.pCatPathListTmp">
+                                    </select>
+                                    <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('pCatPathList')">reset</span>
                                 </div>
-                                <div class="col-sm-8">
-                                    <div class="input-group" ng-if="ctrl.searchInfo.cartId == 5">
-                                        <select multiple chosen width="'100%'" class="form-control"
-                                                ng-model="ctrl.tempUpEntity.pCatPathListTmp"
-                                                ng-options="category as category.catPath for category in ctrl.tempUpEntity.pCatPathListTmp">
-                                        </select>
-                                        <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('pCatPathList')">reset</span>
-                                    </div>
-                                    <div class="input-group" ng-if="ctrl.searchInfo.cartId != 5">
-                                        <select multiple chosen width="'100%'" class="form-control"
-                                                ng-model="ctrl.tempUpEntity.cidValueTmp"
-                                                ng-options="category as category.catPath for category in ctrl.tempUpEntity.cidValueTmp">
-                                        </select>
-                                        <span class="input-group-addon cur-p" ng-click="ctrl.tempUpEntity.cidValueTmp=null">reset</span>
-                                    </div>
+                                <div class="input-group" ng-if="ctrl.searchInfo.cartId != 5">
+                                    <select multiple chosen width="'100%'" class="form-control"
+                                            ng-model="ctrl.tempUpEntity.cidValueTmp"
+                                            ng-options="category as category.catPath for category in ctrl.tempUpEntity.cidValueTmp">
+                                    </select>
+                                    <span class="input-group-addon cur-p" ng-click="ctrl.tempUpEntity.cidValueTmp=null">reset</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="form-group"><!-- 查询创建时间 -->
-                                <label class="col-sm-3 control-label query-title">Publish Time</label>
-                                <div class="col-sm-9 form-inline">
-                                    <div class="col-sm-5 input-group">
-                                        <input type="text" class="form-control" uib-datepicker-popup
-                                               ng-model="ctrl.searchInfo.pPublishTimeFrom"
-                                               onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                               date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.pPublishTimeTo" is-open="datePickerCt1"
-                                               ng-disabled="!ctrl.searchInfo.cartId"
-                                               close-text="Close"/>
-                                        <span class="input-group-btn">
+                        <div class="form-group"><!-- 查询创建时间 -->
+                            <label class="col-sm-3 control-label query-title">Publish Time</label>
+                            <div class="col-sm-9 form-inline">
+                                <div class="col-sm-5 input-group">
+                                    <input type="text" class="form-control" uib-datepicker-popup
+                                           ng-model="ctrl.searchInfo.pPublishTimeFrom"
+                                           onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                           date-model-format="yyyy-MM-dd" max-date="vm.searchInfo.pPublishTimeTo" is-open="datePickerCt1"
+                                           ng-disabled="!ctrl.searchInfo.cartId"
+                                           close-text="Close"/>
+                                    <span class="input-group-btn">
                                             <button type="button" class="btn btn-default" ng-click="datePickerCt1 = !datePickerCt1"><i class="glyphicon glyphicon-calendar"></i></button>
                                         </span>
-                                    </div>
-                                    &nbsp;~&nbsp;
-                                    <div class="col-sm-5 input-group">
-                                        <input type="text" class="form-control" uib-datepicker-popup
-                                               ng-model="ctrl.searchInfo.pPublishTimeTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))"
-                                               onpaste="return false" maxlength="10"
-                                               date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.pPublishTimeFrom" is-open="datePickerCt2"
-                                               ng-disabled="!ctrl.searchInfo.cartId"
-                                               close-text="Close"/>
-                                        <span class="input-group-btn">
+                                </div>
+                                &nbsp;~&nbsp;
+                                <div class="col-sm-5 input-group">
+                                    <input type="text" class="form-control" uib-datepicker-popup
+                                           ng-model="ctrl.searchInfo.pPublishTimeTo" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))"
+                                           onpaste="return false" maxlength="10"
+                                           date-model-format="yyyy-MM-dd" min-date="vm.searchInfo.pPublishTimeFrom" is-open="datePickerCt2"
+                                           ng-disabled="!ctrl.searchInfo.cartId"
+                                           close-text="Close"/>
+                                    <span class="input-group-btn">
                                             <button type="button" class="btn btn-default" ng-click="datePickerCt2 = !datePickerCt2"><i class="glyphicon glyphicon-calendar"></i></button>
                                         </span>
-                                    </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="form-group">
-                                <lable class="col-sm-3 control-label query-title">Sale Price</lable>
-                                <div class="col-sm-9 form-inline">
-                                    <div class="col-sm-5 input-group">
-                                        <input type="number" class="form-control" ng-model="ctrl.searchInfo.pSalePriceFrom" ng-disabled="!ctrl.searchInfo.cartId">
-                                    </div>
-                                        &nbsp;~&nbsp;
-                                    <div class="col-sm-5 input-group">
-                                        <input type="text" class="form-control" ng-model="ctrl.searchInfo.pSalePriceTo" ng-disabled="!ctrl.searchInfo.cartId">
-                                    </div>
+                        <div class="form-group">
+                            <lable class="col-sm-3 control-label query-title">Sale Price</lable>
+                            <div class="col-sm-9 form-inline">
+                                <div class="col-sm-5 input-group">
+                                    <input type="number" class="form-control" ng-model="ctrl.searchInfo.pSalePriceFrom" ng-disabled="!ctrl.searchInfo.cartId">
+                                </div>
+                                &nbsp;~&nbsp;
+                                <div class="col-sm-5 input-group">
+                                    <input type="text" class="form-control" ng-model="ctrl.searchInfo.pSalePriceTo" ng-disabled="!ctrl.searchInfo.cartId">
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                </uib-tab>
+            </uib-tab>
 
 
-            </uib-tabset>
-        </uib-accordion-group>
-    </uib-accordion>
+        </uib-tabset>
+    </uib-accordion-group>
+</uib-accordion>
+
     <div class="form-group text-center">
         <button class="btn btn-default ng-binding" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;Clear</button>
         <button class="btn btn-vo ng-binding" ng-click="ctrl.search()"><i class="fa fa-search"></i>&nbsp;Search</button>
