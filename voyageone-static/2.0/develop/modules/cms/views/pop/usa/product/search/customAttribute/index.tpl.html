@@ -85,37 +85,47 @@
                             </div>
                         </div>
                     </h4>
-                    <div class="column_overflow column_overflow_2">
-                        <div class="col-sm-9 form-inline">
-                            <label>Sale Time</label>
-                            <div class="col-sm-5 input-group">
-                                <input type="text" class="form-control" uib-datepicker-popup
-                                       ng-model="ctrl.saleInfo.beginTime" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                       date-model-format="yyyy-MM-dd" is-open="datePicker1" close-text="Close" ng-required="ctrl.saleInfo.selCarts.length > 0"/>
-                                <span class="input-group-btn">
-                                    <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
-                                </span>
-                            </div>
-                            &nbsp;~&nbsp;
-                            <div class="col-sm-5 input-group">
-                                <input type="text" class="form-control" uib-datepicker-popup
-                                       ng-model="ctrl.saleInfo.endTime" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
-                                       date-model-format="yyyy-MM-dd" is-open="datePicker2" close-text="Close" ng-required="ctrl.saleInfo.selCarts.length > 0"/>
-                                <span class="input-group-btn">
+                    <div class="column_overflow_2">
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label query-title">Sale Time</label>
+                            <div class="col-sm-9 form-inline">
+                                <div class="col-sm-5 input-group">
+                                    <input type="text" class="form-control" uib-datepicker-popup
+                                           ng-model="ctrl.saleInfo.beginTime" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                           date-model-format="yyyy-MM-dd" is-open="datePicker1" close-text="Close" ng-required="ctrl.saleInfo.selCarts.length > 0"/>
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+                                    </span>
+                                </div>
+                                <strong>&nbsp;~&nbsp;</strong>
+                                <div class="col-sm-5 input-group">
+                                    <input type="text" class="form-control" uib-datepicker-popup
+                                           ng-model="ctrl.saleInfo.endTime" onkeypress="return (/[\d-]/.test(String.fromCharCode(event.keyCode)))" onpaste="return false" maxlength="10"
+                                           date-model-format="yyyy-MM-dd" is-open="datePicker2" close-text="Close" ng-required="ctrl.saleInfo.selCarts.length > 0"/>
+                                    <span class="input-group-btn">
                                     <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
                                 </span>
+                                </div>
+                            </div>
+                            <div class="col-md-9" ng-if="ctrl.saleInfo.selCarts.length > 0 && (!ctrl.saleInfo.beginTime || !ctrl.saleInfo.endTime)">
+                                <label class="col-sm-3 control-label query-title"></label>
+                                <div class="col-sm-5 input-group" style="color:red;">Please set the time</div>
                             </div>
                         </div>
-                        <div class="col-md-9" ng-if="ctrl.saleInfo.selCarts.length > 0 && (!ctrl.saleInfo.beginTime || !ctrl.saleInfo.endTime)">
-                            <label style="color: red;">Please set the time</label>
-                        </div>
-                        <div>
-                            <label class="checkbox-inline c-checkbox" ng-repeat="platformSale in ctrl.platformSales | filter:{cartName:platformSales}">
-                                <input type="checkbox" ng-model="ctrl.saleInfo.selCartObj[platformSale.cartId]" ng-click="ctrl.selSaleCart()">
-                                <span class="fa fa-check"></span>&nbsp;{{platformSale.cartName}}</label>
-                        </div>
-                        <div class="col-md-9" ng-if="ctrl.saleInfo.selCarts.length == 0 && (ctrl.saleInfo.beginTime || ctrl.saleInfo.endTime)">
-                            <label style="color: red;">Please select the platform</label>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label query-title">Platform</label>
+                            <div class="col-sm-9 form-inline">
+                                <div class="col-sm-10 input-group">
+                                    <label class="checkbox-inline c-checkbox" ng-repeat="platformSale in ctrl.platformSales | filter:{cartName:platformSales}">
+                                        <input type="checkbox" ng-model="ctrl.saleInfo.selCartObj[platformSale.cartId]" ng-click="ctrl.selSaleCart()">
+                                        <span class="fa fa-check"></span>&nbsp;{{platformSale.cartName}}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-9" ng-if="ctrl.saleInfo.selCarts.length == 0 && (ctrl.saleInfo.beginTime || ctrl.saleInfo.endTime)">
+                                <label class="col-sm-3 control-label query-title"></label>
+                                <div class="col-sm-5 input-group" style="color:red;">Please select the platform</div>
+                            </div>
                         </div>
 
                         <!--<div ng-repeat="platformSale in ctrl.platformSales | filter:{cartName:platformSales}" class="m-t-xs">-->
