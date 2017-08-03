@@ -38,12 +38,13 @@
                     <div class="category_drag col-sm-3" ng-repeat="tree in ctrl.vm.trees" ng-init="$parentIndex = $index">
                         <div class="category_drag_main">
                             <div class="form-inline m-l-xs">
-                                <input type="text" placeholder="Quick search" class="form-control" style="width:85%" ng-model="name[$parentIndex]">
+                                <input type="text" placeholder="Quick search" class="form-control" style="width:80%" ng-model="name[$parentIndex]">
                                 <button type="button" class="btn btn-vo btn-xxs"
                                         ng-click="ctrl.searchName[$parentIndex] = name[$parentIndex] ;ctrl.filterByName($parentIndex,tree.tags)">
                                     <i class="fa fa-search"></i>
                                 </button>
-                                <button type="button" class="btn btn-success btn-xxs" ng-click="ctrl.popNewTag($parentIndex)">
+                                <button type="button" class="btn btn-success btn-xxs pull-right" style="margin-top: 1px;margin-right: 3px;"
+                                        ng-click="ctrl.popNewTag($parentIndex)">
                                     <i class="fa fa-plus"></i>
                                 </button>
                             </div>

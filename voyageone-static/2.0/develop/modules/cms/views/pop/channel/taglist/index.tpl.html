@@ -6,21 +6,27 @@
             <h5 class="modal-title"><i class="glyphicon glyphicon-move"></i>&nbsp;Edit Tag</h5>
         </div>
         <div class="modal-body">
-            <div class="container-fluid">
-                <h3>Edit the tag</h3>
-                <div class="row">
-                    <label class="">{{ctrl.tag.tagPathName}}</label>
+            <div class="container-fluid form-horizontal" style="border: 1px solid #add;">
+                <div class="row form-group">
+                    <div class="col-md-10 col-md-offset-2">
+                        <label class="pull-left control-label query-title" ng-if="ctrl.parentTag">{{ctrl.tag.tagPathName}}</label>
+                    </div>
                 </div>
-                <div class="row">
-                    <label ng-if="ctrl.parentTag">{{ctrl.parentTag.tagPathName}} -></label>
-                    <input type="text" name="tagPathName" ng-model="ctrl.tagName" required>
+                <div class="row form-group">
+                    <div class="col-md-10 col-md-offset-2">
+                        <label class="pull-left control-label query-title" ng-if="ctrl.parentTag">{{ctrl.parentTag.tagPathName}} ></label>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" placeholder="please input category Path"
+                                   name="tagPathName" ng-model="ctrl.tagName" required>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="modal-footer">
             <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i> CANCLE</button>
             <button class="btn btn-vo" ng-click="ctrl.editTag()"
-                    ng-disabled="tagForm.$invalid || ctrl.tagName == ctrl.tag.tagName"><i class="glyphicon glyphicon-floppy-disk"></i> SAVE</button>
+                    ng-disabled="tagForm.$invalid || ctrl.tagName == ctrl.tag.tagName"><i class="glyphicon glyphicon-floppy-disk"></i> CONFIRM</button>
         </div>
     </form>
 </div>
