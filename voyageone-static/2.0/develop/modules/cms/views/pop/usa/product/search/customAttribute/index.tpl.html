@@ -120,6 +120,8 @@
                                     <label class="checkbox-inline c-checkbox" ng-repeat="platformSale in ctrl.platformSales | filter:{cartName:platformSales}">
                                         <input type="checkbox" ng-model="ctrl.saleInfo.selCartObj[platformSale.cartId]" ng-click="ctrl.selSaleCart()">
                                         <span class="fa fa-check"></span>&nbsp;{{platformSale.cartName}}</label>
+                                    <input type="hidden" name="checkFlag" ng-model="ctrl.checkFlag"
+                                           ng-required="ctrl.saleInfo.selCarts.length == 0 && (ctrl.saleInfo.beginTime || ctrl.saleInfo.endTime)">
                                 </div>
                             </div>
                             <div class="col-md-9" ng-if="ctrl.saleInfo.selCarts.length == 0 && (ctrl.saleInfo.beginTime || ctrl.saleInfo.endTime)">
@@ -140,6 +142,8 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>Cancel</button>
-        <button class="btn btn-vo" ng-disabled="customColumnForm.$invalid" ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i>OK</button>
+        <button class="btn btn-vo"
+                ng-disabled="customColumnForm.$invalid"
+                ng-click="ctrl.save()"><i class="glyphicon glyphicon-floppy-disk"></i>OK</button>
     </div>
 </div>
