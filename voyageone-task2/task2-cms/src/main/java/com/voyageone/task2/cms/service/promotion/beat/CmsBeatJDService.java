@@ -146,6 +146,7 @@ public class CmsBeatJDService extends BaseCronTaskService {
                 cmsBtBeatInfo.setSynFlag(BeatFlag.RE_SUCCESS);
             }
         } catch (Exception e) {
+            $error(e);
             if(cmsBtBeatInfo.getSynFlag() == BeatFlag.REVERT.getFlag()){
                 cmsBtBeatInfo.setSynFlag(BeatFlag.RE_FAIL);
             }else{
