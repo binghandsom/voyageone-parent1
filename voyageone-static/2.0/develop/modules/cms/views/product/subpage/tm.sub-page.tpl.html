@@ -347,7 +347,8 @@
                                     <span></span>
                                 </div>
                                 <div class="col-md-8">
-                                    <select class="form-control" ng-model="ctrl.vm.platform.fields.mainImageTemplate" ng-change="ctrl.change(ctrl.vm.platform.fields.mainImageTemplate)">
+                                    <select class="form-control" ng-model="ctrl.tempImageTemplate" ng-change="ctrl.change()">
+                                        <option class="form-control" value="请输入...">请输入...</option>
                                         <option class="form-control" value={{item.imageTemplate}} ng-repeat="item in ctrl.vm.sxImageTemplates" >{{item.imageTemplate}}</option>
                                         <option class="form-control" value="">手动输入模板路径</option>
                                     </select>
@@ -361,7 +362,7 @@
                                     <span></span>
                                 </div>
                                 <div class="col-md-8">
-                                    <input class="form-control" ng-model="ctrl.vm.platform.fields.mainImageTemplate">
+                                    <input class="form-control" ng-model="ctrl.tempImageTemplate" ng-change="ctrl.change1()">
                                 </div>
                             </div>
                             <!--xu-->
