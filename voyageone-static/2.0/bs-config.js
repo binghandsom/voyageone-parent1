@@ -1,7 +1,7 @@
 var morgan = require('morgan'),
     proxy = require('http-proxy-middleware');
 
-var proxyUrl = "http://localhost:8080";
+var proxyUrl = "http://10.0.1.143:8080";
 var proxyMiddleware = proxy(proxyUrl);
 
 var jsonPlaceholderProxy = proxy(['/cms','/core'], {

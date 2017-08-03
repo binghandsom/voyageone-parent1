@@ -419,6 +419,35 @@ s-field textarea.s-html {
 }
 
 /**产品详情*/
+.product-shema-detail{
+    position: relative;
+}
+
+.product-shema-detail .saleShadow{
+    position: absolute;
+    background: #ededed;
+    width: 100%;
+    height: 100%;
+    z-index: 999999;
+    opacity: 0.6;
+    -moz-opacity:0.6;
+    -khtml-opacity: 0.6;
+}
+
+.product-shema-detail .saleTip{
+    position: absolute;
+    left: 42%;
+    top: 20%;
+    width: 170px;
+    z-index: 1000000;
+    text-align: center;
+    font-size: 22px;
+    padding: 17px;
+    color: #f05050;
+    border: 2px solid #f05050;
+    border-radius: 3px;
+}
+
 .product-shema-detail .nav span {
     display: inline-block;
     width: 135px;
