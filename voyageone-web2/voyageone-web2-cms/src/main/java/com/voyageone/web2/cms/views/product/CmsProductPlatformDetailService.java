@@ -43,6 +43,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.base.BaseViewService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -528,13 +529,22 @@ public class CmsProductPlatformDetailService extends BaseViewService {
             platform.remove("saveType");
         }
 
+        String mainImageTemplate = "";
+        if(MapUtils.isNotEmpty((Map) platform.get("fields"))){
+            mainImageTemplate = (String) ((Map) platform.get("fields")).get("mainImageTemplate");
+        }
+
         if (platform.get("schemaFields") != null) {
             List<Field> masterFields = buildMasterFields((Map<String, Object>) platform.get("schemaFields"));
 
             platform.put("fields", FieldUtil.getFieldsValueToMap(masterFields));
             platform.remove("schemaFields");
         }
+
+
         CmsBtProductModel_Platform_Cart platformModel = new CmsBtProductModel_Platform_Cart(platform);
+
+        platformModel.getFieldsNotNull().setStringAttribute("mainImageTemplate", mainImageTemplate);
 
         Boolean isCatPathChg = false;
         CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, prodId);;
