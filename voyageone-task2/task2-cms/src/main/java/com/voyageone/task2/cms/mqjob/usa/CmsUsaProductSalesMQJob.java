@@ -52,6 +52,7 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
                     cmsMtProdSalesHisModel.setQty(cmsMtProdSalesHisModel.getQty() - item.getQty());
                 }
                 cmsMtProdSalesHisDao.update(cmsMtProdSalesHisModel);
+                $info("成功修改已有记录,prodCode:" + cmsMtProdSalesHisModel.getProdCode() + " qty:" + cmsMtProdSalesHisModel.getQty());
             } else {
                 //没有查到对应的数据,新建一条数据
                 String code = null;
@@ -77,6 +78,7 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
                     cmsMtProdSalesHisModel.setQty(0 - item.getQty());
                 }
                 cmsMtProdSalesHisDao.update(cmsMtProdSalesHisModel);
+                $info("未查询到已有记录,创建新纪录,prodCode:" + cmsMtProdSalesHisModel.getProdCode() + " qty:" + cmsMtProdSalesHisModel.getQty());
             }
         }
     }
