@@ -63,8 +63,8 @@ define([
                     self.filterFeed();
 
                     // 如果有SKU不存在中国价格,则重新计算一次价格
-                    let noCNPriceSku = _.find(self.feed.sku, sku => {
-                        return !sku.priceMsrp || !priceCurrent;
+                    let noCNPriceSku = _.find(self.feed.skus, sku => {
+                        return sku.priceMsrp == null || sku.priceCurrent == null;
                     });
                     if (noCNPriceSku) {
                         self.setSkuCNPrice();
@@ -116,12 +116,12 @@ define([
                 if (!sku.priceClientRetail) {
                     sku.priceClientRetail = 0;
                 }
-                if (!sku.priceMsrp) {
-                    sku.priceMsrp = 0;
-                }
-                if (!sku.priceCurrent) {
-                    sku.priceCurrent = 0;
-                }
+                // if (!sku.priceMsrp) {
+                //     sku.priceMsrp = 0;
+                // }
+                // if (!sku.priceCurrent) {
+                //     sku.priceCurrent = 0;
+                // }
                 if (!sku.isSale) {
                     sku.isSale = 1;
                 }
