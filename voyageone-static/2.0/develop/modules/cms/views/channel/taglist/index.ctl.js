@@ -115,7 +115,7 @@ define([
                 tagInfo: tagInfo,
                 tagSelectObject: self.selected[parentIndex === 0 ? 0 : parentIndex - 1]
             }).then(function () {
-                self.notify.success('Tag added successfully.');
+                self.notify.success('The tag was successfully added.');
                 self.init(parentIndex);
             });
         };
