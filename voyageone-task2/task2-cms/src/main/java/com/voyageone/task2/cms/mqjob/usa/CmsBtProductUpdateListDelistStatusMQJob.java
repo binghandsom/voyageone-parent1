@@ -1,7 +1,9 @@
 package com.voyageone.task2.cms.mqjob.usa;
 
+import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
@@ -32,6 +34,7 @@ public class CmsBtProductUpdateListDelistStatusMQJob extends TBaseMQCmsService<C
 
     @Override
     public void onStartup(CmsBtProductUpdateListDelistStatusMQMessageBody messageBody) throws Exception {
+        $info("接收到上下架消息体,messageBody:" + JacksonUtil.bean2Json(messageBody));
         if (messageBody != null) {
             Integer cartId = messageBody.getCartId();
             String channelId = messageBody.getChannelId();
@@ -47,7 +50,7 @@ public class CmsBtProductUpdateListDelistStatusMQJob extends TBaseMQCmsService<C
                         CmsBtProductModel_Platform_Cart usPlatform = usPlatforms.get("P" + cartId);
                         if (usPlatform != null){
                             String status = usPlatform.getStatus();
-                            //status为Approve状态才可以进行上下架
+                            //status为Approved状态才可以进行上下架
                             if (CmsConstants.ProductStatus.Approved.name().equals(status)) {
 
                                 JongoUpdate jongoUpdate = new JongoUpdate();
@@ -62,7 +65,8 @@ public class CmsBtProductUpdateListDelistStatusMQJob extends TBaseMQCmsService<C
                                     //下架操作
                                     jongoUpdate.setUpdateParameters(CmsConstants.PlatformStatus.InStock.name());
                                 }
-                                cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+                                BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+                                $info("执行上下架操作,channelId: " + channelId + " productCode:" + productCode + " bulkWriteResult:" + bulkWriteResult);
 
                                 //设置滞后发布日期
                                 if (days != 0){
@@ -75,6 +79,8 @@ public class CmsBtProductUpdateListDelistStatusMQJob extends TBaseMQCmsService<C
                                 }else {
                                     platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, messageBody.getSender());
                                 }
+                            }else {
+                                $info("非Approved状态,无法进行上下架操作,productCode:" + productCode + " status:" + status);
                             }
                         }
                     }

@@ -1,8 +1,10 @@
 package com.voyageone.task2.cms.mqjob.usa;
 
+import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.PlatformProductUploadService;
@@ -36,6 +38,7 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
 
     @Override
     public void onStartup(CmsBtProductUpdatePriceMQMessageBody messageBody) throws Exception {
+        $info("接收到批量修改价格消息体,messageBody:" + JacksonUtil.bean2Json(messageBody));
         if (messageBody != null) {
             String sender = messageBody.getSender();
             String channelId = messageBody.getChannelId();
@@ -137,7 +140,9 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                     jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + ".skus.$." + changedPriceType + "\":#,\"usPlatforms.P" + cartId + ".skus.$.clientNetPrice\":#}}");
                     jongoUpdate.setUpdateParameters(newPrice,newPrice);
                 }
-                cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+                BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+
+                $info("修改sku价格,channelId:" + channelId  +" skuCode:" + skuCode + " bulkWriteResult:" + bulkWriteResult);
                 if (CmsConstants.ProductStatus.Approved.name().equals(status) && (CmsConstants.PlatformStatus.OnSale.name().equals(platform.getpStatus()) || CmsConstants.PlatformStatus.InStock.name().equals(platform.getpStatus()))) {
                     platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, sender);
                 }
@@ -156,7 +161,8 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
             jongoUpdate.setQueryParameters(productCode);
             jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "St\":#,\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "Ed\":#}}");
             jongoUpdate.setUpdateParameters(newStPrice, newEdPrice);
-            cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+            BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
+            $info("同步价格最大值最小值,channelId:" + channelId  +" productCode:" + productCode + " bulkWriteResult:" + bulkWriteResult);
         }
     }
 

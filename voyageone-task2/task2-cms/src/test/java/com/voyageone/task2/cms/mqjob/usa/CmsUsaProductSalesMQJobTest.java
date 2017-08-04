@@ -21,9 +21,9 @@ public class CmsUsaProductSalesMQJobTest {
     @Test
     public void testOnStartup() throws Exception {
 
-       /* String json ="{\"delaySecond\":0,\"sender\":null,\"mqTranSequence\":null,\"items\":[{\"channelId\":\"001\",\"cartId\":20,\"orderDate\":1501707096000,\"sku\":\"116-13\",\"clientSku\":\"814443-001-4.5\",\"qty\":100,\"status\":1}]}";
-        CmsUsaProductSalesMQMessageBody body = JacksonUtil.json2Bean(json, CmsUsaProductSalesMQMessageBody.class);*/
-        CmsUsaProductSalesMQMessageBody body = new CmsUsaProductSalesMQMessageBody();
+        String json ="{\"delaySecond\":0,\"sender\":null,\"mqTranSequence\":null,\"items\":[{\"channelId\":\"001\",\"cartId\":20,\"orderDate\":1501707096000,\"sku\":\"116-13\",\"clientSku\":\"814443-001-4.5\",\"qty\":100,\"status\":1}]}";
+        CmsUsaProductSalesMQMessageBody body = JacksonUtil.json2Bean(json, CmsUsaProductSalesMQMessageBody.class);
+       /* CmsUsaProductSalesMQMessageBody body = new CmsUsaProductSalesMQMessageBody();
         CmsUsaProductSalesMQMessageBody.TargetParam param = new CmsUsaProductSalesMQMessageBody.TargetParam();
 
         body.setSender("xusong");
@@ -36,7 +36,7 @@ public class CmsUsaProductSalesMQJobTest {
         param.setSku("aj6961-m");
         ArrayList<CmsUsaProductSalesMQMessageBody.TargetParam> params = new ArrayList<>();
         params.add(param);
-        body.setItems(params);
+        body.setItems(params);*/
         cmsUsaProductSalesMQJob.onStartup(body);
     }
 }
