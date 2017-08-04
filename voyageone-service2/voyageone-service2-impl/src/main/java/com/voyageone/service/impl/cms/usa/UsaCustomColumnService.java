@@ -39,6 +39,8 @@ public class UsaCustomColumnService extends BaseService {
     private TypeChannelsService typeChannelsService;
     @Autowired
     private CmsMqSenderService cmsMqSenderService;
+    @Autowired
+    private UsaSaleDataStatisticsService usaSaleDataStatisticsService;
 
     /**
      * 获取用户勾选的自定义列
@@ -330,7 +332,8 @@ public class UsaCustomColumnService extends BaseService {
                     mqMessageBody.setStartDate(beginTime);
                     mqMessageBody.setEndDate(endTime);
                     mqMessageBody.setSender(username);
-                    cmsMqSenderService.sendMessage(mqMessageBody);
+                    // cmsMqSenderService.sendMessage(mqMessageBody);
+                    usaSaleDataStatisticsService.SaleDataStatistics(mqMessageBody);
 
                     platformSaleCarts.remove(cartId);
                 }
@@ -344,7 +347,8 @@ public class UsaCustomColumnService extends BaseService {
                     mqMessageBody.setStartDate(beginTime);
                     mqMessageBody.setEndDate(endTime);
                     mqMessageBody.setSender(username);
-                    cmsMqSenderService.sendMessage(mqMessageBody);
+                    // cmsMqSenderService.sendMessage(mqMessageBody);
+                    usaSaleDataStatisticsService.SaleDataStatistics(mqMessageBody);
                 }
             }
         }

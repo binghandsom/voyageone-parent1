@@ -110,8 +110,6 @@ define([
             // 处理Common Attributes
             let self = this;
 
-            console.log(self.saleInfo);
-
             let selCommonProps = [];
             _.each(self.commonProps, item => {
                 if (item.checked) {
