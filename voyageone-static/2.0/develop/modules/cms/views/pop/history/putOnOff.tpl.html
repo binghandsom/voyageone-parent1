@@ -56,7 +56,7 @@
                             <td class="text-center">{{logItem.cartName}}</td>
                             <td class="text-center">{{logItem.activeStatus}}</td>
                             <td class="text-center">{{logItem.platformStatus}}</td>
-                            <td class="text-center">{{logItem.modified}}</td>
+                            <td class="text-center">{{logItem.created  | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
                             <td class="text-center">{{logItem.result}}</td>
                             <td class="text-center">{{logItem.comment}}</td>
                         </tr>
