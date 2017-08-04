@@ -451,6 +451,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                         // 检查是否发布过仓储商品
                         try {
                             scItem = tbScItemService.getScItemByOuterCode(shopProp, sku_outerId);
+                            isNew = true; // 只要我们表里没有，都认为是new，因为可能创建好了，程序异常了，没有走后面的初始化库存以及货品绑定
                         } catch (ApiException e) {
                             String errMsg = String.format("自动设置天猫商品全链路库存管理:检查是否发布过仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
                             throw new BusinessException(errMsg);
