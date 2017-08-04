@@ -206,7 +206,8 @@ public class CmsImagePostScene7Service extends BaseCronTaskService {
 
     private boolean usingHttps(String channel) {
         return ChannelConfigEnums.Channel.Modotex.getId().equalsIgnoreCase(channel) ||
-                ChannelConfigEnums.Channel.WMF.getId().equalsIgnoreCase(channel);
+                ChannelConfigEnums.Channel.WMF.getId().equalsIgnoreCase(channel) ||
+                ChannelConfigEnums.Channel.SoleUnlimited.getId().equalsIgnoreCase(channel);
     }
 }
 
