@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.Shops;
@@ -149,12 +150,12 @@ public class CmsAdvSearchOtherService extends BaseViewService {
                 groupObj.setGroupBean(groupModelMap);
             }
 
-            ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(groupObj.getOrgChannelId());
-            if (channel == null) {
-                orgChaNameList.add("");
-            } else {
-                orgChaNameList.add(channel.getFullName());
-            }
+//            ChannelConfigEnums.Channel channel = ChannelConfigEnums.Channel.valueOfId(groupObj.getOrgChannelId());
+//            if (channel == null) {
+//                orgChaNameList.add("");
+//            } else {
+                orgChaNameList.add(Channels.getChannel(groupObj.getOrgChannelId()).getFull_name());
+//            }
 
             if (!hasImgFlg) {
                 // 获取商品free tag信息

@@ -12,6 +12,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.jd.service.JdImgzoneService;
@@ -95,7 +96,7 @@ public class CmsUploadImageToPlatformService extends BaseCronTaskService {
                 + CmsConstants.ImageUploadStatus.WAITING_UPLOAD + ",\"active\":1,\"cartId\":{$in:[" + CartEnums.Cart.TM.getId() + ","
                 + CartEnums.Cart.TB.getId() + "," + CartEnums.Cart.TG.getId() + "," + CartEnums.Cart.JM.getId() + ","
                 + CartEnums.Cart.TT.getId() + "," + CartEnums.Cart.LTT.getId() + "," + CartEnums.Cart.KL.getId() + ","
-                + CartEnums.Cart.JD.getId() + "," + CartEnums.Cart.JG.getId() + "," + CartEnums.Cart.JGJ.getId() + "," + CartEnums.Cart.JGY.getId() + "]}}");
+                + CartEnums.Cart.JD.getId() + "," + CartEnums.Cart.JG.getId() + "," + CartEnums.Cart.JGJ.getId() + "," + CartEnums.Cart.JGY.getId() + "," + CartEnums.Cart.LCN.getId() + "]}}");
 
         List<CmsBtImageGroupModel> imageGroupList = cmsBtImageGroupDao.select(queryObject);
         for (CmsBtImageGroupModel imageGroup : imageGroupList) {
@@ -129,6 +130,15 @@ public class CmsUploadImageToPlatformService extends BaseCronTaskService {
             uploadImageToJD(channelId, cartId, imageType, image);
         } else if (cartId.equals(CartEnums.Cart.KL.getId())) {
             uploadImageToKL(channelId, imageType, image);
+        }
+        else if (cartId.equals(CartEnums.Cart.LCN.getId())) {
+            if(!StringUtil.isEmpty(image.getOriginUrl())){
+                image.setPlatformUrl(image.getOriginUrl().replace("image.voyageone.com.cn","image.liking.com"));
+                image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_SUCCESS));
+            }else{
+                image.setStatus(Integer.parseInt(CmsConstants.ImageUploadStatus.UPLOAD_FAIL));
+                image.setStatusName("OriginUrl是空");
+            }
         }
         // TODO 淘宝/天猫/天猫国际/聚美/京东/京东国际/京东国际匠心界/京东国际悦境以外 以后往这里加
     }
