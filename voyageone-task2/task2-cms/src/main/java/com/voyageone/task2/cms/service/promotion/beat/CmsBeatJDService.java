@@ -18,6 +18,7 @@ import com.voyageone.components.jd.service.JdWareNewService;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
 import com.voyageone.service.bean.cms.task.beat.ConfigBean;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.CmsBtImagesModel;
 import com.voyageone.service.model.cms.enums.ImageCategoryType;
 import com.voyageone.service.model.cms.enums.jiagepilu.BeatFlag;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -39,6 +40,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static java.lang.String.format;
 
@@ -100,13 +104,19 @@ public class CmsBeatJDService extends BaseCronTaskService {
         }
 
         $info("预定抽取数量：%s，实际抽取数量：%s", LIMIT, beatInfoModels.size());
-        beatInfoModels.forEach(this::beatMain);
-
+        ExecutorService es  = Executors.newFixedThreadPool(THREAD_COUNT);
+        for (CmsBtBeatInfoBean beatInfoModel :beatInfoModels ){
+            es.execute(() -> beatMain(beatInfoModel));
+        }
+        es.shutdown();
+        es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+//        beatInfoModels.forEach(this::beatMain);
     }
 
 
     private void beatMain(CmsBtBeatInfoBean cmsBtBeatInfo) {
         ConfigBean configBean;
+        long threadNo =  Thread.currentThread().getId();
         ShopBean shopBean = Shops.getShop(cmsBtBeatInfo.getTask().getChannelId(), cmsBtBeatInfo.getTask().getCartId());
 //        shopBean.setShop_name("Sneakerhead国际旗舰店");
 //        shopBean.setApp_url("https://api.jd.com/routerjson");
@@ -120,7 +130,7 @@ public class CmsBeatJDService extends BaseCronTaskService {
             CmsMtImageCategoryModel cmsMtImageCategoryModel = imageCategoryService.getCategory(shopBean, ImageCategoryType.Beat);
             if (cmsMtImageCategoryModel == null) throw new BusinessException("平台的图片空间取得失败");
             if (cmsBtBeatInfo.getSynFlag() == BeatFlag.BEATING.getFlag()) {
-                $info(String.format("channelId:%s code:%s numIId:%d 价格披露",cmsBtBeatInfo.getTask().getChannelId(), cmsBtBeatInfo.getProductCode(), cmsBtBeatInfo.getNumIid()));
+                $info(String.format("threadNo=%s channelId:%s code:%s numIId:%d 价格披露",threadNo+"", cmsBtBeatInfo.getTask().getChannelId(), cmsBtBeatInfo.getProductCode(), cmsBtBeatInfo.getNumIid()));
                 String jdImageUrl = getJdImageUrl(shopBean, configBean.getBeat_template(), cmsBtBeatInfo.getImageName(), cmsMtImageCategoryModel, cmsBtBeatInfo.getPrice());
                 $info("jdImageUrl " + jdImageUrl);
                 Image image = getJDImage(shopBean, cmsBtBeatInfo.getTask().getChannelId(), cmsBtBeatInfo.getTask().getCartId(), cmsBtBeatInfo.getProductCode(), cmsBtBeatInfo.getNumIid());
