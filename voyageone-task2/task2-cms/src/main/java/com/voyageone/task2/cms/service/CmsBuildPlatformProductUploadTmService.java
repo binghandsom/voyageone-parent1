@@ -433,25 +433,19 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             storeCode = taobaoScItemService.doCheckNeedSetScItem(shopProp, mainProduct);
             if (!StringUtils.isEmpty(storeCode)) {
                 String title = sxProductService.getProductValueByMasterMapping("title", shopProp, expressionParser, getTaskName());
-//                Map<String, ScItem> scItemMap = new HashMap<>();
                 for (String sku_outerId : strSkuCodeList) {
-                    // 皇马店先看scItem表有没有该货品 20170627 STA
-                    ScItem scItem;
                     boolean isNew = false;
-                    if (ChannelConfigEnums.Channel.REAL_MADRID.getId().equals(channelId)) {
-                        scItem = new ScItem();
-                        Map<String, Object> searchParam = new HashMap<>();
-                        searchParam.put("channelId", channelId);
-                        searchParam.put("cartId", cartId);
-                        searchParam.put("sku", sku_outerId);
-                        searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
+                    ScItem scItem = new ScItem();
+                    Map<String, Object> searchParam = new HashMap<>();
+                    searchParam.put("channelId", channelId);
+                    searchParam.put("cartId", cartId);
+                    searchParam.put("sku", sku_outerId);
+                    searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
 
-                        CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
+                    CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
 
-                        if (scItemModel != null) {
-                            scItem.setItemId(Long.parseLong(scItemModel.getScProductId()));
-                        }
-                    // 皇马店先看scItem表有没有该货品 20170627 END
+                    if (scItemModel != null) {
+                        scItem.setItemId(Long.parseLong(scItemModel.getScProductId()));
                     } else {
                         // 检查是否发布过仓储商品
                         try {
@@ -474,7 +468,6 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
 
                     sxData.putSxScItem(sku_outerId, scItem, isNew);
                 }
-//                sxData.setScItemMap(scItemMap);
             }
             // 20170417 全链路库存改造 charis END
 
