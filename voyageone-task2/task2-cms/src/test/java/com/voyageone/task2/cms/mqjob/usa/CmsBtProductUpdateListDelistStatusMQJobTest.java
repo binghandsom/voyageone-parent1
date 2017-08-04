@@ -28,7 +28,7 @@ public class CmsBtProductUpdateListDelistStatusMQJobTest {
         map.setCartId(8);
         map.setChannelId("001");
         //下架
-        map.setActiveStatus("deList");
+        map.setActiveStatus("list");
         map.setProductCodes(Collections.singletonList("609973-460"));
         map.setDays(5);
 
