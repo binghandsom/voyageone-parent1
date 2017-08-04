@@ -23,13 +23,12 @@ public class FtpConstants {
         /**
          * nexcess ftp
          */
-        @Deprecated
-        NEXCESS_FTP,
+        @Deprecated NEXCESS_FTP,
 
         /**
          * scene7 ftp
          */
-        SCENE7_FTP,
+        @Deprecated SCENE7_FTP,
 
         /**
          * feed channel ftp
