@@ -80,7 +80,7 @@ public class CmsBtProductUpdateListDelistStatusMQJob extends TBaseMQCmsService<C
                                     platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, messageBody.getSender());
                                 }
                             }else {
-                                $info("非Approve状态,无法进行上下架操作,productCode:" + productCode + " status:" + status);
+                                $info("非Approved状态,无法进行上下架操作,productCode:" + productCode + " status:" + status);
                             }
                         }
                     }
