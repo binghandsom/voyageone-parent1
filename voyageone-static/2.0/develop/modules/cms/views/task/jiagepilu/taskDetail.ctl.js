@@ -349,7 +349,7 @@ define([
                     if (platformId == '2') {
                         self.taskJiagepiluService.getJdSeriesSkuId({code:code,num_iid:numIid,cartId:self.task.cartId}).then(function (resp) {
                             if (resp.data) {
-                                window.open(self.task.pUrl + resp.data);
+                                window.open(self.task.pUrl + resp.data+".html");
                             }
                         });
                     } else {

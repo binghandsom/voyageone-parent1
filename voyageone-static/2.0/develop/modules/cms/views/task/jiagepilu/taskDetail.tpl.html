@@ -156,8 +156,8 @@
 								<td class="text-left" title="{{::info.imageTaskId}}">{{::info.imageStatusEnum | translate}}</td>
 
 								<td class="text-left">
-									<span ng-if = "info.message <= 50">{{::info.message}}</span>
-									<span ng-if = "info.message > 50"><popover-text content="info.message" direct="left" size="50"></popover-text></span>
+									<span ng-if = "info.message.length <= 50">{{::info.message}}</span>
+									<span ng-if = "info.message.length > 50"><popover-text content="info.message" direct="left" size="50"></popover-text></span>
 								</td>
 								<td class="text-left">{{::info.modified.substring(0, 19)  | gmtDate:'yyyy-MM-dd HH:mm:ss'}}</td>
 								<td class="text-center">
