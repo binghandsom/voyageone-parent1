@@ -435,7 +435,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 String title = sxProductService.getProductValueByMasterMapping("title", shopProp, expressionParser, getTaskName());
                 for (String sku_outerId : strSkuCodeList) {
                     boolean isNew = false;
-                    ScItem scItem = new ScItem();
+                    ScItem scItem;
                     Map<String, Object> searchParam = new HashMap<>();
                     searchParam.put("channelId", channelId);
                     searchParam.put("cartId", cartId);
@@ -445,6 +445,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                     CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
 
                     if (scItemModel != null) {
+                        scItem = new ScItem();
                         scItem.setItemId(Long.parseLong(scItemModel.getScProductId()));
                     } else {
                         // 检查是否发布过仓储商品
@@ -847,7 +848,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 Map<String, Object> searchParam = new HashMap<>();
                 searchParam.put("channelId", channelId);
                 searchParam.put("cartId", cartId);
-                searchParam.put("code", code);
+//                searchParam.put("code", code);
                 searchParam.put("sku", skuCode);
                 searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
                 String scCode;

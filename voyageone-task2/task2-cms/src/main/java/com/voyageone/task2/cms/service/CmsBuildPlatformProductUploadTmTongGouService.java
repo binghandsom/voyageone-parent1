@@ -492,21 +492,33 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 for (String sku_outerId : strSkuCodeList) {
                     ScItem scItem;
                     boolean isNew = false;
-                    // 检查是否发布过仓储商品
-                    try {
-                        scItem = tbScItemService.getScItemByOuterCode(shopProp, sku_outerId);
-                    } catch (ApiException e) {
-                        String errMsg = String.format("自动设置天猫商品全链路库存管理:检查是否发布过仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
-                        throw new BusinessException(errMsg);
-                    }
-                    if (scItem == null) {
-                        // 没有发布过仓储商品的场合， 发布仓储商品
+                    Map<String, Object> searchParam = new HashMap<>();
+                    searchParam.put("channelId", channelId);
+                    searchParam.put("cartId", cartId);
+                    searchParam.put("sku", sku_outerId);
+                    searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
+
+                    CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
+                    if (scItemModel != null) {
+                        scItem = new ScItem();
+                        scItem.setItemId(Long.parseLong(scItemModel.getScProductId()));
+                    } else {
+                        // 检查是否发布过仓储商品
                         try {
-                            scItem = tbScItemService.addScItemSimple(shopProp, title, sku_outerId);
-                            isNew = true;
+                            scItem = tbScItemService.getScItemByOuterCode(shopProp, sku_outerId);
                         } catch (ApiException e) {
-                            String errMsg = String.format("自动设置天猫商品全链路库存管理:发布仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
+                            String errMsg = String.format("自动设置天猫商品全链路库存管理:检查是否发布过仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
                             throw new BusinessException(errMsg);
+                        }
+                        if (scItem == null) {
+                            // 没有发布过仓储商品的场合， 发布仓储商品
+                            try {
+                                scItem = tbScItemService.addScItemSimple(shopProp, title, sku_outerId);
+                                isNew = true;
+                            } catch (ApiException e) {
+                                String errMsg = String.format("自动设置天猫商品全链路库存管理:发布仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
+                                throw new BusinessException(errMsg);
+                            }
                         }
                     }
 //                    scItemMap.put(sku_outerId, scItem);
@@ -968,7 +980,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             searchParam.put("channelId", sxData.getChannelId());
             searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
             searchParam.put("cartId", cartId);
-            searchParam.put("code", code);
+//            searchParam.put("code", code);
             searchParam.put("sku", skuCode);
 //            searchParam.put("scCode", scCode); // 检索里不需要这个字段
             CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
