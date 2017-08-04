@@ -111,12 +111,27 @@
 
     <select id="select_multi_synship_ct_user_config_cust_cols" parameterType="HashMap" resultType="HashMap">
         select
-        cfg_val1,
-        cfg_val2
+        cfg_val2,
+        cfg_val1
         from Synship.ct_user_config
         where
         user_id = #{userId}
         AND cfg_name = #{cfgName}
     </select>
+
+    <select id="select_synship_ct_user_config_platform_sale_carts" parameterType="String" resultType="String">
+        SELECT
+            cfg_val2
+        FROM
+            synship.ct_user_config
+        WHERE
+            cfg_name = #{cfgName,jdbcType=VARCHAR}
+        GROUP BY
+            cfg_val2
+    </select>
+
+    <update id="update_synship_ct_user_config_platform_sale_time">
+        UPDATE synship.ct_user_config SET cfg_val1=#{cfgVal1,jdbcType=VARCHAR} WHERE cfg_name=#{cfgName,jdbcType=VARCHAR}
+    </update>
 
 </mapper>

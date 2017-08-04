@@ -62,5 +62,23 @@ public class CmsMtCommonPropDaoExt extends ServiceBaseDao {
         return selectList("select_multi_synship_ct_user_config_cust_cols", parameters("userId", userId, "cfgName", cfgName));
     }
 
+    /**
+     * 获取美国CMS 平台动态销售统计选择的平台
+     *
+     * @param cfgName 配置'usa_cms_cust_col_platform_sale'
+     * @return 所有平台
+     */
+    public List<String> getUsaPlatformSaleCarts(String cfgName) {
+        return selectList("select_synship_ct_user_config_platform_sale_carts", parameters("cfgName", cfgName));
+    }
 
+    /**
+     * 把美国CMS PlatformSale所有的日期取值统一设置为一致的时间
+     *
+     * @param cfgName usa_cms_cust_col_platform_sale
+     * @param cfgVal1 {"beginTime":"2017-08-01","endTime":"2017-08-02"}格式
+     */
+    public int updateUsaPlatformSaleTime(String cfgName, String cfgVal1) {
+        return update("update_synship_ct_user_config_platform_sale_time", parameters("cfgName", cfgName, "cfgVal1", cfgVal1));
+    }
 }

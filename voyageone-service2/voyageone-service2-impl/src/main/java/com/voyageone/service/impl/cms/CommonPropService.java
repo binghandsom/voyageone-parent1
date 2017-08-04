@@ -57,8 +57,27 @@ public class CommonPropService extends BaseService {
         return cmsMtCommonPropDaoExt.deleteUserCustColumns(userId, cfgName);
     }
 
-    public List<Map<String, Object>> getMultiCustColumnsByUserId(int userId, String cfgName){
+    public List<Map<String, Object>> getMultiCustColumnsByUserId(int userId, String cfgName) {
         return cmsMtCommonPropDaoExt.selectMultiUserCustColumns(userId, cfgName);
     }
 
+    /**
+     * 获取美国CMS 平台动态销售统计选择的平台
+     *
+     * @param cfgName 配置'usa_cms_cust_col_platform_sale'
+     * @return 所有平台
+     */
+    public List<String> getUsaPlatformSaleCarts(String cfgName) {
+        return cmsMtCommonPropDaoExt.getUsaPlatformSaleCarts(cfgName);
+    }
+
+    /**
+     * 把美国CMS PlatformSale所有的日期取值统一设置为一致的时间
+     *
+     * @param cfgName usa_cms_cust_col_platform_sale
+     * @param cfgVal1 {"beginTime":"2017-08-01","endTime":"2017-08-02"}格式
+     */
+    public int updateUsaPlatformSaleTime(String cfgName, String cfgVal1) {
+        return cmsMtCommonPropDaoExt.updateUsaPlatformSaleTime(cfgName, cfgVal1);
+    }
 }

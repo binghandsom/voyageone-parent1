@@ -17,6 +17,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -273,31 +274,70 @@ public class UsaCustomColumnService extends BaseService {
             }
         }
         // 保存用户自定义列 --->>> usa_cms_cust_col_platform_sale
-        // 如果信息发生更改(从无到有, 或起始截止时间发生变化)
+
+        // 当前用户的自定义列 -> 平台动态日期销售数量, KV: cfg_val2-cfg_val1
         List<Map<String, Object>> platformSales = commonPropService.getMultiCustColumnsByUserId(userId, "usa_cms_cust_col_platform_sale");
+        if (platformSales == null) {
+            platformSales = Collections.emptyList();
+        }
+        // 方便起见, 直接删除用户‘usa_cms_cust_col_platform_sale’配置, 再重新初始化
         commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_platform_sale");
         if (CollectionUtils.isNotEmpty(selPlatformSales)) {
+            // 动态销售日期区间, 所有用户共享, 一人改变全部的用户自定义列对应时间区间都修改
+            // group by cartId(cfg_val2), 看所有用户总共选择了多少cartId
+            List<String> platformSaleCarts = commonPropService.getUsaPlatformSaleCarts("usa_cms_cust_col_platform_sale");
+            if (platformSaleCarts == null) {
+                platformSaleCarts = Collections.emptyList();
+            }
+            boolean saleTimeUpdFlag = false;
+            String beginTime = "";
+            String endTime = "";
             for (Map<String, Object> cartMap : selPlatformSales) {
                 String cartId = (String) cartMap.get("cartId");
-                String beginTime = (String) cartMap.get("beginTime");
-                String endTime = (String) cartMap.get("endTime");
+                beginTime = (String) cartMap.get("beginTime");
+                endTime = (String) cartMap.get("endTime");
                 if (StringUtils.isBlank(cartId) || StringUtils.isBlank(beginTime) || StringUtils.isBlank(endTime)) {
                     throw new BusinessException("Platform sale parameter invalid");
                 }
+
+                if (!saleTimeUpdFlag) {
+                    // 当前用户的配置记录已删除, 把其他所有用户相关配置的时间区间修改一致
+                    cartMap.remove("cartId");
+                    commonPropService.updateUsaPlatformSaleTime("usa_cms_cust_col_platform_sale", JacksonUtil.bean2Json(cartMap));
+                    saleTimeUpdFlag = true;
+                }
+
+                // 逐一添加当前用户平台设置
+                cartMap.put("cartId", cartId);
                 commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_platform_sale", JacksonUtil.bean2Json(cartMap), cartId);
+
                 boolean mqFlag = true;
-                if (CollectionUtils.isNotEmpty(platformSales)) {
-                    for (Map<String, Object> saleMap : platformSales) {
-                        if (cartId.equalsIgnoreCase((String) saleMap.get("cfg_val2"))) {
-                            Map<String, Object> cartTimeMap = JacksonUtil.jsonToMap((String) saleMap.get("cfg_val1"));
-                            if (cartTimeMap != null && beginTime.equals((String) cartTimeMap.get("beginTime")) && endTime.equals((String) cartTimeMap.get("endTime"))) {
-                                mqFlag = false;
-                            }
-                            break;
+                for (Map<String, Object> saleMap : platformSales) {
+                    String tempCartId = (String) saleMap.get("cfg_val2");
+                    if (cartId.equals(tempCartId)) {
+                        Map<String, Object> cartTimeMap = JacksonUtil.jsonToMap((String) saleMap.get("cfg_val1"));
+                        if (beginTime.equals((String) cartTimeMap.get("beginTime")) && endTime.equals((String) cartTimeMap.get("endTime"))) {
+                            mqFlag = false;
                         }
+                        break;
                     }
                 }
+
                 if (mqFlag) {
+                    CmsSaleDataStatisticsMQMessageBody mqMessageBody = new CmsSaleDataStatisticsMQMessageBody();
+                    mqMessageBody.setChannelId(channelId);
+                    mqMessageBody.setCartId(Integer.valueOf(cartId));
+                    mqMessageBody.setStartDate(beginTime);
+                    mqMessageBody.setEndDate(endTime);
+                    mqMessageBody.setSender(username);
+                    cmsMqSenderService.sendMessage(mqMessageBody);
+
+                    platformSaleCarts.remove(cartId);
+                }
+            }
+
+            if (saleTimeUpdFlag && platformSaleCarts.size() > 0) {
+                for (String cartId : platformSaleCarts) {
                     CmsSaleDataStatisticsMQMessageBody mqMessageBody = new CmsSaleDataStatisticsMQMessageBody();
                     mqMessageBody.setChannelId(channelId);
                     mqMessageBody.setCartId(Integer.valueOf(cartId));
