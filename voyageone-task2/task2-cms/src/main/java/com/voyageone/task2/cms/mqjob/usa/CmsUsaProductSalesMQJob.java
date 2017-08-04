@@ -90,7 +90,7 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
                 }
                 WriteResult update = cmsMtProdSalesHisDao.update(cmsMtProdSalesHisModel);
                 $info("未查询到已有记录,创建新纪录,prodCode:" + cmsMtProdSalesHisModel.getProdCode() + " skuCode:" + cmsMtProdSalesHisModel.getSku() + " qty:"
-                        + cmsMtProdSalesHisModel.getQty() + update.toString());
+                        + cmsMtProdSalesHisModel.getQty() + " WriteResult:" + JacksonUtil.bean2Json(update));
             }
         }
     }
@@ -100,7 +100,7 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
         Date date = new Date(time);
         Calendar c = Calendar.getInstance();
         c.setTime(date);
-        c.add(Calendar.MINUTE, -60 * 8);
+        c.add(Calendar.MINUTE, - 60 * 8);
         return DateTimeUtil.format(c.getTime(), DateTimeUtil.DEFAULT_DATE_FORMAT);
     }
 }
