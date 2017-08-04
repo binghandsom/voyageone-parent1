@@ -435,7 +435,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 String title = sxProductService.getProductValueByMasterMapping("title", shopProp, expressionParser, getTaskName());
                 for (String sku_outerId : strSkuCodeList) {
                     boolean isNew = false;
-                    ScItem scItem = new ScItem();
+                    ScItem scItem;
                     Map<String, Object> searchParam = new HashMap<>();
                     searchParam.put("channelId", channelId);
                     searchParam.put("cartId", cartId);
@@ -445,11 +445,13 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                     CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
 
                     if (scItemModel != null) {
+                        scItem = new ScItem();
                         scItem.setItemId(Long.parseLong(scItemModel.getScProductId()));
                     } else {
                         // 检查是否发布过仓储商品
                         try {
                             scItem = tbScItemService.getScItemByOuterCode(shopProp, sku_outerId);
+                            isNew = true; // 只要我们表里没有，都认为是new，因为可能创建好了，程序异常了，没有走后面的初始化库存以及货品绑定
                         } catch (ApiException e) {
                             String errMsg = String.format("自动设置天猫商品全链路库存管理:检查是否发布过仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
                             throw new BusinessException(errMsg);
@@ -847,7 +849,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 Map<String, Object> searchParam = new HashMap<>();
                 searchParam.put("channelId", channelId);
                 searchParam.put("cartId", cartId);
-                searchParam.put("code", code);
+//                searchParam.put("code", code);
                 searchParam.put("sku", skuCode);
                 searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
                 String scCode;
