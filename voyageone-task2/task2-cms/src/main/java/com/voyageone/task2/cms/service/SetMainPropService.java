@@ -241,6 +241,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         String singleGroupFlg = "0";
         // feed-》mast 主类目是否同步  0：不同步 1：无条件同步
         String categoryFlg = "0";
+        //
+        String copyMainProductFreeTagsFlg = "0";
         // 需要拆分的主类目
         List<String> categorySingle = new ArrayList<>();
         Map<String, String> mastBrand = null;
@@ -469,6 +471,11 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
             channelConditionConfig = conditionPropValueRepo.getAllByChannelId(channelId);
 
+            // 从cms_mt_channel_config查询COPY_MAIN_PRODUCT_FREE_TAGS设置，如果config_value1为1则复制主商品FreeTags
+            CmsChannelConfigBean channelConfig = CmsChannelConfigs.getConfigBeanNoCode(usjoi ? "928" : channelId, CmsConstants.ChannelConfig.COPY_MAIN_PRODUCT_FREE_TAGS);
+            if (channelConfig != null && "1".equals(channelConfig.getConfigValue1())) {
+                copyMainProductFreeTagsFlg = "1";
+            }
 
         }
 
@@ -3321,12 +3328,11 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 common.getFields().setUsageCn(mainProduct.getCommon().getFields().getUsageCn());
 
                 // 复制主商品自由标签
-                List<String> mainFreeTags = mainProduct.getFreeTags();
-                if (!ListUtils.isNull(mainFreeTags)) {
+                if ("1".equals(copyMainProductFreeTagsFlg)) {
                     if (ListUtils.isNull(productModel.getFreeTags())) {
-                        productModel.setFreeTags(mainFreeTags);
+                        productModel.setFreeTags(mainProduct.getFreeTags());
                     } else {
-                        for (String tag : mainFreeTags) {
+                        for (String tag : mainProduct.getFreeTags()) {
                             if (!productModel.getFreeTags().contains(tag)) {
                                 productModel.getFreeTags().add(tag);
                             }

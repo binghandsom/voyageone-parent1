@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.tools.product;
 
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.service.bean.cms.translation.TaskSummaryBean;
 import com.voyageone.service.bean.cms.translation.TranslationTaskBean;
 import com.voyageone.service.impl.cms.tools.product.TranslationTaskService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -47,7 +48,8 @@ public class TranslationController extends CmsController {
         Map<String, Object> translateTaskInitResponse = new HashMap<>();
 
         translateTaskInitResponse.put("sortFieldOptions", TypeConfigEnums.MastType.translateTask.getList(getLang()));
-        translateTaskInitResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
+//        translateTaskInitResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
+        translateTaskInitResponse.put("taskSummary",new TaskSummaryBean());
         translateTaskInitResponse.put("taskDetail", translationTaskService.getCurrentTask(channelId, user));
 
         return success(translateTaskInitResponse);
@@ -131,8 +133,10 @@ public class TranslationController extends CmsController {
         Map<String, Object> translateTaskAssignResponse = new HashMap<>();
 
         translateTaskAssignResponse.put("taskDetail", translationTaskService.assignTask(channelId, user, priority, sort, keyWord));
-        translateTaskAssignResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
+//        translateTaskAssignResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
+        translateTaskAssignResponse.put("taskSummary", new TaskSummaryBean());
         return success(translateTaskAssignResponse);
+
     }
 
     /**
@@ -148,7 +152,9 @@ public class TranslationController extends CmsController {
         Map<String, Object> translateTaskSaveResponse = new HashMap<>();
 
         translateTaskSaveResponse.put("taskDetail", translationTaskService.saveTask(requestBean, channelId, user, status));
-        translateTaskSaveResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
+
+//        translateTaskSaveResponse.put("taskSummary", translationTaskService.getTaskSummary(channelId, user));
+        translateTaskSaveResponse.put("taskSummary",new TaskSummaryBean());
         return translateTaskSaveResponse;
     }
 

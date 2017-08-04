@@ -1,4 +1,6 @@
 <div class="product-shema-detail">
+    <div class="saleShadow" ng-if="ctrl.vm.platform.isSale == '0'"></div>
+    <label class="saleTip" ng-if="ctrl.vm.platform.isSale == '0'">暂不售卖</label>
     <div class="panel-group" id="accordion">
         <div class="panel panel-default">
             <div class="panel-heading cur-p" ng-click="ctrl.panelShow = true" ng-if="!ctrl.panelShow">
