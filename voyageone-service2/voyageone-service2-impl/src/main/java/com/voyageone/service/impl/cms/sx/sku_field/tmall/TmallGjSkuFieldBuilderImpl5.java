@@ -311,7 +311,15 @@ public class TmallGjSkuFieldBuilderImpl5 extends AbstractSkuFieldBuilder {
                             }
                         }
                         // added by morse.lu 2017/01/03 end
-                        skuFieldValue.setInputFieldValue(hscodeField.getId(), propValue.split(",")[0]);
+                        // modified by morse.lu 2017/07/31 start
+                        // 对应 第一，第二计量单位和销售单位
+                        // hscode||||清关要素||||计量单位|||销售单位
+//                        skuFieldValue.setInputFieldValue(hscodeField.getId(), propValue.split(",")[0]);
+                        if (!StringUtils.isEmpty(propValue)) {
+                            skuFieldValue.setInputFieldValue(hscodeField.getId(),
+                                    expressionParser.getSxProductService().constructTmHscode(sxProduct, propValue, shopBean));
+                        }
+                        // modified by morse.lu 2017/07/31 end
                         continue;
                     }
                     // added by morse.lu 2016/08/17 start

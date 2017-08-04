@@ -61,6 +61,7 @@ import com.voyageone.service.dao.ims.ImsBtProductExceptDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
+import com.voyageone.service.daoext.cms.CmsMtHsCodeUnitDaoExt;
 import com.voyageone.service.daoext.cms.PaddingImageDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.*;
@@ -155,6 +156,8 @@ public class SxProductService extends BaseService {
     private CmsMtBrandService cmsMtBrandService;
     @Autowired
     private SneakerheadApiService sneakerheadApiService;
+    @Autowired
+    private CmsMtHsCodeUnitDaoExt cmsMtHsCodeUnitDaoExt;
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
     @Autowired
@@ -1858,8 +1861,14 @@ public class SxProductService extends BaseService {
                             }
                         }
                         // added by morse.lu 2017/01/03 end
-
-                        ((InputField) field).setValue(propValue.split(",")[0]);
+                        // modified by morse.lu 2017/07/31 start
+                        // 对应 第一，第二计量单位和销售单位
+                        // hscode||||清关要素||||计量单位|||销售单位
+//                        ((InputField) field).setValue(propValue.split(",")[0]);
+                        if (!StringUtils.isEmpty(propValue)) {
+                            ((InputField) field).setValue(constructTmHscode(sxData.getMainProduct(), propValue, shopBean));
+                        }
+                        // modified by morse.lu 2017/07/31 end
                         retMap.put(field.getId(), field);
                     }
                     continue;
@@ -6420,6 +6429,114 @@ public class SxProductService extends BaseService {
         private int getSort() {
             return this.sort;
         }
+    }
+
+    /**
+     * 对应 第一，第二计量单位和销售单位
+     * hscode||||清关要素||||计量单位|||销售单位
+     */
+    public String constructTmHscode(CmsBtProductModel product, String cmsHsCode, ShopBean shopBean) {
+        String sp_hscode = "||||";
+        String[] argsHs = cmsHsCode.split(",");
+        String hsCode = argsHs[0];
+        StringBuilder sb = new StringBuilder(hsCode); // hscode
+        sb.append(sp_hscode);
+        // 清关要素
+        // 暂无
+        sb.append(sp_hscode);
+        // 计量单位
+        String hscodeUnit = constructTmHscodeUnit(product, hsCode, shopBean);
+        sb.append(hscodeUnit).append(sp_hscode);
+        // 销售单位
+        if (argsHs.length == 3) {
+            String hscodeSaleUnit = argsHs[2];
+            sb.append(getTmHscodeSaleUnit(hscodeSaleUnit));
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * 获取天猫 第一，第二计量单位
+     */
+    public CmsMtHsCodeUnitBean getTmHscodeUnitBean(String hsCode, ShopBean shopBean) {
+        CmsMtHsCodeUnitBean bean = cmsMtHsCodeUnitDaoExt.getHscodeUnit(hsCode);
+        if (bean == null) {
+            Map<String, String> mapHscode = tbProductService.getHscodeDetail(hsCode, shopBean);
+            bean = new CmsMtHsCodeUnitBean();
+            bean.setHscode(hsCode);
+            int index = 1;
+            for (Map.Entry<String, String> entry : mapHscode.entrySet()) {
+                if (index == 1) {
+                    bean.setFirstUnit(entry.getValue());
+                    bean.setFirstUnitId(entry.getKey());
+                } else if (index == 2) {
+                    bean.setSecondUnit(entry.getValue());
+                    bean.setSecondUnitId(entry.getKey());
+                }
+                index++;
+            }
+
+            cmsMtHsCodeUnitDaoExt.insertHsCodeUnit(bean);
+        }
+
+        return bean;
+    }
+
+    /**
+     * 获取天猫 第一，第二计量单位
+     * 含量0##1##件||含量1##0.14##千克
+     */
+    private String constructTmHscodeUnit(CmsBtProductModel product, String hsCode, ShopBean shopBean) {
+        StringBuffer sb = new StringBuffer("");
+        String sp_at = "##";
+        String sp_ut = "||";
+
+        CmsMtHsCodeUnitBean bean = getTmHscodeUnitBean(hsCode, shopBean);
+        Double weightKg = product.getCommonNotNull().getFieldsNotNull().getWeightKG();
+        Integer weightG = product.getCommonNotNull().getFieldsNotNull().getWeightG();
+        String firstUnitId = bean.getFirstUnitId();
+        String firstUnit = bean.getFirstUnit();
+        String secondUnitId = bean.getSecondUnitId();
+        String secondUnit = bean.getSecondUnit();
+        if (!StringUtils.isEmpty(firstUnitId) && !StringUtils.isEmpty(firstUnit)) {
+            String firstVal;
+            if ("千克".equals(firstUnit)) {
+                firstVal = weightKg.toString();
+            } else if ("克".equals(firstUnit)) {
+                firstVal = weightG.toString();
+            } else {
+                firstVal = "1";
+            }
+            sb.append(firstUnitId).append(sp_at).append(firstVal).append(sp_at).append(firstUnit);
+
+            if (!StringUtils.isEmpty(secondUnitId) && !StringUtils.isEmpty(secondUnit)) {
+                sb.append(sp_ut);
+                String secondVal;
+                if ("千克".equals(secondUnit)) {
+                    secondVal = weightKg.toString();
+                } else if ("克".equals(secondUnit)) {
+                    secondVal = weightG.toString();
+                } else {
+                    secondVal = "1";
+                }
+                sb.append(secondUnitId).append(sp_at).append(secondVal).append(sp_at).append(secondUnit);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * 获取天猫 销售单位
+     * code##%s||cnName##%s
+     */
+    public String getTmHscodeSaleUnit(String hscodeSaleUnit) {
+        CmsMtHscodeSaleUnitModel unit = cmsMtHsCodeUnitDaoExt.getHscodeSaleUnit(hscodeSaleUnit);
+        if (unit == null) {
+            throw new BusinessException(String.format("hscode的销售单位 [%s] 在cms_mt_hscode_sale_unit表中不存在, 联系管理员！", hscodeSaleUnit));
+        }
+        return String.format("code##%s||cnName##%s", unit.getUnitCode(), hscodeSaleUnit);
     }
 
     public Map<String, Integer> getSaleQuantity(List<BaseMongoMap<String, Object>> skuList) {

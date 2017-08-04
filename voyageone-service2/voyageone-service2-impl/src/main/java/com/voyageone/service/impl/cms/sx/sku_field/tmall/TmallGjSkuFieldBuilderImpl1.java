@@ -8,13 +8,11 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.InputField;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.masterdate.schema.field.SingleCheckField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
-import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.MappingBean;
 import com.voyageone.service.bean.cms.product.SxData;
@@ -345,7 +343,15 @@ public class TmallGjSkuFieldBuilderImpl1 extends AbstractSkuFieldBuilder {
                             }
                         }
                         // added by morse.lu 2017/01/03 end
-                        skuFieldValue.setInputFieldValue(hscodeField.getId(), propValue.split(",")[0]);
+                        // modified by morse.lu 2017/07/31 start
+                        // 对应 第一，第二计量单位和销售单位
+                        // hscode||||清关要素||||计量单位|||销售单位
+//                        skuFieldValue.setInputFieldValue(hscodeField.getId(), propValue.split(",")[0]);
+                        if (!StringUtils.isEmpty(propValue)) {
+                            skuFieldValue.setInputFieldValue(hscodeField.getId(),
+                                    expressionParser.getSxProductService().constructTmHscode(sxProduct, propValue, shopBean));
+                        }
+                        // modified by morse.lu 2017/07/31 end
                         continue;
                     }
                     // added by morse.lu 2016/08/17 start

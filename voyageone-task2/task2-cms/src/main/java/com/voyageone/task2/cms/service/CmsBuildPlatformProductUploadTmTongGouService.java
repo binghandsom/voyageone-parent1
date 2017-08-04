@@ -1842,7 +1842,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             String hscode = "";
             String hscodeSaleUnit = "";
             String hscode_unit = "";
-            Map<String, String> unitMap = new HashMap<>();
             CmsMtHsCodeUnitBean bean = null;
             // 只有当入关方式(true表示跨境申报)时，才需要设置海关报关税号hscode;false表示邮关申报时，不需要设置海关报关税号hscode
             if ("true".equalsIgnoreCase(crossBorderRreportFlg)) {
@@ -1873,8 +1872,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     }
                 }
                 if (!StringUtils.isEmpty(hscode)) {
-                    bean = cmsMtHsCodeUnitDaoExt.getHscodeUnit(hscode);
-                    if (bean != null) {
+//                    bean = cmsMtHsCodeUnitDaoExt.getHscodeUnit(hscode);
+                    bean = expressionParser.getSxProductService().getTmHscodeUnitBean(hscode, shopProp);
+//                    if (bean != null) {
                         Double weightKg = product.getCommonNotNull().getFieldsNotNull().getWeightKG();
                         Integer weightG = product.getCommonNotNull().getFieldsNotNull().getWeightG();
                         if (!StringUtils.isEmpty(bean.getFirstUnit())) {
@@ -1896,15 +1896,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                                 hscode_unit = hscode_unit + ",1";
                             }
                         }
-                    } else {
-                        throw new BusinessException(String.format("hscode [%s] 在cms_mt_hscode_unit表中不存在, 联系管理员！", hscode));
-                    }
-                }
-                if (!StringUtils.isEmpty(hscodeSaleUnit)) {
-                    unitMap = cmsMtHsCodeUnitDaoExt.getHscodeSaleUnit(hscodeSaleUnit);
-                    if (unitMap == null) {
-                        throw new BusinessException(String.format("hscode的销售单位 [%s] 在cms_mt_hscode_sale_unit表中不存在, 联系管理员！", hscodeSaleUnit));
-                    }
+//                    } else {
+//                        throw new BusinessException(String.format("hscode [%s] 在cms_mt_hscode_unit表中不存在, 联系管理员！", hscode));
+//                    }
                 }
             }
 
@@ -1991,7 +1985,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                         // 获取hscode对应的第一，第二计量单位和销售单位 20170602 STA
                         skuMap.put("hscode_unit", hscode_unit);
                         // 销售单位
-                        skuMap.put("hscode_sale_unit", String.format("code##%s||cnName##%s", unitMap.get("unitCode"), hscodeSaleUnit));
+//                        skuMap.put("hscode_sale_unit", String.format("code##%s||cnName##%s", unitMap.get("unitCode"), hscodeSaleUnit));
+                        skuMap.put("hscode_sale_unit", sxProductService.getTmHscodeSaleUnit(hscodeSaleUnit));
                         // 获取hscode对应的第一，第二计量单位和销售单位 20170602 END
                     }
 
