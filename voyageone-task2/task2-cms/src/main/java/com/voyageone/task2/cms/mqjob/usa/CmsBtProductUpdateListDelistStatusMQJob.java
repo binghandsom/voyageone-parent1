@@ -50,7 +50,7 @@ public class CmsBtProductUpdateListDelistStatusMQJob extends TBaseMQCmsService<C
                         CmsBtProductModel_Platform_Cart usPlatform = usPlatforms.get("P" + cartId);
                         if (usPlatform != null){
                             String status = usPlatform.getStatus();
-                            //status为Approve状态才可以进行上下架
+                            //status为Approved状态才可以进行上下架
                             if (CmsConstants.ProductStatus.Approved.name().equals(status)) {
 
                                 JongoUpdate jongoUpdate = new JongoUpdate();
