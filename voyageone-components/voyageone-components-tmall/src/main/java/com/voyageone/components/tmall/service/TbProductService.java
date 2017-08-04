@@ -339,13 +339,14 @@ public class TbProductService extends TbBase {
             throw new BusinessException(errMsg);
         }
 
+        Map<String, String> ret = new LinkedHashMap<>();
+
         List<String> list = response.getResults();
         if (ListUtils.isNull(list) || StringUtils.isEmpty(list.get(0))) {
-            String errMsg = "TmallItemHscodeDetailGet 取得hscode明细为空!";
-            throw new BusinessException(errMsg);
+//            String errMsg = "TmallItemHscodeDetailGet 取得hscode明细为空!";
+//            throw new BusinessException(errMsg);
+            return ret;
         }
-
-        Map<String, String> ret = new LinkedHashMap<>();
 
         // 这边天猫返回的信息很挫，只能自己format了=。=
 //        String resJson = list.get(0).replace("\\\"", "\"");
