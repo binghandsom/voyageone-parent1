@@ -288,7 +288,7 @@ public class TranslationTaskService extends BaseService {
         String translateTimeStr = DateTimeUtil.format(date, null);
 
         JongoQuery query = new JongoQuery();
-        query.setQuery("{\"local\": {$in: [\"0\", null]}" +
+        query.setQuery("{\"lock\": {$in: [\"0\", null]}" +
                 ", \"common.fields.isMasterMain\":1" +
                 ", \"common.fields.translateStatus\": {$ne : \"1\"}" +
                 ", \"common.fields.translator\": #" +

@@ -994,10 +994,9 @@
                                                 popover-title="{{'TXT_PROMOTION_DETAIL'|translate}}" type="button" popover-placement="right" class="btn btn-vo btn-xs">
                                             {{'TXT_PROMOTION_DETAIL'|translate}}</button>&nbsp;
 
-                                        <!--Todo  显示商品numid  -->
-                                        <span class="m-r-sm" ng-if="!!productInfo.groupBean.numIId&&!!vm.productUrl">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
-                                                <a target="_blank" ng-bind="productInfo.groupBean.numIId" ng-if="vm.searchInfo.cartId!=27"></a>
-                                                <a target="_blank" ng-bind="productInfo.groupBean.platformMallId" ng-if="vm.searchInfo.cartId == 27"></a>
+                                            <!--Todo  显示商品numid  -->
+                                            <span class="m-r-sm" ng-if="!!productInfo.numIId&&!!vm.productUrl">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
+                                                <a target="_blank" ng-bind="productInfo.numIId"></a>
                                             </span>
                                         <!-- Todo 商品平台状态-->
                                         <span class="label m-l-sm" ng-if="productInfo.platforms">

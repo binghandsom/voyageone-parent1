@@ -30,6 +30,8 @@ public class CmsBtProductModel extends ChannelPartitionModel implements Cloneabl
     private Long prodId;
     //商品lock
     private String lock = "";
+    //isSale
+    private String isSale;
     //comment
     private String comment = "";
     //共通属性
@@ -83,6 +85,14 @@ public class CmsBtProductModel extends ChannelPartitionModel implements Cloneabl
 
     public void setLock(String lock) {
         this.lock = lock;
+    }
+
+    public String getIsSale() {
+        return isSale;
+    }
+
+    public void setIsSale(String isSale) {
+        this.isSale = isSale;
     }
 
     public String getComment() {
@@ -305,6 +315,6 @@ public class CmsBtProductModel extends ChannelPartitionModel implements Cloneabl
 
     @Override
     public CmsBtProductModel clone() throws CloneNotSupportedException {
-        return (CmsBtProductModel)super.clone();
+        return (CmsBtProductModel) super.clone();
     }
 }
