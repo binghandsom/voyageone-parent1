@@ -83,7 +83,7 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
                     cmsMtProdSalesHisModel.setQty(0 - item.getQty());
                 }
                 WriteResult update = cmsMtProdSalesHisDao.update(cmsMtProdSalesHisModel);
-                $info("未查询到已有记录,创建新纪录,prodCode:" + cmsMtProdSalesHisModel.getProdCode() + " qty:"
+                $info("未查询到已有记录,创建新纪录,prodCode:" + cmsMtProdSalesHisModel.getProdCode() + " skuCode:" + cmsMtProdSalesHisModel.getSku() + " qty:"
                         + cmsMtProdSalesHisModel.getQty() + " WriteResult:" + JacksonUtil.bean2Json(update));
             }
         }
