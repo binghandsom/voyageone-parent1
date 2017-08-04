@@ -46,7 +46,7 @@ public class UsaSaleDataStatisticsService extends BaseService {
         cleanBeforeSaleData(messageBody.getChannelId(), messageBody.getCartId());
         Criteria criteria = new Criteria("channel_id").is(messageBody.getChannelId()).and("date").gte(messageBody.getStartDate()).lte(messageBody.getEndDate());
 
-        if(messageBody.getCartId() != null && messageBody.getCartId() != 0){
+        if(messageBody.getCartId() != null && messageBody.getCartId() != -1){
             criteria = criteria.and("cart_id").is(messageBody.getCartId());
         }
 

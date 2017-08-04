@@ -230,7 +230,7 @@ public class UsaCustomColumnService extends BaseService {
 
         // 追加一个Total
         Map<String, String> totalSaleMap = new HashMap<>();
-        totalSaleMap.put("cartId", "0");
+        totalSaleMap.put("cartId", "-1");
         totalSaleMap.put("cartName", "Total");
         totalSaleMap.put("beginTime", "");
         totalSaleMap.put("endTime", "");
