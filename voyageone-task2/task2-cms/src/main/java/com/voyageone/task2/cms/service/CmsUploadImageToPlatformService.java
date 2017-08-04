@@ -2,7 +2,6 @@ package com.voyageone.task2.cms.service;
 
 import com.jd.open.api.sdk.response.AbstractResponse;
 import com.jd.open.api.sdk.response.imgzone.ImgzonePictureUploadResponse;
-import com.sun.xml.internal.bind.v2.runtime.property.StructureLoaderBuilder;
 import com.taobao.api.TaobaoResponse;
 import com.taobao.api.domain.Picture;
 import com.taobao.api.response.PictureUploadResponse;
