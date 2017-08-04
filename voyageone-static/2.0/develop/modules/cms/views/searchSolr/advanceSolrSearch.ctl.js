@@ -290,8 +290,8 @@ define([
                 $scope.vm.productList.forEach(function (p) {
                     var f = p.common.fields;
                     p.thumb = f.images6 && f.images6.length > 0 && f.images6[0] && f.images6[0].image6
-                        ?f.images6[0].image6
-                        :f.images1[0].image1
+                        ? f.images6[0].image6
+                        : (f.images1 && f.images1.length > 0 ? f.images1[0].image1 : "")
                 });
 
                 $scope.vm.codeMap = res.data.codeMap;
