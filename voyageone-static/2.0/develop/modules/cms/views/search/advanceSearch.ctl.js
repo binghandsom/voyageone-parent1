@@ -22,7 +22,7 @@ define([
                 var f = i.common.fields;
                 i.thumb = f.images6 && f.images6.length && f.images6[0].image6
                     ?f.images6[0].image6
-                    :f.images1[0].image1
+                    :f.images1 && f.images1.length && f.images1[0].image1?f.images1[0].image1:""
             });
         }
         return list;
