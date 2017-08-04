@@ -348,9 +348,10 @@ public class TbProductService extends TbBase {
         Map<String, String> ret = new LinkedHashMap<>();
 
         // 这边天猫返回的信息很挫，只能自己format了=。=
-        String resJson = list.get(0).replace("\\\"", "\"");
-        resJson = resJson.substring(1, resJson.length() - 1);
-        Map<String, Object> resMap = JacksonUtil.jsonToMap(resJson);
+//        String resJson = list.get(0).replace("\\\"", "\"");
+//        resJson = resJson.substring(1, resJson.length() - 1);
+//        Map<String, Object> resMap = JacksonUtil.jsonToMap(resJson);
+        Map<String, Object> resMap = JacksonUtil.jsonToMap(list.get(0));
         if (resMap.get("unitList") == null) {
             String errMsg = "TmallItemHscodeDetailGet 取得unitList为空!";
             throw new BusinessException(errMsg);
