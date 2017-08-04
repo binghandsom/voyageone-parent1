@@ -56,7 +56,7 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
                 }
                 WriteResult update = cmsMtProdSalesHisDao.update(cmsMtProdSalesHisModel);
 
-                $info("成功修改已有记录,prodCode:" + cmsMtProdSalesHisModel.getProdCode() + " qty:"
+                $info("修改已有记录,prodCode:" + cmsMtProdSalesHisModel.getProdCode() + " qty:"
                         + cmsMtProdSalesHisModel.getQty() + " WriteResult:" + JacksonUtil.bean2Json(update));
             } else {
                 //没有查到对应的数据,新建一条数据
@@ -88,6 +88,7 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
             }
         }
     }
+
     private String parseTime(Long time) {
         //美国西海岸时间,减八个小时
         Date date = new Date(time);
