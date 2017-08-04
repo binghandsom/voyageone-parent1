@@ -3,10 +3,8 @@ package com.voyageone.components.tmall.service;
 import com.taobao.api.ApiException;
 import com.taobao.api.BaseTaobaoRequest;
 import com.taobao.api.domain.TipItemPromDTO;
-import com.taobao.api.request.TmallPromotionTipItemAddRequest;
 import com.taobao.api.request.TmallPromotionTipItemModifyRequest;
 import com.taobao.api.request.TmallPromotionTipItemRemoveRequest;
-import com.taobao.api.response.TmallPromotionTipItemAddResponse;
 import com.taobao.api.response.TmallPromotionTipItemModifyResponse;
 import com.taobao.api.response.TmallPromotionTipItemRemoveResponse;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -15,9 +13,6 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.components.tmall.TbBase;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.annotation.*;
-import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
  * Created by Administrator on 2015/10/29.
@@ -33,21 +28,21 @@ public class TbPromotionService extends TbBase {
         this.mqSenderService = mqSenderService;
     }
 
-    public TmallPromotionTipItemAddResponse addPromotion(ShopBean shopBean, TipItemPromDTO ItemProm) throws ApiException {
-
-        logger.info("天猫特价宝添加活动商品 " + ItemProm.getItemId());
-
-        TmallPromotionTipItemAddRequest req = new TmallPromotionTipItemAddRequest();
-
-        req.setItemProm(ItemProm);
-
-        TmallPromotionTipItemAddResponse response = reqTaobaoApi(shopBean, req);
-        if (response.getErrorCode() != null) {
-            logger.error(response.getSubMsg());
-        }
-
-        return response;
-    }
+//    public TmallPromotionTipItemAddResponse addPromotion(ShopBean shopBean, TipItemPromDTO ItemProm) throws ApiException {
+//
+//        logger.info("天猫特价宝添加活动商品 " + ItemProm.getItemId());
+//
+//        TmallPromotionTipItemAddRequest req = new TmallPromotionTipItemAddRequest();
+//
+//        req.setItemProm(ItemProm);
+//
+//        TmallPromotionTipItemAddResponse response = reqTaobaoApi(shopBean, req);
+//        if (response.getErrorCode() != null) {
+//            logger.error(response.getSubMsg());
+//        }
+//
+//        return response;
+//    }
 
     public TmallPromotionTipItemModifyResponse updatePromotion(ShopBean shopBean, TipItemPromDTO ItemProm) throws ApiException {
         logger.info("天猫特价宝更新活动商品 " + ItemProm.getItemId());
@@ -114,6 +109,17 @@ public class TbPromotionService extends TbBase {
         return response;
     }
 
+    enum OperatingType {
+        REMOVE(0),
+        UPDATE(1);
+
+        private int value;
+
+        OperatingType(int value) {
+            this.value = value;
+        }
+    }
+
     /**
      * 简单实现的接口调用 MQ 信息体，追加必要的 cartId 字段
      */
@@ -148,32 +154,21 @@ public class TbPromotionService extends TbBase {
         }
     }
 
-    enum OperatingType {
-        REMOVE(0),
-        UPDATE(1);
-
-        private int value;
-
-        OperatingType(int value) {
-            this.value = value;
-        }
-    }
-
-    @Configuration
-    public static class AutoConfiguration {
-        @Bean
-        @Conditional(OnMissTbPromotionService.class)
-        public TbPromotionService tbPromotionService(MqSenderService mqSenderService) {
-            return new TbPromotionService(false, mqSenderService);
-        }
-    }
-
-    public static class OnMissTbPromotionService implements Condition {
-        @Override
-        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-            ConfigurableListableBeanFactory configurableListableBeanFactory = context.getBeanFactory();
-            String[] namesForType = configurableListableBeanFactory.getBeanNamesForType(TbPromotionService.class);
-            return namesForType.length < 1;
-        }
-    }
+//    @Configuration
+//    public static class AutoConfiguration {
+//        @Bean
+//        @Conditional(OnMissTbPromotionService.class)
+//        public TbPromotionService tbPromotionService(MqSenderService mqSenderService) {
+//            return new TbPromotionService(false, mqSenderService);
+//        }
+//    }
+//
+//    public static class OnMissTbPromotionService implements Condition {
+//        @Override
+//        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+//            ConfigurableListableBeanFactory configurableListableBeanFactory = context.getBeanFactory();
+//            String[] namesForType = configurableListableBeanFactory.getBeanNamesForType(TbPromotionService.class);
+//            return namesForType.length < 1;
+//        }
+//    }
 }
