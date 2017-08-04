@@ -26,10 +26,16 @@ import java.util.List;
 @Service
 @RabbitListener()
 public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSalesMQMessageBody> {
-    @Autowired
+    private final
     ProductService productService;
-    @Autowired
+    private final
     CmsMtProdSalesHisDao cmsMtProdSalesHisDao;
+
+    @Autowired
+    public CmsUsaProductSalesMQJob(ProductService productService, CmsMtProdSalesHisDao cmsMtProdSalesHisDao) {
+        this.productService = productService;
+        this.cmsMtProdSalesHisDao = cmsMtProdSalesHisDao;
+    }
 
     @Override
     public void onStartup(CmsUsaProductSalesMQMessageBody messageBody) throws Exception {
@@ -84,7 +90,7 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
                 }
                 WriteResult update = cmsMtProdSalesHisDao.update(cmsMtProdSalesHisModel);
                 $info("未查询到已有记录,创建新纪录,prodCode:" + cmsMtProdSalesHisModel.getProdCode() + " skuCode:" + cmsMtProdSalesHisModel.getSku() + " qty:"
-                        + cmsMtProdSalesHisModel.getQty() + " WriteResult:" + JacksonUtil.bean2Json(update));
+                        + cmsMtProdSalesHisModel.getQty() + update.toString());
             }
         }
     }
@@ -95,7 +101,6 @@ public class CmsUsaProductSalesMQJob extends TBaseMQCmsService<CmsUsaProductSale
         Calendar c = Calendar.getInstance();
         c.setTime(date);
         c.add(Calendar.MINUTE, -60 * 8);
-        String format = DateTimeUtil.format(c.getTime(), DateTimeUtil.DEFAULT_DATE_FORMAT);
-        return format;
+        return DateTimeUtil.format(c.getTime(), DateTimeUtil.DEFAULT_DATE_FORMAT);
     }
 }
