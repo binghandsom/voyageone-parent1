@@ -980,8 +980,8 @@ public class CmsProductPlatformDetailService extends BaseViewService {
     //更新cmsBtProduct
     private JongoUpdate updateCmsBtProductInfo(Integer cartId, String pStatus, String userName, String prodCode) {
         JongoUpdate updObj = new JongoUpdate();
-        updObj.setQuery("{'common.fields.code':#}");
-        updObj.setQueryParameters(prodCode);
+        updObj.setQuery("{'common.fields.code':#,'platforms.P#.status':'Approved'}");
+        updObj.setQueryParameters(prodCode,cartId);
         String platformStatus = CmsConstants.PlatformActive.ToInStock.name().equals(pStatus)
                 ? CmsConstants.PlatformStatus.InStock.name()
                 : CmsConstants.PlatformStatus.OnSale.name();
