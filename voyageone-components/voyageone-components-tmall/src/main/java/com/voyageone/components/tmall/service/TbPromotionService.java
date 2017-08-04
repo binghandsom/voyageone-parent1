@@ -13,6 +13,9 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.components.rabbitmq.service.MqSenderService;
 import com.voyageone.components.tmall.TbBase;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.annotation.*;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
  * Created by Administrator on 2015/10/29.
@@ -120,6 +123,24 @@ public class TbPromotionService extends TbBase {
         }
     }
 
+    @Configuration
+    public static class AutoConfiguration {
+        @Bean
+        @Conditional(OnMissTbPromotionService.class)
+        public TbPromotionService tbPromotionService(MqSenderService mqSenderService) {
+            return new TbPromotionService(false, mqSenderService);
+        }
+    }
+
+    public static class OnMissTbPromotionService implements Condition {
+        @Override
+        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+            ConfigurableListableBeanFactory configurableListableBeanFactory = context.getBeanFactory();
+            String[] namesForType = configurableListableBeanFactory.getBeanNamesForType(TbPromotionService.class);
+            return namesForType.length < 1;
+        }
+    }
+
     /**
      * 简单实现的接口调用 MQ 信息体，追加必要的 cartId 字段
      */
@@ -153,22 +174,4 @@ public class TbPromotionService extends TbBase {
         public void check() throws MQMessageRuleException {
         }
     }
-
-//    @Configuration
-//    public static class AutoConfiguration {
-//        @Bean
-//        @Conditional(OnMissTbPromotionService.class)
-//        public TbPromotionService tbPromotionService(MqSenderService mqSenderService) {
-//            return new TbPromotionService(false, mqSenderService);
-//        }
-//    }
-//
-//    public static class OnMissTbPromotionService implements Condition {
-//        @Override
-//        public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-//            ConfigurableListableBeanFactory configurableListableBeanFactory = context.getBeanFactory();
-//            String[] namesForType = configurableListableBeanFactory.getBeanNamesForType(TbPromotionService.class);
-//            return namesForType.length < 1;
-//        }
-//    }
 }
