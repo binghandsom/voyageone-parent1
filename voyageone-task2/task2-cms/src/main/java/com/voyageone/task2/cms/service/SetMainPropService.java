@@ -1378,7 +1378,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         break;
                     case SNKRHDa:
                         platform.setpCatPath(feed.getAttribute().get("amazonBrowseTree")==null?"":feed.getAttribute().get("amazonBrowseTree").get(0));
-                        platform.getFields().setAttribute("sellerFulfilledPrime", true);
+                        platform.getFields().setAttribute("sellerFulfilledPrime", "1");
                         break;
                 }
 
