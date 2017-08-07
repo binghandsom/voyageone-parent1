@@ -59,8 +59,10 @@ public class CmsBuildPlatformCategoryTransferUsMqJob extends TBaseMQCmsService<C
         for (String fullCatId : fullCatIds) {
             TransferUsCategoryModel categoryModel = new TransferUsCategoryModel();
 
-            String[] fullCatIdArrs = fullCatId.split(symbol);
             String catId = fullCatId;
+
+            // 如果该类目是1级类目,自动批接上父类catId:1(Root Catalog), 2(Default Category)
+            String[] fullCatIdArrs = ("1-2-"+fullCatId).split(symbol);
             String parentId = "0";
             if (fullCatIdArrs.length > 0) {
                 catId = fullCatIdArrs[fullCatIdArrs.length - 1];
