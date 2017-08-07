@@ -25,7 +25,7 @@ public class TransferUsProductModel {
     private List<String> boxImages;
     private List<String> marketingImages;
     private String brand;
-    private boolean isTaxable;
+    private boolean taxable;
     private String colorMap;
     private String material;
     private String origin;
@@ -254,10 +254,10 @@ public class TransferUsProductModel {
     }
 
     public boolean isTaxable() {
-        return isTaxable;
+        return taxable;
     }
 
     public void setTaxable(boolean taxable) {
-        isTaxable = taxable;
+        this.taxable = taxable;
     }
 }
