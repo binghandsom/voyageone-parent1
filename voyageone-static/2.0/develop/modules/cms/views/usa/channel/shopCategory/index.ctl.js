@@ -58,10 +58,12 @@ define([
 
             totalCategory.splice(categoryItem.index + 1);
 
-            if (category && category.children.length > 0) {
-                let len = totalCategory.length;
+
+            let len = totalCategory.length;
+            if(category.children)
                 totalCategory.push({index: len, children: category.children});
-            }
+            else
+                totalCategory.push({index: len, children: []});
 
             categoryItem.selectedCat = category;
             self.selected = category;
@@ -105,11 +107,14 @@ define([
                 let parentCatId = index === 0 ? 0 : selectedCat.catId;
 
                 self.sellerCatService.addCat({
-                    "cartId": 8,
-                    "catName": response.catName,
-                    "mapping":response.mapping,
-                    "parentCatId": parentCatId
+                    cartId: 8,
+                    catName: response.catName,
+                    mapping:response.mapping,
+                    parentCatId: parentCatId,
+                    urlKey:response.urlKey
                 }).then(function (res) {
+                    console.log(res);
+
                     let newNode = getNodeByName(response.catName, res.data.catTree);
 
                     if (index === 0)

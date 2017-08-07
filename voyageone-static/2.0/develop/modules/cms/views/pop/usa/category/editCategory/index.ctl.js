@@ -23,7 +23,7 @@ define([
             let self = this;
 
             if (self.context.type === 'add') {
-                self.parentCatPath = `${self.context.parentCatPath} >`;
+                self.parentCatPath = `${self.context.parentCatPath}`;
                 self.category = {
                     mapping: {}
                 };
@@ -33,7 +33,7 @@ define([
 
                 parentCatPaths.splice(catPath.split('>').length - 1);
                 if (parentCatPaths.length > 0)
-                    self.parentCatPath = `${parentCatPaths.join('>')} >`;
+                    self.parentCatPath = `${parentCatPaths.join('>')}`;
             }
 
         }
@@ -51,7 +51,7 @@ define([
 
             if (self.context.type === 'add') {
                 if (isEmpty(self.category.urlKey) || isEmpty(self.category.catName)) {
-                    self.alert('please check category name & category\'s urlKey');
+                    self.alert('please check US title & category\'s urlKey');
                     return false;
                 }
             }

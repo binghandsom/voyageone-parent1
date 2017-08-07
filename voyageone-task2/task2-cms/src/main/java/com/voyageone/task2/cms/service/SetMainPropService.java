@@ -54,6 +54,7 @@ import com.voyageone.service.impl.cms.tools.common.CmsMasterBrandMappingService;
 import com.voyageone.service.impl.cms.usa.UsaNewArrivalService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.WmsCreateOrUpdateProductMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsCategoryReceiveMQMessageBody;
 import com.voyageone.service.impl.com.ComMtValueChannelService;
 import com.voyageone.service.impl.com.mq.MqSender;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
@@ -1159,6 +1160,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     doSetGroup(feed);
                     productService.createProduct(cmsProduct.getChannelId(), cmsProduct, getTaskName());
 
+
+
                     // sneakerHead 新商品加入top50
                     if(feed.getChannelId().equals(ChannelConfigEnums.Channel.SN.getId()) && CmsConstants.UsaFeedStatus.Approved.name().equals(feed.getStatus())){
                         doInsertTop50(cmsProduct);
@@ -1206,13 +1209,24 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         }
 
         // 新code插入美国sneakhead官网相应类目的第一个
-        private void doInsertTop50(CmsBtProductModel cmsProduct){
+        public void doInsertTop50(CmsBtProductModel cmsProduct){
             CmsBtProductModel_Platform_Cart platform = cmsProduct.getUsPlatform(CartEnums.Cart.SNKRHDp.getValue());
             if(platform != null && ListUtils.notNull(platform.getSellerCats())){
                 List<String> sellerCatIds = new ArrayList<>();
+                List<String> fullCatIds = platform.getSellerCats()
+                        .stream()
+                        .filter(item->ListUtils.notNull(item.getcIds()))
+                        .map(item-> "-"+item.getcIds().stream().collect(Collectors.joining("-"))+"-")
+                        .collect(Collectors.toList());
                 platform.getSellerCats().stream().map(CmsBtProductModel_SellerCat::getcIds).collect(Collectors.toList()).forEach(sellerCatIds::addAll);
                 sellerCatIds = sellerCatIds.stream().distinct().collect(Collectors.toList());
                 sellerCatIds.forEach(sellerCatId->productTopService.insertTop50(cmsProduct.getChannelId(), sellerCatId, cmsProduct.getCommon().getFields().getCode(), CartEnums.Cart.SNKRHDp.getValue()));
+                CmsCategoryReceiveMQMessageBody cmsCategoryReceiveMQMessageBody = new CmsCategoryReceiveMQMessageBody();
+                cmsCategoryReceiveMQMessageBody.setChannelId(cmsProduct.getChannelId());
+                cmsCategoryReceiveMQMessageBody.setCartId(platform.getCartId()+"");
+                cmsCategoryReceiveMQMessageBody.setFullCatIds(fullCatIds);
+                cmsCategoryReceiveMQMessageBody.setSender(getTaskName());
+                cmsMqSenderService.sendMessage(cmsCategoryReceiveMQMessageBody);
             }
         }
         private void doCreateUsaPlatform(CmsBtProductModel cmsProduct, CmsBtFeedInfoModel feed) {
@@ -1364,7 +1378,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         break;
                     case SNKRHDa:
                         platform.setpCatPath(feed.getAttribute().get("amazonBrowseTree")==null?"":feed.getAttribute().get("amazonBrowseTree").get(0));
-                        platform.getFields().setAttribute("sellerFulfilledPrime", true);
+                        platform.getFields().setAttribute("sellerFulfilledPrime", "1");
                         break;
                 }
 

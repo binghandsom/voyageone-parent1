@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -514,6 +515,56 @@ public class SellerCatService extends BaseService {
         return sellerCat;
     }
 
+    public Map sellerCompare(List<CmsBtProductModel_SellerCat> o, List<CmsBtProductModel_SellerCat> n){
+
+        List<String> oCatIds = new ArrayList<>();
+        List<String> delCatPath = new ArrayList<>();
+        List<String> addCatPath = new ArrayList<>();
+        if(ListUtils.notNull(o)) {
+            o.stream().map(CmsBtProductModel_SellerCat::getcIds).collect(Collectors.toList()).forEach(oCatIds::addAll);
+            oCatIds = oCatIds.stream().distinct().collect(Collectors.toList());
+
+            for(CmsBtProductModel_SellerCat item: o){
+                if(ListUtils.isNull(n) || n.stream().noneMatch(cmsBtProductModel_sellerCat -> cmsBtProductModel_sellerCat.getcId().equals(item.getcId()))){
+                    delCatPath.add("-"+item.getcIds().stream().collect(Collectors.joining("-"))+"-");
+                }
+            }
+        }
+
+
+        List<String> nCatIds = new ArrayList<>();
+        if(ListUtils.notNull(n)) {
+            n.stream().map(CmsBtProductModel_SellerCat::getcIds).collect(Collectors.toList()).forEach(nCatIds::addAll);
+            nCatIds = nCatIds.stream().distinct().collect(Collectors.toList());
+
+            for(CmsBtProductModel_SellerCat item: n){
+                if(ListUtils.isNull(o) || o.stream().noneMatch(cmsBtProductModel_sellerCat -> cmsBtProductModel_sellerCat.getcId().equals(item.getcId()))){
+                    addCatPath.add("-"+item.getcIds().stream().collect(Collectors.joining("-"))+"-");
+                }
+            }
+        }
+
+        List<String> del = new ArrayList<>();
+        List<String> add = new ArrayList<>();
+        for(String s: oCatIds){
+            if(!nCatIds.contains(s)){
+                del.add(s);
+            }
+        }
+
+        for(String s: nCatIds){
+            if(!oCatIds.contains(s)){
+                add.add(s);
+            }
+        }
+        Map<String, List<String>> rep = new HashMap();
+        rep.put("del", del);
+        rep.put("add", add);
+        rep.put("delCatPath", delCatPath);
+        rep.put("addCatPath", addCatPath);
+
+        return rep;
+    }
     /**
      * 商品所属分类被删除，插入履历
      *
