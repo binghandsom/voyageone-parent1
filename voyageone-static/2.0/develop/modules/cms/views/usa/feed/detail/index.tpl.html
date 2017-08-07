@@ -314,22 +314,6 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="row">
-                                        <label class="col-md-4 control-label query-title text-left vo_unreqfield">Order Limit Count</label>
-                                        <div class="col-md-6">
-                                            <input type="number" maxlength="11" class="form-control" ng-model="ctrl.feed.orderlimitcount">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <label class="col-md-4 control-label query-title text-left vo_unreqfield">URL Key</label>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control" ng-model="ctrl.feed.urlkey" ng-disabled="ctrl.feed.hasUrlkey">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
                                         <label class="col-md-4 control-label query-title text-left vo_unreqfield">Abstract</label>
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" ng-model="ctrl.feed.abstract">
@@ -344,9 +328,28 @@
                                         </div>
                                     </div>
                                 </div>
-
-
-
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title text-left vo_unreqfield">Order Limit Count</label>
+                                        <div class="col-md-6">
+                                            <input type="number" maxlength="11" class="form-control" ng-model="ctrl.feed.orderlimitcount">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title text-left vo_reqfield">URL Key</label>
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="urlkey" ng-model="ctrl.feed.urlkey" ng-disabled="ctrl.feed.hasUrlkey" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title text-left"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.urlkey"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="form-group">
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title text-left vo_unreqfield">Is Phone Order Only</label>
@@ -376,6 +379,38 @@
                                         <label class="col-md-4 control-label query-title text-left vo_unreqfield">SEO Keywords</label>
                                         <div class="col-md-6">
                                             <textarea class="form-control" ng-model="ctrl.feed.seoKeywords"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title text-left vo_reqfield">Weight</label>
+                                        <div class="col-md-6">
+                                            <input type="number" class="form-control" name="weight" ng-model="ctrl.feed.weight" required>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title text-left"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.weight"></vo-message>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title text-left vo_reqfield">Weight Unit</label>
+                                        <div class="col-md-6">
+                                            <select class="form-control" name="weightUnit"
+                                                    ng-model="ctrl.feed.weightUnit"
+                                                    ng-options="weightUnit as weightUnit for weightUnit in ctrl.setting.weightOrgUnits">
+                                                <option value="" translate="TXT_SELECT_NO_VALUE"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-4 control-label query-title text-left"></label>
+                                        <div class="col-md-6">
+                                            <vo-message target="feedForm.weightUnit"></vo-message>
                                         </div>
                                     </div>
                                 </div>
@@ -525,7 +560,7 @@
                                                             <div class="row">
                                                                 <label class="col-md-6 query-title text-left">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
-                                                                    <input type="number" class="form-control" ng-model="ctrl.feed.imageNum" ng-enter="ctrl.initImage(ctrl.feed.imageNum)">
+                                                                    <input type="number" class="form-control" maxlength="2" max="15" ng-model="ctrl.feed.imageNum" ng-enter="ctrl.initImage(ctrl.feed.imageNum)">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -591,7 +626,7 @@
                                                             <div class="row">
                                                                 <label class="col-md-6 query-title text-left">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
-                                                                    <input type="number" class="form-control" ng-model="ctrl.feed.boxImageNum" ng-enter="ctrl.initBoxImage(ctrl.feed.boxImageNum)">
+                                                                    <input type="number" class="form-control" maxlength="2" max="15" ng-model="ctrl.feed.boxImageNum" ng-enter="ctrl.initBoxImage(ctrl.feed.boxImageNum)">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -630,43 +665,7 @@
                             <div class="table-responsive box box-body">
                                 <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
                                     <thead>
-                                    <tr>
-                                        <td class="text-left"></td>
-                                        <td class="text-left"></td>
-                                        <td class="text-left"></td>
-                                        <td class="text-right form-horizontal">
-                                            <div class="form-group query-title">default:</div>
-                                            <div class="form-group">
-                                                <input type="number" class="form-control text-right" ng-model="ctrl.setting.weightOrg"
-                                                       ng-change="ctrl.setSkuProperty('','weightOrg','0')">
-                                            </div>
-                                        </td>
-                                        <td class="text-right form-horizontal">
-                                            <div class="form-group query-title">default:</div>
-                                            <div class="form-group">
-                                                <select class="form-control" ng-options="weightUnit as weightUnit for weightUnit in ctrl.setting.weightOrgUnits"
-                                                        ng-model="ctrl.setting.weightOrgUnit" ng-change="ctrl.setSkuProperty('','weightOrgUnit','0')">
-                                                </select>
-                                            </div>
-                                        </td>
-                                        <td class="text-right form-horizontal">
-                                            <div class="form-group query-title">default:</div>
-                                            <div class="form-group">
-                                                <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceClientMsrp"
-                                                       ng-disabled="ctrl.feed.approvePricing=='1'"
-                                                       ng-blur="ctrl.setSkuProperty('','priceClientMsrp','1')"
-                                                       ng-enter="ctrl.setSkuProperty('','priceClientMsrp','1')">
-                                            </div>
-                                        </td>
-                                        <td class="text-right form-horizontal">
-                                            <div class="form-group query-title">default:</div>
-                                            <div class="form-group">
-                                                <input type="number" class="form-control text-right" ng-model="ctrl.setting.priceNet"
-                                                       ng-disabled="ctrl.feed.approvePricing=='1'"
-                                                       ng-blur="ctrl.setSkuProperty('','priceNet','1')"
-                                                       ng-enter="ctrl.setSkuProperty('','priceNet','1')">
-                                            </div>
-                                        </td>
+                                    <!--<tr>
                                         <td colspan="2" ng-if="ctrl.auth!=1">
 
                                                 <div class="row form-group pull-right">
@@ -683,20 +682,13 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
                                         </td>
-
-                                    </tr>
+                                    </tr>-->
                                     <tr>
                                         <th class="text-left">Size</th>
-                                        <th class="text-left">Sku</th>
-                                        <th class="text-left">Barcode</th>
-                                        <th class="text-right">Weight</th>
-                                        <th class="text-center">Weight Unit</th>
-                                        <th class="text-right">Msrp($)</th>
-                                        <th class="text-right">Price($)</th>
-                                        <th class="text-right" ng-if="ctrl.auth!=1">cn Msrp(￥)</th>
-                                        <th class="text-right" ng-if="ctrl.auth!=1">Price(￥)</th>
+                                        <th class="text-left">SKU</th>
+                                        <th class="text-left">UPC</th>
+                                        <th class="text-right">QTY</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -704,33 +696,89 @@
                                         <td class="text-left">{{sku.size}}</td>
                                         <td class="text-left">{{sku.sku}}</td>
                                         <td class="text-left">{{sku.barcode}}</td>
-                                        <td class="text-right">
-                                            <input type="number" class="form-control text-right" ng-model="sku.weightOrg"/>
+                                        <td class="text-right">{{sku.qty}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Platform Price  -->
+                    <div class="skuItem">
+                        <div class="skuItem-head">
+                            <h4>Price List</h4>
+                        </div>
+                        <div class="skuItem-body">
+                            <div class="table-responsive box box-body">
+                                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                                    <thead>
+                                    <tr>
+                                        <td class="text-left"></td>
+                                        <td class="text-left"></td>
+                                        <td class="text-right form-horizontal">
+                                            <div class="form-group query-title">default:</div>
+                                            <div class="form-group">
+                                                <input type="number" class="form-control text-right"
+                                                       ng-model="ctrl.setting.platformPrice.platformPrice"
+                                                       ng-enter="ctrl.setPlatformPrice('priceClientMsrp', ctrl.setting.platformPrice.platformPrice)">
+                                            </div>
                                         </td>
-                                        <td class="text-center">
-                                            <select class="form-control" ng-options="weightUnit as weightUnit for weightUnit in ctrl.setting.weightOrgUnits"
-                                                    ng-model="sku.weightOrgUnit">
-                                            </select>
-                                        </td>
-                                        <td class="text-right">
-                                            <input type="number" class="form-control text-right" ng-model="sku.priceClientMsrp"
-                                                   ng-disabled="ctrl.feed.approvePricing=='1'"
-                                                   ng-blur="ctrl.setSkuProperty(sku,'priceClientMsrp','1')"
-                                                   ng-enter="ctrl.setSkuProperty(sku,'priceClientMsrp','1')"/>
-                                        </td>
-                                        <td class="text-right">
-                                            <input type="number" class="form-control text-right" ng-model="sku.priceNet"
-                                                   ng-disabled="ctrl.feed.approvePricing=='1'"
-                                                   ng-blur="ctrl.setSkuProperty(sku,'priceNet','1')"
-                                                   ng-enter="ctrl.setSkuProperty(sku,'priceNet','1')"/>
-                                        </td>
-                                        <td class="text-right" ng-if="ctrl.auth!=1">
-                                            <input type="number" class="form-control text-right" ng-model="sku.priceMsrp" readonly/>
-                                        </td>
-                                        <td class="text-right" ng-if="ctrl.auth!=1">
-                                            <input type="number" class="form-control text-right" ng-model="sku.priceCurrent" readonly/>
+                                        <td class="text-right form-horizontal">
+                                            <div class="form-group query-title">default:</div>
+                                            <div class="form-group">
+                                                <input type="number" class="form-control text-right"
+                                                       ng-model="ctrl.setting.platformPrice.priceClientRetail"
+                                                       ng-enter="ctrl.setPlatformPrice('priceClientRetail', ctrl.setting.platformPrice.priceClientRetail)">
+                                            </div>
                                         </td>
 
+                                    </tr>
+                                    <tr>
+                                        <th class="text-left" ng-if="ctrl.feed.feedAuth == 3">Is Sale</th>
+                                        <th class="text-left">Platform</th>
+                                        <th class="text-right">Msrp($)</th>
+                                        <th class="text-right">Price($)</th>
+                                        <th class="text-right">CN Msrp(￥)</th>
+                                        <th class="text-right">CN Price(￥)</th>
+                                        <th class="text-right" ng-if="ctrl.feed.feedAuth == 3">Days OldBefore Sharing</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="platform in ctrl.feed.usPlatformPrices">
+                                        <td class="text-left" ng-if="ctrl.feed.feedAuth == 3">
+                                            <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="platform.isSale">
+                                        </td>
+                                        <td class="text-left">{{platform.cartName}}</td>
+                                        <td class="text-right">
+                                            <input type="number" class="form-control text-right" ng-model="platform.priceClientMsrp" ng-change="ctrl.calculatePrice()" required>
+                                        </td>
+                                        <td class="text-right">
+                                            <input type="number" class="form-control text-right" ng-model="platform.priceClientRetail" ng-change="ctrl.calculatePrice()" required>
+                                        </td>
+                                        <td class="text-right"><label>-</label></td>
+                                        <td class="text-right"><label>-</label></td>
+                                        <td class="text-right" ng-if="ctrl.feed.feedAuth == 3">
+                                            <input type="number" class="form-control text-right" ng-model="platform.sharingDay"/>
+                                        </td>
+                                    </tr>
+                                    <tr ng-if="ctrl.feed.feedAuth > 1" ng-repeat="platform in ctrl.feed.platformPrices">
+                                        <td class="text-left" ng-if="ctrl.feed.feedAuth == 3">
+                                            <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="platform.isSale">
+                                        </td>
+                                        <td class="text-left">{{platform.cartName}}</td>
+                                        <td class="text-right"><label>-</label></td>
+                                        <td class="text-right"><label>-</label></td>
+                                        <td class="text-right">
+                                            <input type="number" class="form-control text-right" ng-model="platform.priceMsrp" required>
+                                        </td>
+                                        <td class="text-right">
+                                            <input type="number" class="form-control text-right" ng-model="platform.priceCurrent" required>
+                                        </td>
+                                        <td class="text-right" ng-if="ctrl.feed.feedAuth == 3">
+                                            <input type="number" class="form-control text-right" ng-model="platform.sharingDay || 0" required>
+                                        </td>
                                     </tr>
                                     </tbody>
                                 </table>

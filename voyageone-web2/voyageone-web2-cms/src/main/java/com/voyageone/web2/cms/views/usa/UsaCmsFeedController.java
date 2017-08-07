@@ -5,6 +5,7 @@ import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.ListUtils;
+import com.voyageone.service.impl.cms.TypeChannelsService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.usa.UsaFeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -38,6 +39,8 @@ public class UsaCmsFeedController extends BaseController {
     private FeedInfoService feedInfoService;
     @Autowired
     private UsaFeedInfoService usaFeedInfoService;
+    @Autowired
+    private TypeChannelsService typeChannelsService;
 
     /**
      * 统一的当前语言环境提供
@@ -68,6 +71,9 @@ public class UsaCmsFeedController extends BaseController {
             resultMap.put("materialList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.material_TYPE_103, channelId, getLang()));
             resultMap.put("originList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.origin_TYPE_104, channelId, getLang()));
             resultMap.put("colorMap", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.colorMap_TYPE_105, channelId, getLang()));
+
+            // 平台
+            resultMap.put("platforms", typeChannelsService.getUsPlatformTypeList(channelId, getLang()));
         }
         return success(resultMap);
     }
