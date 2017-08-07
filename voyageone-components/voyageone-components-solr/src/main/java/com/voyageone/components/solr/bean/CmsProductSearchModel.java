@@ -48,6 +48,8 @@ public class CmsProductSearchModel {
 
     private String lastReceivedOn;
 
+    private List<String> upc;
+
 
     public String getId() {
         return id;
@@ -264,5 +266,13 @@ public class CmsProductSearchModel {
 
     public void setUsFreeTags(List<String> usFreeTags) {
         this.usFreeTags = usFreeTags;
+    }
+
+    public List<String> getUpc() {
+        return upc;
+    }
+
+    public void setUpc(List<String> upc) {
+        this.upc = upc;
     }
 }

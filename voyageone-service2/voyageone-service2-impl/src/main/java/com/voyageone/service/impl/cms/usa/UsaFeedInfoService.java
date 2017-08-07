@@ -106,7 +106,6 @@ public class UsaFeedInfoService extends BaseService {
                 }else{
                     sku.setPriceCurrent(calculatePrice(formulaMsrp, sku));
                 }
-                sku.setPriceCurrent(calculatePrice(formulaRetail, sku));
                 priceClientRetailMin = Double.min(priceClientRetailMin, sku.getPriceClientRetail());
                 priceClientRetailMax = Double.max(priceClientRetailMax, sku.getPriceClientRetail());
                 priceClientMsrpMin = Double.min(priceClientMsrpMin, sku.getPriceClientMsrp());
@@ -259,7 +258,7 @@ public class UsaFeedInfoService extends BaseService {
             String searchContent = (String) searchValue.get("searchContent");
             String[] split = searchContent.split("\n");
             List<String> searchContents = Arrays.asList(split);
-            criteria = criteria.orOperator(Criteria.where("code").in(searchContents), Criteria.where("model").in(searchContents), Criteria.where("skus.sku").in(searchContents), Criteria.where("skus.barcode").in(searchContents));
+            criteria = criteria.orOperator(Criteria.where("code").in(searchContents), Criteria.where("model").in(searchContents), Criteria.where("skus.sku").in(searchContents), Criteria.where("skus.barcode").in(searchContents),Criteria.where("upc").in(searchContents));
         }
 
         if (ListUtils.notNull((List) searchValue.get("approvePricing"))) {
