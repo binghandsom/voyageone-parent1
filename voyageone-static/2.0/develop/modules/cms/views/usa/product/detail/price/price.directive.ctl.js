@@ -21,7 +21,9 @@ define([
                 cartId:"",
                 prodId:"",
                 clientMsrpPrice:"",
-                clientRetailPrice:""
+                clientRetailPrice:"",
+                isSale:"",
+                days:null
             };
             this.manyMsrp = "";
             this.manySalePrice = "";
@@ -51,15 +53,24 @@ define([
 
                 _.each(self.usPriceList, item => {
                     item.flag = true;
+                    if(item.isSale == "1" || item.isSale == null ){
+                        item.tempIsSale = true;
+                    }else {
+                        item.tempIsSale = false;
+                    }
                 });
-
                 _.each(self.priceList, item => {
                     item.flag = true;
+                    if(item.isSale == "1" || item.isSale == null ){
+                        item.tempIsSale = true;
+                    }else {
+                        item.tempIsSale = false;
+                    }
                 });
             });
         }
         //修改价格
-        save(cartId, priceMsrpSt,priceRetailSt) {
+        save(cartId, priceMsrpSt,priceRetailSt,isSale,days) {
             let self = this;
             if((priceMsrpSt == null || priceMsrpSt == "0") || (priceRetailSt == null || priceRetailSt == "0")){
                 self.alert('value can not to be 0 or empty!');
@@ -69,6 +80,8 @@ define([
                 self.saveParam.prodId = self.productInfo.productId + "";
                 self.saveParam.clientMsrpPrice = priceMsrpSt + "";
                 self.saveParam.clientRetailPrice = priceRetailSt + "";
+                self.saveParam.isSale = isSale == true?"1":"0";
+                self.saveParam.days = days;
                 self.detailDataService.updateOnePrice([self.saveParam]).then(() =>{
                     self.notify.success('Update Success');
                     self.getData();
@@ -102,7 +115,7 @@ define([
                         cartId: key + "",
                         prodId:self.productInfo.productId + "",
                         clientMsrpPrice:self.manyUsMsrp ? self.manyUsMsrp +"":"",
-                        clientRetailPrice:self.manyUsNetPrice?self.manyUsNetPrice+"":""
+                        clientRetailPrice:self.manyUsNetPrice?self.manyUsNetPrice+"":"",
                     };
                     lists.push(map);
                 });
@@ -114,7 +127,7 @@ define([
                         cartId: key + "",
                         prodId:self.productInfo.productId + "",
                         clientMsrpPrice:self.manyMsrp ? self.manyMsrp +"":"",
-                        clientRetailPrice:self.manySalePrice?self.manySalePrice+"":""
+                        clientRetailPrice:self.manySalePrice?self.manySalePrice+"":"",
                     }
                     lists.push(map);
                 })
