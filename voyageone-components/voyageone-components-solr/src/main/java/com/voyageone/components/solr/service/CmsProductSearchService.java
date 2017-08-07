@@ -1,5 +1,6 @@
 package com.voyageone.components.solr.service;
 
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
@@ -69,6 +70,7 @@ public class CmsProductSearchService extends BaseSearchService {
         List<String> skuCodeList = new ArrayList<>();
         if (skuList != null && !skuList.isEmpty()) {
             cmsProductSearchModel.setSkuCode(skuList.stream().map(CmsBtProductModel_Sku::getSkuCode).collect(Collectors.toList()));
+            cmsProductSearchModel.setUpc(skuList.stream().filter(sku-> !StringUtil.isEmpty(sku.getBarcode())).map(CmsBtProductModel_Sku::getBarcode).collect(Collectors.toList()));
         }
 
         cmsProductSearchModel.setTranslateStatus(field.getTranslateStatus());

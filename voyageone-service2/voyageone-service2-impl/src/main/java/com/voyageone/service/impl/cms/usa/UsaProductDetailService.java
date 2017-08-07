@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms.usa;
 
+import com.mchange.lang.IntegerUtils;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
@@ -47,7 +48,6 @@ import java.util.stream.Collectors;
 
 /**
  * Created by james on 2017/7/18.
- *
  */
 @Service
 public class UsaProductDetailService extends BaseService {
@@ -552,10 +552,12 @@ public class UsaProductDetailService extends BaseService {
         CmsBtProductModel cmsBtProductModel = null;
 
         if (ListUtils.notNull(lists)) for (Map<String, Object> paraMap : lists) {
+
             //同事传入portId更新价格履历
             Long prodId = Long.parseLong((String) paraMap.get("prodId"));
             //平台id
             Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
+            String isSale = (String) paraMap.get("isSale");
             Double clientMsrpPrice = null;
             Double clientRetailPrice = null;
             if (StringUtils.isNotEmpty((String) paraMap.get("clientMsrpPrice"))) {
@@ -564,12 +566,28 @@ public class UsaProductDetailService extends BaseService {
             if (StringUtils.isNotEmpty((String) paraMap.get("clientRetailPrice"))) {
                 clientRetailPrice = Double.parseDouble((String) paraMap.get("clientRetailPrice"));
             }
-            if (cmsBtProductModel == null){
+            if (cmsBtProductModel == null) {
                 cmsBtProductModel = productService.getProductById(channelId, prodId);
             }
             String productCode = cmsBtProductModel.getCommon().getFields().getCode();
             //获取商品code
             String code = cmsBtProductModel.getCommonNotNull().getFieldsNotNull().getCode();
+
+            //设置滞后发布日期
+            Integer days = (Integer) paraMap.get("days");
+            if (days != null){
+                if (days != 0){
+                    Date date = new Date();
+                    Calendar calendar = new GregorianCalendar();
+                    calendar.setTime(date);
+                    calendar.add(calendar.DATE, days);
+                    date = calendar.getTime();
+                    platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, date, 0, userName);
+                }else {
+                    platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, userName);
+                }
+            }
+
             if (cartId < 20) {
                 //修改美国平台价格
                 Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = cmsBtProductModel.getUsPlatforms();
@@ -601,6 +619,10 @@ public class UsaProductDetailService extends BaseService {
                                 //修改最大值最小值
                                 minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceSaleSt", clientRetailPrice);
                                 minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceSaleEd", clientRetailPrice);
+                            }
+                            //修改销售状态
+                            if (StringUtils.isNotEmpty(isSale)) {
+                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".isSale", isSale);
                             }
                             HashMap<String, Object> queryMap = new HashMap<>();
                             //设置查询条件
@@ -659,6 +681,10 @@ public class UsaProductDetailService extends BaseService {
                                 //修改最大值最小值
                                 minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceRetailSt", clientRetailPrice);
                                 minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceRetailEd", clientRetailPrice);
+                            }
+                            //修改销售状态
+                            if (StringUtils.isNotEmpty(isSale)) {
+                                minMaxPriceUpdateMap.put("platforms.P" + cartId + ".isSale", isSale);
                             }
                             HashMap<String, Object> queryMap = new HashMap<>();
                             //设置查询条件
@@ -738,6 +764,7 @@ public class UsaProductDetailService extends BaseService {
                         priceMap.put("pStatus", value.getpStatus() != null ? value.getpStatus().name() : null);
                         priceMap.put("pReallyStatus", value.getpReallyStatus());
                         priceMap.put("pPublishError", value.getpPublishError());
+                        priceMap.put("isSale", value.getIsSale());
                         allUsPriceList.put(value.getCartId().toString(), priceMap);
                     }
                     data.put("allUsPriceList", allUsPriceList);
@@ -766,6 +793,7 @@ public class UsaProductDetailService extends BaseService {
                             priceMap.put("pStatus", value.getpStatus() != null ? value.getpStatus().name() : null);
                             priceMap.put("pReallyStatus", value.getpReallyStatus());
                             priceMap.put("pPublishError", value.getpPublishError());
+                            priceMap.put("isSale", value.getIsSale());
 
                             allPriceList.put(value.getCartId().toString(), priceMap);
                         }

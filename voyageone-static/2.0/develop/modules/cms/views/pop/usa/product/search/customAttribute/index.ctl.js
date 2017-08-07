@@ -4,15 +4,12 @@ define([
 
     cms.controller('usaCustomAttributeController',class usaCustomAttributeController{
 
-        constructor(context,advanceSearch,$modalInstance,notify){
+        constructor(context,advanceSearch,$uibModalInstance,notify,$rootScope){
             this.context = context;
+            this.$rootScope = $rootScope;
             this.advanceSearch = advanceSearch;
-            this.$modalInstance = $modalInstance;
+            this.$uibModalInstance = $uibModalInstance;
             this.notify = notify;
-
-            // 数据重新请求
-            // this.customColumns = this.context.customColumns;
-            // this.usPlatforms = this.context.usPlatforms;
 
             this.customColumns = {
                 commonProps:[],
@@ -84,14 +81,7 @@ define([
                            self.saleInfo.selCarts.push(platformSale.cartId);
                        });
                    }
-                   /*_.each(self.platformSales, item => {
-                       let selOne = _.find(self.selPlatformSales, selItem => {
-                           return item.cartId == selItem.cartId;
-                       });
-                       if (selOne) {
-                           _.extend(item, {checked:true,beginTime:selOne.beginTime,endTime:selOne.endTime});
-                       }
-                   });*/
+
                }
             });
         }
@@ -142,22 +132,21 @@ define([
                     selPlatformSales.push(tempPlatSale);
                 });
             }
-            /*_.each(self.platformSales, item => {
-                if (item.checked) {
-                    let map = {cartId:item.cartId,beginTime:item.beginTime,endTime:item.endTime};
-                    selPlatformSales.push(map);
-                }
-            });*/
 
-            let params = {
+            //去除遮罩
+            self.advanceSearch.saveCustomColumns({
                 selCommonProps:selCommonProps,
                 selPlatformAttributes:selPlatformAttributes,
                 selPlatformSales:selPlatformSales
-            };
-            self.advanceSearch.saveCustomColumns(params).then(res => {
-                self.$modalInstance.close(res.data);
+            },{
+                autoBlock: false
+            }).then(res => {
+                //self.context.customAttributeResult = res.data;
+                self.$rootScope.customAttributeResult = res.data;
                 self.notify.success("save success");
             });
+
+            self.$uibModalInstance.close(self.context.customAttributeResult);
         }
 
     });

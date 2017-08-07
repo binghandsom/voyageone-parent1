@@ -335,7 +335,7 @@
                                     </button>
                                 </th>
                                 <th class="text-center td-width-150 white-space-noWrap th-border-white" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selPlatformSales track by $index">
-                                    {{ctrl.cartEntity.valueOf(+prop.cartId).name}}【{{prop.beginTime}}～{{prop.endTime}}】
+                                    {{ctrl.carts.valueOf(+prop.cartId).name}}【{{prop.beginTime}}～{{prop.endTime}}】
                                     <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.cartId)">
                                         <i class="fa fa-{{ctrl.getArrowName(prop.cartId)}}"></i>
                                     </button>

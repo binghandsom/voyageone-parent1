@@ -103,8 +103,16 @@ public class UsaFeedInfoService extends BaseService {
         ;
         for (CmsBtFeedInfoModel_Sku sku : cmsBtFeedInfoModel.getSkus()) {
             try {
-                sku.setPriceMsrp(calculatePrice(formulaMsrp, sku));
-                sku.setPriceCurrent(calculatePrice(formulaRetail, sku));
+                if(Double.compare(sku.getPriceClientMsrp(),0.0) == 0){
+                    sku.setPriceMsrp(0.0);
+                }else{
+                    sku.setPriceMsrp(calculatePrice(formulaMsrp, sku));
+                }
+                if(Double.compare(sku.getPriceClientRetail(),0.0) == 0 || Double.compare(sku.getPriceClientMsrp(),0.0) == 0){
+                    sku.setPriceCurrent(0.0);
+                }else{
+                    sku.setPriceCurrent(calculatePrice(formulaMsrp, sku));
+                }
                 priceClientRetailMin = Double.min(priceClientRetailMin, sku.getPriceClientRetail());
                 priceClientRetailMax = Double.max(priceClientRetailMax, sku.getPriceClientRetail());
                 priceClientMsrpMin = Double.min(priceClientMsrpMin, sku.getPriceClientMsrp());
@@ -257,7 +265,7 @@ public class UsaFeedInfoService extends BaseService {
             String searchContent = (String) searchValue.get("searchContent");
             String[] split = searchContent.split("\n");
             List<String> searchContents = Arrays.asList(split);
-            criteria.orOperator(new Criteria("code").in(searchContents), new Criteria("model").in(searchContents), new Criteria("skus.sku").in(searchContent), new Criteria("skus.barcode").in(searchContent));
+            criteria = criteria.orOperator(Criteria.where("code").in(searchContents), Criteria.where("model").in(searchContents), Criteria.where("skus.sku").in(searchContents), Criteria.where("skus.barcode").in(searchContents),Criteria.where("upc").in(searchContents));
         }
 
         if (ListUtils.notNull((List) searchValue.get("approvePricing"))) {
