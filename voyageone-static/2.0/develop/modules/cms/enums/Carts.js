@@ -21,6 +21,11 @@ define(['underscore'], function (_) {
     }
 
     return {
+
+        /**
+         * 用于美国版自定义，表示total：总销量
+         */
+        TOTAL:new Cart('Total',-1,'总库存','',''),
         /**
          * Master
          */
