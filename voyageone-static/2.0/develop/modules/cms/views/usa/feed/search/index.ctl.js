@@ -53,6 +53,7 @@ define([
         }
         init(){
             let self = this;
+            self.columnArrow={"created":{"count":true,"mark":"sort-desc"}};
             self.getList();
         }
         getListSearch(){
@@ -62,6 +63,7 @@ define([
                 feed.check = false;
             })
             self.totalItems = false;
+            self.paging.curr=1;
             self.getList();
         }
 
@@ -132,7 +134,7 @@ define([
             let self = this;
             self.requestMap = {};
             if(value == null || value == ''){
-                self.alert("value can not be null!!!");
+                self.alert("value can not be  empty or 0!!!");
                 feed.editMsrp = false;
                 feed.editRetai = false;
                 return;
@@ -166,10 +168,13 @@ define([
 
             if (columnArrow) {
                 _.forEach(columnArrow, function (value, key) {
-                    columnArrow[key] = null;
+                    if(key == "created"){
+                        columnArrow["created"] = {'count':true,'mark':'sort-desc'};
+                    }else{
+                        columnArrow[key] = null;
+                    }
                 });
             }
-
         }
 
         popBatchApprove() {
