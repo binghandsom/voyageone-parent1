@@ -230,6 +230,13 @@ define([
         // 初始化Item -> image
         initImage(num) {
             let self = this;
+
+            if(num > 15){
+                self.notify.danger('Please not more than 15');
+                self.imageView.imageNum = null;
+                return false;
+            }
+
             self.confirm("Make sure of setting the image count to <strong style='color:red'> " + num + "</strong>").then(confirmed => {
                 if (num <= 0) {
                     self.imageView.currImage = {};
@@ -284,6 +291,13 @@ define([
         // 初始化Box -> image
         initBoxImage(num) {
             let self = this;
+
+            if(num > 15){
+                self.notify.danger('Please not more than 15');
+                self.imageView.boxImageNum = null;
+                return false;
+            }
+
             self.confirm("Make sure of setting the image count to <strong style='color:red'> " + num + "</strong>").then(confirmed => {
                 if (num <= 0) {
                     self.imageView.currBoxImage = {};
