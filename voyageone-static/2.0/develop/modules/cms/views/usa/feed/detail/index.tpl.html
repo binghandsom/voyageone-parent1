@@ -761,7 +761,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr ng-repeat="platform in ctrl.feed.usPlatformPrices">
+                                    <tr ng-repeat="(key, platform) in ctrl.feed.usPlatforms">
                                         <td class="text-left" ng-if="ctrl.feed.feedAuth == 3">
                                             <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="platform.isSale">
                                         </td>
@@ -780,7 +780,7 @@
                                             <input type="number" class="form-control text-right" ng-model="platform.sharingDay"/>
                                         </td>
                                     </tr>
-                                    <tr ng-if="ctrl.feed.feedAuth > 1" ng-repeat="platform in ctrl.feed.platformPrices">
+                                    <tr ng-if="ctrl.feed.feedAuth > 1" ng-repeat="(key, platform) in ctrl.feed.platforms">
                                         <td class="text-left" ng-if="ctrl.feed.feedAuth == 3">
                                             <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="platform.isSale">
                                         </td>

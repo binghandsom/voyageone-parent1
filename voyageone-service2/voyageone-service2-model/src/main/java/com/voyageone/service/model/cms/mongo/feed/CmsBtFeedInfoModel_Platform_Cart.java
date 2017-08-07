@@ -1,12 +1,14 @@
 package com.voyageone.service.model.cms.mongo.feed;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+
 /**
  * Feed各平台价格
  *
  * @Author rex.wu
  * @Create 2017-08-07 11:18
  */
-public class CmsBtFeedInfoModel_PlatformPrice {
+public class CmsBtFeedInfoModel_Platform_Cart extends BaseMongoMap<String, Object> {
 
     private Integer cartId;
     private Integer isSale;
@@ -17,58 +19,58 @@ public class CmsBtFeedInfoModel_PlatformPrice {
     private Integer sharingDay;
 
     public Integer getCartId() {
-        return cartId;
+        return getIntAttribute("cartId");
     }
 
     public void setCartId(Integer cartId) {
-        this.cartId = cartId;
+        setAttribute("cartId", cartId);
     }
 
     public Integer getIsSale() {
-        return isSale;
+        return getIntAttribute("isSale");
     }
 
     public void setIsSale(Integer isSale) {
-        this.isSale = isSale;
+        setAttribute("isSale", isSale);
     }
 
     public Double getPriceClientMsrp() {
-        return priceClientMsrp;
+        return getDoubleAttribute("priceClientMsrp");
     }
 
     public void setPriceClientMsrp(Double priceClientMsrp) {
-        this.priceClientMsrp = priceClientMsrp;
+        setAttribute("priceClientMsrp", priceClientMsrp);
     }
 
     public Double getPriceClientRetail() {
-        return priceClientRetail;
+        return getDoubleAttribute("priceClientRetail");
     }
 
     public void setPriceClientRetail(Double priceClientRetail) {
-        this.priceClientRetail = priceClientRetail;
+        setAttribute("priceClientRetail", priceClientRetail);
     }
 
     public Double getPriceMsrp() {
-        return priceMsrp;
+        return getDoubleAttribute("priceMsrp");
     }
 
     public void setPriceMsrp(Double priceMsrp) {
-        this.priceMsrp = priceMsrp;
+        setAttribute("priceMsrp", priceMsrp);
     }
 
     public Double getPriceCurrent() {
-        return priceCurrent;
+        return getDoubleAttribute("priceCurrent");
     }
 
     public void setPriceCurrent(Double priceCurrent) {
-        this.priceCurrent = priceCurrent;
+        setAttribute("priceCurrent", priceCurrent);
     }
 
     public Integer getSharingDay() {
-        return sharingDay;
+        return getIntAttribute("sharingDay");
     }
 
     public void setSharingDay(Integer sharingDay) {
-        this.sharingDay = sharingDay;
+        setAttribute("sharingDay", sharingDay);
     }
 }

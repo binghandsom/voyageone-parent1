@@ -1,15 +1,14 @@
 package com.voyageone.service.model.cms.mongo.feed;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -19,6 +18,11 @@ import java.util.stream.Collectors;
  * Created by james.li on 2015/11/26.
  */
 public class CmsBtFeedInfoModel extends ChannelPartitionModel {
+
+    /**
+     * 定义platforms的固定文字
+     **/
+    private final static String PLATFORM_CART_PRE = "P";
 
     public CmsBtFeedInfoModel() {
     }
@@ -78,8 +82,10 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     /**
      * 中美各平台价格
      */
-    private List<CmsBtFeedInfoModel_PlatformPrice> usPlatformPrices;
-    private List<CmsBtFeedInfoModel_PlatformPrice> platformPrices;
+    //平台属性Map
+    private Map<String, CmsBtFeedInfoModel_Platform_Cart> platforms = new HashMap<>();
+    //平台属性Map
+    private Map<String, CmsBtFeedInfoModel_Platform_Cart> usPlatforms = new HashMap<>();
 
     private String approvePricing;
 
@@ -515,39 +521,33 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         this.approveInfo = approveInfo;
     }
 
-    public List<CmsBtFeedInfoModel_PlatformPrice> getUsPlatformPrices() {
-        return usPlatformPrices;
+    public Map<String, CmsBtFeedInfoModel_Platform_Cart> getPlatforms() {
+        return platforms;
     }
 
-    public void setUsPlatformPrices(List<CmsBtFeedInfoModel_PlatformPrice> usPlatformPrices) {
-        this.usPlatformPrices = usPlatformPrices;
+    public void setPlatforms(Map<String, CmsBtFeedInfoModel_Platform_Cart> platforms) {
+        this.platforms = platforms;
     }
 
-    public List<CmsBtFeedInfoModel_PlatformPrice> getPlatformPrices() {
-        return platformPrices;
+    public Map<String, CmsBtFeedInfoModel_Platform_Cart> getUsPlatforms() {
+        return usPlatforms;
     }
 
-    public CmsBtFeedInfoModel_PlatformPrice getPlatformPrice(Integer cartId) {
-        if (cartId != null) {
-            if (CollectionUtils.isNotEmpty(this.getUsPlatformPrices())) {
-                for (CmsBtFeedInfoModel_PlatformPrice tempPlatformPrice : this.getUsPlatformPrices()) {
-                    if (Objects.equals(cartId, tempPlatformPrice.getCartId())) {
-                        return tempPlatformPrice;
-                    }
-                }
-            }
-            if (CollectionUtils.isNotEmpty(this.getPlatformPrices())) {
-                for (CmsBtFeedInfoModel_PlatformPrice tempPlatformPrice : this.getPlatformPrices()) {
-                    if (Objects.equals(cartId, tempPlatformPrice.getCartId())) {
-                        return tempPlatformPrice;
-                    }
-                }
-            }
+    public void setUsPlatforms(Map<String, CmsBtFeedInfoModel_Platform_Cart> usPlatforms) {
+        this.usPlatforms = usPlatforms;
+    }
+
+    public CmsBtFeedInfoModel_Platform_Cart getPlatform(Integer cartId) {
+        if (MapUtils.isEmpty(getPlatforms()) || cartId == null) {
+            return null;
         }
-        return null;
+        return getPlatforms().get(PLATFORM_CART_PRE + cartId);
     }
 
-    public void setPlatformPrices(List<CmsBtFeedInfoModel_PlatformPrice> platformPrices) {
-        this.platformPrices = platformPrices;
+    public CmsBtFeedInfoModel_Platform_Cart getUsPlatform(Integer cartId) {
+        if (MapUtils.isEmpty(getUsPlatforms()) || cartId == null) {
+            return null;
+        }
+        return getUsPlatforms().get(PLATFORM_CART_PRE + cartId);
     }
 }

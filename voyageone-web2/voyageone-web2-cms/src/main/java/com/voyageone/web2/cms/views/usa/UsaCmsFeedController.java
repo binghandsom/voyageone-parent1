@@ -4,11 +4,13 @@ import com.mongodb.WriteResult;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.impl.cms.TypeChannelsService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.usa.UsaFeedInfoService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Platform_Cart;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.bean.usa.FeedRequest;
@@ -17,6 +19,7 @@ import com.voyageone.web2.core.bean.UserSessionBean;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,9 +76,41 @@ public class UsaCmsFeedController extends BaseController {
             resultMap.put("colorMap", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.colorMap_TYPE_105, channelId, getLang()));
 
             // 平台
-            resultMap.put("platforms", typeChannelsService.getUsPlatformTypeList(channelId, getLang()));
+            List<TypeChannelBean> platforms = typeChannelsService.getUsPlatformTypeList(channelId, getLang());
+            resultMap.put("platforms", platforms);
+            initPlatform(feed, platforms);
         }
         return success(resultMap);
+    }
+
+    private void initPlatform(CmsBtFeedInfoModel feed, List<TypeChannelBean> platforms) {
+        if (feed == null || CollectionUtils.isEmpty(platforms)) {
+            return;
+        }
+
+        for (TypeChannelBean cart : platforms) {
+            Integer cartId = NumberUtils.toInt(cart.getValue(), -1);
+            CmsBtFeedInfoModel_Platform_Cart platformCart = null;
+            if (cartId > 0 && cartId < 20) {
+                // platforms
+                platformCart = feed.getUsPlatform(cartId);
+                if (platformCart == null) {
+                    platformCart = new CmsBtFeedInfoModel_Platform_Cart();
+                    platformCart.setCartId(cartId);
+                    platformCart.setIsSale(1);
+                    feed.getUsPlatforms().put("P" + cartId, platformCart);
+                }
+            } else if (cartId > 20) {
+                // usPlatforms
+                platformCart = feed.getPlatform(cartId);
+                if (platformCart == null) {
+                    platformCart = new CmsBtFeedInfoModel_Platform_Cart();
+                    platformCart.setCartId(cartId);
+                    platformCart.setIsSale(1);
+                    feed.getPlatforms().put("P" + cartId, platformCart);
+                }
+            }
+        }
     }
 
     /**

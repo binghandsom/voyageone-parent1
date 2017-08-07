@@ -1,10 +1,8 @@
 package com.voyageone.service.impl.cms.usa;
 
-import com.mongodb.BulkWriteResult;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.dao.mongodb.JongoUpdate;
-import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
@@ -19,7 +17,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_PlatformPrice;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
@@ -29,7 +27,6 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,44 +88,47 @@ public class UsaFeedInfoService extends BaseService {
         String formulaRetail = retailConfig.getConfigValue1();
 
         // 如果usPlatform.cartId=8的Msrp($)和Price($)值发送改变, 同步计算所有平台中国价格级SKU价格
-        CmsBtFeedInfoModel_PlatformPrice platformPrice = cmsBtFeedInfoModel.getPlatformPrice(Integer.valueOf(8));
-        Double priceMsrp = null;
-        Double priceCurrent = null;
-        if(Double.compare(platformPrice.getPriceClientMsrp(),0.0) == 0) {
-            priceMsrp = 0D;
-        } else {
-            priceMsrp = calculatePrice(formulaMsrp, platformPrice);
-        }
-        if(Double.compare(platformPrice.getPriceClientRetail(),0.0) == 0 || Double.compare(platformPrice.getPriceClientMsrp(),0.0) == 0){
-            priceCurrent = 0D;
-        }else{
-            priceCurrent = calculatePrice(formulaRetail, platformPrice);
-        }
+        CmsBtFeedInfoModel_Platform_Cart snPlatform = cmsBtFeedInfoModel.getUsPlatform(Integer.valueOf(8));
+        if (snPlatform != null) {
+            Double priceMsrp = null;
+            Double priceCurrent = null;
+            if(snPlatform.getPriceClientMsrp() == null || Double.compare(snPlatform.getPriceClientMsrp(),0.0) == 0) {
+                priceMsrp = 0D;
+            } else {
+                priceMsrp = calculatePrice(formulaMsrp, snPlatform);
+            }
+            if(snPlatform.getPriceClientRetail() == null || snPlatform.getPriceClientMsrp() == null
+                    || Double.compare(snPlatform.getPriceClientRetail(),0.0) == 0 || Double.compare(snPlatform.getPriceClientMsrp(),0.0) == 0){
+                priceCurrent = 0D;
+            }else{
+                priceCurrent = calculatePrice(formulaRetail, snPlatform);
+            }
 
-        // 中国平台价格
-        for (CmsBtFeedInfoModel_PlatformPrice cnPlatformPrice :  cmsBtFeedInfoModel.getPlatformPrices()) {
-            cnPlatformPrice.setPriceMsrp(priceMsrp);
-            cnPlatformPrice.setPriceCurrent(priceCurrent);
+            // 中国平台价格
+            for (CmsBtFeedInfoModel_Platform_Cart platformCart :  cmsBtFeedInfoModel.getPlatforms().values()) {
+                platformCart.setPriceMsrp(priceMsrp);
+                platformCart.setPriceCurrent(priceCurrent);
+            }
+
+            Double priceClientRetailMin = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientRetail();
+            Double priceClientMsrpMin = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientMsrp();
+            Double priceClientRetailMax = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientRetail();
+            Double priceClientMsrpMax = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientMsrp();
+
+            for (CmsBtFeedInfoModel_Sku sku : cmsBtFeedInfoModel.getSkus()) {
+                sku.setPriceMsrp(priceMsrp);
+                sku.setPriceCurrent(priceCurrent);
+                priceClientRetailMin = Double.min(priceClientRetailMin, sku.getPriceClientRetail());
+                priceClientRetailMax = Double.max(priceClientRetailMax, sku.getPriceClientRetail());
+                priceClientMsrpMin = Double.min(priceClientMsrpMin, sku.getPriceClientMsrp());
+                priceClientMsrpMax = Double.max(priceClientMsrpMax, sku.getPriceClientMsrp());
+            }
+
+            cmsBtFeedInfoModel.setPriceClientMsrpMax(priceClientMsrpMax);
+            cmsBtFeedInfoModel.setPriceClientRetailMax(priceClientRetailMax);
+            cmsBtFeedInfoModel.setPriceClientRetailMin(priceClientRetailMin);
+            cmsBtFeedInfoModel.setPriceClientMsrpMin(priceClientMsrpMin);
         }
-
-        Double priceClientRetailMin = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientRetail();
-        Double priceClientMsrpMin = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientMsrp();
-        Double priceClientRetailMax = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientRetail();
-        Double priceClientMsrpMax = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientMsrp();
-
-        for (CmsBtFeedInfoModel_Sku sku : cmsBtFeedInfoModel.getSkus()) {
-            sku.setPriceMsrp(priceMsrp);
-            sku.setPriceCurrent(priceCurrent);
-            priceClientRetailMin = Double.min(priceClientRetailMin, sku.getPriceClientRetail());
-            priceClientRetailMax = Double.max(priceClientRetailMax, sku.getPriceClientRetail());
-            priceClientMsrpMin = Double.min(priceClientMsrpMin, sku.getPriceClientMsrp());
-            priceClientMsrpMax = Double.max(priceClientMsrpMax, sku.getPriceClientMsrp());
-        }
-
-        cmsBtFeedInfoModel.setPriceClientMsrpMax(priceClientMsrpMax);
-        cmsBtFeedInfoModel.setPriceClientRetailMax(priceClientRetailMax);
-        cmsBtFeedInfoModel.setPriceClientRetailMin(priceClientRetailMin);
-        cmsBtFeedInfoModel.setPriceClientMsrpMin(priceClientMsrpMin);
 
         /*Double priceClientRetailMin = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientRetail();
         Double priceClientMsrpMin = cmsBtFeedInfoModel.getSkus().get(0).getPriceClientMsrp();
@@ -163,7 +163,7 @@ public class UsaFeedInfoService extends BaseService {
         return cmsBtFeedInfoModel;
     }
 
-    private Double calculatePrice(String formula, CmsBtFeedInfoModel_PlatformPrice platformPrice) {
+    private Double calculatePrice(String formula, CmsBtFeedInfoModel_Platform_Cart platformPrice) {
         ExpressionParser parser = new SpelExpressionParser();
 
         Expression expression = parser.parseExpression(formula);

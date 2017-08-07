@@ -83,34 +83,12 @@ define([
                     _.each(self.platforms, platform => {
                         let cartId = parseInt(platform.value);
                         self.platformsObj[cartId] = cartId < 20 ? platform.name : platform.add_name2;
-                        let matchOne;
-                        if (cartId < 20) {
-                            matchOne = _.find(self.feed.usPlatformPrices, priceObj => {
-                                return cartId === priceObj.cartId;
-                            });
-                            if (!matchOne) {
-                                let platformPrice = {cartId:cartId,isSale:1};
-                                self.feed.usPlatformPrices.push(platformPrice);
-                            } else {
-                                _.extend(matchOne, {cartName:platform.name});
-                            }
-                        } else if (cartId > 20) {
-                            matchOne = _.find(self.feed.platformPrices, priceObj => {
-                                return cartId === priceObj.cartId;
-                            });
-                            if (!matchOne) {
-                                let platformPrice = {cartId:cartId,isSale:1};
-                                self.feed.platformPrices.push(platformPrice);
-                            } else {
-                                _.extend(matchOne, {cartName:platform.name});
-                            }
-                        }
                     });
 
                     // 如果有中国平台中国价格为null, 则触发计算价格
                     if (self.feed.feedAuth > 1) {
-                        let noCNPriceOne = _.find(self.feed.platformPrices, platformPrice => {
-                            return platformPrice.priceMsrp == null || platformPrice.priceCurrent == null;
+                        let noCNPriceOne = _.find(_.values(self.feed.platforms), platform => {
+                            return platform.priceMsrp == null || platform.priceCurrent == null;
                         });
                         if (noCNPriceOne) {
                             self.calculatePrice();
@@ -281,9 +259,20 @@ define([
         setPlatformPrice(property, value) {
             let self = this;
             if (property && value && !isNaN(value)) {
-                _.each(self.feed.usPlatformPrices, platformPrice => {
-                    platformPrice[property] = value;
+                let usPlatofrms = _.values(self.feed.usPlatforms);
+                let snPlaform = _.find(usPlatofrms, platform => {
+                    return platform.cartId == 8;
                 });
+                let pastOne = angular.copy(snPlaform);
+                _.each(usPlatofrms, platform => {
+                    platform[property] = value;
+                });
+                let newOne = _.find(usPlatofrms, platform => {
+                    return platform.cartId == 8;
+                })
+                if (pastOne.priceClientMsrp != newOne.priceClientMsrp || pastOne.priceClientRetail == newOne.priceClientRetail) {
+                    self.calculatePrice();
+                }
             }
         }
 
@@ -299,8 +288,8 @@ define([
                         priceClientMsrpMin: res.data.priceClientMsrpMin,
                         priceClientRetailMax: res.data.priceClientRetailMax,
                         priceClientMsrpMax: res.data.priceClientMsrpMax,
-                        usPlatformPrices: res.data.usPlatformPrices,
-                        platformPrices: res.data.platformPrices
+                        usPlatforms: res.data.usPlatforms,
+                        platforms: res.data.platforms
                     };
                     _.extend(self.feed, priceScope);
                 }
