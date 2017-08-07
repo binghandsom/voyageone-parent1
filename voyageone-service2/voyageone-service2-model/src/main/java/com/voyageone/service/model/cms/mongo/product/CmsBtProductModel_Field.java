@@ -286,11 +286,11 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
 
     public String getUrlKey() {
-        return getStringAttribute("urlKey");
+        return getStringAttribute("urlkey");
     }
 
     public void setUrlKey(String urlKey) {
-        setAttribute("urlKey", urlKey );
+        setAttribute("urlkey", urlKey );
     }
 
     public String getAbstract() {
