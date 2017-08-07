@@ -47,6 +47,15 @@ public class CmsBuildPlatformCategoryTransferUsMqJob extends TBaseMQCmsService<C
         List<String> fullCatIds = messageBody.getFullCatIds(); // "-"分割
 
         List<CmsBtSellerCatModel> sellerCatModels = sellerCatService.getSellerCatsByChannelCart(channelId, Integer.parseInt(cartId), true);
+
+        if (ListUtils.isNull(fullCatIds)) {
+            // 空的话就是全类目
+            fullCatIds = new ArrayList<>();
+            for (CmsBtSellerCatModel root : sellerCatModels) {
+                findChildrenCatIds(root, fullCatIds);
+            }
+        }
+
         for (String fullCatId : fullCatIds) {
             TransferUsCategoryModel categoryModel = new TransferUsCategoryModel();
 
@@ -104,6 +113,16 @@ public class CmsBuildPlatformCategoryTransferUsMqJob extends TBaseMQCmsService<C
                 body.setSender(getTaskName());
                 cmsMqSenderService.sendMessage(body);
             }
+        }
+    }
+
+    /**
+     * 找出所有子节点
+     */
+    private void findChildrenCatIds(CmsBtSellerCatModel root, List<String> fullCatIds) {
+        for (CmsBtSellerCatModel model : root.getChildren()) {
+            fullCatIds.add(model.getFullCatId());
+            findChildrenCatIds(model, fullCatIds);
         }
     }
 }
