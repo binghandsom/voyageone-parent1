@@ -110,7 +110,7 @@ public class CmsSynFeedQtyService  extends BaseCronTaskService {
     }
     @Override
     protected String getTaskName() {
-        return "CmsSynFeedQtyService";
+        return "CmsSynFeedQtyJob";
     }
     @Override
     protected SubSystem getSubSystem() {
