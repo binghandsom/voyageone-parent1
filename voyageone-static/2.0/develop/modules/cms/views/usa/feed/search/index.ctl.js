@@ -154,8 +154,10 @@ define([
                 columnArrow = self.columnArrow;
             self.paraMap = {};
             self.paraMap = {
-                status: "",
-                approvePricing: null
+                status: [],
+                approvePricing: [],
+                sortName:"created",
+                sortType:"-1"
             };
             self.status = [false, false, false];
             self.approvePricing = [false, false];
