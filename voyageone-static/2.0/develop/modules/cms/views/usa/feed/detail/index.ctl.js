@@ -31,6 +31,7 @@ define([
             this.originList = [];
             this.colorMap = [];
             this.platforms = [];
+            this.platformsObj = {};
             // 设置
             this.setting = {
                 weightOrg: "",
@@ -78,20 +79,17 @@ define([
                     if (!self.feed.platformPrices) {
                         self.feed.platformPrices = [];
                     }
-                    console.log(self.feed.feedAuth);
                     // Platform Price
                     _.each(self.platforms, platform => {
                         let cartId = parseInt(platform.value);
+                        self.platformsObj[cartId] = cartId < 20 ? platform.name : platform.add_name2;
                         let matchOne;
                         if (cartId < 20) {
                             matchOne = _.find(self.feed.usPlatformPrices, priceObj => {
                                 return cartId === priceObj.cartId;
                             });
                             if (!matchOne) {
-                                let platformPrice = {cartId:cartId,cartName:platform.name};
-                                if (self.feed.feedAuth > 1) {
-                                    _.extend(platformPrice, {isSale:1});
-                                }
+                                let platformPrice = {cartId:cartId,isSale:1};
                                 self.feed.usPlatformPrices.push(platformPrice);
                             } else {
                                 _.extend(matchOne, {cartName:platform.name});
@@ -101,10 +99,7 @@ define([
                                 return cartId === priceObj.cartId;
                             });
                             if (!matchOne) {
-                                let platformPrice = {cartId:cartId,cartName:platform.name};
-                                if (self.feed.feedAuth > 1) {
-                                    _.extend(platformPrice, {isSale:1});
-                                }
+                                let platformPrice = {cartId:cartId,isSale:1};
                                 self.feed.platformPrices.push(platformPrice);
                             } else {
                                 _.extend(matchOne, {cartName:platform.name});
@@ -112,14 +107,14 @@ define([
                         }
                     });
 
-
-
-                    // 如果有SKU不存在中国价格,则重新计算一次价格
-                    let noCNPriceSku = _.find(self.feed.skus, sku => {
-                        return sku.priceMsrp == null || sku.priceCurrent == null;
-                    });
-                    if (noCNPriceSku) {
-                        self.setSkuCNPrice();
+                    // 如果有中国平台中国价格为null, 则触发计算价格
+                    if (self.feed.feedAuth > 1) {
+                        let noCNPriceOne = _.find(self.feed.platformPrices, platformPrice => {
+                            return platformPrice.priceMsrp == null || platformPrice.priceCurrent == null;
+                        });
+                        if (noCNPriceOne) {
+                            self.calculatePrice();
+                        }
                     }
                 } else {
                     let id = self.id;
@@ -292,43 +287,20 @@ define([
             }
         }
 
+        // 计算中国价格
         calculatePrice() {
-            console.log("计算中国价格...");
-        }
-
-        // 统一设置SKU属性
-        setSkuProperty(sku, property, priceFlag) {
             let self = this;
-            if (!sku && self.setting[property]) {
-                angular.forEach(self.feed.skus, function (item) {
-                    item[property] = self.setting[property];
-                    item['priceClientRetail'] = item['priceNet'];
-                })
-            } else {
-                sku['priceClientRetail'] = sku['priceNet'];
-            }
-            if (priceFlag == "1") {
-                self.setSkuCNPrice();
-            }
-        }
-
-        // 同步计算中国相关价格
-        setSkuCNPrice() {
-            let self = this;
-            let productType = self.feed.productType;
             self.itemDetailService.setPrice({feed: self.feed}).then((res) => {
                 if (res.data) {
                     self.feed.skus = res.data.skus;
-                    // 将sku->weightOrg转换成float
-                    angular.forEach(self.feed.skus, function (sku) {
-                        sku.weightOrg = parseFloat(sku.weightOrg);
-                    });
 
                     var priceScope = {
                         priceClientRetailMin: res.data.priceClientRetailMin,
                         priceClientMsrpMin: res.data.priceClientMsrpMin,
                         priceClientRetailMax: res.data.priceClientRetailMax,
-                        priceClientMsrpMax: res.data.priceClientMsrpMax
+                        priceClientMsrpMax: res.data.priceClientMsrpMax,
+                        usPlatformPrices: res.data.usPlatformPrices,
+                        platformPrices: res.data.platformPrices
                     };
                     _.extend(self.feed, priceScope);
                 }
@@ -345,41 +317,41 @@ define([
                     return;
                 }
                 // Msrp or price O时禁止Approve
-                let checkSkus = _.filter(self.feed.skus, function (sku) {
-                    // return sku.priceClientMsrp == 0 || sku.priceClientMsrp == 500 || sku.priceNet == 0 || sku.priceNet == 500;
-                    return sku.priceClientMsrp == 0 || sku.priceNet == 0;
+                let checkPlatforms = _.filter(self.feed.usPlatformPrices, platformPrice => {
+                    return platformPrice.priceClientMsrp == 0 || platformPrice.priceClientRetail == 0;
                 });
-                let skus = [];
-                angular.forEach(checkSkus, function (sku) {
-                    skus.push(sku.sku);
+                let platforms = [];
+                angular.forEach(checkPlatforms, function (platform) {
+                    platforms.push(self.platformsObj[platform.cartId]);
                 });
-                if (_.size(checkSkus) > 0) {
-                    let message = `SKU[${skus}] Msrp($) or price($) is 0, feed can't be approved.`;
+                if (_.size(platforms) > 0) {
+                    let message = `Platform[${platforms}] Msrp($) or price($) is 0, feed can't be approved.`;
                     self.alert(message);
                     return;
                 }
-                checkSkus = _.filter(self.feed.skus, function (sku) {
-                    return sku.priceClientMsrp == 500 || sku.priceNet == 500;
+                checkPlatforms = _.filter(self.feed.usPlatformPrices, function (platformPrice) {
+                    return platformPrice.priceClientMsrp == 500 || platformPrice.priceClientRetail == 500;
                 });
-                if (!checkSkus || _.size(checkSkus) == 0) {
-                    let ctx = {
-                        updateModel: true,
-                        codeList: [self.feed.code]
-                    };
-                    self.popups.openBatchApprove(ctx).then((res) => {
-                        if (res.success) {
-                            _.extend(self.feed, {approveInfo: res.approveInfo});
-                            self.saveFeed(flag);
-                        }
-                    });
+                if (!checkPlatforms || _.size(checkPlatforms) == 0) {
+                    // let ctx = {
+                    //     updateModel: true,
+                    //     codeList: [self.feed.code]
+                    // };
+                    // self.popups.openBatchApprove(ctx).then((res) => {
+                    //     if (res.success) {
+                    //         _.extend(self.feed, {approveInfo: res.approveInfo});
+                    //         self.saveFeed(flag);
+                    //     }
+                    // });
+                    self.saveFeed(flag);
                 } else {
-                    skus = [];
-                    angular.forEach(checkSkus, function (sku) {
-                        skus.push(sku.sku);
+                    platforms = [];
+                    angular.forEach(checkPlatforms, function (platform) {
+                        platforms.push(self.platformsObj[platform.cartId]);
                     });
-                    let message = `SKU[${skus}] Msrp($) or price($) is 500, continue to approve?`;
+                    let message = `Platform[${platforms}] Msrp($) or price($) is 500, continue to approve?`;
                     self.confirm(message).then((confirmed) => {
-                        let ctx = {
+                        /*let ctx = {
                             updateModel: true,
                             codeList: [self.feed.code]
                         };
@@ -388,7 +360,8 @@ define([
                                 _.extend(self.feed, {approveInfo: res.approveInfo});
                                 self.saveFeed(flag);
                             }
-                        });
+                        });*/
+                        self.saveFeed(flag);
                     }, () => {
 
                     })

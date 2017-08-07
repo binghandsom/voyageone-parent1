@@ -212,7 +212,7 @@
                                         <div class="col-md-6">
                                             <select class="form-control" name="productType" chosen search-contain="true"
                                                     ng-options="productType.value as productType.name for productType in ctrl.productTypeList"
-                                                    ng-model="ctrl.feed.productType" ng-change="ctrl.setSkuProperty(null,null,'1')" required>
+                                                    ng-model="ctrl.feed.productType" ng-change="ctrl.calculatePrice()" required>
                                             </select>
                                         </div>
                                     </div>
@@ -733,7 +733,22 @@
                                                        ng-enter="ctrl.setPlatformPrice('priceClientRetail', ctrl.setting.platformPrice.priceClientRetail)">
                                             </div>
                                         </td>
-
+                                        <td colspan="2" ng-if="ctrl.auth!=1">
+                                            <div class="row form-group pull-right">
+                                                <label class="col-md-8 control-label query-title text-left vo_unreqfield">Approve Pricing :</label>
+                                                <div class="col-md-1">
+                                                    <div class="onoffswitch" style="margin: 0px auto;">
+                                                        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="approvePricing"
+                                                               ng-true-value="'1'" ng-false-value="'0'"
+                                                               ng-model="ctrl.feed.approvePricing">
+                                                        <label class="onoffswitch-label" for="approvePricing">
+                                                            <span class="onoffswitch-inner"></span>
+                                                            <span class="onoffswitch-switch"></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th class="text-left" ng-if="ctrl.feed.feedAuth == 3">Is Sale</th>
@@ -750,12 +765,14 @@
                                         <td class="text-left" ng-if="ctrl.feed.feedAuth == 3">
                                             <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="platform.isSale">
                                         </td>
-                                        <td class="text-left">{{platform.cartName}}</td>
+                                        <td class="text-left">{{ctrl.platformsObj[platform.cartId]}}</td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control text-right" ng-model="platform.priceClientMsrp" ng-change="ctrl.calculatePrice()" required>
+                                            <input type="number" class="form-control text-right"
+                                                   ng-model="platform.priceClientMsrp" ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" required>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control text-right" ng-model="platform.priceClientRetail" ng-change="ctrl.calculatePrice()" required>
+                                            <input type="number" class="form-control text-right"
+                                                   ng-model="platform.priceClientRetail" ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" required>
                                         </td>
                                         <td class="text-right"><label>-</label></td>
                                         <td class="text-right"><label>-</label></td>
@@ -767,18 +784,16 @@
                                         <td class="text-left" ng-if="ctrl.feed.feedAuth == 3">
                                             <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="platform.isSale">
                                         </td>
-                                        <td class="text-left">{{platform.cartName}}</td>
+                                        <td class="text-left">{{ctrl.platformsObj[platform.cartId]}}</td>
                                         <td class="text-right"><label>-</label></td>
                                         <td class="text-right"><label>-</label></td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control text-right" ng-model="platform.priceMsrp" required>
+                                            <input type="number" class="form-control text-right" ng-model="platform.priceMsrp" required readonly>
                                         </td>
                                         <td class="text-right">
-                                            <input type="number" class="form-control text-right" ng-model="platform.priceCurrent" required>
+                                            <input type="number" class="form-control text-right" ng-model="platform.priceCurrent" required readonly>
                                         </td>
-                                        <td class="text-right" ng-if="ctrl.feed.feedAuth == 3">
-                                            <input type="number" class="form-control text-right" ng-model="platform.sharingDay || 0" required>
-                                        </td>
+                                        <td class="text-right"><label>-</label></td>
                                     </tr>
                                     </tbody>
                                 </table>
