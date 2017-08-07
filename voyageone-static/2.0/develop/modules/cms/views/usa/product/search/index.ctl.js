@@ -11,12 +11,13 @@ define([
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2,notify,$routeParams) {
+        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2,notify,$routeParams,$rootScope) {
             let self = this;
 
             self.accordionOpen = false;
             self.popups = popups;
             self.srInstance = new selectRowsFactory();
+            self.$rootScope = $rootScope;
             self.$parse = $parse;
             self.$translate = $translate;
             self.alert = alert;
@@ -94,7 +95,8 @@ define([
             self.sort = {
                 sName:'Newest',
                 sortType:-1
-            }
+            };
+            self.customAttributeResult = {};
         }
 
         init() {
@@ -128,7 +130,6 @@ define([
                     self.customColumns.selCommonProps = self.getSelectedProps(res.data.commonProps,res.data.selCommonProps,'propId');
                     self.customColumns.selPlatformAttributes = self.getSelectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
                     self.customColumns.selPlatformSales = res.data.selPlatformSales;
-                    // console.log(res.data);
 
                     self.search();
                 }
@@ -249,9 +250,18 @@ define([
                 }
 
             }else{
-                let _func = self.$parse(prop[attrName]);
+                let _func = self.$parse(prop[attrName]),
+                    result = _func(element);
 
-                return _func(element) ? _func(element) : '';
+                if(result){
+                    if(prop.toLabel === 1){
+                        result = result === '1' ? 'yes':'no';
+                    }
+                }else{
+                    result = '';
+                }
+
+                return result;
             }
 
         }
@@ -357,13 +367,29 @@ define([
             let self = this;
             let ctx = {
                 customColumns:self.customColumns,
-                usPlatforms:self.masterData.usPlatforms
+                usPlatforms:self.masterData.usPlatforms,
+                customAttributeResult:self.customAttributeResult
             };
             self.popups.openCustomAttributes(ctx).then(res => {
+                //防止重复显示，不能删除这行代码
                 self.customColumnNames = {};
-                self.customColumns.selCommonProps = self.getSelectedProps(self.customColumns.commonProps,res.selCommonProps,'propId');
-                self.customColumns.selPlatformAttributes = self.getSelectedProps(self.customColumns.platformAttributes, res.selPlatformAttributes,'value');
-                self.customColumns.selPlatformSales = res.selPlatformSales;
+
+                self.$rootScope.$watch('customAttributeResult',function(newValue,oldValue){
+
+                    if(newValue && !angular.equals(newValue,oldValue)){
+                        //回调返回
+                        self.alert("计算完成！");
+
+                        let _cusRes = newValue;
+                        self.customColumns.selCommonProps = self.getSelectedProps(self.customColumns.commonProps,_cusRes.selCommonProps,'propId');
+                        self.customColumns.selPlatformAttributes = self.getSelectedProps(self.customColumns.platformAttributes, _cusRes.selPlatformAttributes,'value');
+                        self.customColumns.selPlatformSales = _cusRes.selPlatformSales;
+                    }else{
+                        //回调未返回
+                        self.alert('程序在计算请稍后！');
+                    }
+                },true);
+
             })
         }
 
