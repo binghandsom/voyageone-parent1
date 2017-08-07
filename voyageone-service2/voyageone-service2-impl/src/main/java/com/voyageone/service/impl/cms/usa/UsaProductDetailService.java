@@ -31,11 +31,13 @@ import com.voyageone.service.impl.cms.*;
 import com.voyageone.service.impl.cms.prices.PriceService;
 import com.voyageone.service.impl.cms.product.CmsBtPriceLogService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductTopService;
 import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
 import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdateListDelistStatusMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdatePriceMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsCategoryReceiveMQMessageBody;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import org.apache.commons.collections.MapUtils;
@@ -67,9 +69,10 @@ public class UsaProductDetailService extends BaseService {
     private final CmsBtPriceLogService cmsBtPriceLogService;
     private final PlatformProductUploadService platformProductUploadService;
     private final SellerCatService sellerCatService;
+    private final ProductTopService productTopService;
 
     @Autowired
-    public UsaProductDetailService(ProductService productService, CommonSchemaService commonSchemaService, PlatformCategoryService platformCategoryService, TagService tagService, CmsBtProductDao cmsBtProductDao, PriceService priceService, CmsMqSenderService cmsMqSenderService, CmsProductSearchQueryService cmsProductSearchQueryService, CmsBtPriceLogService cmsBtPriceLogService, PlatformProductUploadService platformProductUploadService, SellerCatService sellerCatService) {
+    public UsaProductDetailService(ProductService productService, CommonSchemaService commonSchemaService, PlatformCategoryService platformCategoryService, TagService tagService, CmsBtProductDao cmsBtProductDao, PriceService priceService, CmsMqSenderService cmsMqSenderService, CmsProductSearchQueryService cmsProductSearchQueryService, CmsBtPriceLogService cmsBtPriceLogService, PlatformProductUploadService platformProductUploadService, SellerCatService sellerCatService, ProductTopService productTopService) {
         this.productService = productService;
         this.commonSchemaService = commonSchemaService;
         this.platformCategoryService = platformCategoryService;
@@ -81,6 +84,7 @@ public class UsaProductDetailService extends BaseService {
         this.cmsBtPriceLogService = cmsBtPriceLogService;
         this.platformProductUploadService = platformProductUploadService;
         this.sellerCatService = sellerCatService;
+        this.productTopService = productTopService;
     }
 
     /**
@@ -245,8 +249,10 @@ public class UsaProductDetailService extends BaseService {
 
     // 更新自由标签
     public void updateProductPlatform(String channelId, Long prodId, Map<String, Object> platform, List<Map<String, String>> sellers, String modifier) {
-        /* 保存类型 */
 
+        CmsBtProductModel oldProduct = productService.getProductById(channelId, prodId);
+
+        /* 保存类型 */
         if (platform.get("platformFields") != null) {
             List<Field> masterFields = buildMasterFields((List<Map<String, Object>>) platform.get("platformFields"));
 
@@ -305,6 +311,40 @@ public class UsaProductDetailService extends BaseService {
 
         if (CmsConstants.ProductStatus.Approved.name().equals(platformModel.getStatus())) {
             platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, platformModel.getCartId(), cmsBtProductModel.getCommon().getFields().getCode(), null, 0, modifier);
+        }
+
+
+        if(platformModel.getCartId() ==CartEnums.Cart.SNKRHDp.getValue()) {
+            List<CmsBtProductModel_SellerCat> oSeller = null;
+            if (oldProduct.getUsPlatform(platformModel.getCartId()) != null) {
+                oSeller = oldProduct.getUsPlatform(platformModel.getCartId()).getSellerCats();
+            }
+            Map<String, List<String>> diff = sellerCatService.sellerCompare(oSeller, platformModel.getSellerCats());
+
+
+            if (ListUtils.notNull(diff.get("del"))) {
+
+                diff.get("del").forEach(catId -> productTopService.removeTop50(channelId, catId, cmsBtProductModel.getCommon().getFields().getCode(), platformModel.getCartId()));
+            }
+
+            // 重新推送类目的产品数据
+            if (ListUtils.notNull(diff.get("delCatPath"))) {
+                CmsCategoryReceiveMQMessageBody cmsCategoryReceiveMQMessageBody = new CmsCategoryReceiveMQMessageBody();
+                cmsCategoryReceiveMQMessageBody.setChannelId(channelId);
+                cmsCategoryReceiveMQMessageBody.setCartId(platformModel.getCartId() + "");
+                cmsCategoryReceiveMQMessageBody.setFullCatIds(diff.get("delCatPath"));
+                cmsCategoryReceiveMQMessageBody.setSender(modifier);
+                cmsMqSenderService.sendMessage(cmsCategoryReceiveMQMessageBody);
+            }
+
+            if (ListUtils.notNull(diff.get("addCatPath"))) {
+                CmsCategoryReceiveMQMessageBody cmsCategoryReceiveMQMessageBody = new CmsCategoryReceiveMQMessageBody();
+                cmsCategoryReceiveMQMessageBody.setChannelId(channelId);
+                cmsCategoryReceiveMQMessageBody.setCartId(platformModel.getCartId() + "");
+                cmsCategoryReceiveMQMessageBody.setFullCatIds(diff.get("addCatPath"));
+                cmsCategoryReceiveMQMessageBody.setSender(modifier);
+                cmsMqSenderService.sendMessage(cmsCategoryReceiveMQMessageBody);
+            }
         }
     }
 

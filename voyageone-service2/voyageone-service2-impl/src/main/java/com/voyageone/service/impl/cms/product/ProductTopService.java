@@ -365,4 +365,14 @@ public class ProductTopService extends BaseService {
             }
         }
     }
+    public void removeTop50(String channelId, String sellerCatId, String code, Integer cartId){
+        CmsBtProductTopModel topModel = dao.selectBySellerCatId(sellerCatId, channelId, cartId);
+        if(topModel != null){
+            if(ListUtils.notNull(topModel.getProductCodeList())){
+                topModel.getProductCodeList().remove(code);
+                //保险起见 去重一把
+                dao.update(topModel);
+            }
+        }
+    }
 }

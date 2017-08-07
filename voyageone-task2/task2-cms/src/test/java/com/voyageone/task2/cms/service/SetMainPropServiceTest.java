@@ -3,6 +3,8 @@ package com.voyageone.task2.cms.service;
 import com.voyageone.category.match.FeedQuery;
 import com.voyageone.category.match.Searcher;
 import com.voyageone.category.match.Tokenizer;
+import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +28,15 @@ public class SetMainPropServiceTest {
     @Autowired
     private Searcher searcher;
 
+    @Autowired
+    ProductService productService;
+
     @Test
     public void getMainCatInfoTest() {
 //        (String feedCategoryPath, String productType, String sizeType, String productNameEn, String brand)
-
+        CmsBtProductModel cmsBtProductModel = productService.getProductById("001",4358066);
+        SetMainPropService.setMainProp mainProp = setMainPropService.new setMainProp("001", false, false);
+        mainProp.doInsertTop50(productService.getProductById("001",4358066L));
         // 取得查询条件
         FeedQuery query = getFeedQuery("Men's Athletic Shoes", "fashion-sneakers", "mens", "Teva Mens Kimtah Cut-Out Fisherman Athletic Shoes Black 8", "Teva");
 
