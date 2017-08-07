@@ -60,7 +60,7 @@
                            <td class="text-center">-</td>
                            <td class="text-center">-</td>
                             <td class="text-center">
-                                <input type="number"  ng-disabled="(platform.isSale == '1' || platform.isSale == null) ? true : false" ng-model="platform.days">
+                                <input type="number"  ng-disabled="(platform.isSale == '1' || platform.isSale == null || !platform.tempIsSale) ? true : false" ng-model="platform.days">
                             </td>
                            <td class="text-center">
                                <button type="button" class="btn btn-info btn-pop" ng-click="platform.flag=true ;ctrl.save(key,platform.priceMsrpSt,platform.priceRetailSt,platform.tempIsSale,platform.days)" ng-disabled="platform.flag">save</button>
@@ -106,7 +106,7 @@
                                 </span>
                             </td>
                             <td class="text-center">
-                                <input type="number"  ng-disabled="(platform.isSale == '1' || platform.isSale == null) ? true : false" ng-model="platform.days">
+                                <input type="number"  ng-disabled="(platform.isSale == '1' || platform.isSale == null || !platform.tempIsSale) ? true : false" ng-model="platform.days">
                             </td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-info btn-pop" ng-click="platform.flag=true ;ctrl.save(key,platform.priceMsrpSt,platform.priceRetailSt,platform.tempIsSale,platform.days)" ng-disabled="platform.flag">save</button>
