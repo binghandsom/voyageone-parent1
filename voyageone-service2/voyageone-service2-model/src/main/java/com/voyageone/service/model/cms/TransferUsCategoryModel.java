@@ -14,15 +14,15 @@ public class TransferUsCategoryModel {
     private String categoryPath;
     private Integer displayOrder;
     private String name;
-    private boolean isPublished;
+    private boolean published;
     private String urlKey;
     private String headerTitle;
     private String seoTitle;
     private String seoKeywords;
     private String seoDescription;
     private String seoCanonical;
-    private boolean isVisibleOnMenu;
-    private boolean isEnableFilter;
+    private boolean visibleOnMenu;
+    private boolean enableFilter;
     private List<String> productCodes;
 
     public String getChannelId() {
@@ -82,11 +82,11 @@ public class TransferUsCategoryModel {
     }
 
     public boolean isPublished() {
-        return isPublished;
+        return published;
     }
 
     public void setPublished(boolean published) {
-        isPublished = published;
+        this.published = published;
     }
 
     public String getUrlKey() {
@@ -138,19 +138,19 @@ public class TransferUsCategoryModel {
     }
 
     public boolean isVisibleOnMenu() {
-        return isVisibleOnMenu;
+        return visibleOnMenu;
     }
 
     public void setVisibleOnMenu(boolean visibleOnMenu) {
-        isVisibleOnMenu = visibleOnMenu;
+        this.visibleOnMenu = visibleOnMenu;
     }
 
     public boolean isEnableFilter() {
-        return isEnableFilter;
+        return enableFilter;
     }
 
     public void setEnableFilter(boolean enableFilter) {
-        isEnableFilter = enableFilter;
+        this.enableFilter = enableFilter;
     }
 
     public List<String> getProductCodes() {
