@@ -14,7 +14,7 @@
                 </div>
                 <div class="row form-group">
                     <div class="col-md-10 col-md-offset-2">
-                        <label class="pull-left control-label query-title" ng-if="ctrl.parentTag">{{ctrl.parentTag.tagPathName}} ></label>
+                        <label class="pull-left control-label query-title" ng-if="ctrl.context.parentIndex != '0'">{{ctrl.parentTag.tagPathName}} ></label>
                         <div class="col-md-6">
                             <input type="text" class="form-control" placeholder="please input category Path"
                                    name="tagPathName" ng-model="ctrl.tagName" required>

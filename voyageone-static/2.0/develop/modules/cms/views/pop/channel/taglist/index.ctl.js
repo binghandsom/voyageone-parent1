@@ -10,13 +10,13 @@ define([
 
     cms.controller('EditTagController',class EditTagController{
 
-       constructor(channelTagService, confirm, context, notify, alert, $modalInstance){
+       constructor(channelTagService, confirm, context, notify, alert, $uibModalInstance){
            this.channelTagService = channelTagService;
            this.confirm = confirm;
            this.context = context;
            this.notify = notify;
            this.alert = alert;
-           this.$modalInstance = $modalInstance;
+           this.$uibModalInstance = $uibModalInstance;
 
            this.tag = context.tag;
            this.tagName = "";
@@ -50,7 +50,7 @@ define([
                     tagName:self.tagName
                 };
                 self.channelTagService.editTagName(parameter).then(res => {
-                    self.$modalInstance.close({success:!!res.data});
+                    self.$uibModalInstance.close({success:!!res.data});
                 });
             }
         };

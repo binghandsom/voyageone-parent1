@@ -87,8 +87,11 @@ define([
         };
 
         TagListCtl.prototype.editTag = function (tag, parentIndex,$event) {
-            var self = this;
-            self.popups.editTag({tag:tag}).then(res => {
+            let self = this;
+
+            self.popups.editTag({
+                tag:tag,
+                parentIndex:parentIndex}).then(() => {
                 self.notify.success("TagName modified successfully.");
                 self.init(parentIndex);
             });
