@@ -1,12 +1,15 @@
 package com.voyageone.service.model.cms.mongo.feed;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -40,6 +43,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private List<String> image;
     private String brand;
     private String weight;
+    private String weightUnit; // 重量单位: kg 和 lb
     private String shortDescription;
     private String longDescription;
     private List<CmsBtFeedInfoModel_Sku> skus;
@@ -70,6 +74,12 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
      * <p>Add by rex.wu at 2017-07-06</p>
      */
     private String status;
+
+    /**
+     * 中美各平台价格
+     */
+    private List<CmsBtFeedInfoModel_PlatformPrice> usPlatformPrices;
+    private List<CmsBtFeedInfoModel_PlatformPrice> platformPrices;
 
     private String approvePricing;
 
@@ -270,6 +280,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         attribute.put("image", this.image);
         attribute.put("brand", this.brand);
         attribute.put("weight", this.weight);
+        attribute.put("weight", this.weightUnit);
         attribute.put("material", this.material);
         attribute.put("shortDescription", this.shortDescription);
         attribute.put("longDescription", this.longDescription);
@@ -292,6 +303,14 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setWeight(String weight) {
         this.weight = weight;
+    }
+
+    public String getWeightUnit() {
+        return weightUnit;
+    }
+
+    public void setWeightUnit(String weightUnit) {
+        this.weightUnit = weightUnit;
     }
 
     public void attributeListToMap() {
@@ -352,6 +371,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
         cmsBtFeedInfoModel.setBrand(this.getBrand());
         cmsBtFeedInfoModel.setWeight(this.getWeight());
+        cmsBtFeedInfoModel.setWeightUnit(this.getWeightUnit());
         cmsBtFeedInfoModel.setShortDescription(this.getShortDescription());
         cmsBtFeedInfoModel.setLongDescription(this.getLongDescription());
         cmsBtFeedInfoModel.setSkus(this.getSkus());
@@ -495,4 +515,39 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         this.approveInfo = approveInfo;
     }
 
+    public List<CmsBtFeedInfoModel_PlatformPrice> getUsPlatformPrices() {
+        return usPlatformPrices;
+    }
+
+    public void setUsPlatformPrices(List<CmsBtFeedInfoModel_PlatformPrice> usPlatformPrices) {
+        this.usPlatformPrices = usPlatformPrices;
+    }
+
+    public List<CmsBtFeedInfoModel_PlatformPrice> getPlatformPrices() {
+        return platformPrices;
+    }
+
+    public CmsBtFeedInfoModel_PlatformPrice getPlatformPrice(Integer cartId) {
+        if (cartId != null) {
+            if (CollectionUtils.isNotEmpty(this.getUsPlatformPrices())) {
+                for (CmsBtFeedInfoModel_PlatformPrice tempPlatformPrice : this.getUsPlatformPrices()) {
+                    if (Objects.equals(cartId, tempPlatformPrice.getCartId())) {
+                        return tempPlatformPrice;
+                    }
+                }
+            }
+            if (CollectionUtils.isNotEmpty(this.getPlatformPrices())) {
+                for (CmsBtFeedInfoModel_PlatformPrice tempPlatformPrice : this.getPlatformPrices()) {
+                    if (Objects.equals(cartId, tempPlatformPrice.getCartId())) {
+                        return tempPlatformPrice;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public void setPlatformPrices(List<CmsBtFeedInfoModel_PlatformPrice> platformPrices) {
+        this.platformPrices = platformPrices;
+    }
 }

@@ -21,14 +21,17 @@ define([
                 this.alert("Feed not exists.");
                 return;
             }
-
+            // CmsBtFeedInfoModel
             this.feed = {};
+            // 共通属性
             this.brandList = [];
             this.productTypeList = [];
             this.sizeTypeList = [];
             this.materialList = [];
             this.originList = [];
             this.colorMap = [];
+            this.platforms = [];
+            // 设置
             this.setting = {
                 weightOrg: "",
                 weightOrgUnit: "",
@@ -37,7 +40,10 @@ define([
                 priceMsrp: "",
                 priceCurrent: "",
 
-                weightOrgUnits: ['lb', 'kg']
+                weightOrgUnits: ['lb', 'kg'],
+
+                // 平台价格
+                platformPrice: {}
             };
             this.topFeedList = null; // 同Model查询结果
             this.imageUrl = "http://image.sneakerhead.com/is/image/sneakerhead/";
@@ -49,7 +55,6 @@ define([
             // 根据code加载Feed
             self.itemDetailService.detail({id: self.id}).then((resp) => {
                 if (resp.data && resp.data.feed) {
-                    self.feed = resp.data.feed;
                     self.brandList = resp.data.brandList;
                     self.productTypeList = resp.data.productTypeList;
                     self.sizeTypeList = resp.data.sizeTypeList;
@@ -57,10 +62,57 @@ define([
                     self.originList = resp.data.originList;
                     self.colorMap = resp.data.colorMap;
 
+                    // 平台
+                    self.platforms = resp.data.platforms;
+
+                    // FeedModel
+                    self.feed = resp.data.feed;
                     // 记录原始Feed数据中是否有urlkey
                     self.hasUrlkey();
                     // 处理Feed数据
                     self.filterFeed();
+
+                    if (!self.feed.usPlatformPrices) {
+                        self.feed.usPlatformPrices = [];
+                    }
+                    if (!self.feed.platformPrices) {
+                        self.feed.platformPrices = [];
+                    }
+                    console.log(self.feed.feedAuth);
+                    // Platform Price
+                    _.each(self.platforms, platform => {
+                        let cartId = parseInt(platform.value);
+                        let matchOne;
+                        if (cartId < 20) {
+                            matchOne = _.find(self.feed.usPlatformPrices, priceObj => {
+                                return cartId === priceObj.cartId;
+                            });
+                            if (!matchOne) {
+                                let platformPrice = {cartId:cartId,cartName:platform.name};
+                                if (self.feed.feedAuth > 1) {
+                                    _.extend(platformPrice, {isSale:1});
+                                }
+                                self.feed.usPlatformPrices.push(platformPrice);
+                            } else {
+                                _.extend(matchOne, {cartName:platform.name});
+                            }
+                        } else if (cartId > 20) {
+                            matchOne = _.find(self.feed.platformPrices, priceObj => {
+                                return cartId === priceObj.cartId;
+                            });
+                            if (!matchOne) {
+                                let platformPrice = {cartId:cartId,cartName:platform.name};
+                                if (self.feed.feedAuth > 1) {
+                                    _.extend(platformPrice, {isSale:1});
+                                }
+                                self.feed.platformPrices.push(platformPrice);
+                            } else {
+                                _.extend(matchOne, {cartName:platform.name});
+                            }
+                        }
+                    });
+
+
 
                     // 如果有SKU不存在中国价格,则重新计算一次价格
                     let noCNPriceSku = _.find(self.feed.skus, sku => {
@@ -107,29 +159,6 @@ define([
             } else {
                 _.extend(self.feed, {urlkey:self.feed.attribute.urlkey[0]});
             }
-            // 将sku->weightOrg转换成float,如果各价格为空默认设置成0
-            angular.forEach(self.feed.skus, function (sku) {
-                sku.weightOrg = parseFloat(sku.weightOrg);
-                if (!sku.priceNet) {
-                    sku.priceNet = 0;
-                }
-                if (!sku.priceClientRetail) {
-                    sku.priceClientRetail = 0;
-                }
-                // if (!sku.priceMsrp) {
-                //     sku.priceMsrp = 0;
-                // }
-                // if (!sku.priceCurrent) {
-                //     sku.priceCurrent = 0;
-                // }
-                if (!sku.isSale) {
-                    sku.isSale = 1;
-                }
-                // 重量单位,默认lb
-                if (!sku.weightOrgUnit) {
-                    sku.weightOrgUnit = "lb";
-                }
-            });
             // 处理Abstract和accessory
             if (!!self.feed.attribute.abstract && _.size(self.feed.attribute.abstract) > 0) {
                 _.extend(self.feed, {abstract: self.feed.attribute.abstract[0]});
@@ -220,6 +249,19 @@ define([
                 self.currentBoxImage = self.feed.attribute.boximages[0];
                 _.extend(self.feed, {boxImageNum: _.size(self.feed.attribute.boximages)});
             }
+
+            // Feed.weight=0.5lb, 如果是这样的数据将其扯开为weight=0.5, weightUnit=lb
+            let weight = self.feed.weight;
+            if (weight && isNaN(weight)) {
+                let weightUnit = _.find(self.setting.weightOrgUnits, weightUnit => {
+                    return weight.indexOf(weightUnit) > 0;
+                });
+                if (weightUnit) {
+                    _.extend(self.feed, {weight:parseFloat(weight.replace(weightUnit, "")), weightUnit:weightUnit})
+                }
+            } else {
+                self.feed.weight = !weight ? null : parseFloat(weight);
+            }
         }
 
         // 生成UrlKey
@@ -238,6 +280,20 @@ define([
                     _.extend(self.feed, {urlkey: null});
                 }
             }
+        }
+
+        // Set Platform Price
+        setPlatformPrice(property, value) {
+            let self = this;
+            if (property && value && !isNaN(value)) {
+                _.each(self.feed.usPlatformPrices, platformPrice => {
+                    platformPrice[property] = value;
+                });
+            }
+        }
+
+        calculatePrice() {
+            console.log("计算中国价格...");
         }
 
         // 统一设置SKU属性
@@ -403,27 +459,6 @@ define([
                     _.extend(self.feed.attribute, {categories:categories});
                     _.extend(self.feed, {categoriesTree:context});
                 }else{
-                    // _.extend(self.feed, {category: context.catPath, categoryCatId:context.catId});
-                    // if (!!context.mapping) {
-                    //     let seoInfo = {};
-                    //     if (!!context.mapping.seoTitle) {
-                    //         _.extend(seoInfo, {seoTitle: context.mapping.seoTitle});
-                    //     }
-                    //     if (!!context.mapping.seoKeywords) {
-                    //         _.extend(seoInfo, {seoKeywords: context.mapping.seoKeywords});
-                    //     }
-                    //     if (!!context.mapping.seoDescription) {
-                    //         _.extend(seoInfo, {seoDescription: context.mapping.seoDescription});
-                    //     }
-                    //     // amazon、googleCategory、googleDepartment、priceGrabber
-                    //     let category = {
-                    //         amazonBrowseTree:context.mapping.amazon,
-                    //         googleCategory:context.mapping.googleCategory,
-                    //         googleDepartment:context.mapping.googleDepartment,
-                    //         priceGrabberCategory:context.mapping.priceGrabber};
-                    //     _.extend(self.feed, category);
-                    //     _.extend(self.feed, seoInfo);
-                    // }
                     let category = context.catPath;
                     let categoryCatId = context.catId;
                     let seoTitle = "";

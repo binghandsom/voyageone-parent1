@@ -56,73 +56,78 @@ define([
             self.columnArrow={"created":{"count":true,"mark":"sort-desc"}};
             self.getList();
         }
+
         getListSearch(){
             let self = this;
             self.isAll = false;
             angular.forEach(self.feeds, function (feed) {
                 feed.check = false;
-            })
+            });
             self.totalItems = false;
             self.paging.curr=1;
             self.getList();
         }
 
+        /**
+         * 获取检索列表
+         */
         getList() {
+            let self = this,
+                _upEntity = angular.copy(self.paraMap);
 
-            let self = this;
-            self.paraMap.status = [];
-            self.paraMap.approvePricing = [];
+            _upEntity.status = [];
+            _upEntity.approvePricing = [];
             if (self.status[0] === true) {
-                self.paraMap.status.push("New");
+                _upEntity.status.push("New");
             }
             if (self.status[1] === true) {
-                self.paraMap.status.push("Pending");
+                _upEntity.status.push("Pending");
             }
             if (self.status[2] === true) {
-                self.paraMap.status.push("Ready");
+                _upEntity.status.push("Ready");
             }
             //根据当前页面权限设置默认状态值
-            if (self.paraMap.status.length == 0) {
+            if (_upEntity.status.length == 0) {
                 //状态值为空
                 if (self.flag == 1) {
                     //new 权限
-                    self.paraMap.status.push("New");
+                    _upEntity.status.push("New");
                 }
                 if (self.flag == 2) {
                     //Pending 权限
-                    self.paraMap.status.push("New");
-                    self.paraMap.status.push("Pending");
+                    _upEntity.status.push("New");
+                    _upEntity.status.push("Pending");
                 }
                 if (self.flag == 3) {
                     //Ready 权限
-                    self.paraMap.status.push("New");
-                    self.paraMap.status.push("Pending");
-                    self.paraMap.status.push("Ready");
+                    _upEntity.status.push("New");
+                    _upEntity.status.push("Pending");
+                    _upEntity.status.push("Ready");
                 }
             }
 
             if (self.approvePricing[0] === true)
             {
-                self.paraMap.approvePricing.push("1");
+                _upEntity.approvePricing.push("1");
             }
             if (self.approvePricing[1] === true)
             {
-                self.paraMap.approvePricing.push("0");
+                _upEntity.approvePricing.push("0");
             }
-            if(self.paraMap.lastReceivedOnStart != null){
-                self.paraMap.lastReceivedOnStart += " 00:00:00";
+            if(_upEntity.lastReceivedOnStart != null){
+                _upEntity.lastReceivedOnStart += " 00:00:00";
             }
-            if(self.paraMap.lastReceivedOnEnd != null){
-                self.paraMap.lastReceivedOnEnd += " 23:59:59";
+            if(_upEntity.lastReceivedOnEnd != null){
+                _upEntity.lastReceivedOnEnd += " 23:59:59";
             }
-            if(self.paraMap.createdStart != null){
-                self.paraMap.createdStart += " 00:00:00";
+            if(_upEntity.createdStart != null){
+                _upEntity.createdStart += " 00:00:00";
             }
-            if(self.paraMap.createdEnd != null){
-                self.paraMap.createdEnd += " 23:59:59";
+            if(_upEntity.createdEnd != null){
+                _upEntity.createdEnd += " 23:59:59";
             }
 
-            self.itemDetailService.list(_.extend(self.paraMap, self.paging)).then(resp => {
+            self.itemDetailService.list(_.extend(_upEntity, self.paging)).then(resp => {
                 self.feeds = resp.data.feedList;
                 self.feedListTotal = resp.data.feedListTotal;
                 self.paging.total = resp.data.feedListTotal;
@@ -131,24 +136,25 @@ define([
         }
 
         updateOne(feed, key, value) {
-            let self = this;
-            self.requestMap = {};
+            let self = this,
+                requestMap = {};
+
             if(value == null || value == ''){
                 self.alert("value can not be  empty or 0!!!");
+                feed.editMsrp = feed.editRetai = false;
+                return;
+            }
+
+            requestMap.code = feed.code;
+            requestMap[key] = value + '';
+
+            self.itemDetailService.updateOne(requestMap).then(() => {
+                self.notify.success('update success!');
+
                 feed.editMsrp = false;
                 feed.editRetai = false;
-                return;
-            }else{
-                self.requestMap.code = feed.code;
-                self.requestMap[key] = value + '';
+            });
 
-                self.itemDetailService.updateOne(self.requestMap).then(resp => {
-                    self.notify.success('update success!');
-
-                    feed.editMsrp = false;
-                    feed.editRetai = false;
-                });
-            }
         }
 
         clear() {
