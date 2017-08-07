@@ -1,8 +1,5 @@
 package com.voyageone.service.model.cms;
 
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
-
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -24,9 +21,9 @@ public class TransferUsProductModel {
     private String urlKey;
     private String created;
     private String model;
-    private List<CmsBtProductModel_Field_Image> images;
-    private List<CmsBtProductModel_Field_Image> boxImages;
-    private List<CmsBtProductModel_Field_Image> marketingImages;
+    private List<String> images;
+    private List<String> boxImages;
+    private List<String> marketingImages;
     private String brand;
     private boolean isTaxable;
     private String colorMap;
@@ -144,27 +141,27 @@ public class TransferUsProductModel {
         this.model = model;
     }
 
-    public List<CmsBtProductModel_Field_Image> getImages() {
+    public List<String> getImages() {
         return images;
     }
 
-    public void setImages(List<CmsBtProductModel_Field_Image> images) {
+    public void setImages(List<String> images) {
         this.images = images;
     }
 
-    public List<CmsBtProductModel_Field_Image> getBoxImages() {
+    public List<String> getBoxImages() {
         return boxImages;
     }
 
-    public void setBoxImages(List<CmsBtProductModel_Field_Image> boxImages) {
+    public void setBoxImages(List<String> boxImages) {
         this.boxImages = boxImages;
     }
 
-    public List<CmsBtProductModel_Field_Image> getMarketingImages() {
+    public List<String> getMarketingImages() {
         return marketingImages;
     }
 
-    public void setMarketingImages(List<CmsBtProductModel_Field_Image> marketingImages) {
+    public void setMarketingImages(List<String> marketingImages) {
         this.marketingImages = marketingImages;
     }
 

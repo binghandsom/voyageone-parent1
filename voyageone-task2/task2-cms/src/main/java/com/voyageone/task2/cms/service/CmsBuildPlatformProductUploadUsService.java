@@ -1,12 +1,9 @@
 package com.voyageone.task2.cms.service;
 
-import com.taobao.api.domain.Shop;
-import com.taobao.top.schema.field.MultiComplexField;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -30,7 +27,10 @@ import com.voyageone.service.model.cms.CmsBtUsWorkloadModel;
 import com.voyageone.service.model.cms.TransferUsProductModel;
 import com.voyageone.service.model.cms.TransferUsProductModel_Sku;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -83,6 +83,11 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
     @Autowired
     private PlatformCategoryService platformCategoryService;
 
+    private static final Map<CmsConstants.PlatformStatus, String> statusMap = new HashMap<CmsConstants.PlatformStatus, String>() {{
+        this.put(CmsConstants.PlatformStatus.InStock, "delist");
+        this.put(CmsConstants.PlatformStatus.OnSale, "list");
+    }};
+
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
@@ -92,6 +97,7 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
         $info("天猫国际官网同购主线程正常结束");
 
     }
+
     public void doUploadMain(List<TaskControlBean> taskControlList) {
         // 初始化cms_mt_channel_condition_config表的条件表达式(避免多线程时2次初始化)
         channelConditionConfig = new HashMap<>();
@@ -125,7 +131,7 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
 
         // 准备按组分配线程（相同的组， 会共用相同的一组线程通道， 不同的组， 线程通道互不干涉）
         Map<String, List<String>> mapTaskControl = new HashMap<>();
-        taskControlBeanList.forEach((l)->{
+        taskControlBeanList.forEach((l) -> {
             String key = l.getCfg_val2();
             if (StringUtils.isEmpty(key)) {
                 key = "0";
@@ -145,7 +151,7 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
 
         while (true) {
 
-            mapTaskControl.forEach((k, v)->{
+            mapTaskControl.forEach((k, v) -> {
                 boolean blnCreateThread = false;
 
                 if (mapThread.containsKey(k)) {
@@ -220,10 +226,10 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
     /**
      * 平台产品上新主处理
      *
-     * @param channelId String 渠道ID
-     * @param cartId String 平台ID
+     * @param channelId   String 渠道ID
+     * @param cartId      String 平台ID
      * @param threadCount int 线程数
-     * @param rowCount int 每个渠道最大抽出件数
+     * @param rowCount    int 每个渠道最大抽出件数
      */
     public void doProductUpload(String channelId, int cartId, int threadCount, int rowCount) throws Exception {
 
@@ -314,7 +320,7 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
                 }
                 // 如果上新数据中的errorMessage为空
                 if (StringUtils.isEmpty(sxData.getErrorMessage())) {
-                    if(StringUtils.isNullOrBlank2(e.getMessage())) {
+                    if (StringUtils.isNullOrBlank2(e.getMessage())) {
                         sxData.setErrorMessage("出现不可预知的错误，请跟管理员联系! " + e.getStackTrace()[0].toString());
                         e.printStackTrace();
                     } else {
@@ -342,7 +348,6 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
         }
         $info(String.format("本次推送数据 [%s] 条！", productModels.size()));
     }
-
 
 
     private TransferUsProductModel getProductInfoForUs(SxData sxData, String channelId, int cartId, ShopBean shop) {
@@ -396,8 +401,8 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
         productModel.setUrlKey(commonFields.getUrlKey());
         productModel.setCreated(mainProduct.getCreated());
         productModel.setModel(commonFields.getModel());
-        productModel.setImages(commonFields.getImages1());
-        productModel.setBoxImages(commonFields.getImages2());
+        productModel.setImages(commonFields.getImages1().stream().map(map -> map.getName()).collect(Collectors.toList()));
+        productModel.setBoxImages(commonFields.getImages2().stream().map(map -> map.getName()).collect(Collectors.toList()));
         productModel.setMarketingImages(null);// TODO: 2017/7/20
         productModel.setBrand(commonFields.getBrand());
         productModel.setColorMap(commonFields.getColorMap());
@@ -406,7 +411,7 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
         productModel.setGoogleCategory(commonFields.getGoogleCategory());
         productModel.setGoogleDepartment(commonFields.getGoogleDepartment());
         productModel.setPriceGrabberCategory(commonFields.getPriceGrabberCategory());
-        productModel.setStatus(platformInfo.getpStatus().name());
+        productModel.setStatus(statusMap.get(platformInfo.getpStatus()));
         if (StringUtils.isNullOrBlank2(commonFields.getTaxable()) || "0".equals(commonFields.getTaxable())) {
             productModel.setTaxable(false);
         } else {
@@ -428,8 +433,8 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
                     .findFirst()
                     .get();
 
-            skuInfo.setMsrp(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceMsrp.name()));
-            skuInfo.setPrice(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.priceSale.name()));
+            skuInfo.setMsrp(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.clientMsrpPrice.name()));
+            skuInfo.setPrice(sku.getDoubleAttribute(CmsBtProductConstants.Platform_SKU_COM.clientNetPrice.name()));
             skuInfo.setQty(sku.getIntAttribute(CmsBtProductConstants.Platform_SKU_COM.qty.name()));
             skuInfo.setSize(mergedSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.size.name()));
             skuInfo.setUpc(mergedSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.barcode.name()));
@@ -444,12 +449,12 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
     }
 
     private Map<String, Object> getUsProductAttributes(CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchema,
-                                                 ShopBean shop, ExpressionParser expressionParser) {
+                                                       ShopBean shop, ExpressionParser expressionParser) {
         Map<String, Object> platformInfoMap = new HashMap<>();
 
         // 取得schema数据中的propsItem(XML字符串)
         String propsItem = cmsMtPlatformCategorySchema.getPropsItem();
-        List<Field> itemFieldList =null;
+        List<Field> itemFieldList = null;
         if (!StringUtils.isEmpty(propsItem)) {
             // 将取出的propsItem转换为字段列表
             itemFieldList = SchemaReader.readXmlForList(propsItem);
@@ -478,18 +483,23 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
                 // 根据输入类型分别设置3个属性值
                 switch (fieldValue.getType()) {
                     case SINGLECHECK: {
-                        platformInfoMap.put(fieldId, ((SingleCheckField)fieldValue).getValue().getValue());
+                        platformInfoMap.put(fieldId, ((SingleCheckField) fieldValue).getValue().getValue());
                         break;
                     }
                     case MULTICHECK: {
                         List<String> valueList = ((MultiCheckField) fieldValue).getValues().stream()
-                                    .map(Value::getValue)
-                                    .collect(Collectors.toList());
+                                .map(Value::getValue)
+                                .collect(Collectors.toList());
                         platformInfoMap.put(fieldId, valueList);
                         break;
                     }
                     case INPUT: {
-                        platformInfoMap.put(fieldId, ((InputField)fieldValue).getValue());
+                        String val = StringUtils.null2Space(((InputField) fieldValue).getValue());
+                        if (val.equalsIgnoreCase("true") || val.equalsIgnoreCase("false")) {
+                            platformInfoMap.put(fieldId, Boolean.parseBoolean(val));
+                        } else {
+                            platformInfoMap.put(fieldId, val);
+                        }
                         break;
                     }
                     default:
@@ -501,7 +511,6 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
 
         return platformInfoMap;
     }
-
 
 
 }
