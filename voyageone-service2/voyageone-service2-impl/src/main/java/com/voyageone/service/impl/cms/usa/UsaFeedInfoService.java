@@ -90,9 +90,11 @@ public class UsaFeedInfoService extends BaseService {
         }
         String formulaRetail = retailConfig.getConfigValue1();
 
+        // 如果usPlatform.cartId=8的Msrp($)和Price($)值发送改变, 同步计算所有平台中国价格级SKU价格
         CmsBtFeedInfoModel_PlatformPrice platformPrice = cmsBtFeedInfoModel.getPlatformPrice(Integer.valueOf(8));
         if (platformPrice != null) {
-
+            Double priceClientMsrp = calculatePrice(formulaMsrp, platformPrice);
+            Double priceClientRetail = calculatePrice(formulaRetail, platformPrice);
         }
 
 
@@ -127,6 +129,23 @@ public class UsaFeedInfoService extends BaseService {
         cmsBtFeedInfoModel.setPriceClientMsrpMin(priceClientMsrpMin);
 
         return cmsBtFeedInfoModel;
+    }
+
+    private Double calculatePrice(String formula, CmsBtFeedInfoModel_PlatformPrice platformPrice) {
+        ExpressionParser parser = new SpelExpressionParser();
+
+        Expression expression = parser.parseExpression(formula);
+
+        StandardEvaluationContext context = new StandardEvaluationContext(platformPrice);
+
+        try {
+            BigDecimal price = expression.getValue(context, BigDecimal.class);
+
+            return price.setScale(0, RoundingMode.UP).doubleValue();
+        } catch (SpelEvaluationException sp) {
+            $error("使用固定公式计算时出现错误", sp);
+            throw new BusinessException("使用固定公式计算时出现错误", sp);
+        }
     }
 
     private Double calculatePrice(String formula, CmsBtFeedInfoModel_Sku sku) {
