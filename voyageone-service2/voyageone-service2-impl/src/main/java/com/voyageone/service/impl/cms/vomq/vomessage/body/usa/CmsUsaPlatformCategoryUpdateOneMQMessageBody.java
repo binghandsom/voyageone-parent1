@@ -91,9 +91,6 @@ public class CmsUsaPlatformCategoryUpdateOneMQMessageBody extends BaseMQMessageB
         if (StringUtils.isEmpty(pCatPath)) {
             throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数pCatPath为空.");
         }
-        if (MapUtils.isEmpty(mapping)) {
-            throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数mapping为空.");
-        }
         if (flag == null) {
             throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数flag为空.");
         }

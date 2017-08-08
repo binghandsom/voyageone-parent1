@@ -243,7 +243,7 @@ public class UsaAdvanceSearchController extends CmsController {
     @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.UPDATE_PRIMARY_CATEGORY)
     public AjaxResponse updatePrimaryCategory(@RequestBody Map params) {
         UserSessionBean user = getUser();
-        usaProductDetailService.listOrDelist(params,user.getSelChannelId(),user.getUserName());
+        usaProductDetailService.updatePrimaryCategory(params,user.getSelChannelId(),user.getUserName());
         return success(null);
     }
 
@@ -251,7 +251,7 @@ public class UsaAdvanceSearchController extends CmsController {
     @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.UPDATE_OTHER_CATEGORY)
     public AjaxResponse updateOtherCategory(@RequestBody Map params) {
         UserSessionBean user = getUser();
-        usaProductDetailService.listOrDelist(params,user.getSelChannelId(),user.getUserName());
+        usaProductDetailService.updateOtherCategory(params,user.getSelChannelId(),user.getUserName());
         // 返回用户信息
         return success(null);
     }

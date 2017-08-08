@@ -233,7 +233,7 @@
                                     <span class="cur-p label" ng-class="{'label-info':feed.approvePricing == 1,'label-danger':feed.approvePricing != 1}"
                                           ng-click="ctrl.canApprovePrice(feed)">{{feed.approvePricing == 1 ? 'Yes' : 'No'}}</span>
                                 </td>
-                                <td class="text-right" ng-if="feed.priceClientMsrpMin == feed.priceClientMsrpMax" ng-hide="ctrl.flag == 1">
+                                <!--<td class="text-right" ng-if="feed.priceClientMsrpMin == feed.priceClientMsrpMax" ng-hide="ctrl.flag == 1">
                                     <div class="input-group">
                                         <span class="input-group-addon cur-p"
                                               ng-click="feed.editMsrp =feed.approvePricing != 1? !feed.editMsrp:feed.editMsrp"><i class="fa fa-pencil"></i></span>
@@ -256,6 +256,29 @@
                                 </td>
                                 <td class="text-right" ng-if="feed.priceClientRetailMin != feed.priceClientRetailMax" ng-hide="ctrl.flag == 1">
                                     {{feed.priceClientRetailMin}}~{{feed.priceClientRetailMax}}
+                                </td>-->
+
+                                <td class="text-right" ng-hide="ctrl.flag == 1">
+                                    <div class="input-group">
+                                        <span class="input-group-addon cur-p"
+                                              ng-click="feed.editMsrp =feed.approvePricing != 1? !feed.editMsrp:feed.editMsrp"><i class="fa fa-pencil"></i></span>
+                                        <input type="number" class="form-control text-right"
+                                               ng-init="feed.priceClientMsrp = feed.usPlatforms.P8.priceClientMsrp"
+                                               ng-model="feed.priceClientMsrp"
+                                               ng-enter="ctrl.updatePrice(feed,'priceClientMsrp', feed.priceClientMsrp, 8)"
+                                               ng-disabled="!feed.editMsrp ">
+                                    </div>
+                                </td>
+                                <td class="text-right" ng-hide="ctrl.flag == 1">
+                                    <div class="input-group">
+                                        <span class="input-group-addon cur-p"
+                                              ng-click="feed.editRetai =feed.approvePricing != 1?!feed.editRetai:feed.editRetai"><i class="fa fa-pencil"></i></span>
+                                        <input type="number" class="form-control text-right"
+                                               ng-disabled="!feed.editRetai"
+                                               ng-init="feed.priceClientRetail = feed.usPlatforms.P8.priceClientRetail"
+                                               ng-model="feed.priceClientRetail"
+                                               ng-enter="ctrl.updatePrice(feed,'priceClientRetail',feed.priceClientRetail, 8)">
+                                    </div>
                                 </td>
                                 <td class="text-center">{{feed.created}}</td>
                                 <td class="text-center">{{feed.lastReceivedOn}}</td>

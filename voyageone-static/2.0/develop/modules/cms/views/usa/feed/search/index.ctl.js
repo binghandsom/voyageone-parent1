@@ -157,6 +157,29 @@ define([
 
         }
 
+        // 修改价格, 对应feed.usPlatforms.P8.XX
+        updatePrice(feed, key, value, cartId) {
+            let self = this,
+                requestMap = {};
+
+            if(value == null || value <= 0){
+                self.alert("Price must be greater than 0!");
+                feed.editMsrp = feed.editRetai = false;
+                return;
+            }
+
+            requestMap.code = feed.code;
+            requestMap["cartId"] = cartId;
+            requestMap[key] = value + '';
+
+            self.itemDetailService.updateOne(requestMap).then(() => {
+                self.notify.success('update success!');
+
+                feed.editMsrp = false;
+                feed.editRetai = false;
+            });
+        }
+
         clear() {
             let self = this,
                 columnArrow = self.columnArrow;

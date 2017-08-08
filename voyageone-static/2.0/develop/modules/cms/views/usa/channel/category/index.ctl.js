@@ -385,18 +385,17 @@ define([
                 }).value();
                 self.confirm(msg)
                     .then(function () {
-                        var data = {
+                        self.$searchAdvanceService2.addFreeTag({
                             "type": "usa",
                             "tagPathList": freeTags,
                             "prodIdList": selCodeList,
                             "isSelAll": self._selall ? 1 : 0,
                             "orgDispTagList": res.orgDispTagList,
                             'searchInfo': self.searchUtilService.handleQueryParams(self)
-                        };
-                        self.$searchAdvanceService2.addFreeTag(data).then(function () {
-                            // notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
+                        }).then(function () {
                             self.notify.success("Set free tags succeeded.");
-                            self.clearSelList();
+                            if(!res.continue)
+                                self.clearSelList();
                             self._selall = false;
                             self.search();
                         })
