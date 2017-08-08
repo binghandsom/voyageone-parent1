@@ -213,6 +213,7 @@ public class ProductMainCategoryService extends BaseService {
         Tokenizer tokenizer = new Tokenizer(categoryPathSplit);
 
         FeedQuery query = new FeedQuery(feedCategoryPath, null, tokenizer);
+        if(productType == null) productType = "";
         query.setProductType(productType);
         query.setSizeType(sizeType);
         query.setProductName(productNameEn, brand);
