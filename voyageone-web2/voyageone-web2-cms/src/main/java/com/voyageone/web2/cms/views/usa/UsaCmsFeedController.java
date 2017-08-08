@@ -230,22 +230,30 @@ public class UsaCmsFeedController extends BaseController {
             if (code != null) {
                 queryMap.put("code", code);
             }
+
             //这里有类型转换异常
             String priceClientMsrp = (String) params.get("priceClientMsrp");
             if (StringUtils.isNotEmpty(priceClientMsrp)) {
                 msrpPrice = Double.parseDouble(priceClientMsrp);
             }
-            String price1 = (String) params.get("price");
-            if (StringUtils.isNotEmpty(price1)) {
-                price = Double.parseDouble(price1);
+            String priceClientRetail = (String) params.get("priceClientRetail");
+            if (StringUtils.isNotEmpty(priceClientRetail)) {
+                price = Double.parseDouble(priceClientRetail);
             }
-
+            Integer cartId = (Integer) params.get("cartId");
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(getUser().getSelChannelId(), code);
-            CmsBtFeedInfoModel_Platform_Cart snPlatform = null;
-            if (cmsBtFeedInfoModel != null && (snPlatform = cmsBtFeedInfoModel.getUsPlatform(8)) != null) {
-                snPlatform.setPriceClientMsrp(msrpPrice);
-                snPlatform.setPriceClientRetail(price);
+            CmsBtFeedInfoModel_Platform_Cart platform = null;
+            if (cmsBtFeedInfoModel != null && cartId != null && (platform = cmsBtFeedInfoModel.getUsPlatform(cartId)) != null) {
+                if (msrpPrice != null) {
+                    platform.setPriceClientMsrp(msrpPrice);
+                }
+                if (price != null) {
+                    platform.setPriceClientRetail(price);
+                }
+
+                // cartId=8, 同步计算中国价格
+                usaFeedInfoService.setPrice(cmsBtFeedInfoModel);
             }
             /*if (cmsBtFeedInfoModel != null) {
                 cmsBtFeedInfoModel.setModifier(getUser().getUserName());
@@ -266,10 +274,8 @@ public class UsaCmsFeedController extends BaseController {
             if (approvePricing != null) {
                 cmsBtFeedInfoModel.setApprovePricing(approvePricing);
             }
-            cmsBtFeedInfoModel = usaFeedInfoService.setPrice(cmsBtFeedInfoModel);
             writeResult = feedInfoService.updateFeedInfo(cmsBtFeedInfoModel);
         }
-
 
         return success(writeResult);
     }
