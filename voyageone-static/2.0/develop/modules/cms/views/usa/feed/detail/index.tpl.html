@@ -35,7 +35,8 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title text-left vo_reqfield">Model</label>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" name="model" ng-model="ctrl.feed.model" required>
+                                            <input type="text" class="form-control" name="model" ng-model="ctrl.feed.model"
+                                                   ng-change="ctrl.feed.model=ctrl.feed.model.toLowerCase()" required>
                                         </div>
                                         <div class="col-md-1">
                                             <button type="button" class="btn btn-default" ng-click="ctrl.getTopModel(5)">
