@@ -529,7 +529,8 @@ define([
                         }).then(function () {
                             // notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
                             self.notify.success("Set free tags succeeded.");
-                            self.clearSelList();
+                            if(!res.continue)
+                                self.clearSelList();
                             self._selall = false;
                             self.search();
                         })
