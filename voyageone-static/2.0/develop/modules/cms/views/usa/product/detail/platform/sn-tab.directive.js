@@ -153,8 +153,9 @@ define([
 
         /**
          * Pop category
-         * @param option
-         * @param attr
+         * @param option  cartId:number
+         *                froms:[]
+         *                muiti:boolean
          */
         popUsCategory(option) {
             let self = this;
