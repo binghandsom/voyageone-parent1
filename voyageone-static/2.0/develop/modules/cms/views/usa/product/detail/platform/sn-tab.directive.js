@@ -163,20 +163,22 @@ define([
             self.popups.openUsCategory(option).then(context => {
                 if(option.muiti){
                     self.platform.sellerCarts = context;
-                }else{
-
+                } else {
+                    // SN Primary Category
                     let selNode = {pCatId:context.catId, pCatPath:context.catPath};
                     _.extend(self.platform.platform, selNode);
 
-                    if (context.mapping) {
-                        self.searchField("googleCategory", self.productComm.schemaFields).value = context.mapping.googleCategory;
-                        self.searchField("googleDepartment", self.productComm.schemaFields).value = context.mapping.googleDepartment;
-                        self.searchField("priceGrabberCategory", self.productComm.schemaFields).value = context.mapping.priceGrabber;
+                    self.confirm("Would you like to replace GooGle Category/ Google DepartMent / PriceGrabber Category?").then(confirmed => {
+                        if (context.mapping) {
+                            self.searchField("googleCategory", self.productComm.schemaFields).value = context.mapping.googleCategory;
+                            self.searchField("googleDepartment", self.productComm.schemaFields).value = context.mapping.googleDepartment;
+                            self.searchField("priceGrabberCategory", self.productComm.schemaFields).value = context.mapping.priceGrabber;
 
-                        self.searchField("seoTitle", self.platform.platform.platformFields).value = context.mapping.seoTitle;
-                        self.searchField("seoKeywords", self.platform.platform.platformFields).value = context.mapping.seoKeywords;
-                        self.searchField("seoDescription", self.platform.platform.platformFields).value = context.mapping.seoDescription;
-                    }
+                            // self.searchField("seoTitle", self.platform.platform.platformFields).value = context.mapping.seoTitle;
+                            // self.searchField("seoKeywords", self.platform.platform.platformFields).value = context.mapping.seoKeywords;
+                            // self.searchField("seoDescription", self.platform.platform.platformFields).value = context.mapping.seoDescription;
+                        }
+                    });
                 }
             });
         }
