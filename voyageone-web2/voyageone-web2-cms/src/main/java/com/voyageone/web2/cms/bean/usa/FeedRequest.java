@@ -25,7 +25,7 @@ public class FeedRequest {
     private Boolean selAll; // 是否检索结果全量
     private List<String> codeList; // Feed Code Collection
     private Map<String, Object> searchMap; // Feed检索条件
-    private Map<Integer, Integer> approveInfo;
+    private List<Map<String, Object>> approveInfo;
 
     public String getId() {
         return id;
@@ -99,11 +99,11 @@ public class FeedRequest {
         this.searchMap = searchMap;
     }
 
-    public Map<Integer, Integer> getApproveInfo() {
+    public List<Map<String, Object>> getApproveInfo() {
         return approveInfo;
     }
 
-    public void setApproveInfo(Map<Integer, Integer> approveInfo) {
+    public void setApproveInfo(List<Map<String, Object>> approveInfo) {
         this.approveInfo = approveInfo;
     }
 }

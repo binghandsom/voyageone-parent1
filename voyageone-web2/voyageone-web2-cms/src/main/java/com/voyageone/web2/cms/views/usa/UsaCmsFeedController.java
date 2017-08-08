@@ -140,6 +140,7 @@ public class UsaCmsFeedController extends BaseController {
      */
     @RequestMapping(value = UsaCmsUrlConstants.FEED.APPROVE)
     public AjaxResponse approve(@RequestBody FeedRequest reqParams) {
+        UserSessionBean user = getUser();
         List<String> codeList = reqParams.getCodeList();
         Boolean selAll = reqParams.getSelAll();
         if (selAll != null && selAll) {
@@ -152,10 +153,9 @@ public class UsaCmsFeedController extends BaseController {
         reqParams.getSearchMap().put("status",status );
         reqParams.getSearchMap().put("approvePricing", Collections.singletonList("1"));
         reqParams.getSearchMap().put("codeList",codeList);
-        codeList = usaFeedInfoService.getFeedCodeList(reqParams.getSearchMap(), getUser().getSelChannelId());
+        codeList = usaFeedInfoService.getFeedCodeList(reqParams.getSearchMap(), user.getSelChannelId());
 
-        if (!CollectionUtils.isEmpty(codeList)) {
-            UserSessionBean user = getUser();
+        if (CollectionUtils.isNotEmpty(codeList)) {
             usaFeedInfoService.approve(user.getSelChannelId(), codeList, reqParams.getApproveInfo(), user.getUserName());
         }
         return success("");
