@@ -64,6 +64,7 @@ import com.voyageone.service.model.cms.mongo.CmsBtCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsBtSellerCatModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.feed.mapping2.CmsBtFeedMapping2Model;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -1268,20 +1269,24 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 Double msrpMax = Double.MIN_VALUE;
                 Double retailMin = Double.MAX_VALUE;
                 Double retailMax = Double.MIN_VALUE;
+                CmsBtFeedInfoModel_Platform_Cart feedPlatformCart = feed.getUsPlatform(iCartId);
                 for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
                     BaseMongoMap<String, Object> skuInfo = new BaseMongoMap();
                     skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.skuCode.name(), sku.getSku());
-                    skuInfo.put("clientMsrpPrice", sku.getPriceClientMsrp());
-                    skuInfo.put("clientRetailPrice", sku.getPriceClientRetail());
-                    skuInfo.put("clientNetPrice", sku.getPriceClientRetail());
-                    Boolean isSale = true;
-                    if(sku.getIsSale() != null && sku.getIsSale() == 0) isSale = false;
-                    skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), isSale);
-                    skuList.add(skuInfo);
-                    msrpMin = Double.min(msrpMin, sku.getPriceClientMsrp());
-                    msrpMax = Double.max(msrpMax, sku.getPriceClientMsrp());
-                    retailMin = Double.min(retailMin, sku.getPriceClientRetail());
-                    retailMax = Double.max(retailMax, sku.getPriceClientRetail());
+                    if(feedPlatformCart != null) {
+                        skuInfo.put("clientMsrpPrice", feedPlatformCart.getPriceClientMsrp());
+                        skuInfo.put("clientRetailPrice", feedPlatformCart.getPriceClientRetail());
+                        skuInfo.put("clientNetPrice", feedPlatformCart.getPriceClientRetail());
+
+                        Boolean isSale = true;
+                        if(feedPlatformCart.getIsSale() != null && feedPlatformCart.getIsSale() == 0) isSale = false;
+                        skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), isSale);
+                        skuList.add(skuInfo);
+                        msrpMin = Double.min(msrpMin, feedPlatformCart.getPriceClientMsrp());
+                        msrpMax = Double.max(msrpMax, feedPlatformCart.getPriceClientMsrp());
+                        retailMin = Double.min(retailMin, feedPlatformCart.getPriceClientRetail());
+                        retailMax = Double.max(retailMax, feedPlatformCart.getPriceClientRetail());
+                    }
                 }
                 platform.setpPriceMsrpSt(msrpMin);
                 platform.setpPriceMsrpEd(msrpMax);
@@ -1389,7 +1394,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
                 platform.setSkus(skuList);
 
-                if(feed.getApproveInfo() != null && !feed.getApproveInfo().containsKey(iCartId)){
+                if(feedPlatformCart != null && feedPlatformCart.getIsSale() == 0){
                     platform.setLock("1");
                     platform.setIsSale("0");
                     platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
@@ -2048,7 +2053,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 }
 
                 platform.setSkus(skuList);
-                if(feed.getApproveInfo() != null && !feed.getApproveInfo().containsKey(iCartId)){
+                if(feed.getPlatform(platform.getCartId()) != null && feed.getPlatform(platform.getCartId()).getIsSale() == 0){
                     platform.setLock("1");
                     platform.setIsSale("0");
                 }
@@ -3269,7 +3274,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 ccUsAutoSyncCartList.forEach(cartId->{
                     CmsBtProductModel_Platform_Cart platform = cmsProduct.getUsPlatform(Integer.parseInt(cartId));
                     if(platform != null && CmsConstants.ProductStatus.Approved.toString().equals(platform.getStatus())){
-                        Integer publishTime = feed.getApproveInfo().get(Integer.parseInt(cartId));
+                        Integer publishTime = 0;
+                        if(feed.getUsPlatform(Integer.parseInt(cartId)) != null) publishTime = feed.getUsPlatform(Integer.parseInt(cartId)).getSharingDay();
                         if(publishTime == null) publishTime = 0;
                         if(publishTime == 0){
                             platformProductUploadService.saveCmsBtUsWorkloadModel(cmsProduct.getChannelId(), Integer.parseInt(cartId), cmsProduct.getCommon().getFields().getCode(), null, 0, getTaskName());
