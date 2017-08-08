@@ -50,9 +50,9 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
                 CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getUsPlatform(cartId);
 
                 List<CmsBtProductModel_SellerCat> sellerCats = platform.getSellerCats();
-                List<Map<String, String>> maps = messageBody.getpCatPathAndPCatIds();
-                for (Map<String, String> map : maps) {
-                    String pCatPath = map.get("pCatPath");
+                List<String> pCatPaths = messageBody.getpCatPath();
+
+                for (String pCatPath : pCatPaths) {
                     CmsBtProductModel_SellerCat newSellerCat = sellerCatService.getSellerCat(messageBody.getChannelId(), cartId, pCatPath);
                     if (newSellerCat != null) {
                         if (messageBody.getStatue()) {

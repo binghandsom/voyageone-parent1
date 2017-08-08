@@ -18,14 +18,21 @@ import java.util.Map;
 public class CmsUsaPlatformCategoryUpdateManyMQMessageBody extends BaseMQMessageBody {
 
     List<String> productCodes;
-    List<Map<String,String>> pCatPathAndPCatIds;
+    List<String> pCatPaths;
 //    String pCatPath;
+
 //    String pCatId;
     Integer cartId;
-    //判断是否替换,true替换,false不替换
-    Boolean flag;
     //true:添加类目,false:移除类目
     Boolean statue;
+
+    public List<String> getpCatPath() {
+        return pCatPaths;
+    }
+
+    public void setpCatPath(List<String> pCatPath) {
+        this.pCatPaths = pCatPath;
+    }
 
     public Boolean getStatue() {
         return statue;
@@ -33,22 +40,6 @@ public class CmsUsaPlatformCategoryUpdateManyMQMessageBody extends BaseMQMessage
 
     public void setStatue(Boolean statue) {
         this.statue = statue;
-    }
-
-    public List<Map<String, String>> getpCatPathAndPCatIds() {
-        return pCatPathAndPCatIds;
-    }
-
-    public void setpCatPathAndPCatIds(List<Map<String, String>> pCatPathAndPCatIds) {
-        this.pCatPathAndPCatIds = pCatPathAndPCatIds;
-    }
-
-    public Boolean getFlag() {
-        return flag;
-    }
-
-    public void setFlag(Boolean flag) {
-        this.flag = flag;
     }
 
     public List<String> getProductCodes() {
@@ -79,8 +70,8 @@ public class CmsUsaPlatformCategoryUpdateManyMQMessageBody extends BaseMQMessage
             throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数cartId为空.");
         }
 
-        if (ListUtils.isNull(pCatPathAndPCatIds)) {
-            throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数pCatPathAndPCatIds为空.");
+        if (ListUtils.isNull(pCatPaths)) {
+            throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数pCatPath为空.");
         }
         if (statue == null) {
             throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数statue为空.");
