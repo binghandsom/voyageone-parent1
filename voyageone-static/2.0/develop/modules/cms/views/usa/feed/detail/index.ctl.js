@@ -241,6 +241,10 @@ define([
             } else {
                 self.feed.weight = !weight ? null : parseFloat(weight);
             }
+
+            if (!self.feed.weightUnit) {
+                self.feed.weightUnit = self.setting.weightOrgUnits[0];
+            }
         }
 
         // 生成UrlKey
@@ -279,7 +283,7 @@ define([
                 let newOne = _.find(usPlatofrms, platform => {
                     return platform.cartId == 8;
                 })
-                if (pastOne.priceClientMsrp != newOne.priceClientMsrp || pastOne.priceClientRetail == newOne.priceClientRetail) {
+                if (pastOne.priceClientMsrp != newOne.priceClientMsrp || pastOne.priceClientRetail != newOne.priceClientRetail) {
                     self.calculatePrice();
                 }
             }

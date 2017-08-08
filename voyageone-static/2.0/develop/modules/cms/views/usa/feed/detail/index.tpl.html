@@ -696,7 +696,7 @@
                                     <p class="text-warnings"><i class="fa fa-bell-o"></i>&nbsp;click the button to setting default price</p>
 
                                 </div>
-                                <div class="row form-group pull-right">
+                                <div class="row form-group pull-right" ng-if="ctrl.feed.feedAuth > 1">
                                     <label class="col-md-8 control-label query-title text-left vo_unreqfield">Approve Pricing :</label>
                                     <div class="col-md-1">
                                         <div class="onoffswitch" style="margin: 0px auto;">
@@ -763,7 +763,7 @@
                                                 <td class="text-right">
                                                     <input type="number" class="form-control text-right" ng-model="platform.priceCurrent" required readonly>
                                                 </td>
-                                                <td class="text-right"><label>-</label></td>
+                                                <td class="text-right" ng-if="ctrl.feed.feedAuth == 3"><label>-</label></td>
                                             </tr>
                                             </tbody>
                                         </table>
