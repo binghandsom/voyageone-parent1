@@ -10,7 +10,7 @@ public class BaseDictTest {
     protected String C_TEXT_BR = "<br />";
 
     protected String C_TEMPLATE_IMG = "<img src=\"%s\">";
-    protected String C_TEMPLATE_IMG_790 = "<img width=790px src=\"%s\">";
+    protected String C_TEMPLATE_IMG_790 = "<img width=790px style=\"display:block;\" src=\"%s\">";
     protected String C_TEMPLATE_IMG_990 = "<img width=990px src=\"%s\">";
     protected String C_TEMPLATE_IMG_750 = "<img width=750px src=\"%s\">";
     protected String C_TEMPLATE_IMG_XIANGSHUI = "<a href=\"%s\"><img src=\"%s\"></a>";
@@ -19,6 +19,7 @@ public class BaseDictTest {
     protected String C_带角度图片 = "ANGLE_IMAGE";
     protected String C_自定义图片 = "CUSTOM_IMAGE";
     protected String C_移动端自定义图片 = "MOBILE_CUSTOM_IMAGE";
+    protected String C_TEMPLATE_IMG_SIZECHART = ",{\"img\":\"%s\"}";
 
     protected String C_PC端自拍商品图 = "CUSTOM_PRODUCT_IMAGE";
     protected String C_APP端自拍商品图 = "M_CUSTOM_PRODUCT_IMAGE";
