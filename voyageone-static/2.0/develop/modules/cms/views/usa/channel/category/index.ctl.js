@@ -12,7 +12,7 @@ define([
 
     cms.controller('usCategoryController', class UsCategoryController {
 
-        constructor($routeParams, advanceSearch, productTopService, alert, notify, confirm, $filter, popups, selectRowsFactory, $parse, searchUtilService) {
+        constructor($routeParams, advanceSearch, productTopService, alert, notify, confirm, $filter, popups, selectRowsFactory, $rootScope,searchUtilService) {
             let self = this;
 
             self.sortEntity = sortEntity;
@@ -24,7 +24,7 @@ define([
             self.notify = notify;
             self.confirm = confirm;
             self.$filter = $filter;
-            self.$parse = $parse;
+            self.$rootScope = $rootScope;
             self.advanceSearch = advanceSearch;
             self.tempUpEntity = {};
             self.searchResult = {};
@@ -300,11 +300,26 @@ define([
         // 自定义列弹出
         popCustomAttributes() {
             let self = this;
-            self.popups.openCustomAttributes().then(res => {
+            self.popups.openCustomAttributes().then(() => {
+                //防止重复显示，不能删除这行代码
                 self.customColumnNames = {};
-                self.customColumns.selCommonProps = self.searchUtilService.getSelectedProps(self.customColumns.commonProps, res.selCommonProps, 'propId', self);
-                self.customColumns.selPlatformAttributes = self.searchUtilService.getSelectedProps(self.customColumns.platformAttributes, res.selPlatformAttributes, 'value', self);
-                self.customColumns.selPlatformSales = res.selPlatformSales;
+
+                self.$rootScope.$watch('customAttributeResult',function(newValue,oldValue){
+
+                    if(newValue && !angular.equals(newValue,oldValue)){
+                        //回调返回
+                        self.alert("计算完成！");
+
+                        let _cusRes = newValue;
+                        self.customColumns.selCommonProps = self.getSelectedProps(self.customColumns.commonProps,_cusRes.selCommonProps,'propId');
+                        self.customColumns.selPlatformAttributes = self.getSelectedProps(self.customColumns.platformAttributes, _cusRes.selPlatformAttributes,'value');
+                        self.customColumns.selPlatformSales = _cusRes.selPlatformSales;
+                    }else{
+                        //回调未返回
+                        self.alert('程序在计算请稍后！');
+                    }
+                },true);
+
             })
         }
 

@@ -28,7 +28,7 @@ define([
             searchInfo.codeList = codeList;
             // 处理平台状态
             if (searchInfo.platformStatus) {
-                let platformStatusObj = _.pick(searchInfo.platformStatus, function (value, key, object) {
+                let platformStatusObj = _.pick(searchInfo.platformStatus, function (value) {
                     return value;
                 });
                 searchInfo.platformStatus = _.keys(platformStatusObj);
@@ -36,10 +36,9 @@ define([
 
             //处理类目和店铺内分类
             if(_this.tempUpEntity.pCatPathListTmp)
-            // _.extend(searchInfo, {pCatPathType:1}); // 1 in, 2 not in
                 searchInfo.pCatPathList = _.pluck(_this.tempUpEntity.pCatPathListTmp,'catPath');
+
             if(_this.tempUpEntity.cidValueTmp)
-            // _.extend(searchInfo, {shopCatType:1}); // 1 in, 2 not in
                 searchInfo.cidValue = _.pluck(_this.tempUpEntity.cidValueTmp,'catId');
 
             //价格范围排序修改
@@ -140,9 +139,18 @@ define([
                 }
 
             }else{
-                let _func = self.$parse(prop[attrName]);
+                let _func = self.$parse(prop[attrName]),
+                    result = _func(element);
 
-                return _func(element) ? _func(element) : '';
+                if(result){
+                    if(prop.toLabel === 1){
+                        result = result === '1' ? 'yes':'no';
+                    }
+                }else{
+                    result = '';
+                }
+
+                return result;
             }
         }
 
