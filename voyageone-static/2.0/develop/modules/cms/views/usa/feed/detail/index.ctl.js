@@ -2,7 +2,8 @@
  * @description feed detail
  */
 define([
-    'cms'
+    'cms',
+    'modules/cms/directives/defaultPrice.directive'
 ], function (cms) {
 
     cms.controller('feedDetailController', class FeedDetailController {
@@ -256,8 +257,11 @@ define([
         }
 
         // Set Platform Price
-        setPlatformPrice(property, value) {
-            let self = this;
+        setPlatformPrice(model) {
+            let self = this,
+                property = model.type,
+                value = model.price;
+
             if (property && value && !isNaN(value)) {
                 let usPlatofrms = _.values(self.feed.usPlatforms);
                 let snPlaform = _.find(usPlatofrms, platform => {
@@ -438,6 +442,13 @@ define([
 
         initImage(num) {
             let self = this;
+
+            if(num > 15){
+                self.notify.danger('Please not more than 15');
+                self.feed.imageNum = null;
+                return false;
+            }
+
             self.confirm("Make sure of setting the image count to <strong style='color:red'> " + num + "</strong>").then(confirmed => {
                 if (num <= 0) {
                     self.feed.image = [];
@@ -497,6 +508,13 @@ define([
 
         initBoxImage(num) {
             let self = this;
+
+            if(num > 15){
+                self.notify.danger('Please not more than 15');
+                self.feed.boxImageNum = null;
+                return false;
+            }
+
             self.confirm("Make sure of setting the image count to <strong style='color:red'> " + num + "</strong>").then(confirmed => {
                 if (!num || num <= 0) {
                     self.feed.attribute.boximages = [];
