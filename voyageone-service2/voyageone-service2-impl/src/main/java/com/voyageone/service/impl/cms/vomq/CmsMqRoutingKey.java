@@ -168,8 +168,11 @@ public class CmsMqRoutingKey {
     public static final String CMS_USA_PRODUCT_SALES_UPDATE = "VOCmsUsaProductSalesQueue";
     // 未整理的业务内容
 
-    //美国平台批量修改类目
-    public static final String CMS_USA_PLATFORM_CATEGORY_UPDATE = "VoCmsUsaPlatformCategoryUpdateMQJobQueue";
+    //美国平台修改类目单个
+    public static final String CMS_USA_PLATFORM_CATEGORY_UPDATE_ONE = "VoCmsUsaPlatformCategoryUpdateOneMQJobQueue";
+
+    //美国平台修改类目多个
+    public static final String CMS_USA_PLATFORM_CATEGORY_UPDATE_MANY = "VoCmsUsaPlatformCategoryUpdateManyMQJobQueue";
 
     /**
      * image create task

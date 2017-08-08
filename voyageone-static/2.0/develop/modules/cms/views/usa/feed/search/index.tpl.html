@@ -135,7 +135,7 @@
 
     <div class="container-fluid">
         <div class="panel panel-default">
-            <div class="panel-heading" ng-show="ctrl.flag == 3">
+            <div class="panel-heading" ng-show="ctrl.flag > 1">
                 <div class="container-fluid">
                     <div class="row" >
                         <div class="col-md-6">
@@ -147,7 +147,13 @@
                         </div>
                         <div class="col-md-6" >
                             <div class="btn-group pull-right" style="margin-top: 7px; margin-right: 17px;">
-                                <button type="button" class="btn btn-default btn-pop" ng-click="ctrl.popBatchApprove()"><i class="fa fa-gear"></i>&nbsp;Bulk Approve</button>
+                                <button type="button" class="btn btn-default btn-pop"
+                                        ng-if="ctrl.flag > 1"
+                                        ng-click="ctrl.batchApprovePricing()"><i class="fa fa-gear"></i>&nbsp;Bulk Approve Pricing</button>
+                                &nbsp;&nbsp;
+                                <button type="button" class="btn btn-default btn-pop"
+                                        ng-if="ctrl.flag==3"
+                                        ng-click="ctrl.popBatchApprove()"><i class="fa fa-gear"></i>&nbsp;Bulk Approve</button>
                             </div>
                         </div>
                     </div>
@@ -158,7 +164,7 @@
                     <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
                         <thead>
                             <tr>
-                                <th class="text-center" ng-show="ctrl.flag == 3">
+                                <th class="text-center" ng-show="ctrl.flag > 1">
                                     <input type="checkbox"  ng-model="ctrl.isAll" ng-change="ctrl.selectAll()" >
                                 </th>
                                 <th class="text-center">IMG</th>
@@ -179,13 +185,13 @@
                                     Msrp($)
                                     <button class="opacityBtn"
                                             ng-if="ctrl.feeds.length"
-                                            ng-click="ctrl.columnOrder('priceClientMsrp')"><i class="fa fa-{{ctrl.getArrowName('priceClientMsrp')}}"></i></button>
+                                            ng-click="ctrl.columnOrder('usPlatforms.P8.priceClientMsrp')"><i class="fa fa-{{ctrl.getArrowName('priceClientMsrp')}}"></i></button>
                                 </th>
                                 <th class="text-right" ng-hide="ctrl.flag == 1" style="min-width: 100px">
                                     Price($)
                                     <button class="opacityBtn"
                                             ng-if="ctrl.feeds.length"
-                                            ng-click="ctrl.columnOrder('priceClientRetail')"><i class="fa fa-{{ctrl.getArrowName('priceClientRetail')}}"></i></button>
+                                            ng-click="ctrl.columnOrder('usPlatforms.P8.priceClientRetail')"><i class="fa fa-{{ctrl.getArrowName('priceClientRetail')}}"></i></button>
                                 </th>
                                 <th class="text-center" style="min-width: 120px">
                                     Created On
@@ -208,8 +214,8 @@
                                 <td colspan="14" if-no-rows="ctrl.feeds.length"  style="padding: 0px"></td>
                             </tr>
                             <tr ng-repeat="feed in ctrl.feeds" style="height: 90px">
-                                <td class="text-center" ng-show="ctrl.flag == 3">
-                                    <input type="checkbox" ng-model="feed.check" ng-if="feed.approvePricing == '1' && feed.status == 'Ready'">
+                                <td class="text-center" ng-show="ctrl.flag > 1">
+                                    <input type="checkbox" ng-model="feed.check">
                                 </td>
                                 <td class="text-center">
                                     <a href="javascript:void(0)">
@@ -227,7 +233,7 @@
                                     <span class="cur-p label" ng-class="{'label-info':feed.approvePricing == 1,'label-danger':feed.approvePricing != 1}"
                                           ng-click="ctrl.canApprovePrice(feed)">{{feed.approvePricing == 1 ? 'Yes' : 'No'}}</span>
                                 </td>
-                                <td class="text-right" ng-if="feed.priceClientMsrpMin == feed.priceClientMsrpMax" ng-hide="ctrl.flag == 1">
+                                <!--<td class="text-right" ng-if="feed.priceClientMsrpMin == feed.priceClientMsrpMax" ng-hide="ctrl.flag == 1">
                                     <div class="input-group">
                                         <span class="input-group-addon cur-p"
                                               ng-click="feed.editMsrp =feed.approvePricing != 1? !feed.editMsrp:feed.editMsrp"><i class="fa fa-pencil"></i></span>
@@ -250,6 +256,29 @@
                                 </td>
                                 <td class="text-right" ng-if="feed.priceClientRetailMin != feed.priceClientRetailMax" ng-hide="ctrl.flag == 1">
                                     {{feed.priceClientRetailMin}}~{{feed.priceClientRetailMax}}
+                                </td>-->
+
+                                <td class="text-right" ng-hide="ctrl.flag == 1">
+                                    <div class="input-group">
+                                        <span class="input-group-addon cur-p"
+                                              ng-click="feed.editMsrp =feed.approvePricing != 1? !feed.editMsrp:feed.editMsrp"><i class="fa fa-pencil"></i></span>
+                                        <input type="number" class="form-control text-right"
+                                               ng-init="feed.priceClientMsrp = feed.usPlatforms.P8.priceClientMsrp"
+                                               ng-model="feed.priceClientMsrp"
+                                               ng-enter="ctrl.updatePrice(feed,'priceClientMsrp', feed.priceClientMsrp, 8)"
+                                               ng-disabled="!feed.editMsrp ">
+                                    </div>
+                                </td>
+                                <td class="text-right" ng-hide="ctrl.flag == 1">
+                                    <div class="input-group">
+                                        <span class="input-group-addon cur-p"
+                                              ng-click="feed.editRetai =feed.approvePricing != 1?!feed.editRetai:feed.editRetai"><i class="fa fa-pencil"></i></span>
+                                        <input type="number" class="form-control text-right"
+                                               ng-disabled="!feed.editRetai"
+                                               ng-init="feed.priceClientRetail = feed.usPlatforms.P8.priceClientRetail"
+                                               ng-model="feed.priceClientRetail"
+                                               ng-enter="ctrl.updatePrice(feed,'priceClientRetail',feed.priceClientRetail, 8)">
+                                    </div>
                                 </td>
                                 <td class="text-center">{{feed.created}}</td>
                                 <td class="text-center">{{feed.lastReceivedOn}}</td>

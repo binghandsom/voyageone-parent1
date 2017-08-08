@@ -855,7 +855,8 @@ define(function () {
                 updateOne: "updateOne",
                 setPrice: "setPrice",
                 list: "list",
-                approve: "approve"
+                approve: "approve",
+                bulkApprovePricing:"bulkApprovePricing"
             },
             advanceSearch: {
                 root: "/cms/us/advanceSearch",
@@ -864,7 +865,10 @@ define(function () {
                 getCustomColumns: "getCustomColumns",
                 saveCustomColumns: "saveCustomColumns",
                 updatePrice: "updatePrice",
-                listOrDelist: "listOrDelist"
+                listOrDelist: "listOrDelist",
+                updatePrimaryCategory:"updatePrimaryCategory",
+                updateOtherCategory:"updateOtherCategory"
+
             },
             usTagService: {
                 root: "/cms/us/tag",

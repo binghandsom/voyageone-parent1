@@ -121,7 +121,7 @@ define([
                 self.openTag(result, parentIndex);
         }
 
-        save() {
+        save(flag) {
             let self = this,
                 mapById = flatTrees(self.orgTagTree, null, 'id'),
                 mapByTagPath = flatTrees(self.orgTagTree, null, 'tagPath'),
@@ -168,9 +168,10 @@ define([
             });
 
             self.$uibModalInstance.close({
-                "selectdTagList": selectdTagList,
-                'orgFlg': self.context.orgFlg,
-                'orgDispTagList': orgDispTagList
+                selectdTagList: selectdTagList,
+                orgFlg: self.context.orgFlg,
+                orgDispTagList: orgDispTagList,
+                continue:flag === 1
             });
         }
 

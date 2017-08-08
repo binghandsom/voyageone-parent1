@@ -423,11 +423,58 @@ define([
                     self.clearSelList();
                     self._selall = 0;
                 }
-                    self.notify.success('Update Success');
+                self.notify.success('Update Success');
             });
         }
 
+        updatePrimaryCategory(cartId){
+            let self = this;
 
+            if(self.getSelectedProduct('code').length === 0){
+                self.alert("please choose at least one!!!");
+                return;
+            }
+            self.popups.openUsCategory({
+                cartId:cartId? cartId :0
+            }).then(context => {
+                self.advanceSearch.updatePrimaryCategory({
+                    selAll:self._selall,
+                    codeList:self.getSelectedProduct('code'),
+                    searchInfo:self.searchUtilService.handleQueryParams(self),
+                    cartId:cartId? cartId :0,
+                    pCatPath:context.catPath,
+                    pCatId:context.catId,
+                    flag:true,
+                    mapping:context.mapping
+                }).then();
+
+                console.log(context);
+
+                self.notify.success('Update Success');
+            });
+        }
+
+        updateOtherCategory(cartId){
+            let self = this;
+
+            if(self.getSelectedProduct('code').length === 0){
+                self.alert("please choose at least one!!!");
+                return;
+            }
+            self.popups.openUsCategory({
+                selAll:self._selall,
+                codeList:self.getSelectedProduct('code'),
+                queryMap:self.searchUtilService.handleQueryParams(self),
+                cartId:cartId? cartId :0
+            }).then(res => {
+                if(res.success == "1"){
+                    //需要清除勾选状态
+                    self.clearSelList();
+                    self._selall = 0;
+                }
+                self.notify.success('Update Success');
+            });
+        }
         /**
          * 检索列排序
          * */
@@ -529,7 +576,8 @@ define([
                         }).then(function () {
                             // notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
                             self.notify.success("Set free tags succeeded.");
-                            self.clearSelList();
+                            if(!res.continue)
+                                self.clearSelList();
                             self._selall = false;
                             self.search();
                         })

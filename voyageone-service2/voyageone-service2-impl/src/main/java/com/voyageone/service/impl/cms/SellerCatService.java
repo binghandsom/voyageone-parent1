@@ -515,7 +515,7 @@ public class SellerCatService extends BaseService {
         return sellerCat;
     }
 
-    public Map sellerCompare(List<CmsBtProductModel_SellerCat> o, List<CmsBtProductModel_SellerCat> n){
+    public Map<String, List<String>>  sellerCompare(List<CmsBtProductModel_SellerCat> o, List<CmsBtProductModel_SellerCat> n){
 
         List<String> oCatIds = new ArrayList<>();
         List<String> delCatPath = new ArrayList<>();

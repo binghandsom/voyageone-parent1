@@ -35,7 +35,8 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title text-left vo_reqfield">Model</label>
                                         <div class="col-md-6">
-                                            <input type="text" class="form-control" name="model" ng-model="ctrl.feed.model" required>
+                                            <input type="text" class="form-control" name="model" ng-model="ctrl.feed.model"
+                                                   ng-change="ctrl.feed.model=ctrl.feed.model.toLowerCase()" required>
                                         </div>
                                         <div class="col-md-1">
                                             <button type="button" class="btn btn-default" ng-click="ctrl.getTopModel(5)">
@@ -272,9 +273,10 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title text-left vo_unreqfield">Color Map</label>
                                         <div class="col-md-6">
-                                            <select class="form-control" name="origin" chosen search-contain="true"
-                                                    ng-options="color.value as color.name for color in ctrl.colorMap"
-                                                    ng-model="ctrl.feed.colorMap">
+                                            <select class="form-control" name="origin" chosen search-contain="true" ng-model="ctrl.feed.colorMap">
+                                                <option value="{{colorModel.value}}" ng-repeat="colorModel in ctrl.colorMap" ng-if="$index <= ctrl.colorMap.length"
+                                                        ng-style="{background:colorModel.value}" ng-bind="colorModel.name">
+                                                </option>
                                             </select>
                                         </div>
                                     </div>
@@ -516,7 +518,7 @@
 
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                             <div class="col no-padder bg-light vo_prodDetailPanel">
 
                                 <uib-tabset class="tab-container vo_nav-tabs">
@@ -560,7 +562,7 @@
                                                             <div class="row">
                                                                 <label class="col-md-6 query-title text-left">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
-                                                                    <input type="number" class="form-control" maxlength="2" max="15" ng-model="ctrl.feed.imageNum" ng-enter="ctrl.initImage(ctrl.feed.imageNum)">
+                                                                    <input type="number" class="form-control"  scale="2,0" ng-model="ctrl.feed.imageNum" ng-enter="ctrl.initImage(ctrl.feed.imageNum)">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -626,7 +628,7 @@
                                                             <div class="row">
                                                                 <label class="col-md-6 query-title text-left">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
-                                                                    <input type="number" class="form-control" maxlength="2" max="15" ng-model="ctrl.feed.boxImageNum" ng-enter="ctrl.initBoxImage(ctrl.feed.boxImageNum)">
+                                                                    <input type="number" class="form-control"  scale="2,0" ng-model="ctrl.feed.boxImageNum" ng-enter="ctrl.initBoxImage(ctrl.feed.boxImageNum)">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -654,53 +656,33 @@
                                 </uib-tabset>
 
                             </div>
-                        </div>
-                    </div>
+                            <div class="skuItem">
+                                <div class="skuItem-head">
+                                    <h4>Skus</h4>
+                                </div>
+                                <div class="skuItem-body">
+                                    <div class="table-responsive box box-body">
+                                        <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                                            <thead>
+                                            <tr>
+                                                <th class="text-left">Size</th>
+                                                <th class="text-left">SKU</th>
+                                                <th class="text-left">UPC</th>
+                                                <th class="text-right">QTY</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="sku in ctrl.feed.skus">
+                                                <td class="text-left">{{sku.size}}</td>
+                                                <td class="text-left">{{sku.sku}}</td>
+                                                <td class="text-left">{{sku.barcode}}</td>
+                                                <td class="text-right">{{sku.qty}}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
 
-                    <div class="skuItem">
-                        <div class="skuItem-head">
-                            <h4>Skus</h4>
-                        </div>
-                        <div class="skuItem-body">
-                            <div class="table-responsive box box-body">
-                                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
-                                    <thead>
-                                    <!--<tr>
-                                        <td colspan="2" ng-if="ctrl.auth!=1">
-
-                                                <div class="row form-group pull-right">
-                                                    <label class="col-md-8 control-label query-title text-left vo_unreqfield">Approve Pricing :</label>
-                                                    <div class="col-md-1">
-                                                        <div class="onoffswitch" style="margin: 0px auto;">
-                                                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="approvePricing"
-                                                                   ng-true-value="'1'" ng-false-value="'0'"
-                                                                   ng-model="ctrl.feed.approvePricing">
-                                                            <label class="onoffswitch-label" for="approvePricing">
-                                                                <span class="onoffswitch-inner"></span>
-                                                                <span class="onoffswitch-switch"></span>
-                                                            </label>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                        </td>
-                                    </tr>-->
-                                    <tr>
-                                        <th class="text-left">Size</th>
-                                        <th class="text-left">SKU</th>
-                                        <th class="text-left">UPC</th>
-                                        <th class="text-right">QTY</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr ng-repeat="sku in ctrl.feed.skus">
-                                        <td class="text-left">{{sku.size}}</td>
-                                        <td class="text-left">{{sku.sku}}</td>
-                                        <td class="text-left">{{sku.barcode}}</td>
-                                        <td class="text-right">{{sku.qty}}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -710,96 +692,89 @@
                         <div class="skuItem-head">
                             <h4>Price List</h4>
                         </div>
-                        <div class="skuItem-body">
-                            <div class="table-responsive box box-body">
-                                <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
-                                    <thead>
-                                    <tr>
-                                        <td class="text-left"></td>
-                                        <td class="text-left"></td>
-                                        <td class="text-right form-horizontal">
-                                            <div class="form-group query-title">default:</div>
-                                            <div class="form-group">
-                                                <input type="number" class="form-control text-right"
-                                                       ng-model="ctrl.setting.platformPrice.platformPrice"
-                                                       ng-enter="ctrl.setPlatformPrice('priceClientMsrp', ctrl.setting.platformPrice.platformPrice)">
-                                            </div>
-                                        </td>
-                                        <td class="text-right form-horizontal">
-                                            <div class="form-group query-title">default:</div>
-                                            <div class="form-group">
-                                                <input type="number" class="form-control text-right"
-                                                       ng-model="ctrl.setting.platformPrice.priceClientRetail"
-                                                       ng-enter="ctrl.setPlatformPrice('priceClientRetail', ctrl.setting.platformPrice.priceClientRetail)">
-                                            </div>
-                                        </td>
-                                        <td colspan="2" ng-if="ctrl.auth!=1">
-                                            <div class="row form-group pull-right">
-                                                <label class="col-md-8 control-label query-title text-left vo_unreqfield">Approve Pricing :</label>
-                                                <div class="col-md-1">
-                                                    <div class="onoffswitch" style="margin: 0px auto;">
-                                                        <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="approvePricing"
-                                                               ng-true-value="'1'" ng-false-value="'0'"
-                                                               ng-model="ctrl.feed.approvePricing">
-                                                        <label class="onoffswitch-label" for="approvePricing">
-                                                            <span class="onoffswitch-inner"></span>
-                                                            <span class="onoffswitch-switch"></span>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th class="text-left" ng-if="ctrl.feed.feedAuth == 3">Is Sale</th>
-                                        <th class="text-left">Platform</th>
-                                        <th class="text-right">Msrp($)</th>
-                                        <th class="text-right">Price($)</th>
-                                        <th class="text-right">CN Msrp(￥)</th>
-                                        <th class="text-right">CN Price(￥)</th>
-                                        <th class="text-right" ng-if="ctrl.feed.feedAuth == 3">Days OldBefore Sharing</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr ng-repeat="(key, platform) in ctrl.feed.usPlatforms">
-                                        <td class="text-left" ng-if="ctrl.feed.feedAuth == 3">
-                                            <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="platform.isSale">
-                                        </td>
-                                        <td class="text-left">{{ctrl.platformsObj[platform.cartId]}}</td>
-                                        <td class="text-right">
-                                            <input type="number" class="form-control text-right"
-                                                   ng-model="platform.priceClientMsrp" ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" required>
-                                        </td>
-                                        <td class="text-right">
-                                            <input type="number" class="form-control text-right"
-                                                   ng-model="platform.priceClientRetail" ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" required>
-                                        </td>
-                                        <td class="text-right"><label>-</label></td>
-                                        <td class="text-right"><label>-</label></td>
-                                        <td class="text-right" ng-if="ctrl.feed.feedAuth == 3">
-                                            <input type="number" class="form-control text-right" ng-model="platform.sharingDay"/>
-                                        </td>
-                                    </tr>
-                                    <tr ng-if="ctrl.feed.feedAuth > 1" ng-repeat="(key, platform) in ctrl.feed.platforms">
-                                        <td class="text-left" ng-if="ctrl.feed.feedAuth == 3">
-                                            <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="platform.isSale">
-                                        </td>
-                                        <td class="text-left">{{ctrl.platformsObj[platform.cartId]}}</td>
-                                        <td class="text-right"><label>-</label></td>
-                                        <td class="text-right"><label>-</label></td>
-                                        <td class="text-right">
-                                            <input type="number" class="form-control text-right" ng-model="platform.priceMsrp" required readonly>
-                                        </td>
-                                        <td class="text-right">
-                                            <input type="number" class="form-control text-right" ng-model="platform.priceCurrent" required readonly>
-                                        </td>
-                                        <td class="text-right"><label>-</label></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                        <div class="panel panel-default">
+                            <div class="panel-heading clearfix">
+                                <div class="row form-group pull-left">
+                                    <p class="text-warnings"><i class="fa fa-bell-o"></i>&nbsp;click the button to setting default price</p>
 
+                                </div>
+                                <div class="row form-group pull-right" ng-if="ctrl.feed.feedAuth > 1">
+                                    <label class="col-md-8 control-label query-title text-left vo_unreqfield">Approve Pricing :</label>
+                                    <div class="col-md-1">
+                                        <div class="onoffswitch" style="margin: 0px auto;">
+                                            <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="approvePricing"
+                                                   ng-true-value="'1'" ng-false-value="'0'"
+                                                   ng-model="ctrl.feed.approvePricing">
+                                            <label class="onoffswitch-label" for="approvePricing">
+                                                <span class="onoffswitch-inner"></span>
+                                                <span class="onoffswitch-switch"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-body">
+                                <div class="skuItem-body">
+                                    <div class="table-responsive box box-body">
+                                        <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
+                                            <thead>
+                                            <tr>
+                                                <th class="text-left" ng-if="ctrl.feed.feedAuth == 3">Is Sale</th>
+                                                <th class="text-left">Platform</th>
+                                                <th class="text-right">
+                                                    <default-price type="priceClientMsrp" func="ctrl.setPlatformPrice">Msrp($)</default-price>
+                                                </th>
+                                                <th class="text-right">
+                                                    <default-price type="priceClientRetail" func="ctrl.setPlatformPrice">Price($)</default-price>
+                                                </th>
+                                                <th class="text-right">CN Msrp(￥)</th>
+                                                <th class="text-right">CN Price(￥)</th>
+                                                <th class="text-right" ng-if="ctrl.feed.feedAuth == 3">Days OldBefore Sharing</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr ng-repeat="(key, platform) in ctrl.feed.usPlatforms">
+                                                <td class="text-left" ng-if="ctrl.feed.feedAuth == 3">
+                                                    <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="platform.isSale">
+                                                </td>
+                                                <td class="text-left">{{ctrl.platformsObj[platform.cartId]}}</td>
+                                                <td class="text-right">
+                                                    <input type="number" class="form-control text-right"
+                                                           ng-model="platform.priceClientMsrp" ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" required>
+                                                </td>
+                                                <td class="text-right">
+                                                    <input type="number" class="form-control text-right"
+                                                           ng-model="platform.priceClientRetail" ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" required>
+                                                </td>
+                                                <td class="text-right"><label>-</label></td>
+                                                <td class="text-right"><label>-</label></td>
+                                                <td class="text-right" ng-if="ctrl.feed.feedAuth == 3">
+                                                    <input type="number" class="form-control text-right" ng-model="platform.sharingDay"/>
+                                                </td>
+                                            </tr>
+                                            <tr ng-if="ctrl.feed.feedAuth > 1" ng-repeat="(key, platform) in ctrl.feed.platforms">
+                                                <td class="text-left" ng-if="ctrl.feed.feedAuth == 3">
+                                                    <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="platform.isSale">
+                                                </td>
+                                                <td class="text-left">{{ctrl.platformsObj[platform.cartId]}}</td>
+                                                <td class="text-right"><label>-</label></td>
+                                                <td class="text-right"><label>-</label></td>
+                                                <td class="text-right">
+                                                    <input type="number" class="form-control text-right" ng-model="platform.priceMsrp" required readonly>
+                                                </td>
+                                                <td class="text-right">
+                                                    <input type="number" class="form-control text-right" ng-model="platform.priceCurrent" required readonly>
+                                                </td>
+                                                <td class="text-right" ng-if="ctrl.feed.feedAuth == 3"><label>-</label></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </form>
             </div>

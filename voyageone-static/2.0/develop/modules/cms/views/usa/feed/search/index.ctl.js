@@ -157,6 +157,29 @@ define([
 
         }
 
+        // 修改价格, 对应feed.usPlatforms.P8.XX
+        updatePrice(feed, key, value, cartId) {
+            let self = this,
+                requestMap = {};
+
+            if(value == null || value <= 0){
+                self.alert("Price must be greater than 0!");
+                feed.editMsrp = feed.editRetai = false;
+                return;
+            }
+
+            requestMap.code = feed.code;
+            requestMap["cartId"] = cartId;
+            requestMap[key] = value + '';
+
+            self.itemDetailService.updateOne(requestMap).then(() => {
+                self.notify.success('update success!');
+
+                feed.editMsrp = false;
+                feed.editRetai = false;
+            });
+        }
+
         clear() {
             let self = this,
                 columnArrow = self.columnArrow;
@@ -212,6 +235,37 @@ define([
             });
         }
 
+        // 批量Approve Pricing
+        batchApprovePricing() {
+            let self = this,
+                codeList = [];
+
+            codeList = _.chain(self.feeds).filter(item => {
+                return item.check;
+            }).pluck('code').value();
+
+            if (codeList.length === 0 && self.totalItems == false) {
+                self.alert('Please select at least one！');
+                return false;
+            }
+
+            self.confirm("Make sure of approving pricing of the selected products").then(confirmed => {
+                self.itemDetailService.bulkApprovePricing(
+                    {
+                        selAll:self.totalItems,
+                        codeList:codeList,
+                        searchMap: self.paraMap
+                    }
+                ).then(res => {
+                    self.isAll = false;
+                    angular.forEach(self.feeds, function (feed) {
+                        feed.check = false;
+                    })
+                    self.totalItems = false;
+                    self.getList();
+                });
+            });
+        }
 
         popBatchApproveOne(code) {
             let self = this,
@@ -237,7 +291,7 @@ define([
             let self = this;
 
             _.each(self.feeds, feed => {
-                if(feed.approvePricing == '1' && feed.status == 'Ready')
+                if(feed.status != 'New')
                     feed.check = self.isAll;
             });
         }

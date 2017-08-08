@@ -13,14 +13,8 @@ define([
             this.commonService = commonService;
 
             this.selAll = context.selAll; // 是否检索全量
-            this.updateModel = context.updateModel; // 是否是更新CmsFeedModel对象
             this.codeList = !context.codeList ? [] : context.codeList;
             this.context = context;
-            this.price = {
-                msrp:context.msrp,
-                price:context.price
-            };
-
             this.platforms = [];
 
             this.init();
@@ -45,17 +39,11 @@ define([
         }
 
         approve() {
-            // self.itemDetailService.
             let self = this;
-            let checkCarts = _.filter(self.platforms, item => {
-               return item.checked;
-            });
-
-            let approveInfo = {};
-            angular.forEach(checkCarts, item => {
-                let _tmp ={};
-                _tmp[item.cartId] = item.day;
-                _.extend(approveInfo, _tmp);
+            let approveInfo = [];
+            _.each(self.platforms, platform => {
+                let _tmp ={cartId:platform.cartId, day:platform.day, checked:platform.checked};
+                approveInfo.push(_tmp);
             });
             let params = {
                 selAll:self.selAll,
@@ -63,13 +51,9 @@ define([
                 approveInfo:approveInfo,
                 searchMap:self.context.searchMap
             };
-            if (self.updateModel) {
-                self.$modalInstance.close({success:true,approveInfo:approveInfo});
-            } else {
-                self.itemDetailService.approve(params).then((res) => {
-                    self.$modalInstance.close({success:true});
-                });
-            }
+            self.itemDetailService.approve(params).then((res) => {
+                self.$modalInstance.close({success:true});
+            });
         }
     });
 

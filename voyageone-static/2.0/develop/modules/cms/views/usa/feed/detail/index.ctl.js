@@ -2,7 +2,8 @@
  * @description feed detail
  */
 define([
-    'cms'
+    'cms',
+    'modules/cms/directives/defaultPrice.directive'
 ], function (cms) {
 
     cms.controller('feedDetailController', class FeedDetailController {
@@ -84,6 +85,11 @@ define([
                         let cartId = parseInt(platform.value);
                         self.platformsObj[cartId] = cartId < 20 ? platform.name : platform.add_name2;
                     });
+                    // cartId=5是sharingDay默认45
+                    let cart5Obj = _.find(self.feed.usPlatforms, platform => {
+                        return platform.cartId == 5;
+                    });
+                    cart5Obj['sharingDay'] = 45;
 
                     // 如果有中国平台中国价格为null, 则触发计算价格
                     if (self.feed.feedAuth > 1) {
@@ -235,6 +241,10 @@ define([
             } else {
                 self.feed.weight = !weight ? null : parseFloat(weight);
             }
+
+            if (!self.feed.weightUnit) {
+                self.feed.weightUnit = self.setting.weightOrgUnits[0];
+            }
         }
 
         // 生成UrlKey
@@ -256,8 +266,11 @@ define([
         }
 
         // Set Platform Price
-        setPlatformPrice(property, value) {
-            let self = this;
+        setPlatformPrice(model) {
+            let self = this,
+                property = model.type,
+                value = model.price;
+
             if (property && value && !isNaN(value)) {
                 let usPlatofrms = _.values(self.feed.usPlatforms);
                 let snPlaform = _.find(usPlatofrms, platform => {
@@ -270,7 +283,7 @@ define([
                 let newOne = _.find(usPlatofrms, platform => {
                     return platform.cartId == 8;
                 })
-                if (pastOne.priceClientMsrp != newOne.priceClientMsrp || pastOne.priceClientRetail == newOne.priceClientRetail) {
+                if (pastOne.priceClientMsrp != newOne.priceClientMsrp || pastOne.priceClientRetail != newOne.priceClientRetail) {
                     self.calculatePrice();
                 }
             }
@@ -438,6 +451,13 @@ define([
 
         initImage(num) {
             let self = this;
+
+            if(num > 15){
+                self.notify.danger('Please not more than 15');
+                self.feed.imageNum = null;
+                return false;
+            }
+
             self.confirm("Make sure of setting the image count to <strong style='color:red'> " + num + "</strong>").then(confirmed => {
                 if (num <= 0) {
                     self.feed.image = [];
@@ -497,6 +517,13 @@ define([
 
         initBoxImage(num) {
             let self = this;
+
+            if(num > 15){
+                self.notify.danger('Please not more than 15');
+                self.feed.boxImageNum = null;
+                return false;
+            }
+
             self.confirm("Make sure of setting the image count to <strong style='color:red'> " + num + "</strong>").then(confirmed => {
                 if (!num || num <= 0) {
                     self.feed.attribute.boximages = [];

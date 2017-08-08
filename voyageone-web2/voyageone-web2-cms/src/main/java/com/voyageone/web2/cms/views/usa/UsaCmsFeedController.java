@@ -140,6 +140,7 @@ public class UsaCmsFeedController extends BaseController {
      */
     @RequestMapping(value = UsaCmsUrlConstants.FEED.APPROVE)
     public AjaxResponse approve(@RequestBody FeedRequest reqParams) {
+        UserSessionBean user = getUser();
         List<String> codeList = reqParams.getCodeList();
         Boolean selAll = reqParams.getSelAll();
         if (selAll != null && selAll) {
@@ -148,15 +149,38 @@ public class UsaCmsFeedController extends BaseController {
             reqParams.setSearchMap(new HashMap<>());
         }
         List<String> status = new ArrayList<>();
-        status.add(CmsConstants.ProductStatus.Ready.name());
+        status.add(CmsConstants.UsaFeedStatus.Ready.name());
         reqParams.getSearchMap().put("status",status );
         reqParams.getSearchMap().put("approvePricing", Collections.singletonList("1"));
         reqParams.getSearchMap().put("codeList",codeList);
-        codeList = usaFeedInfoService.getFeedCodeList(reqParams.getSearchMap(), getUser().getSelChannelId());
+        codeList = usaFeedInfoService.getFeedCodeList(reqParams.getSearchMap(), user.getSelChannelId());
 
-        if (!CollectionUtils.isEmpty(codeList)) {
-            UserSessionBean user = getUser();
+        if (CollectionUtils.isNotEmpty(codeList)) {
             usaFeedInfoService.approve(user.getSelChannelId(), codeList, reqParams.getApproveInfo(), user.getUserName());
+        }
+        return success("");
+    }
+
+    @RequestMapping(value = UsaCmsUrlConstants.FEED.BULK_APPROVE_PRICING)
+    public AjaxResponse bulkApprovePricing(@RequestBody FeedRequest reqParams) {
+        UserSessionBean user = getUser();
+        List<String> codeList = reqParams.getCodeList();
+        Boolean selAll = reqParams.getSelAll();
+        if (selAll != null && selAll) {
+            codeList = null;
+        }else{
+            reqParams.setSearchMap(new HashMap<>());
+        }
+        List<String> status = new ArrayList<>();
+        status.add(CmsConstants.UsaFeedStatus.Pending.name());
+        status.add(CmsConstants.UsaFeedStatus.Ready.name());
+        reqParams.getSearchMap().put("status",status );
+        reqParams.getSearchMap().put("approvePricing", Collections.singletonList("0"));
+        reqParams.getSearchMap().put("codeList",codeList);
+        codeList = usaFeedInfoService.getFeedCodeList(reqParams.getSearchMap(), user.getSelChannelId());
+
+        if (CollectionUtils.isNotEmpty(codeList)) {
+            usaFeedInfoService.bulkApprovePricing(user.getSelChannelId(), codeList, user.getUserName());
         }
         return success("");
     }
@@ -206,19 +230,32 @@ public class UsaCmsFeedController extends BaseController {
             if (code != null) {
                 queryMap.put("code", code);
             }
+
             //这里有类型转换异常
             String priceClientMsrp = (String) params.get("priceClientMsrp");
             if (StringUtils.isNotEmpty(priceClientMsrp)) {
                 msrpPrice = Double.parseDouble(priceClientMsrp);
             }
-            String price1 = (String) params.get("price");
-            if (StringUtils.isNotEmpty(price1)) {
-                price = Double.parseDouble(price1);
+            String priceClientRetail = (String) params.get("priceClientRetail");
+            if (StringUtils.isNotEmpty(priceClientRetail)) {
+                price = Double.parseDouble(priceClientRetail);
             }
-
+            Integer cartId = (Integer) params.get("cartId");
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(getUser().getSelChannelId(), code);
-            if (cmsBtFeedInfoModel != null) {
+            CmsBtFeedInfoModel_Platform_Cart platform = null;
+            if (cmsBtFeedInfoModel != null && cartId != null && (platform = cmsBtFeedInfoModel.getUsPlatform(cartId)) != null) {
+                if (msrpPrice != null) {
+                    platform.setPriceClientMsrp(msrpPrice);
+                }
+                if (price != null) {
+                    platform.setPriceClientRetail(price);
+                }
+
+                // cartId=8, 同步计算中国价格
+                usaFeedInfoService.setPrice(cmsBtFeedInfoModel);
+            }
+            /*if (cmsBtFeedInfoModel != null) {
                 cmsBtFeedInfoModel.setModifier(getUser().getUserName());
                 final Double finalMsrpPrice = msrpPrice;
                 final Double finalPrice = price;
@@ -231,16 +268,14 @@ public class UsaCmsFeedController extends BaseController {
                         sku.setPriceNet(finalPrice);
                     }
                 });
-            }
+            }*/
             String approvePricing = (String) params.get("approvePricing");
 
             if (approvePricing != null) {
                 cmsBtFeedInfoModel.setApprovePricing(approvePricing);
             }
-            cmsBtFeedInfoModel = usaFeedInfoService.setPrice(cmsBtFeedInfoModel);
             writeResult = feedInfoService.updateFeedInfo(cmsBtFeedInfoModel);
         }
-
 
         return success(writeResult);
     }
