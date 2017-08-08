@@ -82,5 +82,8 @@ public class CmsUsaPlatformCategoryUpdateManyMQMessageBody extends BaseMQMessage
         if (ListUtils.isNull(pCatPathAndPCatIds)) {
             throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数pCatPathAndPCatIds为空.");
         }
+        if (statue == null) {
+            throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数statue为空.");
+        }
     }
 }

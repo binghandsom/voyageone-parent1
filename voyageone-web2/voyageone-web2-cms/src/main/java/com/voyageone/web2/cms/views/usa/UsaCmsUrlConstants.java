@@ -57,6 +57,10 @@ public class UsaCmsUrlConstants {
 
         String LIST_OR_DELIST = "listOrDelist";
 
+        String UPDATE_PRIMARY_CATEGORY = "updatePrimaryCategory";
+
+        String UPDATE_OTHER_CATEGORY = "updateOtherCategory";
+
 
     }
 

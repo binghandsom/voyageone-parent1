@@ -505,6 +505,10 @@ public class UsaFeedInfoService extends BaseService {
         }
 
         feedInfoModel.getSkus().forEach(sku -> {
+
+            sku.setWeightOrg(feedInfoModel.getWeight());
+            sku.setWeightOrgUnit(feedInfoModel.getWeightUnit());
+
             if (StringUtil.isEmpty(sku.getWeightOrgUnit())) sku.setWeightOrgUnit("lb");
             if (!StringUtils.isEmpty(sku.getWeightOrg())) {
                 if ("lb".equalsIgnoreCase(sku.getWeightOrgUnit())) {
