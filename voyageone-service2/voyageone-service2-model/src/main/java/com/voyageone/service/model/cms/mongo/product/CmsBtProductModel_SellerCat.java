@@ -44,4 +44,10 @@ public class CmsBtProductModel_SellerCat extends BaseMongoMap<String, Object> {
     public void setcNames(List<String> cNames) {
         setAttribute("cNames", cNames);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        CmsBtProductModel_SellerCat sell = (CmsBtProductModel_SellerCat) o;
+        return this.getcId().equalsIgnoreCase(sell.getcId());
+    }
 }
