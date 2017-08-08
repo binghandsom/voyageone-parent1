@@ -50,8 +50,6 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
                 CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getUsPlatform(cartId);
 
                 List<CmsBtProductModel_SellerCat> sellerCats = platform.getSellerCats();
-                ArrayList<CmsBtProductModel_SellerCat> newSllerCats = new ArrayList<>();
-
                 List<Map<String, String>> maps = messageBody.getpCatPathAndPCatIds();
                 for (Map<String, String> map : maps) {
                     String pCatPath = map.get("pCatPath");
@@ -72,7 +70,14 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
                             }
                         } else {
                             //移除类目
-                            sellerCats.remove(newSellerCat);
+                            //判断是否为primary category 对应的类目,这种情况不能移除
+                            if (!newSellerCat.getcId().equalsIgnoreCase(platform.getpCatId())) {
+                                //非主类目对应的
+                                sellerCats.remove(newSellerCat);
+                            } else {
+                                //主类目对应的
+                                $info("primary category,对应的 sellerCat,不能移除,productCode:" + productCode + " pCatPath:" + pCatPath);
+                            }
                         }
                     }
                 }
