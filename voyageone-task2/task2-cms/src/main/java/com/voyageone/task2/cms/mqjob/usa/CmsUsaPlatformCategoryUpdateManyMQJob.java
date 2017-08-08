@@ -45,7 +45,7 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
         Integer cartId = messageBody.getCartId();
         for (String productCode : productCodes) {
             CmsBtProductModel cmsBtProductModel = productService.getProductByCode(messageBody.getChannelId(), productCode);
-            if(cmsBtProductModel != null) {
+            if (cmsBtProductModel != null) {
                 //获取美国平台对象
                 CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getUsPlatform(cartId);
 
@@ -55,40 +55,37 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
                 List<Map<String, String>> maps = messageBody.getpCatPathAndPCatIds();
                 for (Map<String, String> map : maps) {
                     String pCatPath = map.get("pCatPath");
-                    CmsBtProductModel_SellerCat newSellerCat = sellerCatService.getSellerCat(messageBody.getChannelId(), cartId,pCatPath);
-                    if (newSellerCat != null){
-                        newSllerCats.add(newSellerCat);
-                    }
-                }
-                boolean match = false;
-                if (newSllerCats != null){
-                    for (CmsBtProductModel_SellerCat newSllerCat : newSllerCats) {
-                        if (platform.getpCatId().equalsIgnoreCase(newSllerCat.getcId())){
-                            //不存在,再添加
-                            match = true;
-                            break;
+                    CmsBtProductModel_SellerCat newSellerCat = sellerCatService.getSellerCat(messageBody.getChannelId(), cartId, pCatPath);
+                    if (newSellerCat != null) {
+                        if (messageBody.getStatue()) {
+                            //添加类目,要判断是否重复
+                            boolean match = false;
+                            for (CmsBtProductModel_SellerCat sellerCat : sellerCats) {
+                                if (sellerCat.getcId().equalsIgnoreCase(newSellerCat.getcId())) {
+                                    //有重复的不用添加
+                                    match = true;
+                                }
+                            }
+                            //没有重复的
+                            if (!match) {
+                                sellerCats.add(newSellerCat);
+                            }
+                        } else {
+                            //移除类目
+                            sellerCats.remove(newSellerCat);
                         }
                     }
                 }
-                if (!match){
-                    for (CmsBtProductModel_SellerCat sellerCat : sellerCats) {
-                        //先用旧的pcatId匹配
-
-                        if (sellerCat.getcId().equalsIgnoreCase(platform.getpCatId())){
-                            newSllerCats.add(sellerCat);
-                            break;
-                        }
-                    }
-                }
-                update(productCode,messageBody,newSllerCats);
-                if(CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(platform.getStatus())){
+                update(productCode, messageBody, sellerCats);
+                if (CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(platform.getStatus())) {
                     //上新状态,更新上新表
                     sxProductService.insertSxWorkLoad(messageBody.getChannelId(), productCode, cartId, getTaskName());
                 }
             }
         }
     }
-    private void update(String productCode, CmsUsaPlatformCategoryUpdateManyMQMessageBody messageBody, List<CmsBtProductModel_SellerCat> sellerCats){
+
+    private void update(String productCode, CmsUsaPlatformCategoryUpdateManyMQMessageBody messageBody, List<CmsBtProductModel_SellerCat> sellerCats) {
         Integer cartId = messageBody.getCartId();
         List<BulkUpdateModel> bulkList = new ArrayList<>(1);
         HashMap<String, Object> updateMap = new HashMap<>();
@@ -100,9 +97,8 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
         model.setQueryMap(queryMap);
         bulkList.add(model);
         BulkWriteResult bulkWriteResult = productService.bulkUpdateWithMap(messageBody.getChannelId(), bulkList, messageBody.getSender() == null ? getTaskName() : messageBody.getSender(), "$set");
-        $info("更新产品表,productCode:" + productCode + " cartId:" + cartId + " writeResult:"  + JacksonUtil.bean2Json(bulkWriteResult));
+        $info("更新产品表,productCode:" + productCode + " cartId:" + cartId + " writeResult:" + JacksonUtil.bean2Json(bulkWriteResult));
     }
-
 
 
 }

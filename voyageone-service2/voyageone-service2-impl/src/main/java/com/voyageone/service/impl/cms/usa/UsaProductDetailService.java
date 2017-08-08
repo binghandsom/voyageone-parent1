@@ -314,7 +314,7 @@ public class UsaProductDetailService extends BaseService {
         }
 
 
-        if(platformModel.getCartId() ==CartEnums.Cart.SNKRHDp.getValue()) {
+        if(Objects.equals(platformModel.getCartId(), CartEnums.Cart.SNKRHDp.getValue())) {
             List<CmsBtProductModel_SellerCat> oSeller = null;
             if (oldProduct.getUsPlatform(platformModel.getCartId()) != null) {
                 oSeller = oldProduct.getUsPlatform(platformModel.getCartId()).getSellerCats();

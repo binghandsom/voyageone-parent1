@@ -24,6 +24,16 @@ public class CmsUsaPlatformCategoryUpdateManyMQMessageBody extends BaseMQMessage
     Integer cartId;
     //判断是否替换,true替换,false不替换
     Boolean flag;
+    //true:添加类目,false:移除类目
+    Boolean statue;
+
+    public Boolean getStatue() {
+        return statue;
+    }
+
+    public void setStatue(Boolean statue) {
+        this.statue = statue;
+    }
 
     public List<Map<String, String>> getpCatPathAndPCatIds() {
         return pCatPathAndPCatIds;

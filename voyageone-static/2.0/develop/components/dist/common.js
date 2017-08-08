@@ -2331,52 +2331,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 };
 
-angular.module("voyageone.angular.filter").filter("gmtDate", [ "$filter", function($filter) {
-    return function(input, format) {
-        var miliTimes;
-        if (!input) {
-            return "";
-        }
-        switch (typeof input === "undefined" ? "undefined" : _typeof(input)) {
-          case "string":
-            input = new Date(input);
-            miliTimes = input.getTime() + new Date().getTimezoneOffset() * 60 * 1e3 * -1;
-            break;
-
-          case "number":
-            miliTimes = new Date(input);
-            break;
-
-          default:
-            console.error("传入了未知类型数据！！！");
-        }
-        return $filter("date")(new Date(miliTimes), format);
-    };
-} ]);
-
-angular.module("voyageone.angular.filter").filter("stringCutter", function() {
-    return function(value, wordWise, max, tail) {
-        if (!value) return "";
-        max = parseInt(max, 10);
-        if (!max) return value;
-        if (value.length <= max) return value;
-        value = value.substr(0, max);
-        if (wordWise) {
-            var lastSpace = value.lastIndexOf(" ");
-            if (lastSpace != -1) {
-                value = value.substr(0, lastSpace);
-            }
-        }
-        return value + (tail || " …");
-    };
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function(obj) {
-    return typeof obj;
-} : function(obj) {
-    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-};
-
 angular.module("voyageone.angular.vresources", []).provider("$vresources", [ "$provide", function($provide) {
     function getActionUrl(root, action) {
         return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
@@ -2711,3 +2665,49 @@ TranslateService.prototype = {
         return currentLang.substr(0, 2);
     }
 };
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function(obj) {
+    return typeof obj;
+} : function(obj) {
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+angular.module("voyageone.angular.filter").filter("gmtDate", [ "$filter", function($filter) {
+    return function(input, format) {
+        var miliTimes;
+        if (!input) {
+            return "";
+        }
+        switch (typeof input === "undefined" ? "undefined" : _typeof(input)) {
+          case "string":
+            input = new Date(input);
+            miliTimes = input.getTime() + new Date().getTimezoneOffset() * 60 * 1e3 * -1;
+            break;
+
+          case "number":
+            miliTimes = new Date(input);
+            break;
+
+          default:
+            console.error("传入了未知类型数据！！！");
+        }
+        return $filter("date")(new Date(miliTimes), format);
+    };
+} ]);
+
+angular.module("voyageone.angular.filter").filter("stringCutter", function() {
+    return function(value, wordWise, max, tail) {
+        if (!value) return "";
+        max = parseInt(max, 10);
+        if (!max) return value;
+        if (value.length <= max) return value;
+        value = value.substr(0, max);
+        if (wordWise) {
+            var lastSpace = value.lastIndexOf(" ");
+            if (lastSpace != -1) {
+                value = value.substr(0, lastSpace);
+            }
+        }
+        return value + (tail || " …");
+    };
+});
