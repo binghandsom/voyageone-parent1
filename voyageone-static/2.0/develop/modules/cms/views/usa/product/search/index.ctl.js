@@ -6,12 +6,13 @@ define([
     'cms',
     'modules/cms/enums/Carts',
     'modules/cms/directives/platFormStatus.directive',
-    'modules/cms/directives/navBar.directive'
+    'modules/cms/directives/navBar.directive',
+    'modules/cms/service/search.util.service'
 ], function (cms,cartEntity) {
 
     cms.controller('usProductSearchController', class UsProductSearchController {
 
-        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2,notify,$routeParams,$rootScope) {
+        constructor(popups, advanceSearch,selectRowsFactory,$parse,$translate,alert,confirm,$searchAdvanceService2,notify,$routeParams,$rootScope,searchUtilService) {
             let self = this;
 
             self.accordionOpen = false;
@@ -26,7 +27,7 @@ define([
             self.$searchAdvanceService2 = $searchAdvanceService2;
             self.notify = notify;
             self.$routeParams = $routeParams;
-
+            self.searchUtilService = searchUtilService;
             self.pageOption = {curr: 1, total: 0, size: 10, fetch: function(){
                 self.query();
             }};
@@ -144,9 +145,8 @@ define([
 
         // 获取数据
         query() {
-
             let self = this;
-            let searchInfo = self.handleQueryParams();
+            let searchInfo = self.searchUtilService.handleQueryParams(self);
 
             self.srInstance.clearCurrPageRows();
             self.advanceSearch.search(searchInfo).then(res => {
@@ -226,95 +226,8 @@ define([
         }
 
         getProductValue(element,prop){
-            let self = this,
-                attrName;
-
-            if(prop.hasOwnProperty('propId'))
-                attrName = 'propId';
-            else
-                attrName = 'value';
-
-            let valueStr = prop[attrName];
-
-            if(valueStr.split(",").length === 2){
-                let _func1 = self.$parse(valueStr.split(",")[0]),
-                     _func2 = self.$parse(valueStr.split(",")[1]);
-
-                let priceSt = _func1(element) ? _func1(element) : '',
-                    priceEd = _func2(element) ? _func2(element) : '';
-
-                if(priceSt === priceEd){
-                    return priceSt;
-                }else{
-                    return `${priceSt} ~ ${priceEd}`;
-                }
-
-            }else{
-                let _func = self.$parse(prop[attrName]),
-                    result = _func(element);
-
-                if(result){
-                    if(prop.toLabel === 1){
-                        result = result === '1' ? 'yes':'no';
-                    }
-                }else{
-                    result = '';
-                }
-
-                return result;
-            }
-
-        }
-
-        // 处理请求参数
-        handleQueryParams() {
             let self = this;
-            let searchInfo = angular.copy(self.searchInfo);
-            if (!searchInfo) {
-                searchInfo = {};
-            }
-            // codeList 换行符分割
-            let codeList = [];
-            if (searchInfo.codeList) {
-                codeList = searchInfo.codeList.split("\n");
-            }
-            searchInfo.codeList = codeList;
-            // 处理平台状态
-            if (searchInfo.platformStatus) {
-                let platformStatusObj = _.pick(searchInfo.platformStatus, function (value, key, object) {
-                    return value;
-                });
-                searchInfo.platformStatus = _.keys(platformStatusObj);
-            }
-
-            //处理类目和店铺内分类
-            if(self.tempUpEntity.pCatPathListTmp)
-                // _.extend(searchInfo, {pCatPathType:1}); // 1 in, 2 not in
-                searchInfo.pCatPathList = _.pluck(self.tempUpEntity.pCatPathListTmp,'catPath');
-            if(self.tempUpEntity.cidValueTmp)
-                // _.extend(searchInfo, {shopCatType:1}); // 1 in, 2 not in
-                searchInfo.cidValue = _.pluck(self.tempUpEntity.cidValueTmp,'catId');
-
-            //价格范围排序修改
-            if(searchInfo.sortOneName && searchInfo.sortOneName.split(',').length === 2){
-                let _priceResult = '';
-
-                if(searchInfo.sortOneType === '1'){
-                    _priceResult = searchInfo.sortOneName.split(',')[0]
-                }else{
-                    _priceResult = searchInfo.sortOneName.split(',')[1];
-                }
-
-                _priceResult.replace(/P(\d)+([A-Z,a-z,\\.])+/g, function (match) {
-                    _priceResult = match;
-                });
-
-                searchInfo.sortOneName = _priceResult.replace('.','_');
-            }
-
-            // 分页参数处理
-            _.extend(searchInfo, {productPageNum:self.pageOption.curr, productPageSize:self.pageOption.size});
-            return searchInfo;
+            return self.searchUtilService.getProductValue(element, prop);
         }
 
         clear() {
@@ -370,7 +283,7 @@ define([
                 usPlatforms:self.masterData.usPlatforms,
                 customAttributeResult:self.customAttributeResult
             };
-            self.popups.openCustomAttributes(ctx).then(res => {
+            self.popups.openCustomAttributes(ctx).then(() => {
                 //防止重复显示，不能删除这行代码
                 self.customColumnNames = {};
 
@@ -395,14 +308,15 @@ define([
 
         popBatchPrice(cartId) {
             let self = this;
-            if(self.getSelectedProduct('code').length == 0){
+
+            if(self.getSelectedProduct('code').length === 0){
                 self.alert("please choose at least one!!!");
                 return;
             }
             self.popups.openBatchPrice({
                 selAll:self._selall,
                 codeList:self.getSelectedProduct('code'),
-                queryMap:self.handleQueryParams(),
+                queryMap:self.searchUtilService.handleQueryParams(self),
                 cartId:cartId? cartId :0
             }).then(res => {
                 //根据返回参数确定勾选状态,"1",需要清除勾选状态,"0"不需要清除勾选状态
@@ -489,14 +403,16 @@ define([
         //进行上下架操作
         batchList(cartId,activeStatus,usPlatformName){
             let self = this;
-            if(self.getSelectedProduct('code').length == 0){
+
+            if(self.getSelectedProduct('code').length === 0){
                 self.alert("please choose at least one!!!");
                 return;
             }
+
             self.popups.openUsList({
                 selAll:self._selall,
                 codeList:self.getSelectedProduct('code'),
-                queryMap:self.handleQueryParams(),
+                queryMap:self.searchUtilService.handleQueryParams(self),
                 cartId:cartId? cartId :0,
                 //操作状态1为上架,0为下架
                 activeStatus:activeStatus,
@@ -571,21 +487,23 @@ define([
          * 添加产品到指定自由标签
          */
         addFreeTag () {
-            let self = this;
-            let selCodeList = self.getSelectedProduct('code');
-            if (!self._selall && _.size(selCodeList) == 0) {
+            let self = this,
+                selCodeList = self.getSelectedProduct('code');
+
+            if (!self._selall && _.size(selCodeList) === 0) {
                 self.alert("Please select at least one record.");
                 return;
             }
-            let params = {
+
+            self.popups.openUsFreeTag({
                 orgFlg: '2',
                 selTagType: '6',
                 selAllFlg: self._selall ? 1 : 0,
                 selCodeList: self.getSelectedProduct('code'),
-                searchInfo: self.handleQueryParams()
-            };
-            self.popups.openUsFreeTag(params).then(res => {
+                searchInfo: self.searchUtilService.handleQueryParams(self)
+            }).then(res => {
                 let msg = '';
+
                 if (_.size(res.selectdTagList) > 0) {
                     let freeTagsTxt = _.chain(res.selectdTagList).map(function (key, value) {
                         return key.tagPathName;
@@ -594,20 +512,21 @@ define([
                 } else {
                     msg = "Clear free tags for selected products";
                 }
+
                 let freeTags = _.chain(res.selectdTagList).map(function (key, value) {
                     return key.tagPath;
                 }).value();
+
                 self.confirm(msg)
                     .then(function () {
-                        var data = {
+                        self.$searchAdvanceService2.addFreeTag({
                             "type":"usa",
                             "tagPathList": freeTags,
                             "prodIdList": selCodeList,
                             "isSelAll": self._selall ? 1 : 0,
                             "orgDispTagList": res.orgDispTagList,
-                            'searchInfo': self.handleQueryParams()
-                        };
-                        self.$searchAdvanceService2.addFreeTag(data).then(function () {
+                            'searchInfo': self.searchUtilService.handleQueryParams(self)
+                        }).then(function () {
                             // notify.success($translate.instant('TXT_MSG_SET_SUCCESS'));
                             self.notify.success("Set free tags succeeded.");
                             self.clearSelList();
