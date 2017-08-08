@@ -2256,15 +2256,11 @@ public class BackDoorController extends CmsController {
             }
             platform.setSkus(skuList);
 
-            if(feed.getApproveInfo() != null && !feed.getApproveInfo().containsKey(iCartId)){
-                platform.setLock("1");
-                platform.setIsSale("0");
-                platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
-            }else{
+
                 platform.setLock("0");
                 platform.setIsSale("1");
                 platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
-            }
+
             // 商品状态
                 platform.setpStatus(CmsConstants.PlatformStatus.OnSale.toString());
 

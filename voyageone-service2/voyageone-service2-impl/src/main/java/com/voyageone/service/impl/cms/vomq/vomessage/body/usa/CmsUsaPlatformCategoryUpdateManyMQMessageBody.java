@@ -14,20 +14,16 @@ import java.util.Map;
 /**
  * Created by dell on 2017/8/7.
  */
-@VOMQQueue(value = CmsMqRoutingKey.CMS_USA_PLATFORM_CATEGORY_UPDATE)
-public class CmsUsaPlatformCategoryUpdateMQMessageBody extends BaseMQMessageBody {
+@VOMQQueue(value = CmsMqRoutingKey.CMS_USA_PLATFORM_CATEGORY_UPDATE_MANY)
+public class CmsUsaPlatformCategoryUpdateManyMQMessageBody extends BaseMQMessageBody {
 
     List<String> productCodes;
     List<Map<String,String>> pCatPathAndPCatIds;
+//    String pCatPath;
+//    String pCatId;
     Integer cartId;
-
-    public List<String> getProductCodes() {
-        return productCodes;
-    }
-
-    public void setProductCodes(List<String> productCodes) {
-        this.productCodes = productCodes;
-    }
+    //判断是否替换,true替换,false不替换
+    Boolean flag;
 
     public List<Map<String, String>> getpCatPathAndPCatIds() {
         return pCatPathAndPCatIds;
@@ -35,6 +31,22 @@ public class CmsUsaPlatformCategoryUpdateMQMessageBody extends BaseMQMessageBody
 
     public void setpCatPathAndPCatIds(List<Map<String, String>> pCatPathAndPCatIds) {
         this.pCatPathAndPCatIds = pCatPathAndPCatIds;
+    }
+
+    public Boolean getFlag() {
+        return flag;
+    }
+
+    public void setFlag(Boolean flag) {
+        this.flag = flag;
+    }
+
+    public List<String> getProductCodes() {
+        return productCodes;
+    }
+
+    public void setProductCodes(List<String> productCodes) {
+        this.productCodes = productCodes;
     }
 
     public Integer getCartId() {
@@ -48,17 +60,17 @@ public class CmsUsaPlatformCategoryUpdateMQMessageBody extends BaseMQMessageBody
     @Override
     public void check() throws MQMessageRuleException {
         if (org.apache.commons.lang.StringUtils.isBlank(super.getChannelId())) {
-            throw new MQMessageRuleException("高级检索-批量设置平台类目MQ发送异常, 参数channelId为空.");
+            throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数channelId为空.");
         }
         if (CollectionUtils.isEmpty(productCodes)) {
-            throw new MQMessageRuleException("高级检索-批量设置平台类目MQ发送异常, 参数productCodes为空.");
+            throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数productCodes为空.");
         }
         if (cartId == null) {
-            throw new MQMessageRuleException("高级检索-批量设置平台类目MQ发送异常, 参数cartId为空.");
-        }
-        if (ListUtils.isNull(pCatPathAndPCatIds)) {
-            throw new MQMessageRuleException("高级检索-批量设置平台类目MQ发送异常, 参数pCatPathAndPCatIds为空.");
+            throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数cartId为空.");
         }
 
+        if (ListUtils.isNull(pCatPathAndPCatIds)) {
+            throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数pCatPathAndPCatIds为空.");
+        }
     }
 }
