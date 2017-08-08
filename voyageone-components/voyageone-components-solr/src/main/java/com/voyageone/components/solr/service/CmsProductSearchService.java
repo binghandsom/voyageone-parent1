@@ -315,9 +315,9 @@ public class CmsProductSearchService extends BaseSearchService {
         data.forEach((s, o) -> {
             if("id".equals(s)) return;
             if(o instanceof Collection){
-                for(Object item: (Collection)o){
-                    update.add(prefix+s, item);
-                }
+//                for(Object item: (Collection)o){
+                    update.add(prefix+s, o);
+//                }
             }else if(o instanceof Map){
                 Map<String, Object> items = (Map<String, Object>) o;
                 items.forEach((s1, cmsProductSearchPlatformModel) -> {
