@@ -72,7 +72,7 @@ public class UsaFeedInfoService extends BaseService {
     public CmsBtFeedInfoModel setPrice(CmsBtFeedInfoModel cmsBtFeedInfoModel) {
 
         String productType = cmsBtFeedInfoModel.getProductType();
-        if(!StringUtil.isEmpty(productType)){
+        if (!StringUtil.isEmpty(productType)) {
             productType = productType.toLowerCase();
         }
         CmsChannelConfigBean msrpConfig = CmsChannelConfigs.getConfigBean(cmsBtFeedInfoModel.getChannelId(), CmsConstants.ChannelConfig.FEED_PRICE_MSRP, productType);
@@ -92,20 +92,20 @@ public class UsaFeedInfoService extends BaseService {
         if (snPlatform != null) {
             Double priceMsrp = null;
             Double priceCurrent = null;
-            if(snPlatform.getPriceClientMsrp() == null || Double.compare(snPlatform.getPriceClientMsrp(),0.0) == 0) {
+            if (snPlatform.getPriceClientMsrp() == null || Double.compare(snPlatform.getPriceClientMsrp(), 0.0) == 0) {
                 priceMsrp = 0D;
             } else {
                 priceMsrp = calculatePrice(formulaMsrp, snPlatform);
             }
-            if(snPlatform.getPriceClientRetail() == null || snPlatform.getPriceClientMsrp() == null
-                    || Double.compare(snPlatform.getPriceClientRetail(),0.0) == 0 || Double.compare(snPlatform.getPriceClientMsrp(),0.0) == 0){
+            if (snPlatform.getPriceClientRetail() == null || snPlatform.getPriceClientMsrp() == null
+                    || Double.compare(snPlatform.getPriceClientRetail(), 0.0) == 0 || Double.compare(snPlatform.getPriceClientMsrp(), 0.0) == 0) {
                 priceCurrent = 0D;
-            }else{
+            } else {
                 priceCurrent = calculatePrice(formulaRetail, snPlatform);
             }
 
             // 中国平台价格
-            for (CmsBtFeedInfoModel_Platform_Cart platformCart :  cmsBtFeedInfoModel.getPlatforms().values()) {
+            for (CmsBtFeedInfoModel_Platform_Cart platformCart : cmsBtFeedInfoModel.getPlatforms().values()) {
                 platformCart.setPriceMsrp(priceMsrp);
                 platformCart.setPriceCurrent(priceCurrent);
             }
@@ -235,7 +235,7 @@ public class UsaFeedInfoService extends BaseService {
         //封装分页条件
         Integer pageNum = (Integer) searchValue.get("curr");
         Integer pageSize = (Integer) searchValue.get("size");
-        if ( pageNum != null && pageSize != null){
+        if (pageNum != null && pageSize != null) {
             queryObject.setSkip((pageNum - 1) * pageSize);
             queryObject.setLimit(pageSize);
         }
@@ -246,7 +246,7 @@ public class UsaFeedInfoService extends BaseService {
         //封装查询条件
         JongoQuery queryObject = getQuery(searchValue);
         List<CmsBtFeedInfoModel> feedList = feedInfoService.getList(channel, queryObject);
-        if(ListUtils.notNull(feedList)){
+        if (ListUtils.notNull(feedList)) {
             return feedList.stream().map(CmsBtFeedInfoModel::getCode).collect(Collectors.toList());
         }
         return null;
@@ -281,27 +281,23 @@ public class UsaFeedInfoService extends BaseService {
         //设置开始和截止的时间
         if (searchValue.get("lastReceivedOnStart") != null && searchValue.get("lastReceivedOnEnd") == null) {
             criteria = criteria.and("lastReceivedOn").gte((String) searchValue.get("lastReceivedOnStart"));
-        }
-        else if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") == null) {
+        } else if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") == null) {
             criteria = criteria.and("lastReceivedOn").lte((String) searchValue.get("lastReceivedOnEnd"));
-        }
-        else if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") != null) {
+        } else if (searchValue.get("lastReceivedOnEnd") != null && searchValue.get("lastReceivedOnStart") != null) {
             criteria = criteria.and("lastReceivedOn").gte((String) searchValue.get("lastReceivedOnStart")).lte((String) searchValue.get("lastReceivedOnEnd"));
         }
         //通过创建时间查询
         if (searchValue.get("createdStart") != null && searchValue.get("createdEnd") == null) {
             criteria = criteria.and("created").gte((String) searchValue.get("createdStart"));
-        }
-        else if (searchValue.get("createdEnd") != null && searchValue.get("createdStart") == null) {
+        } else if (searchValue.get("createdEnd") != null && searchValue.get("createdStart") == null) {
             criteria = criteria.and("created").lte((String) searchValue.get("createdEnd"));
-        }
-        else if (searchValue.get("createdEnd") != null && searchValue.get("createdStart") != null) {
+        } else if (searchValue.get("createdEnd") != null && searchValue.get("createdStart") != null) {
             criteria = criteria.and("created").gte((String) searchValue.get("createdStart")).lte((String) searchValue.get("createdEnd"));
         }
         //name模糊查询
 
 
-        if (StringUtils.isNotEmpty((String)searchValue.get("name"))) {
+        if (StringUtils.isNotEmpty((String) searchValue.get("name"))) {
             String name = (String) searchValue.get("name");
             String regEx = "[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]";
             Pattern p = Pattern.compile(regEx);
@@ -316,18 +312,18 @@ public class UsaFeedInfoService extends BaseService {
         }
         //多条件精确查询,SKU/ Barcode/ Code / Model
 
-        if (StringUtils.isNotEmpty((String)searchValue.get("searchContent"))) {
+        if (StringUtils.isNotEmpty((String) searchValue.get("searchContent"))) {
             String searchContent = (String) searchValue.get("searchContent");
             String[] split = searchContent.split("\n");
             List<String> searchContents = Arrays.asList(split);
-            criteria = criteria.orOperator(Criteria.where("code").in(searchContents), Criteria.where("model").in(searchContents), Criteria.where("skus.sku").in(searchContents), Criteria.where("skus.barcode").in(searchContents),Criteria.where("upc").in(searchContents));
+            criteria = criteria.orOperator(Criteria.where("code").in(searchContents), Criteria.where("model").in(searchContents), Criteria.where("skus.sku").in(searchContents), Criteria.where("skus.barcode").in(searchContents), Criteria.where("upc").in(searchContents));
         }
 
         if (ListUtils.notNull((List) searchValue.get("approvePricing"))) {
-            criteria = criteria.and("approvePricing").in((List)searchValue.get("approvePricing"));
+            criteria = criteria.and("approvePricing").in((List) searchValue.get("approvePricing"));
         }
 
-        if(ListUtils.notNull((List) searchValue.get("codeList"))){
+        if (ListUtils.notNull((List) searchValue.get("codeList"))) {
             criteria = criteria.and("code").in(((List) searchValue.get("codeList")).toArray());
         }
         return new JongoQuery(criteria);
@@ -508,9 +504,9 @@ public class UsaFeedInfoService extends BaseService {
             }
         }
 
-        feedInfoModel.getSkus().forEach(sku->{
-            if(StringUtil.isEmpty(sku.getWeightOrgUnit())) sku.setWeightOrgUnit("lb");
-            if(!StringUtils.isEmpty(sku.getWeightOrg())) {
+        feedInfoModel.getSkus().forEach(sku -> {
+            if (StringUtil.isEmpty(sku.getWeightOrgUnit())) sku.setWeightOrgUnit("lb");
+            if (!StringUtils.isEmpty(sku.getWeightOrg())) {
                 if ("lb".equalsIgnoreCase(sku.getWeightOrgUnit())) {
                     sku.setWeightCalc(sku.getWeightOrg());
                 } else if ("kg".equalsIgnoreCase(sku.getWeightOrgUnit())) {
@@ -544,10 +540,10 @@ public class UsaFeedInfoService extends BaseService {
      *
      * @param channelId   渠道ID
      * @param codeList    codeList
-     * @param approveInfo 各平台Approve信息,KV:cartId-Days Old Before Sharing
+     * @param approveInfo 各平台Approve信息
      * @param username    修改人
      */
-    public void approve(String channelId, List<String> codeList, Map<Integer, Integer> approveInfo, String username) {
+    public void approve(String channelId, List<String> codeList, List<Map<String, Object>> approveInfo, String username) {
         if (StringUtils.isBlank(channelId) || CollectionUtils.isEmpty(codeList)) {
             throw new BusinessException("Approve parameter error.");
         }
@@ -556,18 +552,38 @@ public class UsaFeedInfoService extends BaseService {
         jongoUpdate.setQuery("{\"channelId\":#,\"code\":{$in:#}}");
         jongoUpdate.setQueryParameters(channelId, codeList);
 
-        jongoUpdate.setUpdate("{$set:{\"updFlg\":#,\"status\":#,\"approveInfo\":#,\"modifier\":#,\"modified\":#}}");
-        jongoUpdate.setUpdateParameters(0, CmsConstants.UsaFeedStatus.Approved.name(), approveInfo, username, DateTimeUtil.getNow());
+        StringBuffer sb = new StringBuffer();
+        sb.append("{\"updFlg\":0,\"status\":#,\"modifier\":#,\"modified\":#");
+        List<Object> updateParameters = new ArrayList<>();
+        updateParameters.add(CmsConstants.UsaFeedStatus.Approved.name());
+        updateParameters.add(username);
+        updateParameters.add(DateTimeUtil.getNow());
+        for (Map<String, Object> approveMap : approveInfo) {
+            Integer cartId = (Integer) approveMap.get("cartId");
+            Integer day = (Integer) approveMap.get("day");
+            Boolean checked = (Boolean) approveMap.get("checked");
+            if (cartId == null) continue;
+            if (day == null || day < 0) {
+                day = 0;
+            }
+
+            if (cartId < 20) {
+                sb.append(",\"usPlatforms.P" + cartId + ".isSale\":#");
+                sb.append(",\"usPlatforms.P" + cartId + ".sharingDay\":#");
+                updateParameters.add((checked != null && checked.booleanValue()) ? 1 : 0);
+                updateParameters.add(day);
+            } else {
+                sb.append(",\"platforms.P" + cartId + ".isSale\":#");
+                updateParameters.add((checked != null && checked.booleanValue()) ? 1 : 0);
+            }
+        }
+        sb.append("}");
+
+        jongoUpdate.setUpdate("{$set:" + sb.toString() + "}");
+        jongoUpdate.setUpdateParameters(updateParameters.toArray());
 
         WriteResult writeResult = cmsBtFeedInfoDao.updateMulti(jongoUpdate, channelId);
         $info(String.format("(%s)批量Approve Feed, 结果:%s", username, JacksonUtil.bean2Json(writeResult)));
-
-    }
-
-    public static void main(String[] args) {
-
-        String hello = "a   b c &^^^^7r8~1";
-        System.out.println(hello.replaceAll("[^a-zA-Z0-9]+", " ").replaceAll("\\s+", "-"));
     }
 
 }
