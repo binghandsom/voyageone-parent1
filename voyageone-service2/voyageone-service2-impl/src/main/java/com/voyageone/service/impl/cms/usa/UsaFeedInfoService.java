@@ -118,6 +118,10 @@ public class UsaFeedInfoService extends BaseService {
             for (CmsBtFeedInfoModel_Sku sku : cmsBtFeedInfoModel.getSkus()) {
                 sku.setPriceMsrp(priceMsrp);
                 sku.setPriceCurrent(priceCurrent);
+                sku.setPriceClientMsrp(snPlatform.getPriceClientMsrp());
+                sku.setPriceClientRetail(snPlatform.getPriceClientRetail());
+                sku.setPriceNet(snPlatform.getPriceClientRetail());
+
                 priceClientRetailMin = Double.min(priceClientRetailMin, sku.getPriceClientRetail());
                 priceClientRetailMax = Double.max(priceClientRetailMax, sku.getPriceClientRetail());
                 priceClientMsrpMin = Double.min(priceClientMsrpMin, sku.getPriceClientMsrp());

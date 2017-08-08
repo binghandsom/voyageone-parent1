@@ -4,6 +4,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.impl.cms.CmsBtDataAmountService;
+import com.voyageone.service.impl.cms.TypeChannelsService;
 import com.voyageone.service.impl.cms.usa.UsaDataAmountService;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
@@ -28,7 +29,17 @@ import java.util.Map;
 public class UsaCmsCommonController extends BaseController {
 
     @Autowired
+    private TypeChannelsService typeChannelsService;
+    @Autowired
     private UsaDataAmountService usaDataAmountService;
+
+    /**
+     * 统一的当前语言环境提供
+     */
+    @Override
+    public String getLang() {
+        return "en";
+    }
 
     /**
      * 获取当前Channel所有的平台，包括en,cn
@@ -36,7 +47,7 @@ public class UsaCmsCommonController extends BaseController {
      */
     @RequestMapping(value = UsaCmsUrlConstants.COMMON.GET_CHANNEL_CART)
     public AjaxResponse getChannelCarts() {
-        return success(TypeChannels.getTypeList(Constants.comMtTypeChannel.SKU_CARTS_53, getUser().getSelChannelId()));
+        return success(typeChannelsService.getUsPlatformTypeList(getUser().getSelChannelId(), getLang()));
     }
 
     @RequestMapping(value = UsaCmsUrlConstants.COMMON.GET_FEED_INFO)

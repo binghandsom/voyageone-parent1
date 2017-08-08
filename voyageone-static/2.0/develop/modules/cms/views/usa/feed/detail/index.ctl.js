@@ -322,16 +322,6 @@ define([
                     return platformPrice.priceClientMsrp == 500 || platformPrice.priceClientRetail == 500;
                 });
                 if (!checkPlatforms || _.size(checkPlatforms) == 0) {
-                    // let ctx = {
-                    //     updateModel: true,
-                    //     codeList: [self.feed.code]
-                    // };
-                    // self.popups.openBatchApprove(ctx).then((res) => {
-                    //     if (res.success) {
-                    //         _.extend(self.feed, {approveInfo: res.approveInfo});
-                    //         self.saveFeed(flag);
-                    //     }
-                    // });
                     self.saveFeed(flag);
                 } else {
                     platforms = [];
@@ -340,16 +330,6 @@ define([
                     });
                     let message = `Platform[${platforms}] Msrp($) or price($) is 500, continue to approve?`;
                     self.confirm(message).then((confirmed) => {
-                        /*let ctx = {
-                            updateModel: true,
-                            codeList: [self.feed.code]
-                        };
-                        self.popups.openBatchApprove(ctx).then((res) => {
-                            if (res.success) {
-                                _.extend(self.feed, {approveInfo: res.approveInfo});
-                                self.saveFeed(flag);
-                            }
-                        });*/
                         self.saveFeed(flag);
                     }, () => {
 
