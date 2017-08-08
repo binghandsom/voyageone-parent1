@@ -148,7 +148,7 @@ public class UsaCmsFeedController extends BaseController {
             reqParams.setSearchMap(new HashMap<>());
         }
         List<String> status = new ArrayList<>();
-        status.add(CmsConstants.ProductStatus.Ready.toString());
+        status.add(CmsConstants.ProductStatus.Ready.name());
         reqParams.getSearchMap().put("status",status );
         reqParams.getSearchMap().put("approvePricing", Collections.singletonList("1"));
         reqParams.getSearchMap().put("codeList",codeList);

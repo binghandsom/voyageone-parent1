@@ -25,7 +25,7 @@
                                         <th class="white-space-noWrap">Days Old Before Sharing</th>
                                     </thead>
                                     <tbody>
-                                        <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId < 20 && platform.lang_id=='en'">
+                                        <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId < 20">
                                             <td>
                                                 <div class="checkbox">
                                                     <label>
@@ -59,7 +59,7 @@
                                         </th>
                                     </thead>
                                     <tbody>
-                                        <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId >= 20 && platform.lang_id=='cn'">
+                                        <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId >= 20">
                                             <td>
                                                 <div class="checkbox">
                                                     <label>
