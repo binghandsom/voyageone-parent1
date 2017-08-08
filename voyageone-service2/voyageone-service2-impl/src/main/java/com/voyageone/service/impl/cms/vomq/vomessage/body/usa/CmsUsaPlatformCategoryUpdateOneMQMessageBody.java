@@ -7,6 +7,7 @@ import com.voyageone.components.rabbitmq.bean.BaseMQMessageBody;
 import com.voyageone.components.rabbitmq.exception.MQMessageRuleException;
 import com.voyageone.service.impl.cms.vomq.CmsMqRoutingKey;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.poi.util.StringUtil;
 
 import java.util.List;
@@ -24,6 +25,14 @@ public class CmsUsaPlatformCategoryUpdateOneMQMessageBody extends BaseMQMessageB
     Integer cartId;
     //判断是否替换,true替换,false不替换
     Boolean flag;
+    Map<String,Object> mapping;
+
+    public Map<String, Object> getMapping() {
+        return mapping;
+    }
+    public void setMapping(Map<String, Object> mapping) {
+        this.mapping = mapping;
+    }
 
     public Boolean getFlag() {
         return flag;
@@ -81,6 +90,12 @@ public class CmsUsaPlatformCategoryUpdateOneMQMessageBody extends BaseMQMessageB
         }
         if (StringUtils.isEmpty(pCatPath)) {
             throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数pCatPath为空.");
+        }
+        if (MapUtils.isEmpty(mapping)) {
+            throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数mapping为空.");
+        }
+        if (flag == null) {
+            throw new MQMessageRuleException("美国CMS-高级检索-批量设置平台类目MQ发送异常, 参数flag为空.");
         }
 
     }
