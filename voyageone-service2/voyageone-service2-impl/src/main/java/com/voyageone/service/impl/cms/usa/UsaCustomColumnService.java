@@ -191,7 +191,7 @@ public class UsaCustomColumnService extends BaseService {
             Map<String, String> keyPriceMap = new HashMap<>();
             keyPriceMap.put("cartId", String.valueOf(cartId));
             keyPriceMap.put("name", String.format("%s Price", cartName));
-            keyPriceMap.put("value", String.format("usPlatforms.P%d.pPriceSaleSt,usPlatforms.P%d.pPriceSaleEd", cartId, cartId));
+            keyPriceMap.put("value", String.format("usPlatforms.P%d.pPriceRetailSt,usPlatforms.P%d.pPriceRetailEd", cartId, cartId));
             platformAttrList.add(keyPriceMap);
 
             Map<String, String> keyQtyMap = new HashMap<>();
