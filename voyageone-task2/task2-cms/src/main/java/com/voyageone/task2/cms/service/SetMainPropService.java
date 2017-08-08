@@ -1305,7 +1305,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 //            }
 //            1.【原始 颜色/口味/香型等】为空的场合，【颜色/口味/香型等】为“暂无”。
 //            2.【原始 颜色/口味/香型等】不为空的场合，【颜色/口味/香型等】调用字典进行中文自动翻译。
-            if(!"007".equals(feed.getChannelId())){
+            if(!"007".equals(feed.getChannelId()) && !"008".equals(feed.getChannelId())){
                 if(!StringUtil.isEmpty(productCommonField.getCodeDiff()) && (StringUtil.isEmpty(productCommonField.getColor()) || "暂无".equals(productCommonField.getColor()))){
                     String color = cmsBtTranslateService.translate(usjoi ? "928" : feed.getChannelId(), CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", productCommonField.getCodeDiff());
                     if (!StringUtil.isEmpty(color)) productCommonField.setColor(color);
