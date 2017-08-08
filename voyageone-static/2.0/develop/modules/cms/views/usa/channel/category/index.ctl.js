@@ -1,5 +1,8 @@
 /**
  * @description 美国店铺内分类
+ *
+ *              由于和高级检索逻辑类似请尽量把共同部分写在searchUtilService
+ *
  * @author piao
  */
 define([
