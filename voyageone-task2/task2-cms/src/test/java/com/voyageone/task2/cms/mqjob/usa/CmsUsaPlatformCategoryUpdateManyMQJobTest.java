@@ -36,7 +36,7 @@ public class CmsUsaPlatformCategoryUpdateManyMQJobTest {
         HashMap<String, String> map = new HashMap<>();
         map.put("pCatPath","Sale>Toddler>50% Off & Up");
         lists.add(map);
-        body.setpCatPathAndPCatIds(lists);
+//        body.setpCatPathAndPCatIds(lists);
         cmsUsaPlatformCategoryUpdateManyMQJob.onStartup(body);
     }
 }

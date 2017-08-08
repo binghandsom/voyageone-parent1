@@ -1,3 +1,7 @@
+/**
+ * @description 美国sneakerhead店铺内分类 cartId：8
+ * @author piao
+ */
 define([
     'cms'
 ], function (cms) {

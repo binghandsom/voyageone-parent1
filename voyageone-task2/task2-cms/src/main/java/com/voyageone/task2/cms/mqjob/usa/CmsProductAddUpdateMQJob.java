@@ -52,6 +52,7 @@ public class CmsProductAddUpdateMQJob extends TBaseMQCmsService<CmsProductAddUpd
 
     @Override
     public void onStartup(CmsProductAddUpdateMQMessageBody messageBody) throws Exception {
+        // code 必须小写
         if (messageBody.getStatus() != 1) {
             CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(messageBody.getChannelId(), messageBody.getCode());
             if (cmsBtFeedInfoModel == null) {

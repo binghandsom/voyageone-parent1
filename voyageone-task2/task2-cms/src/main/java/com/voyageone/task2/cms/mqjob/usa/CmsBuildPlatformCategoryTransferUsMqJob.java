@@ -1,9 +1,13 @@
 package com.voyageone.task2.cms.mqjob.usa;
 
+import com.google.common.collect.Lists;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ListUtils;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductTopDao;
 import com.voyageone.service.impl.cms.SellerCatService;
+import com.voyageone.service.impl.cms.product.search.CmsSearchInfoBean2;
+import com.voyageone.service.impl.cms.search.product.CmsProductSearchQueryService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsCategoryReceiveMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsCategoryTransferToUsMQMessageBody;
@@ -16,7 +20,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Charis on 2017/7/25.
@@ -27,14 +33,14 @@ public class CmsBuildPlatformCategoryTransferUsMqJob extends TBaseMQCmsService<C
 
     private static final String symbol = "-";
 
+
+    @Autowired
+    private CmsProductSearchQueryService cmsProductSearchQueryService;
     @Autowired
     private SellerCatService sellerCatService;
 
     @Autowired
     private CmsBtProductTopDao cmsBtProductTopDao;
-
-    @Autowired
-    private CmsBtProductDao cmsBtProductDao;
 
     @Autowired
     private CmsMqSenderService cmsMqSenderService;
@@ -62,7 +68,7 @@ public class CmsBuildPlatformCategoryTransferUsMqJob extends TBaseMQCmsService<C
             String catId = fullCatId;
 
             // 如果该类目是1级类目,自动批接上父类catId:1(Root Catalog), 2(Default Category)
-            String[] fullCatIdArrs = ("1-2-"+fullCatId).split(symbol);
+            String[] fullCatIdArrs = ("1-2-" + fullCatId).split(symbol);
             String parentId = "0";
             if (fullCatIdArrs.length > 0) {
                 catId = fullCatIdArrs[fullCatIdArrs.length - 1];
@@ -93,12 +99,12 @@ public class CmsBuildPlatformCategoryTransferUsMqJob extends TBaseMQCmsService<C
             List<String> codes = new ArrayList<>();
             CmsBtProductTopModel topModel = cmsBtProductTopDao.selectBySellerCatId(catId, channelId, Integer.parseInt(messageBody.getCartId()));
             if (topModel == null) {
-                codes.addAll(cmsBtProductDao.selectListCodeBySellerCat(channelId, Integer.parseInt(cartId), catId, null, null, null, true)); // 普通code排序
+                codes.addAll(selectListCodeBySellerCatWithSolr(channelId, Integer.parseInt(cartId), catId, null, null, Collections.emptyList())); // 普通code排序
             } else {
                 if (ListUtils.notNull(topModel.getProductCodeList())) {
                     codes.addAll(topModel.getProductCodeList()); // 置顶列表
                 }
-                codes.addAll(cmsBtProductDao.selectListCodeBySellerCat(channelId, Integer.parseInt(cartId), catId, topModel.getSortColumnName(), topModel.getSortType(), topModel.getProductCodeList(), true)); // 普通code排序
+                codes.addAll(selectListCodeBySellerCatWithSolr(channelId, Integer.parseInt(cartId), catId, topModel.getSortColumnName(), topModel.getSortType(), topModel.getProductCodeList())); // 普通code排序
 
             }
 
@@ -126,5 +132,41 @@ public class CmsBuildPlatformCategoryTransferUsMqJob extends TBaseMQCmsService<C
             fullCatIds.add(model.getFullCatId());
             findChildrenCatIds(model, fullCatIds);
         }
+    }
+
+    private List<String> selectListCodeBySellerCatWithSolr(String channelId, int cartId, String catId, String sortKey, Integer sortType, List<String> expCodes) {
+        List<String> ret = new ArrayList<>();
+
+        CmsSearchInfoBean2 params = new CmsSearchInfoBean2();
+        params.setCartId(cartId);
+        params.setCidValue(Lists.newArrayList(catId));
+        params.setShopCatType(1);
+
+        while (true) {
+            int pageNum = 1;
+            int pageSize = 100;
+
+            params.setProductPageNum(pageNum);
+            params.setProductPageSize(pageSize);
+            if (StringUtil.isEmpty(sortKey)) {
+                params.setSortOneName("created");
+                params.setSortOneType("-1");
+            } else {
+                params.setSortOneName(sortKey);
+                params.setSortOneType(String.valueOf(sortType));
+            }
+
+            CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(params, channelId, null, null);
+            List<String> searchResCodes = cmsProductCodeListBean.getProductCodeList();
+            if (ListUtils.notNull(searchResCodes)) {
+                ret.addAll(searchResCodes.stream().filter(item -> !expCodes.contains(item)).collect(Collectors.toList()));
+            }
+
+            if (ListUtils.isNull(searchResCodes) || searchResCodes.size() < pageSize) {
+                break;
+            }
+        }
+
+        return ret;
     }
 }

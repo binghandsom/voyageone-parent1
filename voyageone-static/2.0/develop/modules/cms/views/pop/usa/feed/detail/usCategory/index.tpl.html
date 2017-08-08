@@ -11,6 +11,18 @@
                 <strong>{{ctrl.selected.catPath ? ctrl.selected.catPath : ctrl.context.from}}</strong>
             </p>
         </div>
+
+        <div class="row" ng-if="ctrl.context.move">
+            <div class="col-md-12 checkbox">
+                <label>
+                    <input type="radio" name="categoryMove" ng-model="ctrl.context.move" value="1">&nbsp;&nbsp;Move In
+                </label>
+                <label>
+                    <input type="radio" name="categoryMove" ng-model="ctrl.context.move" value="0">&nbsp;&nbsp;Move Out
+                </label>
+            </div>
+        </div>
+
         <div class="category_drags">
             <div class="category_drag col-sm-3" ng-repeat="categoryItem in ctrl.totalCategory">
                 <div class="category_drag_main">
@@ -42,7 +54,7 @@
 
         </div>
 
-        <div class="container-fluid m-t">
+        <div class="container-fluid m-t" ng-if="ctrl.context.muiti">
             <div class="row">
                 <div class="col-md-9">
                     <label class="col-md-2 control-label">{{'TXT_CURRENT_CATEGORY_WITH_COLON' | translate}}</label>

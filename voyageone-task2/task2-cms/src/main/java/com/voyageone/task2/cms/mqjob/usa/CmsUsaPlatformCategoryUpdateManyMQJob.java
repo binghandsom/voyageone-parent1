@@ -62,6 +62,7 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
                                 if (sellerCat.getcId().equalsIgnoreCase(newSellerCat.getcId())) {
                                     //有重复的不用添加
                                     match = true;
+                                    break;
                                 }
                             }
                             //没有重复的
