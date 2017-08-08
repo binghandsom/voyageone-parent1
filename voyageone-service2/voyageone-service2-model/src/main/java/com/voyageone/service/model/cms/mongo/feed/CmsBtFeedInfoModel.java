@@ -89,8 +89,6 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     private String approvePricing;
 
-    private Map<Integer, Integer> approveInfo;
-
     public String getSizeChartType() {
         return sizeChartType;
     }
@@ -511,14 +509,6 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     public void setPriceClientMsrpMax(Double priceClientMsrpMax) {
         this.priceClientMsrpMax = priceClientMsrpMax;
-    }
-
-    public Map<Integer, Integer> getApproveInfo() {
-        return approveInfo;
-    }
-
-    public void setApproveInfo(Map<Integer, Integer> approveInfo) {
-        this.approveInfo = approveInfo;
     }
 
     public Map<String, CmsBtFeedInfoModel_Platform_Cart> getPlatforms() {
