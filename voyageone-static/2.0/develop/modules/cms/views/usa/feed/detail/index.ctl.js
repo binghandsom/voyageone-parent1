@@ -85,6 +85,11 @@ define([
                         let cartId = parseInt(platform.value);
                         self.platformsObj[cartId] = cartId < 20 ? platform.name : platform.add_name2;
                     });
+                    // cartId=5是sharingDay默认45
+                    let cart5Obj = _.find(self.feed.usPlatforms, platform => {
+                        return platform.cartId == 5;
+                    });
+                    cart5Obj['sharingDay'] = 45;
 
                     // 如果有中国平台中国价格为null, 则触发计算价格
                     if (self.feed.feedAuth > 1) {
