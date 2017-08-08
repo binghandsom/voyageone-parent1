@@ -5,7 +5,14 @@ import com.taobao.api.ApiException;
 import com.taobao.api.domain.Brand;
 import com.taobao.api.domain.ItemCat;
 import com.taobao.api.domain.SellerAuthorize;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.Enums.PlatFormEnums;
+import com.voyageone.common.configs.Shops;
+import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.StringUtils;
+import com.voyageone.components.tmall.service.TbCategoryService;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -15,18 +22,13 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.CmsConstants;
 import com.voyageone.task2.cms.model.PlatformCategoriesModel;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.components.tmall.service.TbCategoryService;
-import com.voyageone.common.configs.Enums.PlatFormEnums;
-import com.voyageone.common.configs.Shops;
-import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Service
 public class GetPlatformCategoryTreesService extends BaseCronTaskService {
@@ -261,7 +263,7 @@ public class GetPlatformCategoryTreesService extends BaseCronTaskService {
         $info("批量删除类目 CART_ID 为：" + shop.getCart_id() + "  channel id: " + shop.getOrder_channel_id() + " 的数据为: " + delCatRes.getN() + "条...");
 
         if (savePlatformCatModels.size() > 0) {
-            $info("保存最新的类目信息: " + savePlatformCatModels.size() + "条记录。");
+            $info(String.format("保存最新的类目信息[channel:%s]: " + savePlatformCatModels.size() + "条记录。", shop.getOrder_channel_id()));
             //保存最新的类目信息
             platformCategoryDao.insertWithList(savePlatformCatModels);
         }
