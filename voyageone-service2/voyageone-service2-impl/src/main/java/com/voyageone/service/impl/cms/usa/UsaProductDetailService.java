@@ -499,7 +499,7 @@ public class UsaProductDetailService extends BaseService {
             mqMap.setParams(params);
             if ("true".equals(selAll)) {
                 //勾选了全部,需要通过检索条件,查询出所有信息
-                Map<String, Object> map = (Map) paraMap.get("queryMap");
+                Map<String, Object> map = (Map<String, Object>) paraMap.get("queryMap");
                 CmsSearchInfoBean2 queryParams = BeanUtils.toModel(map, CmsSearchInfoBean2.class);
                 CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, channelId);
                 long productListTotal = cmsProductCodeListBean.getTotalCount();
@@ -549,7 +549,7 @@ public class UsaProductDetailService extends BaseService {
             mqMap.setDays(days);
             if ("true".equals(selAll)) {
                 //勾选了全部,需要通过检索条件,查询出所有信息
-                Map<String, Object> map = (Map) paraMap.get("queryMap");
+                Map<String, Object> map = (Map<String, Object>) paraMap.get("queryMap");
                 CmsSearchInfoBean2 queryParams = BeanUtils.toModel(map, CmsSearchInfoBean2.class);
                 CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, channelId);
                 long productListTotal = cmsProductCodeListBean.getTotalCount();
@@ -784,9 +784,9 @@ public class UsaProductDetailService extends BaseService {
                 //美国平台参数
                 if (MapUtils.isNotEmpty(usPlatforms)) {
                     HashMap<String, Map<String, Object>> allUsPriceList = new HashMap<>();
-                    for (Map.Entry entry : usPlatforms.entrySet()) {
-                        String key = (String) entry.getKey();
-                        CmsBtProductModel_Platform_Cart value = (CmsBtProductModel_Platform_Cart) entry.getValue();
+                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : usPlatforms.entrySet()) {
+                        String key = entry.getKey();
+                        CmsBtProductModel_Platform_Cart value = entry.getValue();
 
                         HashMap<String, Object> priceMap = new HashMap<>();
                         priceMap.put("priceMsrpSt", value.getpPriceMsrpSt());
@@ -809,9 +809,9 @@ public class UsaProductDetailService extends BaseService {
                 //中国平台参数
                 if (MapUtils.isNotEmpty(platforms)) {
                     HashMap<String, Map<String, Object>> allPriceList = new HashMap<>();
-                    for (Map.Entry entry : platforms.entrySet()) {
-                        String key = (String) entry.getKey();
-                        CmsBtProductModel_Platform_Cart value = (CmsBtProductModel_Platform_Cart) entry.getValue();
+                    for (Map.Entry<String, CmsBtProductModel_Platform_Cart> entry : platforms.entrySet()) {
+                        String key = entry.getKey();
+                        CmsBtProductModel_Platform_Cart value = entry.getValue();
                         if (!"0".equals(value.getCartId().toString())) {
                             HashMap<String, Object> priceMap = new HashMap<>();
                             priceMap.put("priceMsrpSt", value.getpPriceMsrpSt());
@@ -906,82 +906,78 @@ public class UsaProductDetailService extends BaseService {
     public String updatePrimaryCategory(Map<String, Object> paraMap, String channelId, String userName) {
 
         CmsUsaPlatformCategoryUpdateOneMQMessageBody body = new CmsUsaPlatformCategoryUpdateOneMQMessageBody();
-        if (body != null) {
-            Boolean selAll = (Boolean) paraMap.get("selAll");
-            List<String> codeList = (List<String>) paraMap.get("codeList");
+        Boolean selAll = (Boolean) paraMap.get("selAll");
+        List<String> codeList = (List<String>) paraMap.get("codeList");
 
-            Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
-            Map<String, Object> mapping = (Map<String, Object>) paraMap.get("mapping");
-            String pCatPath = (String) paraMap.get("pCatPath");
-            String pCatId = (String) paraMap.get("pCatId");
-            Map<String, Object> searchInfo = (Map<String, Object>) paraMap.get("searchInfo");
-            Boolean flag = (Boolean) paraMap.get("flag");
+        Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
+        Map<String, Object> mapping = (Map<String, Object>) paraMap.get("mapping");
+        String pCatPath = (String) paraMap.get("pCatPath");
+        String pCatId = (String) paraMap.get("pCatId");
+        Map<String, Object> searchInfo = (Map<String, Object>) paraMap.get("searchInfo");
+        Boolean flag = (Boolean) paraMap.get("flag");
 
-            body.setCartId(cartId);
-            body.setChannelId(channelId);
-            body.setFlag(flag);
-            body.setMapping(mapping);
-            body.setpCatId(pCatId);
-            body.setpCatPath(pCatPath);
-            body.setSender(userName);
+        body.setCartId(cartId);
+        body.setChannelId(channelId);
+        body.setFlag(flag);
+        body.setMapping(mapping);
+        body.setpCatId(pCatId);
+        body.setpCatPath(pCatPath);
+        body.setSender(userName);
 
-            if (selAll) {
-                //勾选了全部,需要通过检索条件,查询出所有信息
-                CmsSearchInfoBean2 queryParams = BeanUtils.toModel(searchInfo, CmsSearchInfoBean2.class);
-                CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, channelId);
-                if (cmsProductCodeListBean != null) {
-                    List<String> productCodeList = cmsProductCodeListBean.getProductCodeList();
-                    if (ListUtils.notNull(productCodeList)) {
-                        body.setProductCodes(productCodeList);
-                    } else {
-                        $warn("通过检索条件未查询到任何商品,queryParams:" + queryParams + " channelId:" + channelId);
-                    }
+        if (selAll) {
+            //勾选了全部,需要通过检索条件,查询出所有信息
+            CmsSearchInfoBean2 queryParams = BeanUtils.toModel(searchInfo, CmsSearchInfoBean2.class);
+            CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, channelId);
+            if (cmsProductCodeListBean != null) {
+                List<String> productCodeList = cmsProductCodeListBean.getProductCodeList();
+                if (ListUtils.notNull(productCodeList)) {
+                    body.setProductCodes(productCodeList);
+                } else {
+                    $warn("通过检索条件未查询到任何商品,queryParams:" + queryParams + " channelId:" + channelId);
                 }
-            } else {
-                //未勾选全部
-                body.setProductCodes(codeList);
             }
-            cmsMqSenderService.sendMessage(body);
+        } else {
+            //未勾选全部
+            body.setProductCodes(codeList);
         }
+        cmsMqSenderService.sendMessage(body);
         return null;
     }
 
     public String updateOtherCategory(Map<String, Object> paraMap, String channelId, String userName) {
 
         CmsUsaPlatformCategoryUpdateManyMQMessageBody body = new CmsUsaPlatformCategoryUpdateManyMQMessageBody();
-        if (body != null) {
-            Boolean selAll = (Boolean) paraMap.get("selAll");
-            List<String> codeList = (List<String>) paraMap.get("codeList");
+        Boolean selAll = (Boolean) paraMap.get("selAll");
+        List<String> codeList = (List<String>) paraMap.get("codeList");
 
-            Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
-            Map<String, Object> searchInfo = (Map<String, Object>) paraMap.get("searchInfo");
-            Boolean statue = (Boolean) paraMap.get("statue");
-            List<String> pCatPaths = (List<String>) paraMap.get("pCatPaths");
+        Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
+        Map<String, Object> searchInfo = (Map<String, Object>) paraMap.get("searchInfo");
+        Boolean statue = (Boolean) paraMap.get("statue");
+        List<String> pCatPaths = (List<String>) paraMap.get("pCatPaths");
 
-            body.setCartId(cartId);
-            body.setChannelId(channelId);
-            body.setSender(userName);
-            body.setStatue(statue);
-            body.setpCatPath(pCatPaths);
+        body.setCartId(cartId);
+        body.setChannelId(channelId);
+        body.setSender(userName);
+        body.setStatue(statue);
+        body.setpCatPath(pCatPaths);
 
-            if (selAll) {
-                //勾选了全部,需要通过检索条件,查询出所有信息
-                CmsSearchInfoBean2 queryParams = BeanUtils.toModel(searchInfo, CmsSearchInfoBean2.class);
-                CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, channelId);
-                if (cmsProductCodeListBean != null) {
-                    List<String> productCodeList = cmsProductCodeListBean.getProductCodeList();
-                    if (ListUtils.notNull(productCodeList)) {
-                        body.setProductCodes(productCodeList);
-                    } else {
-                        $warn("通过检索条件未查询到任何商品,queryParams:" + queryParams + " channelId:" + channelId);
-                    }
+        if (selAll) {
+            //勾选了全部,需要通过检索条件,查询出所有信息
+            CmsSearchInfoBean2 queryParams = BeanUtils.toModel(searchInfo, CmsSearchInfoBean2.class);
+            CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, channelId);
+            if (cmsProductCodeListBean != null) {
+                List<String> productCodeList = cmsProductCodeListBean.getProductCodeList();
+                if (ListUtils.notNull(productCodeList)) {
+                    body.setProductCodes(productCodeList);
+                } else {
+                    $warn("通过检索条件未查询到任何商品,queryParams:" + queryParams + " channelId:" + channelId);
                 }
-            } else {
-                //未勾选全部
-                body.setProductCodes(codeList);
             }
-            cmsMqSenderService.sendMessage(body);
+        } else {
+            //未勾选全部
+            body.setProductCodes(codeList);
         }
+        cmsMqSenderService.sendMessage(body);
         return null;
     }
 }
