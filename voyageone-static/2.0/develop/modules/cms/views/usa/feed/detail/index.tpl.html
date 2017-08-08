@@ -272,9 +272,10 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title text-left vo_unreqfield">Color Map</label>
                                         <div class="col-md-6">
-                                            <select class="form-control" name="origin" chosen search-contain="true"
-                                                    ng-options="color.value as color.name for color in ctrl.colorMap"
-                                                    ng-model="ctrl.feed.colorMap">
+                                            <select class="form-control" name="origin" chosen search-contain="true" ng-model="ctrl.feed.colorMap">
+                                                <option value="{{colorModel.value}}" ng-repeat="colorModel in ctrl.colorMap" ng-if="$index <= ctrl.colorMap.length"
+                                                        ng-style="{background:colorModel.value}" ng-bind="colorModel.name">
+                                                </option>
                                             </select>
                                         </div>
                                     </div>

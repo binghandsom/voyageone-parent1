@@ -238,4 +238,21 @@ public class UsaAdvanceSearchController extends CmsController {
         // 返回用户信息
         return success(null);
     }
+
+    //批量修改类目PRIMARY_CATEGORY
+    @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.UPDATE_PRIMARY_CATEGORY)
+    public AjaxResponse updatePrimaryCategory(@RequestBody Map params) {
+        UserSessionBean user = getUser();
+        usaProductDetailService.listOrDelist(params,user.getSelChannelId(),user.getUserName());
+        return success(null);
+    }
+
+    //批量修改类目OTHER_CATEGORY
+    @RequestMapping(value = UsaCmsUrlConstants.ADVANCE_SEARCH.UPDATE_OTHER_CATEGORY)
+    public AjaxResponse updateOtherCategory(@RequestBody Map params) {
+        UserSessionBean user = getUser();
+        usaProductDetailService.listOrDelist(params,user.getSelChannelId(),user.getUserName());
+        // 返回用户信息
+        return success(null);
+    }
 }

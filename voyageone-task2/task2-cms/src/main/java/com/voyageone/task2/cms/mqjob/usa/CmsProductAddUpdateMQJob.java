@@ -2,6 +2,9 @@ package com.voyageone.task2.cms.mqjob.usa;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -9,6 +12,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsProductAddUpdateMQMessageBody;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -19,7 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -92,6 +98,35 @@ public class CmsProductAddUpdateMQJob extends TBaseMQCmsService<CmsProductAddUpd
             sku.setSize(item.getSize());
             skus.add(sku);
         });
+
+        List<TypeChannelBean> typeUsChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(messageBody.getChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_O, "en"); // 取得允许Approve的数据
+        Map<String, CmsBtFeedInfoModel_Platform_Cart> usPlatforms = new HashMap<>();
+        cmsBtFeedInfoModel.setUsPlatforms(usPlatforms);
+        typeUsChannelBeanListApprove.forEach(typeChannelBean -> {
+            Integer cartId = Integer.parseInt(typeChannelBean.getValue());
+            if(cartId > 0 && cartId < 20) {
+                CmsBtFeedInfoModel_Platform_Cart cmsBtFeedInfoModel_platform_cart = new CmsBtFeedInfoModel_Platform_Cart();
+                cmsBtFeedInfoModel_platform_cart.setCartId(cartId);
+                cmsBtFeedInfoModel_platform_cart.setIsSale(1);
+                cmsBtFeedInfoModel_platform_cart.setPriceClientMsrp(messageBody.getMsrp());
+                cmsBtFeedInfoModel_platform_cart.setPriceClientRetail(messageBody.getMsrp() - 0.01);
+                usPlatforms.put("P" + cartId, cmsBtFeedInfoModel_platform_cart);
+            }
+        });
+
+        List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(messageBody.getChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en"); // 取得允许Approve的数据
+        Map<String, CmsBtFeedInfoModel_Platform_Cart> platforms = new HashMap<>();
+        cmsBtFeedInfoModel.setPlatforms(platforms);
+        typeChannelBeanListApprove.forEach(typeChannelBean -> {
+            Integer cartId = Integer.parseInt(typeChannelBean.getValue());
+            if(cartId > 19 && cartId < 900) {
+                CmsBtFeedInfoModel_Platform_Cart cmsBtFeedInfoModel_platform_cart = new CmsBtFeedInfoModel_Platform_Cart();
+                cmsBtFeedInfoModel_platform_cart.setCartId(cartId);
+                cmsBtFeedInfoModel_platform_cart.setIsSale(1);
+                platforms.put("P" + cartId, cmsBtFeedInfoModel_platform_cart);
+            }
+        });
+
         feedInfoService.insertFeedInfo(cmsBtFeedInfoModel);
     }
 

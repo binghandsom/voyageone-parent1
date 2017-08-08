@@ -904,4 +904,10 @@ public class UsaProductDetailService extends BaseService {
         });
         return images;
     }
+
+    //updatePrimaryCategory
+    public String updatePrimaryCategory(Map<String, Object> paraMap, String channelId, String userName) {
+
+        return null;
+    }
 }

@@ -24,20 +24,20 @@ public class CmsProductAddUpdateMQJobTest {
     public void onStartup() throws Exception {
         CmsProductAddUpdateMQMessageBody cmsProductAddUpdateMQMessageBody = new CmsProductAddUpdateMQMessageBody();
         cmsProductAddUpdateMQMessageBody.setChannelId("001");
-        cmsProductAddUpdateMQMessageBody.setCode("james004");
+        cmsProductAddUpdateMQMessageBody.setCode("james0044");
         cmsProductAddUpdateMQMessageBody.setColor("red");
-        cmsProductAddUpdateMQMessageBody.setName("jamestest4");
+        cmsProductAddUpdateMQMessageBody.setName("jamestest44");
         cmsProductAddUpdateMQMessageBody.setMsrp(500.0);
         cmsProductAddUpdateMQMessageBody.setStatus(0);
         cmsProductAddUpdateMQMessageBody.setSkuList(new ArrayList<>());
         CmsProductAddUpdateMQMessageBody.SkuModel sku = new CmsProductAddUpdateMQMessageBody.SkuModel();
         sku.setBarcode("11111");
-        sku.setSku("james004-001");
+        sku.setSku("james0044-001");
         sku.setSize("10");
         cmsProductAddUpdateMQMessageBody.getSkuList().add(sku);
         sku = new CmsProductAddUpdateMQMessageBody.SkuModel();
         sku.setBarcode("2222");
-        sku.setSku("james004-002");
+        sku.setSku("james0044-002");
         sku.setSize("20");
         cmsProductAddUpdateMQMessageBody.getSkuList().add(sku);
 
