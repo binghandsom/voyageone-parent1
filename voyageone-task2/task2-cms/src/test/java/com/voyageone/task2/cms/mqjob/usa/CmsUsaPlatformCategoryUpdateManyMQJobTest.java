@@ -31,9 +31,10 @@ public class CmsUsaPlatformCategoryUpdateManyMQJobTest {
         body.setCartId(8);
         body.setChannelId("001");
         body.setProductCodes(Collections.singletonList("68243-blk"));
+        body.setStatue(false);
         ArrayList<Map<String, String>> lists = new ArrayList<>();
         HashMap<String, String> map = new HashMap<>();
-        map.put("pCatPath","Gear>Apparel - Kids'");
+        map.put("pCatPath","Sale>Toddler>50% Off & Up");
         lists.add(map);
         body.setpCatPathAndPCatIds(lists);
         cmsUsaPlatformCategoryUpdateManyMQJob.onStartup(body);
