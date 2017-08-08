@@ -32,6 +32,8 @@ public class UsaCmsUrlConstants {
 
         String APPROVE = "approve";
 
+        String BULK_APPROVE_PRICING = "bulkApprovePricing";
+
         String LIST = "list";
 
         String UPDATEONE = "updateOne";

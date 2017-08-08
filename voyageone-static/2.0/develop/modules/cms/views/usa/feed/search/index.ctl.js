@@ -212,6 +212,24 @@ define([
             });
         }
 
+        // 批量Approve Pricing
+        batchApprovePricing() {
+            let self = this,
+                codeList = [];
+
+            codeList = _.chain(self.feeds).filter(item => {
+                return item.check;
+            }).pluck('code').value();
+
+            if (codeList.length === 0 && self.totalItems == false) {
+                self.alert('Please select at least one！');
+                return false;
+            }
+
+
+
+
+        }
 
         popBatchApproveOne(code) {
             let self = this,

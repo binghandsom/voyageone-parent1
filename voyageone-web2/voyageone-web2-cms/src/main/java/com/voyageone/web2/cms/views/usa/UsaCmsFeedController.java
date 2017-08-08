@@ -161,6 +161,29 @@ public class UsaCmsFeedController extends BaseController {
         return success("");
     }
 
+    @RequestMapping(value = UsaCmsUrlConstants.FEED.BULK_APPROVE_PRICING)
+    public AjaxResponse bulkApprovePricing(@RequestBody FeedRequest reqParams) {
+        UserSessionBean user = getUser();
+        List<String> codeList = reqParams.getCodeList();
+        Boolean selAll = reqParams.getSelAll();
+        if (selAll != null && selAll) {
+            codeList = null;
+        }else{
+            reqParams.setSearchMap(new HashMap<>());
+        }
+        List<String> status = new ArrayList<>();
+        status.add(CmsConstants.ProductStatus.Ready.name());
+        reqParams.getSearchMap().put("status",status );
+        reqParams.getSearchMap().put("approvePricing", Collections.singletonList("1"));
+        reqParams.getSearchMap().put("codeList",codeList);
+        codeList = usaFeedInfoService.getFeedCodeList(reqParams.getSearchMap(), user.getSelChannelId());
+
+        if (CollectionUtils.isNotEmpty(codeList)) {
+            usaFeedInfoService.approve(user.getSelChannelId(), codeList, reqParams.getApproveInfo(), user.getUserName());
+        }
+        return success("");
+    }
+
     /**
      * 更新Feed信息: Save 或 Submit至下一步 或 Approve
      *
