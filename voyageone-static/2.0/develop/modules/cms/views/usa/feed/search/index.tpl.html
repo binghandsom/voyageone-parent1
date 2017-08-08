@@ -135,7 +135,7 @@
 
     <div class="container-fluid">
         <div class="panel panel-default">
-            <div class="panel-heading" ng-show="ctrl.flag == 3">
+            <div class="panel-heading" ng-show="ctrl.flag > 1">
                 <div class="container-fluid">
                     <div class="row" >
                         <div class="col-md-6">
@@ -147,9 +147,13 @@
                         </div>
                         <div class="col-md-6" >
                             <div class="btn-group pull-right" style="margin-top: 7px; margin-right: 17px;">
-                                <button type="button" class="btn btn-default btn-pop" ng-click="ctrl.batchApprovePricing()"><i class="fa fa-gear"></i>&nbsp;Bulk Approve Pricing</button>
+                                <button type="button" class="btn btn-default btn-pop"
+                                        ng-if="ctrl.flag > 1"
+                                        ng-click="ctrl.batchApprovePricing()"><i class="fa fa-gear"></i>&nbsp;Bulk Approve Pricing</button>
                                 &nbsp;&nbsp;
-                                <button type="button" class="btn btn-default btn-pop" ng-click="ctrl.popBatchApprove()"><i class="fa fa-gear"></i>&nbsp;Bulk Approve</button>
+                                <button type="button" class="btn btn-default btn-pop"
+                                        ng-if="ctrl.flag==3"
+                                        ng-click="ctrl.popBatchApprove()"><i class="fa fa-gear"></i>&nbsp;Bulk Approve</button>
                             </div>
                         </div>
                     </div>
@@ -160,7 +164,7 @@
                     <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
                         <thead>
                             <tr>
-                                <th class="text-center" ng-show="ctrl.flag == 3">
+                                <th class="text-center" ng-show="ctrl.flag > 1">
                                     <input type="checkbox"  ng-model="ctrl.isAll" ng-change="ctrl.selectAll()" >
                                 </th>
                                 <th class="text-center">IMG</th>
@@ -210,8 +214,8 @@
                                 <td colspan="14" if-no-rows="ctrl.feeds.length"  style="padding: 0px"></td>
                             </tr>
                             <tr ng-repeat="feed in ctrl.feeds" style="height: 90px">
-                                <td class="text-center" ng-show="ctrl.flag == 3">
-                                    <input type="checkbox" ng-model="feed.check" ng-if="feed.approvePricing == '1' && feed.status == 'Ready'">
+                                <td class="text-center" ng-show="ctrl.flag > 1">
+                                    <input type="checkbox" ng-model="feed.check">
                                 </td>
                                 <td class="text-center">
                                     <a href="javascript:void(0)">

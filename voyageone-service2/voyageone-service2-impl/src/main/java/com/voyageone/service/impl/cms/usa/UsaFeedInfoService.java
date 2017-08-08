@@ -586,4 +586,33 @@ public class UsaFeedInfoService extends BaseService {
         $info(String.format("(%s)批量Approve Feed, 结果:%s", username, JacksonUtil.bean2Json(writeResult)));
     }
 
+    /**
+     * 批量修改ApprovePricing
+     *
+     * @param channelId 渠道ID
+     * @param codeList  CodeList
+     * @param username  修改人
+     */
+    public void bulkApprovePricing(String channelId, List<String> codeList, String username) {
+        if (StringUtils.isNotBlank(channelId) && CollectionUtils.isNotEmpty(codeList)) {
+
+            JongoUpdate jongoUpdate = new JongoUpdate();
+            jongoUpdate.setQuery("{\"channelId\":#,\"code\":{$in:#}}");
+            jongoUpdate.setQueryParameters(channelId, codeList);
+
+            StringBuffer sb = new StringBuffer();
+            sb.append("{\"approvePricing\":#,\"modifier\":#,\"modified\":#}");
+            List<Object> updateParameters = new ArrayList<>();
+            updateParameters.add("1");
+            updateParameters.add(username);
+            updateParameters.add(DateTimeUtil.getNow());
+
+            jongoUpdate.setUpdate("{$set:" + sb.toString() + "}");
+            jongoUpdate.setUpdateParameters(updateParameters.toArray());
+
+            WriteResult writeResult = cmsBtFeedInfoDao.updateMulti(jongoUpdate, channelId);
+            $info(String.format("(%s)ApprovePricing Feed, 结果: %s", username, JacksonUtil.bean2Json(writeResult)));
+        }
+    }
+
 }

@@ -226,9 +226,22 @@ define([
                 return false;
             }
 
-
-
-
+            self.confirm("Make sure of approving pricing of the selected products").then(confirmed => {
+                self.itemDetailService.bulkApprovePricing(
+                    {
+                        selAll:self.totalItems,
+                        codeList:codeList,
+                        searchMap: self.paraMap
+                    }
+                ).then(res => {
+                    self.isAll = false;
+                    angular.forEach(self.feeds, function (feed) {
+                        feed.check = false;
+                    })
+                    self.totalItems = false;
+                    self.getList();
+                });
+            });
         }
 
         popBatchApproveOne(code) {
@@ -255,7 +268,7 @@ define([
             let self = this;
 
             _.each(self.feeds, feed => {
-                if(feed.approvePricing == '1' && feed.status == 'Ready')
+                if(feed.status != 'New')
                     feed.check = self.isAll;
             });
         }

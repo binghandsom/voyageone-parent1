@@ -149,7 +149,7 @@ public class UsaCmsFeedController extends BaseController {
             reqParams.setSearchMap(new HashMap<>());
         }
         List<String> status = new ArrayList<>();
-        status.add(CmsConstants.ProductStatus.Ready.name());
+        status.add(CmsConstants.UsaFeedStatus.Ready.name());
         reqParams.getSearchMap().put("status",status );
         reqParams.getSearchMap().put("approvePricing", Collections.singletonList("1"));
         reqParams.getSearchMap().put("codeList",codeList);
@@ -172,14 +172,15 @@ public class UsaCmsFeedController extends BaseController {
             reqParams.setSearchMap(new HashMap<>());
         }
         List<String> status = new ArrayList<>();
-        status.add(CmsConstants.ProductStatus.Ready.name());
+        status.add(CmsConstants.UsaFeedStatus.Pending.name());
+        status.add(CmsConstants.UsaFeedStatus.Ready.name());
         reqParams.getSearchMap().put("status",status );
-        reqParams.getSearchMap().put("approvePricing", Collections.singletonList("1"));
+        reqParams.getSearchMap().put("approvePricing", Collections.singletonList("0"));
         reqParams.getSearchMap().put("codeList",codeList);
         codeList = usaFeedInfoService.getFeedCodeList(reqParams.getSearchMap(), user.getSelChannelId());
 
         if (CollectionUtils.isNotEmpty(codeList)) {
-            usaFeedInfoService.approve(user.getSelChannelId(), codeList, reqParams.getApproveInfo(), user.getUserName());
+            usaFeedInfoService.bulkApprovePricing(user.getSelChannelId(), codeList, user.getUserName());
         }
         return success("");
     }
@@ -241,7 +242,12 @@ public class UsaCmsFeedController extends BaseController {
 
 
             CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(getUser().getSelChannelId(), code);
-            if (cmsBtFeedInfoModel != null) {
+            CmsBtFeedInfoModel_Platform_Cart snPlatform = null;
+            if (cmsBtFeedInfoModel != null && (snPlatform = cmsBtFeedInfoModel.getUsPlatform(8)) != null) {
+                snPlatform.setPriceClientMsrp(msrpPrice);
+                snPlatform.setPriceClientRetail(price);
+            }
+            /*if (cmsBtFeedInfoModel != null) {
                 cmsBtFeedInfoModel.setModifier(getUser().getUserName());
                 final Double finalMsrpPrice = msrpPrice;
                 final Double finalPrice = price;
@@ -254,7 +260,7 @@ public class UsaCmsFeedController extends BaseController {
                         sku.setPriceNet(finalPrice);
                     }
                 });
-            }
+            }*/
             String approvePricing = (String) params.get("approvePricing");
 
             if (approvePricing != null) {

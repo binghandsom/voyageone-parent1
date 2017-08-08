@@ -855,7 +855,8 @@ define(function () {
                 updateOne: "updateOne",
                 setPrice: "setPrice",
                 list: "list",
-                approve: "approve"
+                approve: "approve",
+                bulkApprovePricing:"bulkApprovePricing"
             },
             advanceSearch: {
                 root: "/cms/us/advanceSearch",
