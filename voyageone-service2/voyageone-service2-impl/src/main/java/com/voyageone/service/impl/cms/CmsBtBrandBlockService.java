@@ -127,7 +127,9 @@ public class CmsBtBrandBlockService extends BaseService {
     public boolean isBlocked(String channelId, Integer cartId, String feedBrand, String masterBrand, String platformBrandId) {
         return !StringUtils.isEmpty(feedBrand) && isBlocked(channelId, cartId, BRAND_TYPE_FEED, feedBrand)
                 || !StringUtils.isEmpty(masterBrand) && isBlocked(channelId, cartId, BRAND_TYPE_MASTER, masterBrand)
-                || cartId != null && !StringUtils.isEmpty(platformBrandId) && isBlocked(channelId, cartId, BRAND_TYPE_PLATFORM, platformBrandId);
+                || cartId != null && !StringUtils.isEmpty(platformBrandId) && isBlocked(channelId, cartId, BRAND_TYPE_PLATFORM, platformBrandId)
+                // 可以根据master品牌设定平台黑名单
+                || cartId != null && !StringUtils.isEmpty(platformBrandId) && isBlocked(channelId, cartId, BRAND_TYPE_PLATFORM, masterBrand);
 
     }
 
@@ -144,6 +146,7 @@ public class CmsBtBrandBlockService extends BaseService {
     private boolean isBlocked(String channelId, int cartId, int brandType, String brand) {
         return brandBlockDao.selectCount(new HashMap<String, Object>(4, 1f) {{
             put("channelId", channelId);
+            // 黑名单允许各个平台分开设定
             put("cartId", (brandType == BRAND_TYPE_FEED) ? 1 : (brandType == BRAND_TYPE_MASTER ? 0 : cartId));
             put("type", brandType);
             put("brand", brand);

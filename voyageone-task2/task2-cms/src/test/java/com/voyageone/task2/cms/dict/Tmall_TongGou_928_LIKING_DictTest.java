@@ -52,6 +52,10 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
         doCreateJson("天猫同购无线描述-非重点", false, doDict_天猫同购无线描述(4));
         doCreateJson("天猫同购无线描述-爆款", false, doDict_天猫同购无线描述(7));
         doCreateJson("天猫同购无线描述-全自定义", false, doDict_天猫同购无线描述(1));
+
+        doCreateJson("天猫同购描述", false, doDict_天猫同购描述()); // 默认
+        doCreateJson("天猫同购无线描述", false, doDict_天猫同购无线描述());// 默认
+
     }
 
     @Test
@@ -61,15 +65,15 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
         ExpressionParser expressionParser = new ExpressionParser(sxProductService, sxData);
         ShopBean shopProp = new ShopBean();
         shopProp.setApp_url("http://gw.api.taobao.com/router/rest");
-        shopProp.setAppKey("");
-        shopProp.setAppSecret("");
-        shopProp.setSessionKey("");
+        shopProp.setAppKey("23583061");
+        shopProp.setAppSecret("796955b61f045769345d47e18b29cf22");
+        shopProp.setSessionKey("6201c0788f407f9ZZfb038a14a52618b42fa10991ace5313081276392");
         shopProp.setPlatform_id(PlatFormEnums.PlatForm.TM.getId());
 
         try {
             System.out.println("=====================================");
-            System.out.println("字典: 天猫同购描述");
-            String result = sxProductService.resolveDict("天猫同购描述-重点", expressionParser, shopProp, getTaskName(), null);
+            System.out.println("字典: 天猫同购无线描述");
+            String result = sxProductService.resolveDict("天猫同购无线描述", expressionParser, shopProp, "天猫同购无线描述测试charis", null);
             result = "<div style=\"width:790px; margin: 0 auto;\">" + result + "</div>";
             System.out.println(result);
 
@@ -82,7 +86,393 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
         return getClass().getName();
     }
 
+    private RuleExpression doDict_天猫同购描述() {
+        // 根字典
+        RuleExpression ruleRoot = new RuleExpression();
 
+        {
+            // 固定图片 - AMEX项目介绍
+            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i3/3081276392/TB2t9l8XsfhFuJjSZFDXXXJfpXa_!!3081276392.jpg")));
+        }
+        {
+            // 固定图片 - 商品展示
+            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i3/3081276392/TB200AeXaPeFuJjy0FlXXbdcpXa_!!3081276392.jpg")));
+        }
+        {
+            // 商品图片
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageTemplate = new RuleExpression();
+            imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/liking-tmall-product-img790x740?$790X740$&$product-img=%s"));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord(C_商品图片));
+
+            RuleExpression useOriUrl = null;
+
+            CustomWordValueGetAllImages word = new CustomWordValueGetAllImages(htmlTemplate, imageTemplate, imageType, useOriUrl, null, null, null, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+        {
+            // 固定图片 - 商品信息
+            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i2/3081276392/TB2TaMcXnzfFuJjSsphXXc_xpXa_!!3081276392.jpg")));
+        }
+        {
+            String tableTem = "<div style=\"margin-top: -3px; border-width: 0 15px 0 15px; padding: 0 20px 20px 20px; width: 720px; \">" +
+                    "<table style=\"width: 720px; font-family: microsoft yahei; font-size: 13pt; color: #000000; cellspacing: 0; cellpadding: 0\">";
+            int columnCount = 2;
+            RuleExpression tableTemplate = new RuleExpression();
+            tableTemplate.addRuleWord(new TextWord(tableTem));
+
+            // 参数tableParams
+            List<RuleExpression> tableParams = new ArrayList<>();
+            {
+                // 共7个属性
+                for (int index = 0; index < 16; index++) {
+                    RuleExpression ruleExpression = new RuleExpression();
+                    ruleExpression.addRuleWord(new FeedCnWord(true, index));
+                    ruleExpression.addRuleWord(new TextWord("   "));
+                    ruleExpression.addRuleWord(new FeedCnWord(false, index));
+                    tableParams.add(ruleExpression);
+                }
+            }
+
+            CustomWordValueTableWithParam word = new CustomWordValueTableWithParam(tableTemplate, columnCount, tableParams);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+        {
+            // 品牌故事图
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("3"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+        {
+            // 尺码图 - 0
+            // 固定图片 - 商品尺码
+            String sizeChartImage = String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i2/3081276392/TB2T5t6XyYiFuJjSZFkXXaQ_XXa_!!3081276392.jpg");
+
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(sizeChartImage + C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("2"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("0"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+        // 尺码图 - 1 && 尺码图 - 2
+        {
+            for (int i = 1; i < 3; i++) {
+
+                RuleExpression htmlTemplate = new RuleExpression();
+                htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("2"));
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("1"));
+
+                RuleExpression useOriUrl = null;
+
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord(String.valueOf(i)));
+
+                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+                ruleRoot.addRuleWord(new CustomWord(word));
+            }
+        }
+        {
+            // 测量方式图 - 0
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("7"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("0"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        {
+            // 使用说明图
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("6"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, null, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+        {
+            // 物流介绍图
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("4"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图 6：使用说明图 7：测量方式图
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));   // viewType 1:PC端 2：APP端
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("0"));
+
+            CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, null, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(getCommonImagesWord));
+        }
+        return ruleRoot;
+    }
+
+    private RuleExpression doDict_天猫同购无线描述() {
+        // 根字典
+        RuleExpression ruleRoot = new RuleExpression();
+
+        {
+            // start（这里不用写wireless_desc，在TmTongGouService里面会把这里的value加上key(wireless_desc)放进map里的）
+            String kv = "{";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            // coupon 优惠（order不加也可以）
+            String kv = "\"coupon\": {\"enable\": \"false\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        {
+            // hot_recommanded 同店推荐
+            String kv = "\"hot_recommanded\": {\"enable\": \"false\"},";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+        {
+            // item_picture 商品图片 （每张图片url是放在content里面的）
+            {
+                String kv = "\"item_picture\": {\"content\": [";
+                TextWord word = new TextWord(kv);
+                ruleRoot.addRuleWord(word);
+            }
+            {
+                // 固定图片 - AMEX项目介绍
+                do处理天猫同购无线端20张图片(0, ruleRoot, new TextWord("https://img.alicdn.com/imgextra/i3/3081276392/TB2t9l8XsfhFuJjSZFDXXXJfpXa_!!3081276392.jpg"));
+            }
+            {
+                // 固定图片 - 商品展示
+                do处理天猫同购无线端20张图片(1, ruleRoot, new TextWord("https://img.alicdn.com/imgextra/i3/3081276392/TB200AeXaPeFuJjy0FlXXbdcpXa_!!3081276392.jpg"));
+            }
+            {
+                // 主商品
+                for (int i = 0; i < 5; i++){
+                    // 主商品的5张图
+                    CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
+                    RuleExpression imageIndex = new RuleExpression();
+                    imageIndex.addRuleWord(new TextWord(String.valueOf(i)));
+                    userParam.setImageIndex(imageIndex);
+                    RuleExpression img_imageType = new RuleExpression();
+                    img_imageType.addRuleWord(new TextWord(C_商品图片));
+                    userParam.setImageType(img_imageType);
+
+                    RuleExpression imageTemplate = new RuleExpression();
+                    imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/liking-tmall-product-img790x740?$790X740$&$product-img=%s"));
+                    userParam.setImageTemplate(imageTemplate);
+
+                    CustomWordValueGetMainProductImages wordValueGetMainProductImages = new CustomWordValueGetMainProductImages();
+                    wordValueGetMainProductImages.setUserParam(userParam);
+
+                    do处理天猫同购无线端20张图片(2 + i, ruleRoot, new CustomWord(wordValueGetMainProductImages));
+                }
+            }
+            for (int i = 0; i < 4; i++) {
+				// 第7+i张, 非主商品的第一张图
+				RuleExpression imageTemplate = new RuleExpression();
+				imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/liking-tmall-product-img790x740?$790X740$&$product-img=%s"));
+
+				RuleExpression imageType = new RuleExpression();
+				imageType.addRuleWord(new TextWord(C_商品图片));
+
+				RuleExpression codeIndex = new RuleExpression();
+				codeIndex.addRuleWord(new TextWord(String.valueOf(i))); // 第i个非主商品
+
+				RuleExpression imageIndex = new RuleExpression();
+				imageIndex.addRuleWord(new TextWord("0")); // 第一张图
+
+				CustomWordValueGetAllImages allImagesWord = new CustomWordValueGetAllImages(null, imageTemplate, imageType, null, null, null, codeIndex, imageIndex, null);
+                do处理天猫同购无线端20张图片(7 + i, ruleRoot, new CustomWord(allImagesWord));
+			}
+            {
+                // 商品信息logo
+                do处理天猫同购无线端20张图片(11, ruleRoot, new TextWord("https://img.alicdn.com/imgextra/i2/3081276392/TB2TaMcXnzfFuJjSsphXXc_xpXa_!!3081276392.jpg"));
+            }
+            {
+                // 商品参数图
+                RuleExpression imageTemplate = new RuleExpression();
+                String htmlTemplate = "http://s7d5.scene7.com/is/image/sneakerhead/liking790X280-product-info?$liking_790*280$&$1=%s&$2=%s&$3=%s&$4=%s&$5=%s&$6=%s&$7=%s&$8=%s&$9=%s&$10=%s&$11=%s&$12=%s&$13=%s&$14=%s&$15=%s&$16=%s";
+                imageTemplate.addRuleWord(new TextWord(htmlTemplate));
+
+                // 参数imageParams
+                List<RuleExpression> imageParams = new ArrayList<>();
+                {
+                    // 共7个属性
+                    for (int index = 0; index < 16; index++) {
+                        RuleExpression ruleExpression = new RuleExpression();
+                        ruleExpression.addRuleWord(new FeedCnWord(true, index));
+                        ruleExpression.addRuleWord(new TextWord("   "));
+                        ruleExpression.addRuleWord(new FeedCnWord(false, index));
+                        imageParams.add(ruleExpression);
+                    }
+                }
+                CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams, null, null);
+                do处理天猫同购无线端20张图片(12, ruleRoot, new CustomWord(word));
+            }
+            {
+                // 品牌故事图 - 0
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("3"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("1"));   // viewType 1:PC端 2：APP端
+
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord("0"));
+
+                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(null, imageType, viewType, null, imageIndex);
+                do处理天猫同购无线端20张图片(13, ruleRoot, new CustomWord(getCommonImagesWord));
+            }
+            {
+                // 尺码图 - 0
+                // 固定图片 - 商品尺码
+                String sizeChartImage = String.format(C_TEMPLATE_IMG_SIZECHART, "https://img.alicdn.com/imgextra/i2/3081276392/TB2T5t6XyYiFuJjSZFkXXaQ_XXa_!!3081276392.jpg");
+
+                RuleExpression htmlTemplate = new RuleExpression();
+                htmlTemplate.addRuleWord(new TextWord(sizeChartImage + C_TEMPLATE_IMG_SIZECHART));
+
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("2"));
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("1"));
+
+                RuleExpression useOriUrl = null;
+
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord("0"));
+
+                CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+                ruleRoot.addRuleWord(new CustomWord(word));
+            }
+            // 尺码图 - 1 && 尺码图 - 2
+            {
+                for (int i = 1; i < 2; i++) {
+
+
+                    RuleExpression imageType = new RuleExpression();
+                    imageType.addRuleWord(new TextWord("2"));
+
+                    RuleExpression viewType = new RuleExpression();
+                    viewType.addRuleWord(new TextWord("1"));
+
+                    RuleExpression useOriUrl = null;
+
+                    RuleExpression imageIndex = new RuleExpression();
+                    imageIndex.addRuleWord(new TextWord(String.valueOf(i)));
+
+                    CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(null, imageType, viewType, useOriUrl, imageIndex);
+                    do处理天猫同购无线端20张图片(15 + i, ruleRoot, new CustomWord(word));
+                }
+            }
+            {
+                // 测量方式图 - 0
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("7"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图 6：使用说明图 7：测量方式图
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord("0"));
+
+                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(null, imageType, viewType, null, imageIndex);
+                do处理天猫同购无线端20张图片(17, ruleRoot, new CustomWord(getCommonImagesWord));
+            }
+
+            {
+                // 使用说明图 - 0
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("6"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图 6：使用说明图 7：测量方式图
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord("0"));
+
+                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(null, imageType, viewType, null, imageIndex);
+                do处理天猫同购无线端20张图片(18, ruleRoot, new CustomWord(getCommonImagesWord));
+            }
+            {
+                // 物流介绍图
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("4"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图 6：使用说明图 7：测量方式图
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord("0"));
+
+                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(null, imageType, viewType, null, imageIndex);
+                do处理天猫同购无线端20张图片(19, ruleRoot, new CustomWord(getCommonImagesWord));
+            }
+            // end
+            String endStr = "],\"enable\": \"true\", \"order\": \"3\"}";
+            TextWord endWord = new TextWord(endStr);
+            ruleRoot.addRuleWord(endWord);
+
+        }
+        {
+            // end
+            String kv = "}";
+            TextWord word = new TextWord(kv);
+            ruleRoot.addRuleWord(word);
+        }
+
+        return ruleRoot;
+
+    }
 
     private RuleExpression doDict_天猫同购描述(int propType) {
         // 根字典
