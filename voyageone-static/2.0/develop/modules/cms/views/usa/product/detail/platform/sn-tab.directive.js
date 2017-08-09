@@ -168,15 +168,26 @@ define([
                     let selNode = {pCatId:context.catId, pCatPath:context.catPath};
                     _.extend(self.platform.platform, selNode);
 
-                    self.confirm("Would you like to replace GooGle Category/ Google DepartMent / PriceGrabber Category?").then(confirmed => {
+                    let confirmMsg = "Whether to cover the properties associated with the SN primary category?"
+                                     + "(including Google Category, Google DepartMent, PriceGrabber Category, "
+                                     + "Visible On Menu, Enable Filter, Publish, SEO attributes...)";
+                    self.confirm(confirmMsg).then(confirmed => {
                         if (context.mapping) {
                             self.searchField("googleCategory", self.productComm.schemaFields).value = context.mapping.googleCategory;
                             self.searchField("googleDepartment", self.productComm.schemaFields).value = context.mapping.googleDepartment;
                             self.searchField("priceGrabberCategory", self.productComm.schemaFields).value = context.mapping.priceGrabber;
 
-                            // self.searchField("seoTitle", self.platform.platform.platformFields).value = context.mapping.seoTitle;
-                            // self.searchField("seoKeywords", self.platform.platform.platformFields).value = context.mapping.seoKeywords;
-                            // self.searchField("seoDescription", self.platform.platform.platformFields).value = context.mapping.seoDescription;
+                            self.searchField("seoTitle", self.platform.platform.platformFields).value = context.mapping.seoTitle;
+                            self.searchField("seoKeywords", self.platform.platform.platformFields).value = context.mapping.seoKeywords;
+                            self.searchField("seoDescription", self.platform.platform.platformFields).value = context.mapping.seoDescription;
+                        } else {
+                            self.searchField("googleCategory", self.productComm.schemaFields).value = "";
+                            self.searchField("googleDepartment", self.productComm.schemaFields).value = "";
+                            self.searchField("priceGrabberCategory", self.productComm.schemaFields).value = "";
+
+                            self.searchField("seoTitle", self.platform.platform.platformFields).value = "";
+                            self.searchField("seoKeywords", self.platform.platform.platformFields).value = "";
+                            self.searchField("seoDescription", self.platform.platform.platformFields).value = "";
                         }
                     });
                 }
