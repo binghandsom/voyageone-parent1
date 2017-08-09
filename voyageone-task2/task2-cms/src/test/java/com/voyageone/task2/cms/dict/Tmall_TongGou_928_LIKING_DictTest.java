@@ -89,9 +89,43 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
         // 根字典
         RuleExpression ruleRoot = new RuleExpression();
 
+//        {
+//            // 固定图片 - AMEX项目介绍
+//            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i3/3081276392/TB2t9l8XsfhFuJjSZFDXXXJfpXa_!!3081276392.jpg")));
+//        }
         {
-            // 固定图片 - AMEX项目介绍
-            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i3/3081276392/TB2t9l8XsfhFuJjSZFDXXXJfpXa_!!3081276392.jpg")));
+            // 店铺介绍图 - 0
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord("<a href=\"http://liking.tmall.com/p/rd137248.htm\" target=\"_blank\">" + C_TEMPLATE_IMG_790 + "</a>"));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("5"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("0"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, null, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+        {
+            // 店铺介绍图 - 1
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("5"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("1"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, null, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
         }
         {
             // 固定图片 - 商品展示
@@ -287,7 +321,20 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
             }
             {
                 // 固定图片 - AMEX项目介绍
-                do处理天猫同购无线端20张图片(0, ruleRoot, new TextWord("https://img.alicdn.com/imgextra/i3/3081276392/TB2t9l8XsfhFuJjSZFDXXXJfpXa_!!3081276392.jpg"));
+//                do处理天猫同购无线端20张图片(0, ruleRoot, new TextWord("https://img.alicdn.com/imgextra/i3/3081276392/TB2t9l8XsfhFuJjSZFDXXXJfpXa_!!3081276392.jpg"));
+
+                // 店铺介绍图 - 0
+                RuleExpression imageType = new RuleExpression();
+                imageType.addRuleWord(new TextWord("5"));  // imageType 1:商品图 2:尺码图 3：品牌故事图 4：物流介绍图 5:店铺图
+
+                RuleExpression viewType = new RuleExpression();
+                viewType.addRuleWord(new TextWord("2"));   // viewType 1:PC端 2：APP端
+
+                RuleExpression imageIndex = new RuleExpression();
+                imageIndex.addRuleWord(new TextWord("0"));
+
+                CustomWordValueGetCommonImages getCommonImagesWord = new CustomWordValueGetCommonImages(null, imageType, viewType, null, imageIndex);
+                do处理天猫同购无线端20张图片(0, ruleRoot, new CustomWord(getCommonImagesWord));
             }
             {
                 // 固定图片 - 商品展示
