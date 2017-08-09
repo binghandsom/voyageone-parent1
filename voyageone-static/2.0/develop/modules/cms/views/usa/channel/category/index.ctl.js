@@ -147,6 +147,91 @@ define([
             self.tempUpEntity = {};
         }
 
+        /**
+         * @description 批量修改类目
+         * @param option
+         * @return move:0|1
+         */
+        batchUpdateCategory(option){
+            let self = this;
+            let flag = false;
+            if(self.getSelectedProduct('code').length === 0 && self._selall == "0"){
+                self.alert("please choose at least one!!!");
+                return;
+            }
+
+            self.popups.openUsCategory(option).then(res => {
+
+                if(!option.muiti){
+                    //单个
+                    self.confirm("Whether to cover the properties associated with the SN primary category？").then(
+                        (confirmed) => {
+                            //确定
+                            flag =true;
+                            self.advanceSearch.updatePrimaryCategory(
+                                {
+                                    selAll:self._selall == "1"?"true":"false",
+                                    codeList:self.getSelectedProduct('code'),
+                                    searchInfo:self.searchUtilService.handleQueryParams(self),
+                                    mapping:res.mapping,
+                                    pCatPath:res.catPath,
+                                    pCatId:res.catId,
+                                    cartId:option.cartId,
+                                    flag:flag
+                                }
+                            ).then(
+                                param =>{
+                                    self.notify.success('Update Success');
+                                }
+                            );
+                        },
+                        (confirmed) => {
+                            //取消
+                            self.advanceSearch.updatePrimaryCategory(
+                                {
+                                    selAll:self._selall == "1"?"true":"false",
+                                    codeList:self.getSelectedProduct('code'),
+                                    searchInfo:self.searchUtilService.handleQueryParams(self),
+                                    mapping:res.mapping,
+                                    pCatPath:res.catPath,
+                                    pCatId:res.catId,
+                                    cartId:option.cartId,
+                                    flag:flag
+                                }
+                            ).then(
+                                param =>{
+                                    self.notify.success('Update Success');
+                                }
+                            );
+                        }
+                    )
+                }else{
+                    console.log(res);
+                    console.log(option)
+                    //多个
+                    let pCatPaths = [];
+                    angular.forEach(res, function (item) {
+                        pCatPaths.push(item.catPath);
+                    })
+                    self.advanceSearch.updateOtherCategory(
+                        {
+                            selAll:self._selall == "1"?"true":"false",
+                            codeList:self.getSelectedProduct('code'),
+                            searchInfo:self.searchUtilService.handleQueryParams(self),
+                            cartId:option.cartId,
+                            pCatPaths:pCatPaths,
+                            statue:option.move == "1" ? true:false
+                        }
+                    ).then(
+                        param =>{
+                            self.notify.success('Update Success');
+                        }
+                    );
+
+                }
+            });
+        }
+
         dismiss(attrName) {
             this.searchInfo[attrName] = null;
         }
