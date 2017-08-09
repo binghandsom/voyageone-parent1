@@ -792,20 +792,20 @@
             <ul class="nav bs-docs-sidenav">
                 <li class="text-center" style="margin: 7px">
                     <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
-                            ng-disabled="feedForm.$invalid || ctrl.feed.image.length == 0" ng-click="ctrl.save('0')">
+                            ng-disabled="feedForm.$invalid || !ctrl.feed.image || ctrl.feed.image.length == 0" ng-click="ctrl.save('0')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Save
                     </button>
                 </li>
                 <li class="text-center" style="margin: 7px">
                     <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
-                            ng-disabled="feedForm.$invalid || ctrl.feed.image.length == 0"
+                            ng-disabled="feedForm.$invalid || !ctrl.feed.image || ctrl.feed.image.length == 0"
                             ng-if="ctrl.feed.status != 'Ready'" ng-click="ctrl.save('1')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Submit
                     </button>
                 </li>
                 <li class="text-center" style="margin: 7px">
                     <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
-                            ng-disabled="feedForm.$invalid || ctrl.feed.image.length == 0"
+                            ng-disabled="feedForm.$invalid || !ctrl.feed.image || ctrl.feed.image.length == 0"
                             ng-if="ctrl.auth==3 && ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Approve
                     </button>
