@@ -856,12 +856,13 @@ public class UsaProductDetailService extends BaseService {
                 msrpMax = Double.max(msrpMax, clientMsrpPrice);
                 retailMin = Double.min(retailMin, clientRetailPrice);
                 retailMax = Double.max(retailMax, clientRetailPrice);
-
             }
             usPlatform.setpPriceMsrpSt(msrpMin);
             usPlatform.setpPriceMsrpEd(msrpMax);
             usPlatform.setpPriceRetailSt(retailMin);
             usPlatform.setpPriceRetailEd(retailMax);
+            usPlatform.setpPriceSaleSt(retailMin);
+            usPlatform.setpPriceSaleEd(retailMax);
         }
     }
 
