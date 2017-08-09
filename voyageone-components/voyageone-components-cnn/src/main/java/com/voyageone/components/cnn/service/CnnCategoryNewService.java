@@ -53,4 +53,18 @@ public class CnnCategoryNewService extends CnnBase {
         return reqApi(shop, request, CnnUtil.getHeadersForSnApp());
     }
 
+    /**
+     * sn app重置所有店铺内分类，输入参数其实是树形结构
+     */
+    public CategoryResetResponse resetCategory(ShopBean shop, CategoryResetRequest request) throws Exception {
+        return reqApi(shop, request, CnnUtil.getHeadersForSnApp());
+    }
+
+    /**
+     * sn app重置指定店铺内分类下的所有商品
+     */
+    public CategoryProductResetResponse resetCategoryProduct(ShopBean shop, CategoryProductResetRequest request) throws Exception {
+        return reqApi(shop, request, CnnUtil.getHeadersForSnApp());
+    }
+
 }
