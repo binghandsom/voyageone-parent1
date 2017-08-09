@@ -1322,9 +1322,9 @@ public class CmsProductDetailService extends BaseViewService {
         CmsBtProductModel cmsBtProductModel = productService.getProductById(channelId, productId);
         List<CmsBtProductModel_Sku> skuModelList = cmsBtProductModel.getCommon().getSkus();
         HashMap<String, String> barCodeMaps = new HashMap<>();
-        if (ListUtils.notNull(skuModelList)){
+        if (ListUtils.notNull(skuModelList)) {
             for (CmsBtProductModel_Sku cmsBtProductModel_sku : skuModelList) {
-                barCodeMaps.put(cmsBtProductModel_sku.getSkuCode().toLowerCase(),cmsBtProductModel_sku.getBarcode());
+                barCodeMaps.put(cmsBtProductModel_sku.getSkuCode().toLowerCase(), cmsBtProductModel_sku.getBarcode());
             }
         }
         Map<String, Object> resultMap = new HashMap<>();
@@ -1336,8 +1336,8 @@ public class CmsProductDetailService extends BaseViewService {
         // 查询商品的库存信息
         List<String> skuList = new ArrayList<>();
         List<CmsBtProductModel_Sku> skus1 = productInfo.getCommon().getSkus();
-        if (skus1 != null){
-            for ( CmsBtProductModel_Sku item:skus1) {
+        if (skus1 != null) {
+            for (CmsBtProductModel_Sku item : skus1) {
                 skuList.add(item.getSkuCode());
             }
         }
@@ -1354,7 +1354,7 @@ public class CmsProductDetailService extends BaseViewService {
         try {
             sizeMap = sxProductService.getSizeMap(channelId, productInfo.getCommon().getFields().getBrand(),
                     productInfo.getCommon().getFields().getProductType(), productInfo.getCommon().getFields().getSizeType());
-        }catch (BusinessException e){
+        } catch (BusinessException e) {
             sizeMap = new HashMap<>();
         }
 
@@ -1362,7 +1362,7 @@ public class CmsProductDetailService extends BaseViewService {
         GetStoreStockDetailRequest2 getStoreStockDetailRequest2 = new GetStoreStockDetailRequest2();
         getStoreStockDetailRequest2.setChannelId(productInfo.getChannelId());
         getStoreStockDetailRequest2.setSubChannelId(productInfo.getOrgChannelId());
-       // getStoreStockDetailRequest2.setItemCode(code);
+        // getStoreStockDetailRequest2.setItemCode(code);
         //getStoreStockDetailRequest2.setIncludeAllStores(true);
         getStoreStockDetailRequest2.setSkuList(skuList);
        /* String json = "{\"code\":\"0\",\"message\":null,\"data\":{\"header\":{\"supplier\":[\"total\",\"usa\"],\"store\":[\"LA\",\"SH\"],\"base\":[\"sku\",\"origSize\",\"saleSize\",\"total\"]},\"stocks\":[{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[5,5]},\"base\":{\"total\":[5,5],\"origSize\":\"5.5\",\"sku\":\"001001B07-BLK-5.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[1,1]},\"base\":{\"total\":[1,1],\"origSize\":\"8.5\",\"sku\":\"001001b07-blk-8.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"SH\":[0,1]},\"base\":{\"total\":[0,1],\"origSize\":\"5\",\"sku\":\"001001b07-blk-5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[2,2]},\"base\":{\"total\":[2,2],\"origSize\":\"5\",\"sku\":\"001001B07-BLK-5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[6,6]},\"base\":{\"total\":[6,6],\"origSize\":\"6\",\"sku\":\"001001B07-BLK-6\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[6,7]},\"base\":{\"total\":[6,7],\"origSize\":\"7\",\"sku\":\"001001B07-BLK-7\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[13,13]},\"base\":{\"total\":[13,13],\"origSize\":\"6.5\",\"sku\":\"001001B07-BLK-6.5\",\"saleSize\":\"\"}},{\"supplier\":{\"total\":[0,0],\"usa\":[1,1]},\"store\":{\"LA\":[2084,2084]},\"base\":{\"total\":[2084,2084],\"origSize\":\"7.5\",\"sku\":\"001001B07-BLK-7.5\",\"saleSize\":\"\"}}]}}";
@@ -1370,7 +1370,7 @@ public class CmsProductDetailService extends BaseViewService {
 
         GetStoreStockDetailResponse2 execute = voApiClient.execute(getStoreStockDetailRequest2);
         //求和
-        if (execute != null && execute.getData() != null && execute.getData().getHeader() != null &&CollectionUtils.isNotEmpty(execute.getData().getStocks())){
+        if (execute != null && execute.getData() != null && execute.getData().getHeader() != null && CollectionUtils.isNotEmpty(execute.getData().getStocks())) {
             //获取到的参数不为空
             List<GetStoreStockDetailData2.Temp> stocks = execute.getData().getStocks();
             if (stocks != null) {
@@ -1440,10 +1440,10 @@ public class CmsProductDetailService extends BaseViewService {
                 }
                 resultMap.put("excute", execute);
             }
-            resultMap.put("nostock",false);
-        }else {
+            resultMap.put("nostock", false);
+        } else {
             //为空
-            resultMap.put("nostock",true);
+            resultMap.put("nostock", true);
         }
          /*-----------------------by xu--------------------------*/
 
@@ -1919,10 +1919,10 @@ public class CmsProductDetailService extends BaseViewService {
         jongoUpdate.setQuery("{\"prodId\": #}");
         jongoUpdate.setQueryParameters(productModel.getProdId());
 
-        if("928".equals(channelId) || "024".equals(channelId)){
+        if ("928".equals(channelId) || "024".equals(channelId)) {
             jongoUpdate.setUpdate("{$set: {\"common.fields.originalTitleCn\": #,\"common.catConf\": #, \"modifier\":#,\"modified\":#}}");
-            jongoUpdate.setUpdateParameters(originalTitleCn,"1", username, DateTimeUtil.getNowTimeStamp());
-        }else{
+            jongoUpdate.setUpdateParameters(originalTitleCn, "1", username, DateTimeUtil.getNowTimeStamp());
+        } else {
             jongoUpdate.setUpdate("{$set: {\"common.fields.originalTitleCn\": #,\"modifier\":#,\"modified\":#}}");
             jongoUpdate.setUpdateParameters(originalTitleCn, username, DateTimeUtil.getNowTimeStamp());
         }
@@ -2001,7 +2001,7 @@ public class CmsProductDetailService extends BaseViewService {
         }
 
 
-        String msg = "高级检索 单商品originalTitleCn设置" ;
+        String msg = "高级检索 单商品originalTitleCn设置";
         productStatusHistoryService.insertList(channelId, Collections.singletonList(code), -1, EnumProductOperationType.SingleProdSetOriginalTitleCn, msg, username);
     }
 }

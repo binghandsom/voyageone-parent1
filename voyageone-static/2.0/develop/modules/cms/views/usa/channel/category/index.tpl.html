@@ -461,6 +461,12 @@
                             <!--<li>
                                 <a href="javascript:void(0)" ng-click="ctrl.batchCategory()"><i class="fa fa-minus"></i>&nbsp;Category</a>
                             </li>-->
+                            <li ng-if="platform.value == 8">
+                                <a href="javascript:void(0)" ng-click="ctrl.batchUpdateCategory({cartId:platform.value})"><i class="fa fa-minus"></i>&nbsp;Sn Primary Category</a>
+                            </li>
+                            <li ng-if="platform.value == 8">
+                                <a href="javascript:void(0)" ng-click="ctrl.batchUpdateCategory({cartId:platform.value,muiti:true,move:true})"><i class="fa fa-minus"></i>&nbsp;Sn Other Category</a>
+                            </li>
                             <li>
                                 <a href="javascript:void(0)" ng-click="ctrl.batchList(platform.value,'list',platform.name)"><i class="fa fa-minus"></i>&nbsp;List</a>
                             </li>

@@ -31,21 +31,23 @@ define([
             self.foreign = '1';
             self.detailDataService.getSkuStockInfo(self.productInfo.productId)
                 .then(function (resp) {
-                    if (resp.data) {
-                        self.data = resp.data;
+                    if(resp != null){
+                        if (resp.data) {
+                            self.data = resp.data;
 
-                        self.noStock = resp.data.nostock;
+                            self.noStock = resp.data.nostock;
 
-                        if (resp.data.excute && resp.data.excute.data) {
-                            self.supplier = resp.data.excute.data.header.supplier;
-                            self.store = resp.data.excute.data.header.store;
-                            self.base = resp.data.excute.data.header.base;
-                            self.stocks = resp.data.excute.data.stocks;
-                        }
+                            if (resp.data.excute && resp.data.excute.data) {
+                                self.supplier = resp.data.excute.data.header.supplier;
+                                self.store = resp.data.excute.data.header.store;
+                                self.base = resp.data.excute.data.header.base;
+                                self.stocks = resp.data.excute.data.stocks;
+                            }
 
-                        let noStockSkuData = resp.data.noStockSkus;
-                        if (noStockSkuData && noStockSkuData.length > 0) {
-                            scope.noStockSkus = angular.copy(noStockSkuData);
+                            let noStockSkuData = resp.data.noStockSkus;
+                            if (noStockSkuData && noStockSkuData.length > 0) {
+                                scope.noStockSkus = angular.copy(noStockSkuData);
+                            }
                         }
                     }
                 });
