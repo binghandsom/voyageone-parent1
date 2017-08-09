@@ -138,10 +138,13 @@
                                         </button>
                                     </div>
                                     <div class="col-sm-8">
-                                        <select multiple chosen width="'100%'" class="form-control"
-                                                ng-model="ctrl.searchInfo.usFreeTags"
-                                                ng-options="tag.tagPath as tag.tagPathName for tag in ctrl.searchInfo.usFreeTagsOption ">
-                                        </select>
+                                        <div class="input-group">
+                                            <select multiple chosen width="'100%'" class="form-control"
+                                                    ng-model="ctrl.searchInfo.usFreeTags"
+                                                    ng-options="tag.tagPath as tag.tagPathName for tag in ctrl.searchInfo.usFreeTagsOption ">
+                                            </select>
+                                            <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('usFreeTags')">reset</span>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -169,7 +172,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label query-title" translate="TXT_BRAND"></label>
+                                    <label class="col-sm-3 control-label query-title">Brand</label>
                                     <div class="col-sm-8">
                                         <label class="checkbox-inline c-radio">
                                             <input type="radio" name="brandSelOperation" value="1" ng-model="ctrl.searchInfo.brandSelType"><span class="fa fa-check" ></span> include
@@ -182,13 +185,15 @@
                                 <div class="form-group">
                                     <div class="col-sm-3"></div>
                                     <div class="col-sm-8">
-                                        <select multiple chosen width="'100%'" class="form-control"
-                                                ng-model="ctrl.searchInfo.brandList" search-contains = "true"
-                                                ng-options="brand.value as brand.name for brand in ctrl.masterData.brandList">
-                                        </select>
+                                        <div class="input-group">
+                                            <select multiple chosen width="'100%'" class="form-control"
+                                                    ng-model="ctrl.searchInfo.brandList" search-contains = "true"
+                                                    ng-options="brand.value as brand.name for brand in ctrl.masterData.brandList">
+                                            </select>
+                                            <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('brandList')">reset</span>
+                                        </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
 
@@ -207,7 +212,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label query-title">status</label>
+                                    <label class="col-sm-3 control-label query-title">Status</label>
                                     <div class="col-sm-8 checkbox">
                                         <label>
                                             <input type="checkbox" ng-model="ctrl.searchInfo.platformStatus['Pending']">Pending&emsp;
@@ -414,7 +419,14 @@
                                     <button type="button" class="btn btn-default" ng-click="ctrl.addTopProductClick(productInfo)"><i class="fa fa-long-arrow-up"></i></button>&emsp;
                                     <button type="button" class="btn btn-default"><i class="fa fa-long-arrow-down"></i></button>
                                 </td>
-                                <td class="text-center" ng-repeat="prop in ctrl.customColumns.selCommonProps">{{ctrl.getProductValue(productInfo,prop)}}</td>
+                                <td class="text-center" ng-repeat="prop in ctrl.customColumns.selCommonProps">
+                                    <span ng-if="prop.propName == 'Long Description'">
+                                        <popover-text content="ctrl.getProductValue(productInfo,prop)" direct="left" size="50"></popover-text>
+                                    </span>
+                                    <span ng-if="prop.propName != 'Long Description'">
+                                        {{ctrl.getProductValue(productInfo,prop)}}
+                                    </span>
+                                </td>
                                 <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes track by $index">{{ctrl.getProductValue(productInfo,prop)}}</td>
                                 <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformSales track by $index">{{productInfo.sales["P"+prop.cartId]?productInfo.sales["P"+prop.cartId]:0}}</td>
                             </tr>

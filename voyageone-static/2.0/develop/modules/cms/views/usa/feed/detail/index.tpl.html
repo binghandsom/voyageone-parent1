@@ -721,10 +721,12 @@
                                                 <th class="text-left" ng-if="ctrl.feed.feedAuth == 3">Is Sale</th>
                                                 <th class="text-left">Platform</th>
                                                 <th class="text-right">
-                                                    <default-price type="priceClientMsrp" func="ctrl.setPlatformPrice">Msrp($)</default-price>
+                                                    <default-price type="priceClientMsrp" func="ctrl.setPlatformPrice" ng-if="ctrl.feed.approvePricing != 1">Msrp($)</default-price>
+                                                    <span ng-if="ctrl.feed.approvePricing == 1">Msrp($)</span>
                                                 </th>
                                                 <th class="text-right">
-                                                    <default-price type="priceClientRetail" func="ctrl.setPlatformPrice">Price($)</default-price>
+                                                    <default-price type="priceClientRetail" func="ctrl.setPlatformPrice" ng-if="ctrl.feed.approvePricing != 1">Price($)</default-price>
+                                                    <span ng-if="ctrl.feed.approvePricing == 1">Price($)</span>
                                                 </th>
                                                 <th class="text-right">CN Msrp(￥)</th>
                                                 <th class="text-right">CN Price(￥)</th>
@@ -739,18 +741,18 @@
                                                 <td class="text-left">{{ctrl.platformsObj[platform.cartId]}}</td>
                                                 <td class="text-right">
                                                     <input type="number" class="form-control text-right"
-                                                           ng-model="platform.priceClientMsrp"
+                                                           ng-model="platform.priceClientMsrp" ng-readonly="ctrl.feed.approvePricing == 1"
                                                            ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" required>
                                                 </td>
                                                 <td class="text-right">
                                                     <input type="number" class="form-control text-right"
-                                                           ng-model="platform.priceClientRetail"
+                                                           ng-model="platform.priceClientRetail" ng-readonly="ctrl.feed.approvePricing == 1"
                                                            ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" required>
                                                 </td>
                                                 <td class="text-right"><label>-</label></td>
                                                 <td class="text-right"><label>-</label></td>
                                                 <td class="text-right" ng-if="ctrl.feed.feedAuth == 3">
-                                                    <input type="number" class="form-control text-right" ng-model="platform.sharingDay"/>
+                                                    <input type="number" class="form-control text-right" ng-model="platform.sharingDay" scale="2,0"/>
                                                 </td>
                                             </tr>
                                             <tr ng-if="ctrl.feed.feedAuth > 1" ng-repeat="(key, platform) in ctrl.feed.platforms">

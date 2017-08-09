@@ -39,8 +39,11 @@ public class CmsUsaPlatformCategoryUpdateManyMQJobTest {
         lists.add(map);
 //        body.setpCatPathAndPCatIds(lists);
 
-        String s = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"test\",\"channelId\":\"001\",\"productCodes\":[\"2112116RB.BROWN\"],\"cartId\":8,\"statue\":false,\"pCatPath\":[\"Kids'>Kids'\",\"Kids'>Kids' What's Hot\"]}";
+        //String s = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"test\",\"channelId\":\"001\",\"productCodes\":[\"2112116RB.BROWN\"],\"cartId\":8,\"statue\":false,\"pCatPath\":[\"Kids'>Kids'\",\"Kids'>Kids' What's Hot\"]}";
 
+        //String s = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"test\",\"channelId\":\"001\",\"productCodes\":[\"68220-gem\",\"436425-695\",\"15620\",\"68303-gem\",\"2112116RB.BROWN\",\"97995\",\"313497-271\",\"609048-132\",\"311002-111\",\"310669-411\"],\"cartId\":8,\"statue\":true,\"pCatPath\":[\"Apparel>Women's>Women's New Arrivals\",\"Sale>Toddler>50% Off & Up\"]}";
+
+        String s = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"test\",\"channelId\":\"001\",\"productCodes\":[\"68303-gem\"],\"cartId\":8,\"statue\":true,\"pCatPath\":[\"Sale>Kids'\",\"Sale>Women's\"]}";
         CmsUsaPlatformCategoryUpdateManyMQMessageBody body1 = JacksonUtil.json2Bean(s, CmsUsaPlatformCategoryUpdateManyMQMessageBody.class);
         cmsUsaPlatformCategoryUpdateManyMQJob.onStartup(body1);
     }

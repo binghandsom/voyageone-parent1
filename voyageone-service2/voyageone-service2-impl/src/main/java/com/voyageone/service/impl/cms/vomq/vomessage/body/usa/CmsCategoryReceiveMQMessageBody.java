@@ -15,19 +15,9 @@ import java.util.List;
 @VOMQQueue(value = CmsMqRoutingKey.CMS_USA_CATEGORY_RECEIVE)
 public class CmsCategoryReceiveMQMessageBody extends BaseMQMessageBody {
 
-    private String channelId;
     private String cartId;
     private List<String> fullCatIds;
 
-    @Override
-    public String getChannelId() {
-        return channelId;
-    }
-
-    @Override
-    public void setChannelId(String channelId) {
-        this.channelId = channelId;
-    }
 
     public String getCartId() {
         return cartId;
@@ -47,7 +37,7 @@ public class CmsCategoryReceiveMQMessageBody extends BaseMQMessageBody {
 
     @Override
     public void check() throws MQMessageRuleException {
-        if (StringUtils.isEmpty(channelId)) {
+        if (StringUtils.isEmpty(getChannelId())) {
             throw new MQMessageRuleException("获取美国类目信息MQ发送异常, 参数channelId为空.");
         }
         if (StringUtils.isEmpty(cartId)) {
