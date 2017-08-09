@@ -475,7 +475,13 @@ define([
 
             if(!$scope.isCn){
                 selectPlatformType({add_name2:"MS",value:8});
+
+                /**修改店铺内后实时更新左侧菜单栏*/
+                $rootScope.$on('asyncCategorys', function(){
+                    selectPlatformType({add_name2:"MS",value:8});
+                })
             }
+
         }
 
         /**

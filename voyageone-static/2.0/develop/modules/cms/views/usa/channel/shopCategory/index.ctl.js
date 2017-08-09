@@ -31,10 +31,11 @@ define([
 
     cms.controller('shopCategoryController', class ShopCategoryController {
 
-        constructor(sellerCatService, popups, notify) {
+        constructor(sellerCatService, popups, notify,$rootScope) {
             this.sellerCatService = sellerCatService;
             this.popups = popups;
             this.notify = notify;
+            this.$rootScope = $rootScope;
             this.totalCategory = [];
         }
 
@@ -75,13 +76,17 @@ define([
 
             self.popups.openEditCategory(model).then(res => {
 
+                self.$rootScope.categoryTreeList=[];
                 self.sellerCatService.updateCat({
                     cartId: 8,
                     catId: res.catId,
                     catName: res.catName,
                     mapping: res.mapping
-                }).then(() => {
+                }).then(res => {
                     self.notify.success('update success');
+
+                    //实时更新左侧店铺内分类菜单
+                    self.$rootScope.$broadcast('asyncCategorys',res.data);
                 });
 
             });
@@ -113,14 +118,15 @@ define([
                     parentCatId: parentCatId,
                     urlKey:response.urlKey
                 }).then(function (res) {
-                    console.log(res);
-
                     let newNode = getNodeByName(response.catName, res.data.catTree);
 
                     if (index === 0)
                         self.totalCategory[0].children.push(newNode);
                     else
                         selectedCat.children.push(newNode);
+
+                    //实时更新左侧店铺内分类菜单
+                    self.$rootScope.$broadcast('asyncCategorys',res.data);
 
                     self.notify.success('category add success');
 
