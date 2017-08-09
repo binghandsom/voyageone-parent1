@@ -334,7 +334,7 @@
                                     <div class="row">
                                         <label class="col-md-4 control-label query-title text-left vo_unreqfield">Order Limit Count</label>
                                         <div class="col-md-6">
-                                            <input type="number" maxlength="11" class="form-control" ng-model="ctrl.feed.orderlimitcount">
+                                            <input type="number" scale="3,0" class="form-control" ng-model="ctrl.feed.orderlimitcount">
                                         </div>
                                     </div>
                                 </div>
@@ -740,13 +740,13 @@
                                                 </td>
                                                 <td class="text-left">{{ctrl.platformsObj[platform.cartId]}}</td>
                                                 <td class="text-right">
-                                                    <input type="number" class="form-control text-right"
-                                                           ng-model="platform.priceClientMsrp" ng-readonly="ctrl.feed.approvePricing == 1"
+                                                    <input type="number" scale="11,2" class="form-control text-right"
+                                                           ng-model="platform.priceClientMsrp" ng-readonly="ctrl.feed.approvePricing == '1'"
                                                            ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()">
                                                 </td>
                                                 <td class="text-right">
-                                                    <input type="number" class="form-control text-right"
-                                                           ng-model="platform.priceClientRetail" ng-readonly="ctrl.feed.approvePricing == 1"
+                                                    <input type="number" scale="11,2" class="form-control text-right"
+                                                           ng-model="platform.priceClientRetail" ng-readonly="ctrl.feed.approvePricing == '1'"
                                                            ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()">
                                                 </td>
                                                 <td class="text-right"><label>-</label></td>
