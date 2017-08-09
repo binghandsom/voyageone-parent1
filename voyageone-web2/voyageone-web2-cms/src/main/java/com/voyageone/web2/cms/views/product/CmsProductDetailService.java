@@ -1435,8 +1435,12 @@ public class CmsProductDetailService extends BaseViewService {
                 execute.setData(data);
                 //增加排序条件,尺码升序排列
                 List<GetStoreStockDetailData2.Temp> stocks1 = execute.getData().getStocks();
-                if(ListUtils.notNull(stocks1)) {
-                    stocks1.sort((o1, o2) -> o1.getBase().getSku().compareTo(o2.getBase().getSku()));
+                try {
+                    if(ListUtils.notNull(stocks1)) {
+                        stocks1.sort((o1, o2) ->o1.getBase() == null || o2.getBase() == null ? 0 : o1.getBase().getSku().compareTo(o2.getBase().getSku()));
+                    }
+                }catch (Exception e){
+                    $error("库存详情页面根据sku排序报错,param:" + JacksonUtil.bean2Json(execute));
                 }
                 resultMap.put("excute", execute);
             }
