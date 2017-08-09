@@ -702,6 +702,14 @@ define([
                     + $filter('currency')(priceHigh, '');
         };
 
+        containTop(model){
+            let self = this;
+
+            return _.some(self.topList,item=>{
+                return item.code === model.common.fields.code;
+            });
+        }
+
     });
 
 });
