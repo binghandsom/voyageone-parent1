@@ -312,15 +312,15 @@ define([
         save(flag) {
             let self = this;
 
-            // 如果是Approve,approve price是否打钩。价格是否为0或者500，如果是0或者500警告用户再次确认
+            // 如果是Approve,approve price是否打钩
             if (self.feed.status == 'Ready' && flag == '1') {
                 if (self.feed.approvePricing != '1') {
                     self.alert("Please check 'Approve Pricing'.");
                     return;
                 }
                 // Msrp or price O时禁止Approve
-                let checkPlatforms = _.filter(self.feed.usPlatformPrices, platformPrice => {
-                    return platformPrice.priceClientMsrp == 0 || platformPrice.priceClientRetail == 0;
+                let checkPlatforms = _.filter(self.feed.usPlatforms, platform => {
+                    return platform.priceClientMsrp == 0 || platform.priceClientRetail == 0;
                 });
                 let platforms = [];
                 angular.forEach(checkPlatforms, function (platform) {
@@ -331,23 +331,7 @@ define([
                     self.alert(message);
                     return;
                 }
-                checkPlatforms = _.filter(self.feed.usPlatformPrices, function (platformPrice) {
-                    return platformPrice.priceClientMsrp == 500 || platformPrice.priceClientRetail == 500;
-                });
-                if (!checkPlatforms || _.size(checkPlatforms) == 0) {
-                    self.saveFeed(flag);
-                } else {
-                    platforms = [];
-                    angular.forEach(checkPlatforms, function (platform) {
-                        platforms.push(self.platformsObj[platform.cartId]);
-                    });
-                    let message = `Platform[${platforms}] Msrp($) or price($) is 500, continue to approve?`;
-                    self.confirm(message).then((confirmed) => {
-                        self.saveFeed(flag);
-                    }, () => {
-
-                    })
-                }
+                self.saveFeed(flag);
             } else {
                 self.saveFeed(flag);
             }

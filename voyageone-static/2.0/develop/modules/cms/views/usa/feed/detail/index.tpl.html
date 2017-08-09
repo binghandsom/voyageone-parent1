@@ -739,11 +739,13 @@
                                                 <td class="text-left">{{ctrl.platformsObj[platform.cartId]}}</td>
                                                 <td class="text-right">
                                                     <input type="number" class="form-control text-right"
-                                                           ng-model="platform.priceClientMsrp" ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" required>
+                                                           ng-model="platform.priceClientMsrp"
+                                                           ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" required>
                                                 </td>
                                                 <td class="text-right">
                                                     <input type="number" class="form-control text-right"
-                                                           ng-model="platform.priceClientRetail" ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" required>
+                                                           ng-model="platform.priceClientRetail"
+                                                           ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" required>
                                                 </td>
                                                 <td class="text-right"><label>-</label></td>
                                                 <td class="text-right"><label>-</label></td>
