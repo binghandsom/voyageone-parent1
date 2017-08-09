@@ -103,10 +103,11 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
         for (int i = 0; i < strings.size(); i++) {
             if (i == 0) {
                 temp.add(strings.get(i));
-            }else {
+            } else {
                 StringBuilder builder = new StringBuilder(strings.get(0));
                 for (int j = 1; j <= i; j++) {
-                    builder.append("-" + strings.get(j));
+                    builder.append("-" );
+                    builder.append(strings.get(j));
                 }
                 temp.add(builder.toString());
             }
@@ -124,7 +125,7 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
         updateMap.put("usPlatforms.P" + cartId + ".sellerCats", sellerCats);
 
         Boolean flag = messageBody.getFlag();
-        if (flag != null && flag.booleanValue()) {
+        if (flag != null && flag) {
             String googleCategory = "";
             String googleDepartment = "";
             String priceGrabberCategory = "";
