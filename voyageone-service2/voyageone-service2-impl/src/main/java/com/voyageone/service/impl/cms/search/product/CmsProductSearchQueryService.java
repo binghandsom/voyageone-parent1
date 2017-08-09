@@ -192,6 +192,12 @@ public class CmsProductSearchQueryService extends BaseService {
             }
             // 获取platform/cart status
             if (searchValue.getPlatformStatus() != null && searchValue.getPlatformStatus().size() > 0) {
+                // 中国平台 pStatus 没有Pending 只有 WaitingPublish
+                if(cartId > 20) {
+                    if (searchValue.getPlatformStatus().contains("Pending")) {
+                        searchValue.getPlatformStatus().add("WaitingPublish");
+                    }
+                }
                 criteria = criteria.and("P" + cartId + "_pStatus").in(searchValue.getPlatformStatus());
             }
 
