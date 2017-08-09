@@ -35,10 +35,13 @@ define([
             self.productSelList = {selList: []};
             self.catInfo = angular.fromJson(this.$routeParams.category);
             self.popups = popups;
-            self.searchInfo = {
-                cartId: carts.SNKRHDp.id,
-                codeList: ''
+            self.defaultSearchInfo = {
+                brandSelType:1, // brand include
+                pCatPathType:1, // 平台类目
+                shopCatType:1,  // 店铺内分类
+                cartId: carts.SNKRHDp.id
             };
+            self.searchInfo = angular.copy(self.defaultSearchInfo);
             self.carts = carts;
             self.customColumns = {
                 commonProps:[],
@@ -137,11 +140,11 @@ define([
 
         clear() {
             let self = this;
-            self.searchInfo = {
-                brandSelType: 1,
-                pCatPathType: 1,
-                shopCatType: 1
-            };
+            let currSearchInfo = angular.copy(self.searchInfo);
+            let sort = {sortOneName:currSearchInfo.sortOneName, sortOneType:currSearchInfo.sortOneType};
+            self.searchInfo = angular.copy(self.defaultSearchInfo);
+            _.extend(self.searchInfo, sort);
+            self.tempUpEntity = {};
         }
 
         dismiss(attrName) {
