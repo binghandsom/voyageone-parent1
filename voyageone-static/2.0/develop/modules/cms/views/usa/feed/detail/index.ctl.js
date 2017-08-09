@@ -318,19 +318,6 @@ define([
                     self.alert("Please check 'Approve Pricing'.");
                     return;
                 }
-                // Msrp or price O时禁止Approve
-                let checkPlatforms = _.filter(self.feed.usPlatforms, platform => {
-                    return platform.priceClientMsrp == 0 || platform.priceClientRetail == 0;
-                });
-                let platforms = [];
-                angular.forEach(checkPlatforms, function (platform) {
-                    platforms.push(self.platformsObj[platform.cartId]);
-                });
-                if (_.size(platforms) > 0) {
-                    let message = `Platform[${platforms}] Msrp($) or price($) is 0, feed can't be approved.`;
-                    self.alert(message);
-                    return;
-                }
                 self.saveFeed(flag);
             } else {
                 self.saveFeed(flag);
@@ -653,6 +640,25 @@ define([
 
         changeImages(index, imageUrl, arrays) {
             arrays.splice(index, 1, imageUrl);
+        }
+
+        // Check Approve Pricing, 价格Check
+        approvePricing () {
+            let self = this;
+            if (self.feed.approvePricing == "1") {
+                let usPlatforms = _.filter(self.feed.usPlatforms, platform => {
+                    return !platform.priceClientMsrp || platform.priceClientMsrp <= 0 || !platform.priceClientRetail || platform.priceClientRetail <= 0;
+                });
+                if (_.size(usPlatforms) > 0) {
+                    self.feed.approvePricing = "0";
+                    let unCheckedPlatforms = [];
+                    _.each(usPlatforms, platform => {
+                        unCheckedPlatforms.push(self.platformsObj[platform.cartId]);
+                    });
+                    let message = `Platform[${unCheckedPlatforms}] Msrp($) or Price($) is empty or 0.`;
+                    self.alert(message);
+                }
+            }
         }
 
     });
