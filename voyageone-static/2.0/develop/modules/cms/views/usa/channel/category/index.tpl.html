@@ -419,7 +419,14 @@
                                     <button type="button" class="btn btn-default" ng-click="ctrl.addTopProductClick(productInfo)"><i class="fa fa-long-arrow-up"></i></button>&emsp;
                                     <button type="button" class="btn btn-default"><i class="fa fa-long-arrow-down"></i></button>
                                 </td>
-                                <td class="text-center" ng-repeat="prop in ctrl.customColumns.selCommonProps">{{ctrl.getProductValue(productInfo,prop)}}</td>
+                                <td class="text-center" ng-repeat="prop in ctrl.customColumns.selCommonProps">
+                                    <span ng-if="prop.propName == 'Long Description'">
+                                        <popover-text content="ctrl.getProductValue(productInfo,prop)" direct="left" size="50"></popover-text>
+                                    </span>
+                                    <span ng-if="prop.propName != 'Long Description'">
+                                        {{ctrl.getProductValue(productInfo,prop)}}
+                                    </span>
+                                </td>
                                 <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformAttributes track by $index">{{ctrl.getProductValue(productInfo,prop)}}</td>
                                 <td class="text-center" ng-repeat="prop in ctrl.customColumns.selPlatformSales track by $index">{{productInfo.sales["P"+prop.cartId]?productInfo.sales["P"+prop.cartId]:0}}</td>
                             </tr>
