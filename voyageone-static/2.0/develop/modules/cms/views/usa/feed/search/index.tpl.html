@@ -139,7 +139,7 @@
                 <div class="container-fluid">
                     <div class="row" >
                         <div class="col-md-6">
-                            <div class="checkbox" >
+                            <div class="checkbox">
                                 <label>
                                     <input type="checkbox" ng-model="ctrl.totalItems"> Select All Items By Query Terms
                                 </label>
@@ -148,9 +148,8 @@
                         <div class="col-md-6" >
                             <div class="btn-group pull-right" style="margin-top: 7px; margin-right: 17px;">
                                 <button type="button" class="btn btn-default btn-pop"
-                                        ng-if="ctrl.flag > 1"
+                                        ng-if="ctrl.flag > 1" style="margin-right: 10px;"
                                         ng-click="ctrl.batchApprovePricing()"><i class="fa fa-gear"></i>&nbsp;Bulk Approve Pricing</button>
-                                &nbsp;&nbsp;
                                 <button type="button" class="btn btn-default btn-pop"
                                         ng-if="ctrl.flag==3"
                                         ng-click="ctrl.popBatchApprove()"><i class="fa fa-gear"></i>&nbsp;Bulk Approve</button>
