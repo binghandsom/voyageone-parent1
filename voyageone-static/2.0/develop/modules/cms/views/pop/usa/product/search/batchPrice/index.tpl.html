@@ -17,7 +17,7 @@
                </div>
                <div class="col-md-1 text-center">=</div>
                <div class="col-md-3">
-                   <select class="form-control" ng-model="ctrl.paraMap.basePriceType" required>
+                   <select class="form-control" ng-model="ctrl.paraMap.basePriceType" ng-change="ctrl.change(ctrl.paraMap.basePriceType)" required>
                        <option value="clientRetailPrice">Sale Price</option>
                        <option value="clientMsrpPrice">Msrp</option>
                        <option value="fixedValue">Fixed value</option>

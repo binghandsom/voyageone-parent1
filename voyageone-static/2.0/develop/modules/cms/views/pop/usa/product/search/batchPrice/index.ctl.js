@@ -61,6 +61,16 @@ define([
             }
         }
 
+        change(basePriceType){
+            let self = this;
+            if(basePriceType == "fixedValue"){
+                self.paraMap.optionType = "=";
+            }else {
+                self.paraMap.optionType = "*";
+            }
+
+        }
+
     })
 
 });
