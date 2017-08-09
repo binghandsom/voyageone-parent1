@@ -162,11 +162,14 @@ define([
             let self = this,
                 requestMap = {};
 
-            if(value == null || value <= 0){
+            if (!value) {
+                value = 0;
+            }
+            /*if(value == null || value <= 0){
                 self.alert("Price must be greater than 0!");
                 feed.editMsrp = feed.editRetai = false;
                 return;
-            }
+            }*/
 
             requestMap.code = feed.code;
             requestMap["cartId"] = cartId;
