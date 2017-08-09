@@ -21,6 +21,7 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.bean.cms.CmsBtTagBean;
 import com.voyageone.service.bean.cms.search.product.CmsProductCodeListBean;
@@ -938,6 +939,7 @@ public class UsaProductDetailService extends BaseService {
         } else {
             //未勾选全部
             body.setProductCodes(codeList);
+            String s = JacksonUtil.bean2Json(body);
             cmsMqSenderService.sendMessage(body);
         }
         return null;
@@ -978,6 +980,7 @@ public class UsaProductDetailService extends BaseService {
         } else {
             //未勾选全部
             body.setProductCodes(codeList);
+            String s = JacksonUtil.bean2Json(body);
             cmsMqSenderService.sendMessage(body);
         }
         return null;

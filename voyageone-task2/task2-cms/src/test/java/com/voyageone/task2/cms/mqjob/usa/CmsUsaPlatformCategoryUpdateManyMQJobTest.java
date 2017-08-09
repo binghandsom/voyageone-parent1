@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.mqjob.usa;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsUsaPlatformCategoryUpdateManyMQMessageBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,6 +38,10 @@ public class CmsUsaPlatformCategoryUpdateManyMQJobTest {
         map.put("pCatPath","Sale>Toddler>50% Off & Up");
         lists.add(map);
 //        body.setpCatPathAndPCatIds(lists);
-        cmsUsaPlatformCategoryUpdateManyMQJob.onStartup(body);
+
+        String s = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"test\",\"channelId\":\"001\",\"productCodes\":[\"2112116RB.BROWN\"],\"cartId\":8,\"statue\":false,\"pCatPath\":[\"Kids'>Kids'\",\"Kids'>Kids' What's Hot\"]}";
+
+        CmsUsaPlatformCategoryUpdateManyMQMessageBody body1 = JacksonUtil.json2Bean(s, CmsUsaPlatformCategoryUpdateManyMQMessageBody.class);
+        cmsUsaPlatformCategoryUpdateManyMQJob.onStartup(body1);
     }
 }

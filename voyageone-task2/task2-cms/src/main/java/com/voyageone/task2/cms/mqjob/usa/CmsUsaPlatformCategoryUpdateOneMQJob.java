@@ -51,42 +51,39 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
 
         List<String> productCodes = messageBody.getProductCodes();
         Integer cartId = messageBody.getCartId();
-
         for (String productCode : productCodes) {
             CmsBtProductModel cmsBtProductModel = productService.getProductByCode(messageBody.getChannelId(), productCode);
-            if(cmsBtProductModel != null) {
+            if (cmsBtProductModel != null) {
                 //获取美国平台对象
                 CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getUsPlatform(cartId);
-                if (!messageBody.getpCatId().equalsIgnoreCase(platform.getpCatId()) || !messageBody.getpCatPath().equalsIgnoreCase(platform.getpCatPath())) {
-                    //主类目有改动
-                    List<CmsBtProductModel_SellerCat> sellerCats = platform.getSellerCats();
-                    ArrayList<CmsBtProductModel_SellerCat> copysSllerCats = new ArrayList<>();
-                    copysSllerCats.addAll(sellerCats);
+                //主类目有改动
+                List<CmsBtProductModel_SellerCat> sellerCats = platform.getSellerCats();
+                ArrayList<CmsBtProductModel_SellerCat> copysSllerCats = new ArrayList<>();
+                copysSllerCats.addAll(sellerCats);
 
-                    for (CmsBtProductModel_SellerCat sellerCat : copysSllerCats) {
-                        //先用旧的pcatId匹配
-                        if (sellerCat.getcId().equalsIgnoreCase(platform.getpCatId())){
-                            //移除旧的
-                            sellerCats.remove(sellerCat);
-                            break;
-                        }
+                for (CmsBtProductModel_SellerCat sellerCat : copysSllerCats) {
+                    //先用旧的pcatId匹配
+                    if (sellerCat.getcId().equalsIgnoreCase(platform.getpCatId())) {
+                        //移除旧的
+                        sellerCats.remove(sellerCat);
+                        break;
                     }
-                    CmsBtProductModel_SellerCat newSellerCat = sellerCatService.getSellerCat(messageBody.getChannelId(), cartId,messageBody.getpCatPath());
-                    if (newSellerCat != null){
-                        sellerCats.add(newSellerCat);
-                    }
-                    update(productCode,messageBody,sellerCats);
-                    if(CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(platform.getStatus())){
-                        //上新状态,更新上新表
-                        sxProductService.insertSxWorkLoad(messageBody.getChannelId(), productCode, cartId, getTaskName());
-                    }
+                }
+                CmsBtProductModel_SellerCat newSellerCat = sellerCatService.getSellerCat(messageBody.getChannelId(), cartId, messageBody.getpCatPath());
+                if (newSellerCat != null) {
+                    sellerCats.add(newSellerCat);
+                }
+                update(productCode, messageBody, sellerCats);
+                if (CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(platform.getStatus())) {
+                    //上新状态,更新上新表
+                    sxProductService.insertSxWorkLoad(messageBody.getChannelId(), productCode, cartId, getTaskName());
                 }
             }
         }
 
     }
 
-    private void update(String productCode, CmsUsaPlatformCategoryUpdateOneMQMessageBody messageBody, List<CmsBtProductModel_SellerCat> sellerCats){
+    private void update(String productCode, CmsUsaPlatformCategoryUpdateOneMQMessageBody messageBody, List<CmsBtProductModel_SellerCat> sellerCats) {
         Integer cartId = messageBody.getCartId();
         List<BulkUpdateModel> bulkList = new ArrayList<>(1);
         HashMap<String, Object> updateMap = new HashMap<>();
@@ -104,7 +101,7 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
             String seoTitle = "";
             String seoDescription = "";
             String seoKeywords = "";
-            Map<String,Object> mapping = messageBody.getMapping();
+            Map<String, Object> mapping = messageBody.getMapping();
             if (MapUtils.isNotEmpty(mapping)) {
                 googleCategory = StringUtils.trimToEmpty((String) mapping.get("googleCategory"));
                 googleDepartment = StringUtils.trimToEmpty((String) mapping.get("googleDepartment"));
@@ -131,7 +128,7 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
         model.setQueryMap(queryMap);
         bulkList.add(model);
         BulkWriteResult bulkWriteResult = productService.bulkUpdateWithMap(messageBody.getChannelId(), bulkList, messageBody.getSender() == null ? getTaskName() : messageBody.getSender(), "$set");
-        $info("更新产品表,productCode:" + productCode + " cartId:" + cartId + " writeResult:"  + JacksonUtil.bean2Json(bulkWriteResult));
+        $info("更新产品表,productCode:" + productCode + " cartId:" + cartId + " writeResult:" + JacksonUtil.bean2Json(bulkWriteResult));
     }
 
 
