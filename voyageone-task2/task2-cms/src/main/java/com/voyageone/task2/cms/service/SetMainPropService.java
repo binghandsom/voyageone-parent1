@@ -3010,7 +3010,10 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 BigDecimal b = new BigDecimal(weight * 453.59237);
                 cmsProduct.getCommon().getFields().setWeightG(b.setScale(0, BigDecimal.ROUND_HALF_UP).intValue());
                 b = new BigDecimal(weight * 453.59237 / 1000.0);
-                cmsProduct.getCommon().getFields().setWeightKG(b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+
+                Double kg = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                if(kg.compareTo(0.0) == 0) kg = 0.1;
+                cmsProduct.getCommon().getFields().setWeightKG(kg);
             }
         }
 
