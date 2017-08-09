@@ -17,6 +17,9 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_SellerCat;
 import com.voyageone.task2.cms.mqjob.TBaseMQCmsService;
+
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by dell on 2017/8/7.
@@ -90,6 +94,36 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
         updateMap.put("usPlatforms.P" + cartId + ".pCatId", messageBody.getpCatId());
         updateMap.put("usPlatforms.P" + cartId + ".pCatStatus", 1);
         updateMap.put("usPlatforms.P" + cartId + ".sellerCats", sellerCats);
+
+        Boolean flag = messageBody.getFlag();
+        if (flag != null && flag.booleanValue()) {
+            String googleCategory = "";
+            String googleDepartment = "";
+            String priceGrabberCategory = "";
+
+            String seoTitle = "";
+            String seoDescription = "";
+            String seoKeywords = "";
+            Map<String,Object> mapping = messageBody.getMapping();
+            if (MapUtils.isNotEmpty(mapping)) {
+                googleCategory = StringUtils.trimToEmpty((String) mapping.get("googleCategory"));
+                googleDepartment = StringUtils.trimToEmpty((String) mapping.get("googleDepartment"));
+                priceGrabberCategory = StringUtils.trimToEmpty((String) mapping.get("priceGrabberCategory"));
+
+                seoTitle = StringUtils.trimToEmpty((String) mapping.get("seoTitle"));
+                seoDescription = StringUtils.trimToEmpty((String) mapping.get("seoDescription"));
+                seoKeywords = StringUtils.trimToEmpty((String) mapping.get("seoKeywords"));
+            }
+
+            updateMap.put("common.fields.googleCategory", googleCategory);
+            updateMap.put("common.fields.googleDepartment", googleDepartment);
+            updateMap.put("common.fields.priceGrabberCategory", priceGrabberCategory);
+
+            updateMap.put("usPlatforms.P" + cartId + ".fields.seoTitle", seoTitle);
+            updateMap.put("usPlatforms.P" + cartId + ".fields.seoDescription", seoDescription);
+            updateMap.put("usPlatforms.P" + cartId + ".fields.seoKeywords", seoKeywords);
+        }
+
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("common.fields.code", productCode);
         BulkUpdateModel model = new BulkUpdateModel();
