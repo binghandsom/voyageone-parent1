@@ -703,7 +703,7 @@
                                         <div class="onoffswitch" style="margin: 0px auto;">
                                             <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="approvePricing"
                                                    ng-true-value="'1'" ng-false-value="'0'"
-                                                   ng-model="ctrl.feed.approvePricing">
+                                                   ng-model="ctrl.feed.approvePricing" ng-change="ctrl.approvePricing()">
                                             <label class="onoffswitch-label" for="approvePricing">
                                                 <span class="onoffswitch-inner"></span>
                                                 <span class="onoffswitch-switch"></span>
@@ -742,12 +742,12 @@
                                                 <td class="text-right">
                                                     <input type="number" class="form-control text-right"
                                                            ng-model="platform.priceClientMsrp" ng-readonly="ctrl.feed.approvePricing == 1"
-                                                           ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" required>
+                                                           ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" ng-required="ctrl.feed.feedAuth > 1">
                                                 </td>
                                                 <td class="text-right">
                                                     <input type="number" class="form-control text-right"
                                                            ng-model="platform.priceClientRetail" ng-readonly="ctrl.feed.approvePricing == 1"
-                                                           ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" required>
+                                                           ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" ng-required="ctrl.feed.feedAuth > 1">
                                                 </td>
                                                 <td class="text-right"><label>-</label></td>
                                                 <td class="text-right"><label>-</label></td>
