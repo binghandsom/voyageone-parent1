@@ -89,9 +89,26 @@ public class Tmall_TongGou_928_LIKING_DictTest extends BaseDictTest{
         // 根字典
         RuleExpression ruleRoot = new RuleExpression();
 
+//        {
+//            // 固定图片 - AMEX项目介绍
+//            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i3/3081276392/TB2t9l8XsfhFuJjSZFDXXXJfpXa_!!3081276392.jpg")));
+//        }
         {
-            // 固定图片 - AMEX项目介绍
-            ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i3/3081276392/TB2t9l8XsfhFuJjSZFDXXXJfpXa_!!3081276392.jpg")));
+            // 店铺介绍图 - 0
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord("<a href=\"http://liking.tmall.com/p/rd137248.htm\" target=\"_blank\">" + C_TEMPLATE_IMG_790 + "</a>"));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("5"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("0"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, null, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
         }
         {
             // 固定图片 - 商品展示
