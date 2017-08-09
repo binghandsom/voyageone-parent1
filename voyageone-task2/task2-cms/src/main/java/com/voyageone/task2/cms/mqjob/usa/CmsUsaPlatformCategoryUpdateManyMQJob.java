@@ -121,7 +121,8 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
             } else {
                 StringBuilder builder = new StringBuilder(strings.get(0));
                 for (int j = 1; j <= i; j++) {
-                    builder.append("-" + strings.get(j));
+                    builder.append("-" );
+                    builder.append(strings.get(j));
                 }
                 temp.add(builder.toString());
             }

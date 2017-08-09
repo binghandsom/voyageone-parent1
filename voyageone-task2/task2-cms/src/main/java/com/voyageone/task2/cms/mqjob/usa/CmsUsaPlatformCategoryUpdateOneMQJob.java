@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by dell on 2017/8/7.
@@ -51,7 +52,7 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
     @Override
     public void onStartup(CmsUsaPlatformCategoryUpdateOneMQMessageBody messageBody) throws Exception {
         $info("接收到批量更新SN Primary Category MQ消息体" + JacksonUtil.bean2Json(messageBody));
-        ArrayList<String> fullCatIds = new ArrayList<>();
+        List<String> fullCatIds = new ArrayList<>();
         List<String> productCodes = messageBody.getProductCodes();
         Integer cartId = messageBody.getCartId();
         for (String productCode : productCodes) {
@@ -90,11 +91,7 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
         body.setCartId(cartId.toString());
         body.setSender(messageBody.getSender());
         //去重复
-        HashSet<String> set = new HashSet<>();
-        set.addAll(fullCatIds);
-        fullCatIds.clear();
-        fullCatIds.addAll(set);
-        body.setFullCatIds(fullCatIds);
+        fullCatIds = fullCatIds.stream().distinct().collect(Collectors.toList());
         if (ListUtils.notNull(fullCatIds)){
             cmsMqSenderService.sendMessage(body);
         }
@@ -106,10 +103,11 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
         for (int i = 0; i < strings.size(); i++) {
             if (i == 0) {
                 temp.add(strings.get(i));
-            }else {
+            } else {
                 StringBuilder builder = new StringBuilder(strings.get(0));
                 for (int j = 1; j <= i; j++) {
-                    builder.append("-" + strings.get(j));
+                    builder.append("-" );
+                    builder.append(strings.get(j));
                 }
                 temp.add(builder.toString());
             }
@@ -127,7 +125,7 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
         updateMap.put("usPlatforms.P" + cartId + ".sellerCats", sellerCats);
 
         Boolean flag = messageBody.getFlag();
-        if (flag != null && flag.booleanValue()) {
+        if (flag != null && flag) {
             String googleCategory = "";
             String googleDepartment = "";
             String priceGrabberCategory = "";
