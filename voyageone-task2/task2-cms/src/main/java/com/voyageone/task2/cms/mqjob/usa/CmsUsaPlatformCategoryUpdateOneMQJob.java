@@ -60,29 +60,43 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
             if (cmsBtProductModel != null) {
                 //获取美国平台对象
                 CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getUsPlatform(cartId);
-                //主类目有改动
-                List<CmsBtProductModel_SellerCat> sellerCats = platform.getSellerCats();
-                ArrayList<CmsBtProductModel_SellerCat> copysSllerCats = new ArrayList<>();
-                copysSllerCats.addAll(sellerCats);
+                if (platform != null){
+                    //主类目有改动
+                    List<CmsBtProductModel_SellerCat> sellerCats = platform.getSellerCats();
+                    ArrayList<CmsBtProductModel_SellerCat> copysSllerCats = new ArrayList<>();
+                    copysSllerCats.addAll(sellerCats);
 
-                for (CmsBtProductModel_SellerCat sellerCat : copysSllerCats) {
-                    //先用旧的pcatId匹配
-                    if (sellerCat.getcId().equalsIgnoreCase(platform.getpCatId())) {
-                        //移除旧的
-                        sellerCats.remove(sellerCat);
-                        fullCatIds.addAll(getAllpCatIds(sellerCat));
-                        break;
+                    for (CmsBtProductModel_SellerCat sellerCat : copysSllerCats) {
+                        //先用旧的pcatId匹配
+                        if (sellerCat.getcId().equalsIgnoreCase(platform.getpCatId())) {
+                            //移除旧的
+                            sellerCats.remove(sellerCat);
+                            fullCatIds.addAll(getAllpCatIds(sellerCat));
+                            break;
+                        }
                     }
-                }
-                CmsBtProductModel_SellerCat newSellerCat = sellerCatService.getSellerCat(messageBody.getChannelId(), cartId, messageBody.getpCatPath());
-                if (newSellerCat != null) {
-                    sellerCats.add(newSellerCat);
-                    fullCatIds.addAll(getAllpCatIds(newSellerCat));
-                }
-                update(productCode, messageBody, sellerCats);
-                if (CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(platform.getStatus())) {
-                    //上新状态,更新上新表
-                    sxProductService.insertSxWorkLoad(messageBody.getChannelId(), productCode, cartId, getTaskName());
+                    CmsBtProductModel_SellerCat newSellerCat = sellerCatService.getSellerCat(messageBody.getChannelId(), cartId, messageBody.getpCatPath());
+                    //添加类目,要判断是否重复
+                    boolean match = false;
+                    for (CmsBtProductModel_SellerCat sellerCat : sellerCats) {
+                        if (sellerCat.getcId().equalsIgnoreCase(newSellerCat.getcId())) {
+                            //有重复的不用添加
+                            match = true;
+                            break;
+                        }
+                    }
+                    //没有重复的
+                    if (!match) {
+                        if (newSellerCat != null) {
+                            sellerCats.add(newSellerCat);
+                            fullCatIds.addAll(getAllpCatIds(newSellerCat));
+                        }
+                    }
+                    update(productCode, messageBody, sellerCats);
+                    if (CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(platform.getStatus())) {
+                        //上新状态,更新上新表
+                        sxProductService.insertSxWorkLoad(messageBody.getChannelId(), productCode, cartId, getTaskName());
+                    }
                 }
             }
         }

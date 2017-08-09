@@ -43,7 +43,6 @@ define([
                                 self.base = resp.data.excute.data.header.base;
                                 self.stocks = resp.data.excute.data.stocks;
                             }
-
                             let noStockSkuData = resp.data.noStockSkus;
                             if (noStockSkuData && noStockSkuData.length > 0) {
                                 scope.noStockSkus = angular.copy(noStockSkuData);
