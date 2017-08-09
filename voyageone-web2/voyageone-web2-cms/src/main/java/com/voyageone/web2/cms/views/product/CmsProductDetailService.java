@@ -1435,14 +1435,9 @@ public class CmsProductDetailService extends BaseViewService {
                 execute.setData(data);
                 //增加排序条件,尺码升序排列
                 List<GetStoreStockDetailData2.Temp> stocks1 = execute.getData().getStocks();
-                stocks1.sort(new Comparator<GetStoreStockDetailData2.Temp>() {
-                    @Override
-                    public int compare(GetStoreStockDetailData2.Temp o1, GetStoreStockDetailData2.Temp o2) {
-                        String s1 = o1.getBase().getOrigSize();
-                        String s2 = o2.getBase().getOrigSize();
-                        return s1.compareToIgnoreCase(s2);
-                    }
-                });
+                if(ListUtils.notNull(stocks1)) {
+                    stocks1.sort((o1, o2) -> o1.getBase().getSku().compareTo(o2.getBase().getSku()));
+                }
                 resultMap.put("excute", execute);
             }
             resultMap.put("nostock",false);
