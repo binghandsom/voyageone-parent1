@@ -482,7 +482,7 @@ public class CmsProductSearchQueryService extends BaseService {
             List<String> inputCodeList = Arrays.asList(searchValue.getCodeList());
             inputCodeList = inputCodeList.stream().map(inputCode -> StringUtils.trimToEmpty(inputCode)).filter(inputCode -> !inputCode.isEmpty()).collect(Collectors.toList());
             if (inputCodeList.size() > 0) {
-                Criteria tempCriteria = new Criteria("skuCode").in(inputCodeList).or("productCode").in(inputCodeList).or("productModel").in(inputCodeList);
+                Criteria tempCriteria = new Criteria("skuCode").in(inputCodeList).or("productCode").in(inputCodeList).or("productModel").in(inputCodeList).or("upc").in(inputCodeList);
                 criteria = criteria.and(tempCriteria);
             }
 
