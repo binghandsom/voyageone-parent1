@@ -159,7 +159,11 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
             //通过code定位
             jongoUpdate.setQuery("{\"common.fields.code\":#}");
             jongoUpdate.setQueryParameters(productCode);
-            jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "St\":#,\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "Ed\":#}}");
+            if ("pPriceSale".equals(minMaxChangedPriceType)){
+                jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "St\":#,\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "Ed\":#,\"usPlatforms.P" + cartId + "." + "pPriceRetail" + "St\":#,\"usPlatforms.P" + cartId + "." + "pPriceRetail" + "Ed\":#}}");
+            }else {
+                jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "St\":#,\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "Ed\":#}}");
+            }
             jongoUpdate.setUpdateParameters(newStPrice, newEdPrice);
             BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
             $info("同步价格最大值最小值,channelId:" + channelId  +" productCode:" + productCode + " bulkWriteResult:" + bulkWriteResult);

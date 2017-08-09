@@ -652,6 +652,9 @@ public class UsaProductDetailService extends BaseService {
                                 //修改最大值最小值
                                 minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceSaleSt", clientRetailPrice);
                                 minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceSaleEd", clientRetailPrice);
+
+                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceRetailSt", clientRetailPrice);
+                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceRetailEd", clientRetailPrice);
                             }
                             //修改销售状态
                             if (StringUtils.isNotEmpty(isSale)) {
