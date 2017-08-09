@@ -601,7 +601,10 @@ public class UsaFeedInfoService extends BaseService {
         if (StringUtils.isNotBlank(channelId) && CollectionUtils.isNotEmpty(codeList)) {
 
             JongoUpdate jongoUpdate = new JongoUpdate();
-            jongoUpdate.setQuery("{\"channelId\":#,\"code\":{$in:#}}");
+            // usPlatforms.P8.priceClientMsrp 和 usPlatforms.P8.priceClientRetail 必须大于0才能设置approvePricing=1
+            jongoUpdate.setQuery("{\"channelId\":#,\"code\":{$in:#}" +
+                    ",\"usPlatforms.P8.priceClientMsrp\":{$exists:true},\"usPlatforms.P8.priceClientMsrp\":{$gt:0}" +
+                    ",\"usPlatforms.P8.priceClientRetail\":{$exists:true},\"usPlatforms.P8.priceClientRetail\":{$gt:0}}");
             jongoUpdate.setQueryParameters(channelId, codeList);
 
             StringBuffer sb = new StringBuffer();
