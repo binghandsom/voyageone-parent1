@@ -313,7 +313,7 @@ define([
         popBatchPrice(cartId) {
             let self = this;
 
-            if(self.getSelectedProduct('code').length === 0){
+            if(self.getSelectedProduct('code').length === 0 && self._selall == "0"){
                 self.alert("please choose at least one!!!");
                 return;
             }
@@ -408,7 +408,7 @@ define([
         batchList(cartId,activeStatus,usPlatformName){
             let self = this;
 
-            if(self.getSelectedProduct('code').length === 0){
+            if(self.getSelectedProduct('code').length == 0 && self._selall == "0"){
                 self.alert("please choose at least one!!!");
                 return;
             }
@@ -438,8 +438,8 @@ define([
          */
         batchUpdateCategory(option){
             let self = this;
-
-            if(self.getSelectedProduct('code').length === 0){
+            let flag = false;
+            if(self.getSelectedProduct('code').length === 0 && self._selall == "0"){
                 self.alert("please choose at least one!!!");
                 return;
             }
@@ -447,11 +447,71 @@ define([
             self.popups.openUsCategory(option).then(res => {
 
                 if(!option.muiti){
-                    let mapping = res.mapping;
-
-                    console.log(mapping);
+                    //单个
+                    self.confirm("Whether to cover the properties associated with the SN primary category？").then(
+                        (confirmed) => {
+                            //确定
+                            flag =true;
+                            self.advanceSearch.updatePrimaryCategory(
+                                {
+                                    selAll:self._selall == "1"?"true":"false",
+                                    codeList:self.getSelectedProduct('code'),
+                                    searchInfo:self.searchUtilService.handleQueryParams(self),
+                                    mapping:res.mapping,
+                                    pCatPath:res.catPath,
+                                    pCatId:res.catId,
+                                    cartId:option.cartId,
+                                    flag:flag
+                                }
+                            ).then(
+                                param =>{
+                                    self.notify.success('Update Success');
+                                }
+                            );
+                        },
+                        (confirmed) => {
+                            //取消
+                            self.advanceSearch.updatePrimaryCategory(
+                                {
+                                    selAll:self._selall == "1"?"true":"false",
+                                    codeList:self.getSelectedProduct('code'),
+                                    searchInfo:self.searchUtilService.handleQueryParams(self),
+                                    mapping:res.mapping,
+                                    pCatPath:res.catPath,
+                                    pCatId:res.catId,
+                                    cartId:option.cartId,
+                                    flag:flag
+                                }
+                            ).then(
+                                param =>{
+                                    self.notify.success('Update Success');
+                                }
+                            );
+                        }
+                    )
                 }else{
-                    console.log(option.move);
+                    console.log(res);
+                    console.log(option)
+                    //多个
+                    let pCatPaths = [];
+                    angular.forEach(res, function (item) {
+                        pCatPaths.push(item.catPath);
+                    })
+                    self.advanceSearch.updateOtherCategory(
+                        {
+                            selAll:self._selall == "1"?"true":"false",
+                            codeList:self.getSelectedProduct('code'),
+                            searchInfo:self.searchUtilService.handleQueryParams(self),
+                            cartId:option.cartId,
+                            pCatPaths:pCatPaths,
+                            statue:option.move == "1" ? true:false
+                        }
+                    ).then(
+                        param =>{
+                            self.notify.success('Update Success');
+                        }
+                    );
+
                 }
             });
         }
