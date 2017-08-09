@@ -6,12 +6,15 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsPlatformCategoryUpdateMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsCategoryReceiveMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsUsaPlatformCategoryUpdateOneMQMessageBody;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Platform_Cart;
@@ -24,10 +27,8 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by dell on 2017/8/7.
@@ -45,10 +46,13 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
     @Autowired
     SellerCatService sellerCatService;
 
+    @Autowired
+    CmsMqSenderService cmsMqSenderService;
+
     @Override
     public void onStartup(CmsUsaPlatformCategoryUpdateOneMQMessageBody messageBody) throws Exception {
         $info("接收到批量更新SN Primary Category MQ消息体" + JacksonUtil.bean2Json(messageBody));
-
+        List<String> fullCatIds = new ArrayList<>();
         List<String> productCodes = messageBody.getProductCodes();
         Integer cartId = messageBody.getCartId();
         for (String productCode : productCodes) {
@@ -66,12 +70,14 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
                     if (sellerCat.getcId().equalsIgnoreCase(platform.getpCatId())) {
                         //移除旧的
                         sellerCats.remove(sellerCat);
+                        fullCatIds.addAll(getAllpCatIds(sellerCat));
                         break;
                     }
                 }
                 CmsBtProductModel_SellerCat newSellerCat = sellerCatService.getSellerCat(messageBody.getChannelId(), cartId, messageBody.getpCatPath());
                 if (newSellerCat != null) {
                     sellerCats.add(newSellerCat);
+                    fullCatIds.addAll(getAllpCatIds(newSellerCat));
                 }
                 update(productCode, messageBody, sellerCats);
                 if (CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(platform.getStatus())) {
@@ -80,7 +86,32 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
                 }
             }
         }
+        CmsCategoryReceiveMQMessageBody body = new CmsCategoryReceiveMQMessageBody();
+        body.setChannelId(messageBody.getChannelId());
+        body.setCartId(cartId.toString());
+        body.setSender(messageBody.getSender());
+        //去重复
+        fullCatIds = fullCatIds.stream().distinct().collect(Collectors.toList());
+        if (ListUtils.notNull(fullCatIds)){
+            cmsMqSenderService.sendMessage(body);
+        }
+    }
 
+    private ArrayList<String> getAllpCatIds(CmsBtProductModel_SellerCat newSellerCat) {
+        ArrayList<String> temp = new ArrayList<>();
+        List<String> strings = newSellerCat.getcIds();
+        for (int i = 0; i < strings.size(); i++) {
+            if (i == 0) {
+                temp.add(strings.get(i));
+            }else {
+                StringBuilder builder = new StringBuilder(strings.get(0));
+                for (int j = 1; j <= i; j++) {
+                    builder.append("-" + strings.get(j));
+                }
+                temp.add(builder.toString());
+            }
+        }
+        return temp;
     }
 
     private void update(String productCode, CmsUsaPlatformCategoryUpdateOneMQMessageBody messageBody, List<CmsBtProductModel_SellerCat> sellerCats) {
