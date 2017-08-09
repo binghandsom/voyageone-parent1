@@ -143,7 +143,7 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                 BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
 
                 $info("修改sku价格,channelId:" + channelId  +" skuCode:" + skuCode + " bulkWriteResult:" + bulkWriteResult);
-                if (CmsConstants.ProductStatus.Approved.name().equals(status) && (CmsConstants.PlatformStatus.OnSale.name().equals(platform.getpStatus()) || CmsConstants.PlatformStatus.InStock.name().equals(platform.getpStatus()))) {
+                if (CmsConstants.ProductStatus.Approved.name().equals(status) && (CmsConstants.PlatformStatus.OnSale.equals(platform.getpStatus()) || CmsConstants.PlatformStatus.InStock.equals(platform.getpStatus()))) {
                     platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, sender);
                 }
                 i++;

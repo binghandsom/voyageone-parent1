@@ -169,7 +169,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label query-title" translate="TXT_BRAND"></label>
+                                    <label class="col-sm-3 control-label query-title">Brand</label>
                                     <div class="col-sm-8">
                                         <label class="checkbox-inline c-radio">
                                             <input type="radio" name="brandSelOperation" value="1" ng-model="ctrl.searchInfo.brandSelType"><span class="fa fa-check" ></span> include
@@ -182,13 +182,15 @@
                                 <div class="form-group">
                                     <div class="col-sm-3"></div>
                                     <div class="col-sm-8">
-                                        <select multiple chosen width="'100%'" class="form-control"
-                                                ng-model="ctrl.searchInfo.brandList" search-contains = "true"
-                                                ng-options="brand.value as brand.name for brand in ctrl.masterData.brandList">
-                                        </select>
+                                        <div class="input-group">
+                                            <select multiple chosen width="'100%'" class="form-control"
+                                                    ng-model="ctrl.searchInfo.brandList" search-contains = "true"
+                                                    ng-options="brand.value as brand.name for brand in ctrl.masterData.brandList">
+                                            </select>
+                                            <span class="input-group-addon cur-p" ng-click="ctrl.dismiss('brandList')">reset</span>
+                                        </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
 

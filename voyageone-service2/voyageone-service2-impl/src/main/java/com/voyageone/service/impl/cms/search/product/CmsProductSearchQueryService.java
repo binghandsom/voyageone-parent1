@@ -192,6 +192,12 @@ public class CmsProductSearchQueryService extends BaseService {
             }
             // 获取platform/cart status
             if (searchValue.getPlatformStatus() != null && searchValue.getPlatformStatus().size() > 0) {
+                // 中国平台 pStatus 没有Pending 只有 WaitingPublish
+                if(cartId > 20) {
+                    if (searchValue.getPlatformStatus().contains("Pending")) {
+                        searchValue.getPlatformStatus().add("WaitingPublish");
+                    }
+                }
                 criteria = criteria.and("P" + cartId + "_pStatus").in(searchValue.getPlatformStatus());
             }
 
@@ -482,7 +488,7 @@ public class CmsProductSearchQueryService extends BaseService {
             List<String> inputCodeList = Arrays.asList(searchValue.getCodeList());
             inputCodeList = inputCodeList.stream().map(inputCode -> StringUtils.trimToEmpty(inputCode)).filter(inputCode -> !inputCode.isEmpty()).collect(Collectors.toList());
             if (inputCodeList.size() > 0) {
-                Criteria tempCriteria = new Criteria("skuCode").in(inputCodeList).or("productCode").in(inputCodeList).or("productModel").in(inputCodeList);
+                Criteria tempCriteria = new Criteria("skuCode").in(inputCodeList).or("productCode").in(inputCodeList).or("productModel").in(inputCodeList).or("upc").in(inputCodeList);
                 criteria = criteria.and(tempCriteria);
             }
 

@@ -253,7 +253,7 @@
                                                     <div class="col-md-12 form-horizontal">
                                                         <div class="form-group">
                                                             <div class="row">
-                                                                <label class="col-md-6 query-title">&nbsp;&nbsp;Image Count</label>
+                                                                <label class="col-md-6 query-title vo_reqfield">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
                                                                     <input type="number" class="form-control" ng-model="ctrl.imageView.imageNum" ng-enter="ctrl.initImage(ctrl.imageView.imageNum)" scale="2,0">
                                                                 </div>
@@ -275,9 +275,8 @@
                                                                 <button type="button" class="btn btn-default" ng-click="ctrl.deleteImage($index)"><i class="fa fa-trash"></i></button>
                                                             </div>
                                                         </div>
-
-
                                                     </li>
+                                                    <li class="list-group-item text-wrap" style="color: red;" ng-if="ctrl.imageView.images.length == 0">Please input Image Count, then Enter.</li>
                                                 </ul>
 
                                             </div>
@@ -411,13 +410,13 @@
             <ul class="nav bs-docs-sidenav">
                 <li class="text-center" style="margin: 7px">
                     <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
-                            ng-disabled="productForm.$invalid" ng-click="ctrl.save()">
+                            ng-disabled="productForm.$invalid || ctrl.imageView.images.length == 0" ng-click="ctrl.save()">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Save
                     </button>
                 </li>
                 <li class="text-center" style="margin: 7px" ng-if="ctrl.platform.platform.pStatus=='Pending' || ctrl.platform.platform.pStatus=='InStock'">
                     <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
-                            ng-disabled="productForm.$invalid" ng-click="ctrl.save('OnSale')">
+                            ng-disabled="productForm.$invalid || ctrl.imageView.images.length == 0" ng-click="ctrl.save('OnSale')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;List
                     </button>
                 </li>

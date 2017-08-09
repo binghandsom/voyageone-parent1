@@ -359,35 +359,20 @@ define([
         canApprovePrice(feed){
             let self = this;
             //进行校验,no到yes
-            if(feed.approvePricing == 0 || feed.approvePricing == null){
-                if(feed.priceClientMsrpMin == 0 ||feed.priceClientMsrpMin == null || feed.priceClientRetailMin == 0 || feed.priceClientRetailMin == null){
+            if(!feed.approvePricing || feed.approvePricing != "1"){
+
+                if(!feed.usPlatforms || !feed.usPlatforms.P8 || feed.usPlatforms.P8.priceClientMsrp <= 0
+                   || !feed.usPlatforms.P8.priceClientRetail || feed.usPlatforms.P8.priceClientRetail <= 0){
                     //价格为0时不能修改
                     self.alert("Msrp($) or price($) is 0, can not change!!!");
                     return;
                 }
 
-                if(feed.priceClientMsrpMin == 500){
-                    let message = `Msrp($) is 500, continue to change?`;
-                    self.confirm(message).then((confirmed) => {
-                        if(feed.approvePricing == 1)
-                            feed.approvePricing = 0;
-                        else
-                            feed.approvePricing = 1;
-                        self.updateOne(feed,'approvePricing',feed.approvePricing + '');
-                    })
-                }else{
-                    if(feed.approvePricing == 1)
-                        feed.approvePricing = 0;
-                    else
-                        feed.approvePricing = 1;
-                    self.updateOne(feed,'approvePricing' , feed.approvePricing + '');
-                }
+                feed.approvePricing = "1";
+                self.updateOne(feed,'approvePricing', feed.approvePricing);
             }else{
-                if(feed.approvePricing == 1)
-                    feed.approvePricing = 0;
-                else
-                    feed.approvePricing = 1;
-                self.updateOne(feed,'approvePricing',feed.approvePricing + '');
+                feed.approvePricing = "0";
+                self.updateOne(feed,'approvePricing', feed.approvePricing);
             }
         }
     });

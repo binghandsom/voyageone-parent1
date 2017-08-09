@@ -15,7 +15,7 @@ define([
                 this.$element = $element;
                 this.notify = notify;
                 this.$parse = $parse;
-                this.isOpen = false;
+                this.isOpen = true;
                 this.dynamicPopover = {
                     title: 'Defaults',
                     templateUrl: 'priceTemplate.html'
