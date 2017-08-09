@@ -230,8 +230,8 @@
                                 <td class="text-center">{{feed.status}}</td>
                                 <td class="text-center">{{feed.qty}}</td>
                                 <td class="text-center" ng-if="ctrl.flag != 1">
-                                    <span class="cur-p label" ng-class="{'label-info':feed.approvePricing == 1,'label-danger':feed.approvePricing != 1}"
-                                          ng-click="ctrl.canApprovePrice(feed)">{{feed.approvePricing == 1 ? 'Yes' : 'No'}}</span>
+                                    <span class="cur-p label" ng-class="{'label-info':feed.approvePricing == '1','label-danger':feed.approvePricing != '1'}"
+                                          ng-click="ctrl.canApprovePrice(feed)">{{feed.approvePricing == '1' ? 'Yes' : 'No'}}</span>
                                 </td>
                                 <!--<td class="text-right" ng-if="feed.priceClientMsrpMin == feed.priceClientMsrpMax" ng-hide="ctrl.flag == 1">
                                     <div class="input-group">
