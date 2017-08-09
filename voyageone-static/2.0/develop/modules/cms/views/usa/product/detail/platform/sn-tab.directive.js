@@ -170,7 +170,7 @@ define([
 
                     let confirmMsg = "Whether to cover the properties associated with the SN primary category?"
                                      + "(including Google Category, Google DepartMent, PriceGrabber Category, "
-                                     + "Visible On Menu, Enable Filter, Publish, SEO attributes...)";
+                                     + "SEO attributes...)";
                     self.confirm(confirmMsg).then(confirmed => {
                         if (context.mapping) {
                             self.searchField("googleCategory", self.productComm.schemaFields).value = context.mapping.googleCategory;
