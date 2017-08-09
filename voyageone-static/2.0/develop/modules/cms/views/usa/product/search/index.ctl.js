@@ -361,7 +361,7 @@ define([
                 self.tempUpEntity.cidValueTmp = null;
                 self.tempUpEntity.cidValue = null;
 
-                self.popups.openAmazonCategory({cartId: 5,froms:self.searchInfo.pCatPathList,muiti:true}).then(res => {
+                self.popups.openAmazonCategory({cartId: 5,froms:self.tempUpEntity.pCatPathListTmp,muiti:true}).then(res => {
                     self.tempUpEntity.pCatPathListTmp = res;
                 });
             } else {
@@ -369,7 +369,7 @@ define([
                 self.tempUpEntity.pCatPathListTmp = null;
                 self.tempUpEntity.pCatPathList = null;
 
-                self.popups.openUsCategory({cartId:self.searchInfo.cartId,froms:self.searchInfo.cidValue,muiti:true}).then(res => {
+                self.popups.openUsCategory({cartId:self.searchInfo.cartId,froms:self.tempUpEntity.cidValueTmp,muiti:true}).then(res => {
                     self.tempUpEntity.cidValueTmp = res;
                 });
             }
