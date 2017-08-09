@@ -504,14 +504,7 @@ public class UsaProductDetailService extends BaseService {
                 CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, channelId);
                 long productListTotal = cmsProductCodeListBean.getTotalCount();
                 //要根据查询出来的总页数设置分页
-                long pageNumber = 0;
-                if (productListTotal % 100 == 0) {
-                    //整除
-                    pageNumber = productListTotal / 100;
-                } else {
-                    //不整除
-                    pageNumber = (productListTotal / 100) + 1;
-                }
+                long pageNumber = getPageNumber(productListTotal);
 
                 for (int i = 0; i < pageNumber; i++) {
                     queryParams.setProductPageSize(100);
@@ -547,6 +540,8 @@ public class UsaProductDetailService extends BaseService {
             mqMap.setActiveStatus(activeStatus);
             Integer days = Integer.parseInt((String) paraMap.get("days"));
             mqMap.setDays(days);
+            mqMap.setChannelId(channelId);
+            mqMap.setSender(userName);
             if ("true".equals(selAll)) {
                 //勾选了全部,需要通过检索条件,查询出所有信息
                 Map<String, Object> map = (Map<String, Object>) paraMap.get("queryMap");
@@ -554,34 +549,34 @@ public class UsaProductDetailService extends BaseService {
                 CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, channelId);
                 long productListTotal = cmsProductCodeListBean.getTotalCount();
                 //要根据查询出来的总页数设置分页
-                long pageNumber = 0;
-                if (productListTotal % 100 == 0) {
-                    //整除
-                    pageNumber = productListTotal / 100;
-                } else {
-                    //不整除
-                    pageNumber = (productListTotal / 100) + 1;
-                }
-
+                long pageNumber = getPageNumber(productListTotal);
                 for (int i = 0; i < pageNumber; i++) {
                     queryParams.setProductPageSize(100);
                     queryParams.setProductPageNum(i + 1);
                     CmsProductCodeListBean cmsProductCodeListBean1 = cmsProductSearchQueryService.getProductCodeList(queryParams, channelId);
                     List<String> productCodeList = cmsProductCodeListBean1.getProductCodeList();
                     mqMap.setProductCodes(productCodeList);
-                    mqMap.setChannelId(channelId);
-                    mqMap.setSender(userName);
                     cmsMqSenderService.sendMessage(mqMap);
                 }
             } else {
                 //未勾选全部
                 mqMap.setProductCodes(codeList);
-                mqMap.setChannelId(channelId);
-                mqMap.setSender(userName);
                 cmsMqSenderService.sendMessage(mqMap);
             }
         }
         return null;
+    }
+
+    private long getPageNumber(long productListTotal) {
+        long pageNumber = 0;
+        if (productListTotal % 100 == 0) {
+            //整除
+            pageNumber = productListTotal / 100;
+        } else {
+            //不整除
+            pageNumber = (productListTotal / 100) + 1;
+        }
+        return pageNumber;
     }
 
     //修改单条价格
@@ -906,7 +901,7 @@ public class UsaProductDetailService extends BaseService {
     public String updatePrimaryCategory(Map<String, Object> paraMap, String channelId, String userName) {
 
         CmsUsaPlatformCategoryUpdateOneMQMessageBody body = new CmsUsaPlatformCategoryUpdateOneMQMessageBody();
-        Boolean selAll = (Boolean) paraMap.get("selAll");
+        String selAll = (String) paraMap.get("selAll");
         List<String> codeList = (List<String>) paraMap.get("codeList");
 
         Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
@@ -924,30 +919,34 @@ public class UsaProductDetailService extends BaseService {
         body.setpCatPath(pCatPath);
         body.setSender(userName);
 
-        if (selAll) {
+        if ("true".equals(selAll)) {
             //勾选了全部,需要通过检索条件,查询出所有信息
             CmsSearchInfoBean2 queryParams = BeanUtils.toModel(searchInfo, CmsSearchInfoBean2.class);
             CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, channelId);
             if (cmsProductCodeListBean != null) {
-                List<String> productCodeList = cmsProductCodeListBean.getProductCodeList();
-                if (ListUtils.notNull(productCodeList)) {
+                //获取分页页数,默认pagesize为100
+                long pageNumber = getPageNumber(cmsProductCodeListBean.getTotalCount());
+                for (int i = 0; i < pageNumber; i++) {
+                    queryParams.setProductPageSize(100);
+                    queryParams.setProductPageNum(i + 1);
+                    CmsProductCodeListBean cmsProductCodeListBean1 = cmsProductSearchQueryService.getProductCodeList(queryParams, channelId);
+                    List<String> productCodeList = cmsProductCodeListBean1.getProductCodeList();
                     body.setProductCodes(productCodeList);
-                } else {
-                    $warn("通过检索条件未查询到任何商品,queryParams:" + queryParams + " channelId:" + channelId);
+                    cmsMqSenderService.sendMessage(body);
                 }
             }
         } else {
             //未勾选全部
             body.setProductCodes(codeList);
+            cmsMqSenderService.sendMessage(body);
         }
-        cmsMqSenderService.sendMessage(body);
         return null;
     }
 
     public String updateOtherCategory(Map<String, Object> paraMap, String channelId, String userName) {
 
         CmsUsaPlatformCategoryUpdateManyMQMessageBody body = new CmsUsaPlatformCategoryUpdateManyMQMessageBody();
-        Boolean selAll = (Boolean) paraMap.get("selAll");
+        String selAll = (String) paraMap.get("selAll");
         List<String> codeList = (List<String>) paraMap.get("codeList");
 
         Integer cartId = Integer.parseInt((String) paraMap.get("cartId"));
@@ -961,23 +960,26 @@ public class UsaProductDetailService extends BaseService {
         body.setStatue(statue);
         body.setpCatPath(pCatPaths);
 
-        if (selAll) {
+        if ("true".equals(selAll)) {
             //勾选了全部,需要通过检索条件,查询出所有信息
             CmsSearchInfoBean2 queryParams = BeanUtils.toModel(searchInfo, CmsSearchInfoBean2.class);
             CmsProductCodeListBean cmsProductCodeListBean = cmsProductSearchQueryService.getProductCodeList(queryParams, channelId);
             if (cmsProductCodeListBean != null) {
-                List<String> productCodeList = cmsProductCodeListBean.getProductCodeList();
-                if (ListUtils.notNull(productCodeList)) {
+                long pageNumber = getPageNumber(cmsProductCodeListBean.getTotalCount());
+                for (int i = 0; i < pageNumber; i++) {
+                    queryParams.setProductPageSize(100);
+                    queryParams.setProductPageNum(i + 1);
+                    CmsProductCodeListBean cmsProductCodeListBean1 = cmsProductSearchQueryService.getProductCodeList(queryParams, channelId);
+                    List<String> productCodeList = cmsProductCodeListBean1.getProductCodeList();
                     body.setProductCodes(productCodeList);
-                } else {
-                    $warn("通过检索条件未查询到任何商品,queryParams:" + queryParams + " channelId:" + channelId);
+                    cmsMqSenderService.sendMessage(body);
                 }
             }
         } else {
             //未勾选全部
             body.setProductCodes(codeList);
+            cmsMqSenderService.sendMessage(body);
         }
-        cmsMqSenderService.sendMessage(body);
         return null;
     }
 }
