@@ -560,7 +560,7 @@
                                                     <div class="col-md-12 form-horizontal">
                                                         <div class="form-group">
                                                             <div class="row">
-                                                                <label class="col-md-6 query-title text-left">&nbsp;&nbsp;Image Count</label>
+                                                                <label class="col-md-6 query-title text-left vo_reqfield">&nbsp;&nbsp;Image Count</label>
                                                                 <div class="col-md-6">
                                                                     <input type="number" class="form-control"  scale="2,0" ng-model="ctrl.feed.imageNum" ng-enter="ctrl.initImage(ctrl.feed.imageNum)">
                                                                 </div>
@@ -580,9 +580,8 @@
                                                                 <button type="button" class="btn btn-default" ng-click="ctrl.deleteImage($index)"><i class="fa fa-trash"></i></button>
                                                             </div>
                                                         </div>
-
-
                                                     </li>
+                                                    <li class="list-group-item text-wrap" style="color: red;" ng-if="!ctrl.feed.image || ctrl.feed.image.length == 0">Please input Image Count, then Enter.</li>
                                                 </ul>
 
                                             </div>
@@ -791,20 +790,20 @@
             <ul class="nav bs-docs-sidenav">
                 <li class="text-center" style="margin: 7px">
                     <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
-                            ng-disabled="feedForm.$invalid" ng-click="ctrl.save('0')">
+                            ng-disabled="feedForm.$invalid || ctrl.feed.image.length == 0" ng-click="ctrl.save('0')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Save
                     </button>
                 </li>
                 <li class="text-center" style="margin: 7px">
                     <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
-                            ng-disabled="feedForm.$invalid"
+                            ng-disabled="feedForm.$invalid || ctrl.feed.image.length == 0"
                             ng-if="ctrl.feed.status != 'Ready'" ng-click="ctrl.save('1')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Submit
                     </button>
                 </li>
                 <li class="text-center" style="margin: 7px">
                     <button class="btn btn-info text-black" type="button" style="min-width: 82px;"
-                            ng-disabled="feedForm.$invalid"
+                            ng-disabled="feedForm.$invalid || ctrl.feed.image.length == 0"
                             ng-if="ctrl.auth==3 && ctrl.feed.status == 'Ready'" ng-click="ctrl.save('1')">
                         <i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Approve
                     </button>

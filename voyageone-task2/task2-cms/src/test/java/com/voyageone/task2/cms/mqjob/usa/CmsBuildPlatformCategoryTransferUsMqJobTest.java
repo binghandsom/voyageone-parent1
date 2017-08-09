@@ -23,7 +23,8 @@ public class CmsBuildPlatformCategoryTransferUsMqJobTest {
 
     @Test
     public void onStartup() throws Exception {
-        List<String> catIds = Lists.newArrayList("6-7");
+//        List<String> catIds = Lists.newArrayList("6-7");
+        List<String> catIds = Lists.newArrayList("75-2741");
         CmsCategoryReceiveMQMessageBody body = new CmsCategoryReceiveMQMessageBody();
         body.setChannelId("001");
         body.setCartId("8");

@@ -865,7 +865,10 @@ define(function () {
                 getCustomColumns: "getCustomColumns",
                 saveCustomColumns: "saveCustomColumns",
                 updatePrice: "updatePrice",
-                listOrDelist: "listOrDelist"
+                listOrDelist: "listOrDelist",
+                updatePrimaryCategory:"updatePrimaryCategory",
+                updateOtherCategory:"updateOtherCategory"
+
             },
             usTagService: {
                 root: "/cms/us/tag",
