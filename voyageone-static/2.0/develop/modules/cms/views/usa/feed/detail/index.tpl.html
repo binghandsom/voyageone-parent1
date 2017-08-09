@@ -721,12 +721,12 @@
                                                 <th class="text-left" ng-if="ctrl.feed.feedAuth == 3">Is Sale</th>
                                                 <th class="text-left">Platform</th>
                                                 <th class="text-right">
-                                                    <default-price type="priceClientMsrp" func="ctrl.setPlatformPrice" ng-if="ctrl.feed.approvePricing != 1">Msrp($)</default-price>
-                                                    <span ng-if="ctrl.feed.approvePricing == 1">Msrp($)</span>
+                                                    <default-price type="priceClientMsrp" func="ctrl.setPlatformPrice" ng-if="ctrl.feed.approvePricing != '1'">Msrp($)</default-price>
+                                                    <span ng-if="ctrl.feed.approvePricing == '1'">Msrp($)</span>
                                                 </th>
                                                 <th class="text-right">
-                                                    <default-price type="priceClientRetail" func="ctrl.setPlatformPrice" ng-if="ctrl.feed.approvePricing != 1">Price($)</default-price>
-                                                    <span ng-if="ctrl.feed.approvePricing == 1">Price($)</span>
+                                                    <default-price type="priceClientRetail" func="ctrl.setPlatformPrice" ng-if="ctrl.feed.approvePricing != '1'">Price($)</default-price>
+                                                    <span ng-if="ctrl.feed.approvePricing == '1'">Price($)</span>
                                                 </th>
                                                 <th class="text-right">CN Msrp(￥)</th>
                                                 <th class="text-right">CN Price(￥)</th>
@@ -742,12 +742,12 @@
                                                 <td class="text-right">
                                                     <input type="number" class="form-control text-right"
                                                            ng-model="platform.priceClientMsrp" ng-readonly="ctrl.feed.approvePricing == 1"
-                                                           ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" ng-required="ctrl.feed.feedAuth > 1">
+                                                           ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()">
                                                 </td>
                                                 <td class="text-right">
                                                     <input type="number" class="form-control text-right"
                                                            ng-model="platform.priceClientRetail" ng-readonly="ctrl.feed.approvePricing == 1"
-                                                           ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()" ng-required="ctrl.feed.feedAuth > 1">
+                                                           ng-enter="platform.cartId == 8 && ctrl.calculatePrice()" ng-blur="ctrl.calculatePrice()">
                                                 </td>
                                                 <td class="text-right"><label>-</label></td>
                                                 <td class="text-right"><label>-</label></td>
@@ -763,10 +763,10 @@
                                                 <td class="text-right"><label>-</label></td>
                                                 <td class="text-right"><label>-</label></td>
                                                 <td class="text-right">
-                                                    <input type="number" class="form-control text-right" ng-model="platform.priceMsrp" required readonly>
+                                                    <input type="number" class="form-control text-right" ng-model="platform.priceMsrp" readonly>
                                                 </td>
                                                 <td class="text-right">
-                                                    <input type="number" class="form-control text-right" ng-model="platform.priceCurrent" required readonly>
+                                                    <input type="number" class="form-control text-right" ng-model="platform.priceCurrent" readonly>
                                                 </td>
                                                 <td class="text-right" ng-if="ctrl.feed.feedAuth == 3"><label>-</label></td>
                                             </tr>

@@ -271,7 +271,7 @@ define([
                 property = model.type,
                 value = model.price;
 
-            if (property && value && !isNaN(value)) {
+            if (property && !isNaN(value)) {
                 let usPlatofrms = _.values(self.feed.usPlatforms);
                 let snPlaform = _.find(usPlatofrms, platform => {
                     return platform.cartId == 8;
