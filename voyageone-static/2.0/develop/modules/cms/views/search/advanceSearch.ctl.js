@@ -348,6 +348,10 @@ define([
                     var platformInfo = _.find(element.platforms, function (platInfo) {
                         return platInfo.cartId == $scope.vm.searchInfo.cartId;
                     });
+
+                    if(!platformInfo)
+                        return false;
+
                     if (platformInfo.cartId == 27)
                         _.extend(element, {"numIId": platformInfo.pPlatformMallId});
                     else
