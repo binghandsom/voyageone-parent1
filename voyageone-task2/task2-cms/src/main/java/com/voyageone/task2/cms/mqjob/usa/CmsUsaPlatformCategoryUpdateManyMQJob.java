@@ -4,9 +4,12 @@ import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
+import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsCategoryReceiveMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsUsaPlatformCategoryUpdateManyMQMessageBody;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsUsaPlatformCategoryUpdateOneMQMessageBody;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
@@ -17,10 +20,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by dell on 2017/8/7.
@@ -38,9 +38,14 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
     @Autowired
     SellerCatService sellerCatService;
 
+    @Autowired
+    CmsMqSenderService cmsMqSenderService;
+
     @Override
     public void onStartup(CmsUsaPlatformCategoryUpdateManyMQMessageBody messageBody) throws Exception {
         $info("接收到批量更新SN Other Category MQ消息体" + JacksonUtil.bean2Json(messageBody));
+        ArrayList<String> fullCatIds = new ArrayList<>();
+
         List<String> productCodes = messageBody.getProductCodes();
         Integer cartId = messageBody.getCartId();
         for (String productCode : productCodes) {
@@ -68,6 +73,8 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
                             //没有重复的
                             if (!match) {
                                 sellerCats.add(newSellerCat);
+                                //添加的
+                                fullCatIds.addAll(getAllpCatIds(newSellerCat));
                             }
                         } else {
                             //移除类目
@@ -75,6 +82,8 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
                             if (!newSellerCat.getcId().equalsIgnoreCase(platform.getpCatId())) {
                                 //非主类目对应的
                                 sellerCats.remove(newSellerCat);
+                                //移除的
+                                fullCatIds.addAll(getAllpCatIds(newSellerCat));
                             } else {
                                 //主类目对应的
                                 $info("primary category,对应的 sellerCat,不能移除,productCode:" + productCode + " pCatPath:" + pCatPath);
@@ -89,6 +98,35 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
                 }
             }
         }
+        CmsCategoryReceiveMQMessageBody body = new CmsCategoryReceiveMQMessageBody();
+        body.setChannelId(messageBody.getChannelId());
+        body.setCartId(cartId.toString());
+        body.setSender(messageBody.getSender());
+        //去重复
+        HashSet<String> set = new HashSet<>();
+        set.addAll(fullCatIds);
+        fullCatIds.clear();
+        fullCatIds.addAll(set);
+        body.setFullCatIds(fullCatIds);
+        if (ListUtils.notNull(fullCatIds)){
+            cmsMqSenderService.sendMessage(body);
+        }
+    }
+    private ArrayList<String> getAllpCatIds(CmsBtProductModel_SellerCat newSellerCat) {
+        ArrayList<String> temp = new ArrayList<>();
+        List<String> strings = newSellerCat.getcIds();
+        for (int i = 0; i < strings.size(); i++) {
+            if (i == 0) {
+                temp.add(strings.get(i));
+            } else {
+                StringBuilder builder = new StringBuilder(strings.get(0));
+                for (int j = 1; j <= i; j++) {
+                    builder.append("-" + strings.get(j));
+                }
+                temp.add(builder.toString());
+            }
+        }
+        return temp;
     }
 
     private void update(String productCode, CmsUsaPlatformCategoryUpdateManyMQMessageBody messageBody, List<CmsBtProductModel_SellerCat> sellerCats) {
