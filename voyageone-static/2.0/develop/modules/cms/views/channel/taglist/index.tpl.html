@@ -50,7 +50,7 @@
                             </div>
                             <div class="category_drag_list_dp" style="height: 287px;">
                                 <ul>
-                                    <li ng-repeat="tag in tree.tags | filter:{tagChildrenName:ctrl.searchName[$parentIndex]}">
+                                    <li ng-repeat="tag in tree.tags | filter:{tagChildrenName:ctrl.searchName[$parentIndex]}" ng-if="tree.tags.length > 0">
                                         <a href="javascript:void(0)" ng-click="ctrl.openTag(tag , $parentIndex)" ng-class="{indexSelected:ctrl.selected[$parentIndex].tagChildrenName == tag.tagChildrenName}">
                                             <span>{{tag.tagChildrenName}}</span>
                                             <button class="btn btn-success btn-xs pull-right"
