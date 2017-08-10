@@ -77,7 +77,7 @@ angular.module("voyageone.angular.controllers").controller("selectRowsCtrl", fun
             objectList.selAllFlag = true;
             let tempList = _.pluck(objectList.selList, id);
 
-            if(objectList.currPageRows && objectList.currPageRows.length === 0){
+            if(!objectList.currPageRows || objectList.currPageRows.length === 0){
                 return false;
             }
 
