@@ -177,6 +177,7 @@ define([
 
             self.itemDetailService.updateOne(requestMap).then(() => {
                 self.notify.success('update success!');
+                self.feed.usPlatforms.P8[key] = value;
 
                 feed.editMsrp = false;
                 feed.editRetai = false;
