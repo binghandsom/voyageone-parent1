@@ -106,6 +106,7 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
         body.setSender(messageBody.getSender());
         //去重复
         fullCatIds = fullCatIds.stream().distinct().collect(Collectors.toList());
+        body.setFullCatIds(fullCatIds);
         if (ListUtils.notNull(fullCatIds)){
             cmsMqSenderService.sendMessage(body);
         }
