@@ -310,7 +310,7 @@ define([
             })
         }
 
-        popBatchPrice(cartId) {
+        popBatchPrice(cartId,usPlatformName) {
             let self = this;
 
             if(self.getSelectedProduct('code').length === 0 && self._selall == "0"){
@@ -321,7 +321,8 @@ define([
                 selAll:self._selall,
                 codeList:self.getSelectedProduct('code'),
                 queryMap:self.searchUtilService.handleQueryParams(self),
-                cartId:cartId? cartId :0
+                cartId:cartId? cartId :0,
+                usPlatformName:usPlatformName?usPlatformName:null
             }).then(res => {
                 //根据返回参数确定勾选状态,"1",需要清除勾选状态,"0"不需要清除勾选状态
                 if(res.success == "1"){

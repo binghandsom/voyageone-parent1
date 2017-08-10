@@ -15,6 +15,7 @@ define([
             this.confirm = confirm;
             this.$modalInstance = $modalInstance;
             this.context = context;
+            this.usPlatformName = "";
             //设置修改参数
             self.paraMap = {
                 //被修改的价格类型clientMsrpPrice,clientRetailPrice
@@ -32,6 +33,7 @@ define([
                 codeList: [],
                 cartId: ""
             };
+            self.usPlatformName = self.context.usPlatformName;
         }
 
         //修改价格
