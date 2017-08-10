@@ -20,8 +20,8 @@ public class CmsCartAddMQJobTest {
     @Test
     public void onStartup(){
         CmsCartAddMQMessageBody map = new CmsCartAddMQMessageBody();
-        map.setChannelId("010");
-        map.setCartId(928);
+        map.setChannelId("001");
+        map.setCartId(12);
         map.setSender("CmsCartAddMQJob");
         try {
             cmsCartAddMQJob.onStartup(map);

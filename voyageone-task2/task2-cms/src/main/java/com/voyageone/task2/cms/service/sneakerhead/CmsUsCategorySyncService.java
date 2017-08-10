@@ -2,16 +2,22 @@ package com.voyageone.task2.cms.service.sneakerhead;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
+import com.voyageone.base.dao.mongodb.JongoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.sneakerhead.SneakerHeadBase;
 import com.voyageone.components.sneakerhead.bean.SneakerheadCategoryModel;
 import com.voyageone.components.sneakerhead.service.SneakerheadApiService;
+import com.voyageone.service.dao.cms.mongo.CmsBtTempCategoryDao;
+import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.feed.FeedCategoryTreeService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtTempCategoryModel;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by vantis on 2016/11/28.
@@ -31,14 +38,20 @@ public class CmsUsCategorySyncService extends BaseCronTaskService {
     private final SneakerheadApiService sneakerheadApiService;
     private final FeedCategoryTreeService feedCategoryTreeService;
     private final ProductService productService;
+    private final SellerCatService sellerCatService;
+    private final CmsBtTempCategoryDao cmsBtTempCategoryDao;
 
     @Autowired
     public CmsUsCategorySyncService(SneakerheadApiService sneakerheadApiService,
                                     FeedCategoryTreeService feedCategoryTreeService,
-                                    ProductService productService) {
+                                    ProductService productService,
+                                    SellerCatService sellerCatService,
+                                    CmsBtTempCategoryDao cmsBtTempCategoryDao) {
         this.sneakerheadApiService = sneakerheadApiService;
         this.feedCategoryTreeService = feedCategoryTreeService;
         this.productService = productService;
+        this.sellerCatService = sellerCatService;
+        this.cmsBtTempCategoryDao = cmsBtTempCategoryDao;
     }
 
     @Override
@@ -61,6 +74,8 @@ public class CmsUsCategorySyncService extends BaseCronTaskService {
             $info("调用接口 获取 category...");
             // 获得 category
             List<SneakerheadCategoryModel> categoryList = sneakerheadApiService.getCategory(true, SneakerHeadBase.DEFAULT_DOMAIN);
+
+            categoryList.forEach(item->addSellerCatService(channelId, item, "0"));
 
             $info("获取 category 完毕 拍平之...");
 
@@ -123,6 +138,32 @@ public class CmsUsCategorySyncService extends BaseCronTaskService {
                 .map(categoryModel -> flattenCodes(channelId, "", categoryModel))
                 .forEach(result::putAll);
         return result;
+    }
+
+    public void addSellerCatService(String channelId, SneakerheadCategoryModel category, String parentCId){
+
+        CmsBtTempCategoryModel tempCategoryModel = cmsBtTempCategoryDao.selectTempCategoryModelById(channelId, category.getId());
+
+        if (tempCategoryModel != null)
+            sellerCatService.addSellerCat(channelId, 8, category.getName(), category.getId().toString(), parentCId, tempCategoryModel.getMapping(), getTaskName(), tempCategoryModel.getUrlKey());
+        else
+            sellerCatService.addSellerCat(channelId, 8, category.getName(), category.getId().toString(), parentCId, null, getTaskName(), "");
+        if(ListUtils.notNull(category.getSubCategory())){
+
+            List<Integer> catIds = category.getSubCategory().stream().map(cat -> cat.getId()).distinct().collect(Collectors.toList());
+
+            JongoQuery query = new JongoQuery();
+            query.setQuery("{\"id\": {$in : #}}");
+            query.setParameters(catIds);
+            query.setSort("{\"displayOrder\": 1}");
+            List<CmsBtTempCategoryModel> subCategories = cmsBtTempCategoryDao.select(query, channelId);
+            subCategories.forEach(subCat -> {
+
+                SneakerheadCategoryModel item = category.getSubCategory().stream().filter(dataCategory -> ObjectUtils.equals(dataCategory.getId(), subCat.getId())).findFirst().orElse(null);
+                if (item != null)
+                    addSellerCatService(channelId, item, category.getId().toString());
+            });
+        }
     }
 
     private SetMultimap<String, String> flattenCodes(String channelId, String parentCategoryName,

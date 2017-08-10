@@ -191,6 +191,18 @@ public class CmsBtProductModel extends ChannelPartitionModel implements Cloneabl
     }
 
     /**
+     * 根据平台Id设置对应的平台数据信息
+     *
+     * @param cartId 平台Id
+     * @param cart   CmsBtProductModel_Platform_Cart
+     */
+    public void setUsPlatform(Integer cartId, CmsBtProductModel_Platform_Cart cart) {
+        if (cart != null)
+            cart.setCartId(cartId);
+        usPlatforms.put(PLATFORM_CART_PRE + cartId, cart);
+    }
+
+    /**
      * 根据cartType返回对应的platforms.Pxx数据
      *
      * @param cartType 平台类型
