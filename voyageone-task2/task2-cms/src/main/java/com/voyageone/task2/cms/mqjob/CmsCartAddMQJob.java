@@ -201,7 +201,7 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
 
             msrp = Double.valueOf(tempProductModel.getMSRP());
             price = Double.valueOf(tempProductModel.getPrice());
-            if (StringUtils.isEmpty(tempProductModel.getAmazon()))
+            if (!StringUtils.isEmpty(tempProductModel.getThirdPrice()))
                 thridPrice = Double.valueOf(tempProductModel.getThirdPrice());
             else
                 thridPrice = price;
