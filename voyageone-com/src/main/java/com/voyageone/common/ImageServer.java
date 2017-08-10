@@ -153,18 +153,22 @@ public class ImageServer {
         // 不能匹配，那就算了，提出警告，并直接代理
         if (!matcher.matches()) {
             sendNotifyForDownload(String.format(proxyTemplate, pattern.pattern(), imageUrl));
-            return new URL(imageUrl).openStream();
+            return httpGet(imageUrl);
         }
 
         final String path = matcher.group(1);
         final String ISImageUrl = imageServerUrl(channel, path);
 
         try {
-            return new URL(ISImageUrl).openStream();
+            return httpGet(ISImageUrl);
         } catch (IOException e) {
             sendNotifyForDownload(buildExceptionMail(e));
             throw e;
         }
+    }
+
+    private static InputStream httpGet(String imageUrl) throws IOException {
+        return Request.Get(imageUrl).execute().returnContent().asStream();
     }
 
     private static String imageServerUploadFilePath(String channel) {
