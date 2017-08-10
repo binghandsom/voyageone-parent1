@@ -227,7 +227,8 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
             cmsBtProductModel.getCommon().getFields().setGoogleCategory(tempProductModel.getGoogleCategoryPath());
             cmsBtProductModel.getCommon().getFields().setGoogleDepartment(tempProductModel.getGoogleDepartmentPath());
             cmsBtProductModel.getCommon().getFields().setPriceGrabberCategory(tempProductModel.getPriceGrabberCategory());
-            cmsBtProductModel.getCommon().getFields().setColorMap(tempProductModel.getColorMap().toLowerCase());
+            if (!StringUtils.isEmpty(tempProductModel.getColorMap()))
+                cmsBtProductModel.getCommon().getFields().setColorMap(tempProductModel.getColorMap().toLowerCase());
             cmsBtProductModel.getCommon().getFields().setTaxable(tempProductModel.isTaxable());
 
             if (cartId == 6
