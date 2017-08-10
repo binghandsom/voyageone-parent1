@@ -146,6 +146,9 @@ define([
             _.extend(self.searchInfo, sort);
             self.tempUpEntity = {};
         }
+        clearSelList(){
+            this.srInstance.clearSelectedList();
+        }
 
         /**
          * @description 批量修改类目
@@ -182,6 +185,13 @@ define([
                             ).then(
                                 param =>{
                                     self.notify.success('Update Success');
+                                    if(option.continue){
+                                        //save&continue
+                                    }else {
+                                        //save,去除勾选状态
+                                        self.clearSelList();
+                                        self._selall = 0;
+                                    }
                                 }
                             );
                         },
@@ -201,6 +211,13 @@ define([
                             ).then(
                                 param =>{
                                     self.notify.success('Update Success');
+                                    if(option.continue){
+                                        //save&continue
+                                    }else {
+                                        //save,去除勾选状态
+                                        self.clearSelList();
+                                        self._selall = 0;
+                                    }
                                 }
                             );
                         }
@@ -225,6 +242,13 @@ define([
                     ).then(
                         param =>{
                             self.notify.success('Update Success');
+                            if(option.continue){
+                                //save&continue
+                            }else {
+                                //save,去除勾选状态
+                                self.clearSelList();
+                                self._selall = 0;
+                            }
                         }
                     );
 
