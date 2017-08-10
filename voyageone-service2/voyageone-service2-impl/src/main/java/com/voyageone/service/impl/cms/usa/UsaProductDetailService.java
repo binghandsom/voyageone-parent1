@@ -526,6 +526,9 @@ public class UsaProductDetailService extends BaseService {
                 mqMap.setProductCodes(codeList);
                 mqMap.setChannelId(channelId);
                 mqMap.setSender(userName);
+
+                String s = JacksonUtil.bean2Json(mqMap);
+
                 cmsMqSenderService.sendMessage(mqMap);
 
             }
@@ -566,6 +569,8 @@ public class UsaProductDetailService extends BaseService {
             } else {
                 //未勾选全部
                 mqMap.setProductCodes(codeList);
+                String s = JacksonUtil.bean2Json(mqMap);
+
                 cmsMqSenderService.sendMessage(mqMap);
             }
         }
