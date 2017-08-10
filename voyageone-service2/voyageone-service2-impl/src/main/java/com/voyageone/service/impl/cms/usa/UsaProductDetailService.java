@@ -947,6 +947,7 @@ public class UsaProductDetailService extends BaseService {
         } else {
             //未勾选全部
             body.setProductCodes(codeList);
+           // String s = JacksonUtil.bean2Json(body);
             cmsMqSenderService.sendMessage(body);
         }
         return null;
@@ -987,6 +988,8 @@ public class UsaProductDetailService extends BaseService {
         } else {
             //未勾选全部
             body.setProductCodes(codeList);
+            //String s = JacksonUtil.bean2Json(body);
+
             cmsMqSenderService.sendMessage(body);
         }
         return null;
