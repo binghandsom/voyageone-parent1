@@ -106,7 +106,8 @@ define([
 
             self.popups.openEditCategory({
                 type:'add',
-                parentCatPath: selectedCat.catPath ? selectedCat.catPath : ''
+                parentCatPath: selectedCat.catPath ? selectedCat.catPath : '',
+                parentCat:selectedCat?selectedCat:null
             }).then(response => {
 
                 let parentCatId = index === 0 ? 0 : selectedCat.catId;

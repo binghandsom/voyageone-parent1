@@ -27,7 +27,8 @@
     <div class="panel panel-default">
         <div class="panel-body">
             <div class="category_drags">
-                <div class="category_drag col-sm-3 category-div" ng-repeat="categoryItem in ctrl.totalCategory">
+                <div class="category_drag col-sm-3"  style="margin: 7px;border-bottom: 3px solid #ededed;"
+                     ng-repeat="categoryItem in ctrl.totalCategory">
                     <div class="category_drag_main">
                         <p class="text-left text-vo font-bold">
                             &emsp;{{ categoryItem.index + 1 }}&nbsp;Level
@@ -63,12 +64,5 @@
             </div>
         </div>
     </div>
-
-    <style type="text/css">
-        .category-div{
-            margin: 7px;
-            border-bottom: 3px solid #ededed;
-        }
-    </style>
 
 </div>
