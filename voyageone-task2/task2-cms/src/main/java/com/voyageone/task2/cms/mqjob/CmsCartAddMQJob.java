@@ -198,9 +198,13 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
 
             BaseMongoMap<String, Object> newFileds = new BaseMongoMap<>();
 
+
             msrp = Double.valueOf(tempProductModel.getMSRP());
-            thridPrice = Double.valueOf(tempProductModel.getThirdPrice());
             price = Double.valueOf(tempProductModel.getPrice());
+            if (!"0".equals(tempProductModel.getAmazon()))
+                thridPrice = Double.valueOf(tempProductModel.getThirdPrice());
+            else
+                thridPrice = price;
 
             platform.setpPriceMsrpSt(msrp);
             platform.setpPriceMsrpEd(msrp);
