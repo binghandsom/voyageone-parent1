@@ -447,6 +447,9 @@ define([
 
             self.popups.openUsCategory(option).then(res => {
 
+                //判断是否continue
+                //option.continue = false;
+
                 if(!option.muiti){
                     //单个
                     self.confirm("Whether to cover the properties associated with the SN primary category？").then(
@@ -467,6 +470,13 @@ define([
                             ).then(
                                 param =>{
                                     self.notify.success('Update Success');
+                                    if(option.continue){
+                                        //save&continue
+                                    }else {
+                                        //save,去除勾选状态
+                                        self.clearSelList();
+                                        self._selall = 0;
+                                    }
                                 }
                             );
                         },
@@ -485,14 +495,21 @@ define([
                                 }
                             ).then(
                                 param =>{
+                                    console.log("continue:" + option.continue);
                                     self.notify.success('Update Success');
+
+                                    if(option.continue){
+                                        //save&continue
+                                    }else {
+                                        //save,去除勾选状态
+                                        self.clearSelList();
+                                        self._selall = 0;
+                                    }
                                 }
                             );
                         }
                     )
                 }else{
-                    console.log(res);
-                    console.log(option)
                     //多个
                     let pCatPaths = [];
                     angular.forEach(res, function (item) {
@@ -510,6 +527,13 @@ define([
                     ).then(
                         param =>{
                             self.notify.success('Update Success');
+                            if(option.continue){
+                                //save&continue
+                            }else {
+                                //save,去除勾选状态
+                                self.clearSelList();
+                                self._selall = 0;
+                            }
                         }
                     );
 
