@@ -206,7 +206,7 @@ public class CustomWordModuleGetAllImages extends CustomWordModule {
 //                        throw new BusinessException("[CustomWordModuleGetAllImages]取得原始图片url失败!");
 //                    }
                     // end
-                    completeImageUrl = getPicOriUrl(cmsBtProductModelFieldImage.getName(), moduleName);
+                    completeImageUrl = getPicOriUrl(sxData.getChannelId(), cmsBtProductModelFieldImage.getName(), moduleName);
                 } else {
 //                    completeImageUrl = sxProductService.getImageByTemplateId(sxData.getChannelId(), imageTemplate, cmsBtProductModelFieldImage.getName());
 //                    completeImageUrl = String.format(imageTemplate, cmsBtProductModelFieldImage.getName());

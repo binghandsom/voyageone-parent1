@@ -57,9 +57,11 @@ public class ImageServer {
      */
     public static void uploadImage(String channel, String imageName, InputStream inputStream) {
         try {
+            byte[] byteArray = IOUtils.toByteArray(inputStream);
+
             HttpEntity entity = MultipartEntityBuilder.create()
                     .addTextBody("imageName", imageName)
-                    .addBinaryBody("file", inputStream, ContentType.DEFAULT_BINARY, "image")
+                    .addBinaryBody("file", byteArray, ContentType.DEFAULT_BINARY, "image")
                     .build();
 
             String uploadApiUrl = imageServerUploadFilePath(channel);
@@ -76,7 +78,7 @@ public class ImageServer {
             String content = IOUtils.toString(response.getEntity().getContent());
             String reasonPhrase = statusLine.getReasonPhrase();
 
-            final String main = String.format(httpTemplate, code, reasonPhrase, imageName, inputStream.available(),
+            final String main = String.format(httpTemplate, code, reasonPhrase, imageName, byteArray.length,
                     content);
 
             sendUploadFailNotify(main);
