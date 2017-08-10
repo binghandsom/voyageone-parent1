@@ -146,6 +146,9 @@ define([
             _.extend(self.searchInfo, sort);
             self.tempUpEntity = {};
         }
+        clearSelList(){
+            this.srInstance.clearSelectedList();
+        }
 
         /**
          * @description 批量修改类目
@@ -182,6 +185,13 @@ define([
                             ).then(
                                 param =>{
                                     self.notify.success('Update Success');
+                                    if(option.continue){
+                                        //save&continue
+                                    }else {
+                                        //save,去除勾选状态
+                                        self.clearSelList();
+                                        self._selall = 0;
+                                    }
                                 }
                             );
                         },
@@ -201,6 +211,13 @@ define([
                             ).then(
                                 param =>{
                                     self.notify.success('Update Success');
+                                    if(option.continue){
+                                        //save&continue
+                                    }else {
+                                        //save,去除勾选状态
+                                        self.clearSelList();
+                                        self._selall = 0;
+                                    }
                                 }
                             );
                         }
@@ -225,6 +242,13 @@ define([
                     ).then(
                         param =>{
                             self.notify.success('Update Success');
+                            if(option.continue){
+                                //save&continue
+                            }else {
+                                //save,去除勾选状态
+                                self.clearSelList();
+                                self._selall = 0;
+                            }
                         }
                     );
 
@@ -414,7 +438,7 @@ define([
             })
         }
 
-        popBatchPrice(cartId) {
+        popBatchPrice(cartId,usPlatformName) {
             let self = this;
             if (self.getSelectedProduct('code').length == 0) {
                 self.alert("please choose at least one!!!");
@@ -424,7 +448,8 @@ define([
                 selAll: self._selall,
                 codeList: self.getSelectedProduct('code'),
                 queryMap: self.searchUtilService.handleQueryParams(self),
-                cartId: cartId ? cartId : 0
+                cartId: cartId ? cartId : 0,
+                usPlatformName:usPlatformName?usPlatformName:null
             }).then(res => {
                 //根据返回参数确定勾选状态,"1",需要清除勾选状态,"0"不需要清除勾选状态
                 if (res.success == "1") {

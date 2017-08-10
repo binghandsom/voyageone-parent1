@@ -1,9 +1,12 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.base.dao.mongodb.BaseJongoTemplate;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.spring.SpringContext;
 import com.voyageone.common.util.ExcelUtils;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageGroupDao;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.SizeChartService;
@@ -18,6 +21,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -36,6 +41,10 @@ public class SneakerheadMastDateImportTest {
     public final static String cms_mt_sizechartrelation = "H:\\DOC\\14.共通素材整理\\14.6素材图程序导入版\\尺码表程序导入版12.28.xlsx";
     public final static String cms_mt_sizechart = "/Users/linanbin/Desktop/sneakerhead_size.xlsx";
     public final static String sellerCat = "H:\\sneaker\\店铺内分类\\sellerCat.xlsx";
+    public final static String categoryProduct = "H:\\sneaker\\category-product.xlsx";
+    public final static String cmsProduct = "H:\\sneaker\\cms_product.xlsx";
+
+
 
     @Autowired
     SizeChartService sizeChartService;
@@ -43,6 +52,101 @@ public class SneakerheadMastDateImportTest {
     private CmsBtImageGroupDao cmsBtImageGroupDao;
     @Autowired
     private MongoSequenceService commSequenceMongoService;
+
+    @Test
+    public void importCategoryProduct() {
+        BaseJongoTemplate mongoTemplate;
+        mongoTemplate = SpringContext.getBean(BaseJongoTemplate.class);
+        mongoTemplate.removeAll("cms_bt_temp_product_category_c001");
+        try (InputStream inputStream = new FileInputStream(categoryProduct)) {
+            Workbook wb = new XSSFWorkbook(inputStream);
+            Sheet sheet1 = wb.getSheetAt(0);
+            int rowNum = 0;
+            for (Row row : sheet1) {
+                try {
+                    rowNum++;
+                    // 跳过第一行
+                    if (rowNum == 1) {
+                        continue;
+                    }
+
+                    if (row.getCell(8) == null || StringUtil.isEmpty(row.getCell(8).getStringCellValue())) {
+                        break;
+                    }
+                    String json = ExcelUtils.getString(row, 8);
+                    mongoTemplate.insert(JacksonUtil.jsonToMap(json),"cms_bt_temp_product_category_c001");
+
+                } catch (Exception e) {
+                    throw new BusinessException(String.format("第%d行数据格式不对 (%s)", rowNum, e.toString()));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void importProduct() {
+        BaseJongoTemplate mongoTemplate;
+        mongoTemplate = SpringContext.getBean(BaseJongoTemplate.class);
+        mongoTemplate.removeAll("cms_bt_temp_product_c001");
+        try (InputStream inputStream = new FileInputStream(cmsProduct)) {
+            Workbook wb = new XSSFWorkbook(inputStream);
+            Sheet sheet1 = wb.getSheetAt(0);
+            int rowNum = 0;
+            for (Row row : sheet1) {
+                try {
+                    rowNum++;
+                    // 跳过第一行
+                    if (rowNum < 3) {
+                        continue;
+                    }
+
+                    int index = 0;
+                    if (row.getCell(0) == null || StringUtil.isEmpty(row.getCell(0).getStringCellValue())) {
+                        break;
+                    }
+                    Map map = new HashMap();
+                    map.put("code", ExcelUtils.getString(row, index++));
+                    map.put("Abstract", ExcelUtils.getString(row, index++));
+                    map.put("Accessory", ExcelUtils.getString(row, index++));
+                    map.put("amazonId", ExcelUtils.getString(row, index++,"#"));
+                    map.put("amazonPath", ExcelUtils.getString(row, index++));
+                    map.put("googleCategoryPath", ExcelUtils.getString(row, index++));
+                    map.put("googleDepartmentPath", ExcelUtils.getString(row, index++));
+                    map.put("priceGrabberCategory", ExcelUtils.getString(row, index++));
+
+
+                    map.put("taxable", ExcelUtils.getString(row, index++));
+                    map.put("seoTitle", ExcelUtils.getString(row, index++));
+                    map.put("seoDescription", ExcelUtils.getString(row, index++));
+                    map.put("seoKeywords", ExcelUtils.getString(row, index++));
+                    map.put("isNewArrival", ExcelUtils.getString(row, index++));
+                    map.put("orderLimitCount", ExcelUtils.getString(row, index++));
+                    map.put("phoneOrderOnlyMessage", ExcelUtils.getString(row, index++));
+                    map.put("freeShippingType", ExcelUtils.getString(row, index++));
+                    map.put("rewardEligible", ExcelUtils.getString(row, index++));
+                    map.put("discountEligible", ExcelUtils.getString(row, index++));
+                    map.put("onsale", ExcelUtils.getString(row, index++));
+                    map.put("magento", ExcelUtils.getString(row, index++));
+                    map.put("amazon", ExcelUtils.getString(row, index++));
+
+                    map.put("approvedForIkicks", ExcelUtils.getString(row, index++));
+                    map.put("MSRP", ExcelUtils.getString(row, index++));
+                    map.put("price", ExcelUtils.getString(row, index++));
+                    map.put("thirdPrice", ExcelUtils.getString(row, index++));
+                    map.put("colorMap", ExcelUtils.getString(row, index++));
+
+                    mongoTemplate.insert(map,"cms_bt_temp_product_c001");
+
+                } catch (Exception e) {
+                    throw new BusinessException(String.format("第%d行数据格式不对 (%s)", rowNum, e.toString()));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Test
     public void importSizechartrelation() {

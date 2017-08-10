@@ -8,7 +8,7 @@ define([
     'modules/cms/translate/zh',
     'modules/cms/controller/repeatFilter.ctl',
     'modules/cms/controller/popup.ctl'
-], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate,repeatFilter) {
+], function (angularAMD, angular, _, routes, actions, enTranslate, zhTranslate, repeatFilter) {
 
     var mainApp = angular.module('voyageone.cms', [
         'com.voyageone.popups',
@@ -93,9 +93,9 @@ define([
         .controller('asideCtrl', asideCtrl)
 
         //定义一些常用filter
-        .controller('repeatFilter',repeatFilter);
+        .controller('repeatFilter', repeatFilter);
 
-    function appCtrl($scope, $window, translateService) {
+    function appCtrl($localStorage, $scope, $window, translateService) {
 
         var isIE = !!navigator.userAgent.match(/MSIE/i);
         isIE && angular.element($window.document.body).addClass('ie');
@@ -152,7 +152,10 @@ define([
         });
 
         // set de default language
-        translateService.setLanguage("");
+        if ($localStorage.isCn)
+            translateService.setLanguage("");
+        else
+            translateService.setLanguage("en");
 
         function isSmartDevice($window) {
             // Adapted from http://www.detectmobilebrowsers.com
@@ -182,42 +185,20 @@ define([
         function getMenuHeaderInfo() {
             var defer = $q.defer();
             $menuService.getMenuHeaderInfo().then(function (response) {
-                        var data = response.data;
-                        window.userlanguage = data.userInfo.language;
-                        // 设置画面用户显示的语言
-                        _.forEach(data.languageList, function (language) {
+                var data = response.data;
+                window.userlanguage = data.userInfo.language;
+                // 设置画面用户显示的语言
+                _.forEach(data.languageList, function (language) {
 
-                            if (_.isEqual(userlanguage, language.name)) {
-                                data.userInfo.language = language.add_name1;
-                                translateService.setLanguage(language.add_name2);
-                            }
-                        });
-                        //data.userInfo.application = cookieService.application();  服务端已经返回
-                        defer.resolve(data);
+                    if (_.isEqual(userlanguage, language.name)) {
+                        data.userInfo.language = language.add_name1;
+                        translateService.setLanguage(language.add_name2);
+                    }
+                });
+                //data.userInfo.application = cookieService.application();  服务端已经返回
+                defer.resolve(data);
             });
-            // ajaxService.post(cActions.core.home.menu.getMenuHeaderInfo)
-            //     .then(function (response) {
-            //         var data = response.data;
-            //
-            //         // 获取用户语言
-            //         //var userlanguage = translateService.getBrowserLanguage();
-            //         //if (!_.isEmpty(cookieService.language()))
-            //         //    userlanguage = cookieService.language();
-            //         //else if (!_.isEmpty(data.userInfo.language))
-            //         userlanguage = data.userInfo.language;
-            //
-            //         // 设置画面用户显示的语言
-            //         _.forEach(data.languageList, function (language) {
-            //
-            //             if (_.isEqual(userlanguage, language.name)) {
-            //                 data.userInfo.language = language.add_name1;
-            //                 translateService.setLanguage(language.add_name2);
-            //             }
-            //         });
-            //
-            //         //data.userInfo.application = cookieService.application();  服务端已经返回
-            //         defer.resolve(data);
-            //     });
+
             return defer.promise;
         }
 
@@ -314,7 +295,7 @@ define([
         }
     }
 
-    function headerCtrl($scope, $rootScope, $window, $location, menuService, $searchAdvanceService2, cRoutes, cCommonRoutes,$sessionStorage,$localStorage) {
+    function headerCtrl($scope, $rootScope, $window, $location, menuService, $searchAdvanceService2, cRoutes, cCommonRoutes, $sessionStorage, $localStorage) {
         var vm = this;
         vm.menuList = {};
         vm.languageList = {};
@@ -336,19 +317,21 @@ define([
                 vm.languageList = data.languageList;
                 vm.userInfo = data.userInfo;
                 $rootScope.menuTree = data.menuTree;
-                $rootScope.feedCategoryTreeList=data.feedCategoryTreeList;
+                $rootScope.feedCategoryTreeList = data.feedCategoryTreeList;
                 $rootScope.application = data.userInfo.application;
                 $rootScope.isTranslator = data.isTranslator;
 
                 //设置sessionstorage
                 let auth = setAuth(data.menuTree);
-                if(!$sessionStorage.auth)
+                if (!$sessionStorage.auth)
                     $sessionStorage.auth = auth
             });
         }
-        $rootScope.isParentMenu=function(item) {
-            return item.children&& item.children.length > 0;
-        }
+
+        $rootScope.isParentMenu = function (item) {
+            return item.children && item.children.length > 0;
+        };
+
         /**
          * go to channel selected page.
          */
@@ -421,7 +404,7 @@ define([
         }
     }
 
-    function breadcrumbsCtrl($scope, $rootScope, $location, menuService, cRoutes,$localStorage , imageDirectiveService) {
+    function breadcrumbsCtrl($scope, $rootScope, $location, menuService, cRoutes, $localStorage, imageDirectiveService) {
         var vm = this;
         vm.cid = "";
         vm.navigation = {};
@@ -438,7 +421,7 @@ define([
                 vm.navigation = data.categoryList;
                 // TODO 来至服务器端的session
                 $rootScope.platformType = data.platformType;
-                $rootScope.imageUrl = data.imageUrl.replace('{channel}',$localStorage.user.channel);
+                $rootScope.imageUrl = data.imageUrl.replace('{channel}', $localStorage.user.channel);
                 imageDirectiveService.imageUrlTemplate = data.imageUrl;
                 $rootScope.productUrl = data.productUrl;
             });
@@ -453,7 +436,7 @@ define([
         }
     }
 
-    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes, $sessionStorage,$localStorage) {
+    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes, $sessionStorage, $localStorage) {
 
         $scope.menuInfo = {};
         $scope.initialize = initialize;
@@ -461,7 +444,7 @@ define([
         $scope.goSearchPage = goSearchPage;
         $scope.linkPage = linkPage;
         $scope.isCn = $localStorage.isCn;
-        $scope.goAdvanceSearchByFeedCat=goAdvanceSearchByFeedCat;
+        $scope.goAdvanceSearchByFeedCat = goAdvanceSearchByFeedCat;
 
         function initialize() {
             menuService.getPlatformType().then(function (data) {
@@ -473,12 +456,12 @@ define([
                 $scope.menuInfo.only4jumei = data.only4jumei;
             });
 
-            if(!$scope.isCn){
-                selectPlatformType({add_name2:"MS",value:8});
+            if (!$scope.isCn) {
+                selectPlatformType({add_name2: "MS", value: 8});
 
                 /**修改店铺内后实时更新左侧菜单栏*/
-                $rootScope.$on('asyncCategorys', function(){
-                    selectPlatformType({add_name2:"MS",value:8});
+                $rootScope.$on('asyncCategorys', function () {
+                    selectPlatformType({add_name2: "MS", value: 8});
                 })
             }
 
@@ -489,7 +472,7 @@ define([
          * @param cType
          */
         function selectPlatformType(cType) {
-            $scope.menuInfo.categoryTreeList=[];
+            $scope.menuInfo.categoryTreeList = [];
             menuService.setPlatformType(cType).then(function (data) {
                 $rootScope.platformType = {cTypeId: cType.add_name2, cartId: cType.value};
                 $scope.menuInfo.categoryTreeList = data.categoryTreeList;
@@ -497,9 +480,10 @@ define([
             });
         }
 
-        function goAdvanceSearchByFeedCat(catPath,catId) {
-            $location.path(cRoutes.search_advance_param.url + "10001/" + catPath + "/"+ catId);
+        function goAdvanceSearchByFeedCat(catPath, catId) {
+            $location.path(cRoutes.search_advance_param.url + "10001/" + catPath + "/" + catId);
         }
+
         /**
          * 跳转到search页面
          * @param catId:类目名称   影射到高级检索或者feed检索的select默认选中

@@ -526,6 +526,9 @@ public class UsaProductDetailService extends BaseService {
                 mqMap.setProductCodes(codeList);
                 mqMap.setChannelId(channelId);
                 mqMap.setSender(userName);
+
+                //String s = JacksonUtil.bean2Json(mqMap);
+
                 cmsMqSenderService.sendMessage(mqMap);
 
             }
@@ -566,6 +569,8 @@ public class UsaProductDetailService extends BaseService {
             } else {
                 //未勾选全部
                 mqMap.setProductCodes(codeList);
+               // String s = JacksonUtil.bean2Json(mqMap);
+
                 cmsMqSenderService.sendMessage(mqMap);
             }
         }
@@ -682,7 +687,8 @@ public class UsaProductDetailService extends BaseService {
                         productService.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
                         productService.bulkUpdateWithMap(channelId, minMaxPrice, userName, "$set");
                     }
-                    if (CmsConstants.ProductStatus.Approved.name().equals(usPlatform.getStatus()) && (CmsConstants.PlatformStatus.OnSale.name().equals(usPlatform.getpStatus()) || CmsConstants.PlatformStatus.InStock.name().equals(usPlatform.getpStatus()))) {
+
+                    if (CmsConstants.ProductStatus.Approved.name().equals(usPlatform.getStatus()) && (CmsConstants.PlatformStatus.OnSale == usPlatform.getpStatus() || CmsConstants.PlatformStatus.InStock == usPlatform.getpStatus() )) {
                         platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, userName);
                     }
                 }
@@ -719,6 +725,9 @@ public class UsaProductDetailService extends BaseService {
                                 updateMap.put("platforms.P" + cartId + ".skus.$.priceDiffFlg", priceDiffFlg);
 
                                 //修改最大值最小值
+                                minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceSaleSt", clientRetailPrice);
+                                minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceSaleEd", clientRetailPrice);
+
                                 minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceRetailSt", clientRetailPrice);
                                 minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceRetailEd", clientRetailPrice);
                             }
@@ -743,10 +752,9 @@ public class UsaProductDetailService extends BaseService {
                             productService.bulkUpdateWithMap(channelId, bulkList1, userName, "$set");
                             productService.bulkUpdateWithMap(channelId, minMaxPrice1, userName, "$set");
                         }
-                        if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus()) && (CmsConstants.PlatformStatus.OnSale.name().equals(platform.getpStatus()) || CmsConstants.PlatformStatus.InStock.name().equals(platform.getpStatus()))) {
+                        if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus()) && (CmsConstants.PlatformStatus.OnSale == platform.getpStatus() || CmsConstants.PlatformStatus.InStock == platform.getpStatus() )) {
                             platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, userName);
                         }
-
                         //更新价格履历
                         List<String> skus1 = new ArrayList<>();
                         skus.forEach(sku -> skus1.add(sku.getStringAttribute("skuCode")));

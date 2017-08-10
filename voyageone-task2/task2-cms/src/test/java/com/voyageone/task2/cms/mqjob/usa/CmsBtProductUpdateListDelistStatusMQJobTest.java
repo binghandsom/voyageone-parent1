@@ -1,6 +1,8 @@
 package com.voyageone.task2.cms.mqjob.usa;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdateListDelistStatusMQMessageBody;
+import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdatePriceMQMessageBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +34,10 @@ public class CmsBtProductUpdateListDelistStatusMQJobTest {
         map.setProductCodes(Collections.singletonList("609973-460"));
         map.setDays(5);
 
-        cmsBtProductUpdateListDelistStatusMQJob.onStartup(map);
+        String s = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"test\",\"channelId\":\"001\",\"cartId\":8,\"activeStatus\":\"list\",\"productCodes\":[\"68220-gem\"],\"days\":0}";
+        CmsBtProductUpdateListDelistStatusMQMessageBody body = JacksonUtil.json2Bean(s, CmsBtProductUpdateListDelistStatusMQMessageBody.class);
+
+        cmsBtProductUpdateListDelistStatusMQJob.onStartup(body);
 
     }
 }
