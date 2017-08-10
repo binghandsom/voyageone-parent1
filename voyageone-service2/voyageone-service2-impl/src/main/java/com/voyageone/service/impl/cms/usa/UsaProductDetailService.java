@@ -267,20 +267,24 @@ public class UsaProductDetailService extends BaseService {
         if (!StringUtil.isEmpty(platformModel.getpCatPath())) {
             sellerPaths.add(platformModel.getpCatPath());
         }
-        if (ListUtils.notNull(sellers)) {
+
+        if (sellers == null) {
+            sellers = new ArrayList<>();
+        }
+        if (!sellers.isEmpty()) {
             for (Map<String, String> item : sellers) {
                 sellerPaths.add(item.get("catPath"));
             }
-            sellerPaths = sellerPaths.stream().distinct().collect(Collectors.toList());
-            List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
-            sellerPaths.forEach(cat -> {
-                CmsBtProductModel_SellerCat sellerCat = sellerCatService.getSellerCat(channelId, platformModel.getCartId(), cat);
-                if (sellerCat != null) {
-                    sellerCats.add(sellerCat);
-                }
-            });
-            platformModel.setSellerCats(sellerCats);
         }
+        sellerPaths = sellerPaths.stream().distinct().collect(Collectors.toList());
+        List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
+        sellerPaths.forEach(cat -> {
+            CmsBtProductModel_SellerCat sellerCat = sellerCatService.getSellerCat(channelId, platformModel.getCartId(), cat);
+            if (sellerCat != null) {
+                sellerCats.add(sellerCat);
+            }
+        });
+        platformModel.setSellerCats(sellerCats);
 
         // 价格类型处理,String -> Double
         for (BaseMongoMap<String, Object> sku : platformModel.getSkus()) {
