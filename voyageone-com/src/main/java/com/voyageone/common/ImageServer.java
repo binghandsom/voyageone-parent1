@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
  */
 public class ImageServer {
 
+    static boolean DEBUG = false;
+
     private final static String MAIN_CODE_ID = "IMAGE_SERVER";
     private final static Logger LOGGER = LoggerFactory.getLogger(ImageServer.class);
     private static String template = null;
@@ -144,27 +146,28 @@ public class ImageServer {
             return new URL(imageUrl).openStream();
         }
 
-        // use                https?://.+?:?\d*?/(.+)$
         // match              http://xxx.xxx.xxx/is/image.....
-        // get groupValue(1)  is/image.....
-        final Pattern pattern = Pattern.compile("^https?://.+?:?\\d*?/(.+)$");
+        // get groupValue(1)  sneakerhead/(xxxx?xxxx=xxxx)
+        final Pattern pattern = Pattern.compile("^https?://.+?:?\\d*/is/image/sneakerhead/(.+)$");
         final Matcher matcher = pattern.matcher(imageUrl);
 
-        // 不能匹配，那就算了，提出警告，并直接代理
         if (!matcher.matches()) {
-            sendNotifyForDownload(String.format(proxyTemplate, pattern.pattern(), imageUrl));
-            return new URL(imageUrl).openStream();
+            return httpGet(imageUrl);
         }
 
         final String path = matcher.group(1);
-        final String ISImageUrl = imageServerUrl(channel, path);
+        final String ISImageUrl = imageUrl(channel, path);
 
         try {
-            return new URL(ISImageUrl).openStream();
+            return httpGet(ISImageUrl);
         } catch (IOException e) {
             sendNotifyForDownload(buildExceptionMail(e));
             throw e;
         }
+    }
+
+    private static InputStream httpGet(String imageUrl) throws IOException {
+        return Request.Get(imageUrl).execute().returnContent().asStream();
     }
 
     private static String imageServerUploadFilePath(String channel) {
@@ -191,6 +194,11 @@ public class ImageServer {
     }
 
     private static void callTheMaintainer(String message, String subTitle) {
+
+        if (DEBUG) {
+            LOGGER.error(message);
+            return;
+        }
 
         final String maintainer = Codes.getCodeName(MAIN_CODE_ID, "maintainer");
         if (StringUtils.isBlank(maintainer)) {
