@@ -46,7 +46,7 @@
 
     <ul class="nav navbar-nav navbar-right hidden-sm">
         <!-- language uib-dropdown -->
-        <li class="dropdown vo_h_locale" uib-dropdown>
+        <li class="dropdown vo_h_locale" uib-dropdown ng-if="isCn">
             <a href class="dropdown-toggle clear" uib-dropdown-toggle>
                 <span class="" ng-bind="header.userInfo.language"></span><b class="caret"></b>
             </a>
