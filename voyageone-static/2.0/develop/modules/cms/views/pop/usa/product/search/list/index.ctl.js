@@ -14,7 +14,6 @@ define([
             this.confirm = confirm;
             this.$modalInstance = $modalInstance;
             this.context = context;
-            this.usPlatformName = "";
             //设置修改参数
             self.paraMap = {
                 //在当前时间之后多少天执行操作,默认为0;
