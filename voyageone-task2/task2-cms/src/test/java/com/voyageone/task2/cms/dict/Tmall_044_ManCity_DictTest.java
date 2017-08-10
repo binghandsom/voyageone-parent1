@@ -58,7 +58,8 @@ public class Tmall_044_ManCity_DictTest extends BaseDictTest {
 	}
 	private RuleExpression doPC端详情页描述() {
 		String strTemplate_Param_Image = "http://s7d5.scene7.com/is/image/sneakerhead/MANCITY7901300ZHUTUMUBAN-20170724?$KITBAG20170421790x1300TEST1$&$TSXT11=%s&$product=%s&$MCjulebu=%s&$MCCAIZHI=%s&$MCPINGPAI=%s";
-		String strTemplate_Main_Image = "http://s7d5.scene7.com/is/image/sneakerhead/mancityzhutumuban120170724?$champion20170314800x800baoyou1$&$product=%s";
+//		String strTemplate_Main_Image = "http://s7d5.scene7.com/is/image/sneakerhead/mancityzhutumuban120170724?$champion20170314800x800baoyou1$&$product=%s";
+		String strTemplate_Main_Image = "http://s7d5.scene7.com/is/image/sneakerhead/mancitychanpintu20170724?$KITBAG20170421790x750TEST1$&$product1=%s";
 
 		// 根字典
 		RuleExpression ruleRoot = new RuleExpression();
@@ -199,10 +200,10 @@ public class Tmall_044_ManCity_DictTest extends BaseDictTest {
 			ruleRoot.addRuleWord(new CustomWord(word));
 		}
 
-		{
-			// 固定图片 - 尺码展示
-			ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i1/3362876888/TB2C66MXUifF1JjSspdXXclLpXa_!!3362876888.jpg")));
-		}
+//		{
+//			// 固定图片 - 尺码展示
+//			ruleRoot.addRuleWord(new TextWord(String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i1/3362876888/TB2C66MXUifF1JjSspdXXclLpXa_!!3362876888.jpg")));
+//		}
 
 		{
 			// 尺码图
