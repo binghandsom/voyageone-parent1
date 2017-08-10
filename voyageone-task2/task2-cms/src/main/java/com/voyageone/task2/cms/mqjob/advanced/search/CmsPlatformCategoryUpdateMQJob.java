@@ -68,7 +68,7 @@ public class CmsPlatformCategoryUpdateMQJob extends TBaseMQCmsSubService<CmsPlat
         HashMap<String, Object> updateMap = new HashMap<>();
         updateMap.put("platforms.P" + cartId + ".pCatPath", messageBody.getpCatPath());
         updateMap.put("platforms.P" + cartId + ".pCatId", messageBody.getpCatId());
-        updateMap.put("platforms.P" + cartId + ".pCatStatus", 1);
+        updateMap.put("platforms.P" + cartId + ".pCatStatus", "1");
         HashMap<String, Object> queryMap = new HashMap<>();
         queryMap.put("common.fields.code", productCode);
         BulkUpdateModel model = new BulkUpdateModel();
