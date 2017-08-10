@@ -15,6 +15,7 @@ define([
             this.confirm = confirm;
             this.$modalInstance = $modalInstance;
             this.context = context;
+            this.usPlatformName = "";
             //设置修改参数
             self.paraMap = {
                 //被修改的价格类型clientMsrpPrice,clientRetailPrice
@@ -32,6 +33,7 @@ define([
                 codeList: [],
                 cartId: ""
             };
+            self.usPlatformName = self.context.usPlatformName;
         }
 
         //修改价格
@@ -59,6 +61,16 @@ define([
                     self.$modalInstance.close({success: value,type:1});
                 });
             }
+        }
+
+        change(basePriceType){
+            let self = this;
+            if(basePriceType == "fixedValue"){
+                self.paraMap.optionType = "=";
+            }else {
+                self.paraMap.optionType = "*";
+            }
+
         }
 
     })

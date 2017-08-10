@@ -72,6 +72,7 @@
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$dismiss()"><i class="fa fa-remove"></i>&nbsp;close</button>
-        <button class="btn btn-vo" ng-click="ctrl.finish()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;save</button>
+        <button class="btn btn-vo" ng-click="ctrl.finish(false)"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;save</button>
+        <button class="btn btn-vo" ng-click="ctrl.finish(true)" ng-if="ctrl.flag"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;save&continue</button>
     </div>
 </div>

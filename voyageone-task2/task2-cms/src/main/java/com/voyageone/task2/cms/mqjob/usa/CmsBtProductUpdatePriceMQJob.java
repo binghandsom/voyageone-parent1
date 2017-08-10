@@ -143,7 +143,7 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                 BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
 
                 $info("修改sku价格,channelId:" + channelId  +" skuCode:" + skuCode + " bulkWriteResult:" + bulkWriteResult);
-                if (CmsConstants.ProductStatus.Approved.name().equals(status) && (CmsConstants.PlatformStatus.OnSale.equals(platform.getpStatus()) || CmsConstants.PlatformStatus.InStock.equals(platform.getpStatus()))) {
+                if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus()) && (CmsConstants.PlatformStatus.OnSale == platform.getpStatus() || CmsConstants.PlatformStatus.InStock == platform.getpStatus() )) {
                     platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, sender);
                 }
                 i++;
@@ -159,8 +159,14 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
             //通过code定位
             jongoUpdate.setQuery("{\"common.fields.code\":#}");
             jongoUpdate.setQueryParameters(productCode);
-            jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "St\":#,\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "Ed\":#}}");
-            jongoUpdate.setUpdateParameters(newStPrice, newEdPrice);
+            if ("pPriceSale".equals(minMaxChangedPriceType)){
+                jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "St\":#,\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "Ed\":#,\"usPlatforms.P" + cartId + "." + "pPriceRetail" + "St\":#,\"usPlatforms.P" + cartId + "." + "pPriceRetail" + "Ed\":#}}");
+                jongoUpdate.setUpdateParameters(newStPrice, newEdPrice,newStPrice, newEdPrice);
+            }else {
+                jongoUpdate.setUpdate("{$set:{\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "St\":#,\"usPlatforms.P" + cartId + "." + minMaxChangedPriceType + "Ed\":#}}");
+                jongoUpdate.setUpdateParameters(newStPrice, newEdPrice);
+            }
+
             BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithJongo(channelId, Collections.singletonList(jongoUpdate));
             $info("同步价格最大值最小值,channelId:" + channelId  +" productCode:" + productCode + " bulkWriteResult:" + bulkWriteResult);
         }

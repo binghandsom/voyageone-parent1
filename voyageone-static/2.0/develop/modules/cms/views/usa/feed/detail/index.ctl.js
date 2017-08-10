@@ -564,7 +564,7 @@ define([
             if (self.feed.model) {
                 self.itemDetailService.getTopModel({
                    code: self.feed.code,
-                   model: self.feed.model,
+                   model: self.feed.model.toLowerCase(),
                    top: top
                }).then((res) => {
                     if (res.data) {

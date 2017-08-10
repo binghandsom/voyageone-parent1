@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.mqjob.usa;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsBtProductUpdatePriceMQMessageBody;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +37,11 @@ public class CmsBtProductUpdatePriceMQJobTest {
         paraMap.put("value","100");
         paraMap.put("flag","1");
         map.setParams(paraMap);
-        cmsBtProductUpdatePriceMQJob.onStartup(map);
+
+        String s = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"test\",\"channelId\":\"001\",\"productCodes\":[\"68220-gem\"],\"cartId\":0,\"params\":{\"optionType\":\"*\",\"flag\":\"1\",\"changedPriceType\":\"clientRetailPrice\",\"value\":\"10\",\"basePriceType\":\"clientRetailPrice\"}}";
+        CmsBtProductUpdatePriceMQMessageBody body = JacksonUtil.json2Bean(s, CmsBtProductUpdatePriceMQMessageBody.class);
+
+        cmsBtProductUpdatePriceMQJob.onStartup(body);
 
     }
 }

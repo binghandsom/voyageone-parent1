@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by dell on 2017/8/7.
@@ -44,7 +45,7 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
     @Override
     public void onStartup(CmsUsaPlatformCategoryUpdateManyMQMessageBody messageBody) throws Exception {
         $info("接收到批量更新SN Other Category MQ消息体" + JacksonUtil.bean2Json(messageBody));
-        ArrayList<String> fullCatIds = new ArrayList<>();
+        List<String> fullCatIds = new ArrayList<>();
 
         List<String> productCodes = messageBody.getProductCodes();
         Integer cartId = messageBody.getCartId();
@@ -103,10 +104,7 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
         body.setCartId(cartId.toString());
         body.setSender(messageBody.getSender());
         //去重复
-        HashSet<String> set = new HashSet<>();
-        set.addAll(fullCatIds);
-        fullCatIds.clear();
-        fullCatIds.addAll(set);
+        fullCatIds = fullCatIds.stream().distinct().collect(Collectors.toList());
         body.setFullCatIds(fullCatIds);
         if (ListUtils.notNull(fullCatIds)){
             cmsMqSenderService.sendMessage(body);

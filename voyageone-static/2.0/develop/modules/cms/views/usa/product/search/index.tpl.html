@@ -395,10 +395,10 @@
             </button>
             <ul uib-dropdown-menu style="margin-left: 17px">
                 <li ng-if="platform.value == 8">
-                    <a href="javascript:void(0)" ng-click="ctrl.batchUpdateCategory({cartId:platform.value})"><i class="fa fa-minus"></i>&nbsp;Sn Primary Category</a>
+                    <a href="javascript:void(0)" ng-click="ctrl.batchUpdateCategory({cartId:platform.value,flag:true})"><i class="fa fa-minus"></i>&nbsp;Sn Primary Category</a>
                 </li>
                 <li ng-if="platform.value == 8">
-                    <a href="javascript:void(0)" ng-click="ctrl.batchUpdateCategory({cartId:platform.value,muiti:true,move:true})"><i class="fa fa-minus"></i>&nbsp;Sn Other Category</a>
+                    <a href="javascript:void(0)" ng-click="ctrl.batchUpdateCategory({cartId:platform.value,flag:true,muiti:true,move:true})"><i class="fa fa-minus"></i>&nbsp;Sn Other Category</a>
                 </li>
                 <li>
                     <a href="javascript:void(0)" ng-click="ctrl.batchList(platform.value,'list',platform.name)"><i class="fa fa-minus"></i>&nbsp;List</a>
@@ -407,7 +407,7 @@
                     <a href="javascript:void(0)" ng-click="ctrl.batchList(platform.value,'deList',platform.name)"><i class="fa fa-minus"></i>&nbsp;Delist</a>
                 </li>
                 <li>
-                    <a href="javascript:void(0)" ng-click="ctrl.popBatchPrice(platform.value)"><i class="fa fa-minus"></i>&nbsp;Platform Price</a>
+                    <a href="javascript:void(0)" ng-click="ctrl.popBatchPrice(platform.value,platform.name)"><i class="fa fa-minus"></i>&nbsp;Platform Price</a>
                 </li>
 
             </ul>

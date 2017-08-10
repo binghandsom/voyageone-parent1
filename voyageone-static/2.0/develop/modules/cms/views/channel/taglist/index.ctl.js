@@ -9,9 +9,9 @@ define([
     'modules/cms/directives/noticeTip.directive'
 ], function (cms) {
 
-    cms.controller('tagListController', (function () {
+    cms.controller('tagListController',class TagListController{
 
-        function TagListCtl(channelTagService, confirm, popups, notify, alert, $location, usTagService) {
+        constructor(channelTagService, confirm, popups, notify, alert, $location, usTagService){
             this.channelTagService = channelTagService;
             this.confirm = confirm;
             this.popups = popups;
@@ -36,12 +36,14 @@ define([
             }
         }
 
+
+
         /**
          * 初始化    构建tag树形结构
          * @param parentIndex
          */
-        TagListCtl.prototype.init = function (parentIndex) {
-            var self = this, vm = self.vm;
+        init(parentIndex) {
+            let self = this, vm = self.vm;
 
             if (self.usaFlag) {
                 self.usTagService.init({tagTypeSelectValue: vm.usTagTypeSelectValue}).then(res => {
@@ -69,8 +71,8 @@ define([
          * @param tag
          * @param treeIndex
          */
-        TagListCtl.prototype.openTag = function (tag, treeIndex) {
-            var self = this, vm = self.vm,
+        openTag(tag, treeIndex) {
+            let self = this, vm = self.vm,
                 nextTags = vm.trees[treeIndex + 1];
 
             //设置各级选中节点
@@ -86,7 +88,7 @@ define([
 
         };
 
-        TagListCtl.prototype.editTag = function (tag, parentIndex,$event) {
+        editTag(tag, parentIndex,$event) {
             let self = this;
 
             self.popups.editTag({
@@ -103,8 +105,8 @@ define([
          * 新增标签popup
          * @param parentIndex 层级序号
          */
-        TagListCtl.prototype.popNewTag = function (parentIndex) {
-            var self = this, vm = self.vm,
+        popNewTag(parentIndex) {
+            let self = this, vm = self.vm,
                 first, tagInfo;
 
             first = parentIndex === 0;
@@ -126,8 +128,8 @@ define([
         /**
          * 删除标签
          */
-        TagListCtl.prototype.delTag = function (tag, parentIndex, $event) {
-            var self = this,
+        delTag(tag, parentIndex, $event) {
+            let self = this,
                 channelTagService = self.channelTagService;
 
             self.confirm('TXT_CONFIRM_DELETE_TAG').then(function () {
@@ -137,14 +139,16 @@ define([
                     tagTree: self.vm.orgTagTree
                 }).then(function () {
                     self.init(parentIndex);
+
+                    //删除后再出发一个搜索
                 });
             });
 
             $event.stopPropagation();
         };
 
-        TagListCtl.prototype.filterByName = function (parentIndex, tags) {
-            var self = this,
+        filterByName(parentIndex, tags) {
+            let self = this,
                 searchName = self.searchName[parentIndex];
 
             if (!searchName) {
@@ -152,7 +156,7 @@ define([
                 return;
             }
 
-            var result = _.filter(tags, function (item) {
+            let result = _.filter(tags, function (item) {
                 return item.tagChildrenName.indexOf(searchName) >= 0;
             })[0];
 
@@ -165,8 +169,8 @@ define([
          * @param tagTree
          * @param parentIndex
          */
-        TagListCtl.prototype.constructOrg = function (tagTree, parentIndex) {
-            var self = this,
+        constructOrg(tagTree, parentIndex) {
+            let self = this,
                 vm = self.vm;
 
             vm.trees = [];
@@ -174,17 +178,17 @@ define([
                 vm.trees.push({level: 1, tags: tagTree});
             } else {
                 vm.trees.push({level: 1, tags: tagTree});
-                for (var i = 0; i < parentIndex; i++) {
+                for (let i = 0; i < parentIndex; i++) {
                     _.each(vm.trees[i].tags, function (item) {
                         if (item.tagChildrenName == self.selected[i].tagChildrenName)
                             vm.trees.push({tags: item.children});
                     });
                 }
             }
+
+            self.searchName[parentIndex] = '';
         };
 
-        return TagListCtl;
-
-    })());
+    });
 
 });

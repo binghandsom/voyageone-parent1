@@ -30,7 +30,7 @@ public class CmsUsaPlatformCategoryUpdateOneMQJobTest {
         body.setpCatPath("Men's>XuSong");
         body.setpCatId("7");
 
-        String s = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"test\",\"channelId\":\"001\",\"productCodes\":[\"2112116RB.BROWN\"],\"pCatPath\":\"Sale>Toddler\",\"pCatId\":\"2801\",\"cartId\":8,\"flag\":true,\"mapping\":null}";
+        String s = "{\"consumerRetryTimes\":0,\"mqId\":0,\"delaySecond\":0,\"sender\":\"test\",\"channelId\":\"001\",\"productCodes\":[\"68220-gem\"],\"pCatPath\":\"Sale>Men's\",\"pCatId\":\"151\",\"cartId\":8,\"flag\":true,\"mapping\":null}";
 
         CmsUsaPlatformCategoryUpdateOneMQMessageBody body1 = JacksonUtil.json2Bean(s, CmsUsaPlatformCategoryUpdateOneMQMessageBody.class);
 

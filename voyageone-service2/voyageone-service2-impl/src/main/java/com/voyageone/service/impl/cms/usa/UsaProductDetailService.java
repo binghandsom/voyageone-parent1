@@ -267,20 +267,24 @@ public class UsaProductDetailService extends BaseService {
         if (!StringUtil.isEmpty(platformModel.getpCatPath())) {
             sellerPaths.add(platformModel.getpCatPath());
         }
-        if (ListUtils.notNull(sellers)) {
+
+        if (sellers == null) {
+            sellers = new ArrayList<>();
+        }
+        if (!sellers.isEmpty()) {
             for (Map<String, String> item : sellers) {
                 sellerPaths.add(item.get("catPath"));
             }
-            sellerPaths = sellerPaths.stream().distinct().collect(Collectors.toList());
-            List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
-            sellerPaths.forEach(cat -> {
-                CmsBtProductModel_SellerCat sellerCat = sellerCatService.getSellerCat(channelId, platformModel.getCartId(), cat);
-                if (sellerCat != null) {
-                    sellerCats.add(sellerCat);
-                }
-            });
-            platformModel.setSellerCats(sellerCats);
         }
+        sellerPaths = sellerPaths.stream().distinct().collect(Collectors.toList());
+        List<CmsBtProductModel_SellerCat> sellerCats = new ArrayList<>();
+        sellerPaths.forEach(cat -> {
+            CmsBtProductModel_SellerCat sellerCat = sellerCatService.getSellerCat(channelId, platformModel.getCartId(), cat);
+            if (sellerCat != null) {
+                sellerCats.add(sellerCat);
+            }
+        });
+        platformModel.setSellerCats(sellerCats);
 
         // 价格类型处理,String -> Double
         for (BaseMongoMap<String, Object> sku : platformModel.getSkus()) {
@@ -522,6 +526,9 @@ public class UsaProductDetailService extends BaseService {
                 mqMap.setProductCodes(codeList);
                 mqMap.setChannelId(channelId);
                 mqMap.setSender(userName);
+
+                //String s = JacksonUtil.bean2Json(mqMap);
+
                 cmsMqSenderService.sendMessage(mqMap);
 
             }
@@ -562,6 +569,8 @@ public class UsaProductDetailService extends BaseService {
             } else {
                 //未勾选全部
                 mqMap.setProductCodes(codeList);
+               // String s = JacksonUtil.bean2Json(mqMap);
+
                 cmsMqSenderService.sendMessage(mqMap);
             }
         }
@@ -652,6 +661,9 @@ public class UsaProductDetailService extends BaseService {
                                 //修改最大值最小值
                                 minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceSaleSt", clientRetailPrice);
                                 minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceSaleEd", clientRetailPrice);
+
+                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceRetailSt", clientRetailPrice);
+                                minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceRetailEd", clientRetailPrice);
                             }
                             //修改销售状态
                             if (StringUtils.isNotEmpty(isSale)) {
@@ -675,7 +687,8 @@ public class UsaProductDetailService extends BaseService {
                         productService.bulkUpdateWithMap(channelId, bulkList, userName, "$set");
                         productService.bulkUpdateWithMap(channelId, minMaxPrice, userName, "$set");
                     }
-                    if (CmsConstants.ProductStatus.Approved.name().equals(usPlatform.getStatus()) && (CmsConstants.PlatformStatus.OnSale.name().equals(usPlatform.getpStatus()) || CmsConstants.PlatformStatus.InStock.name().equals(usPlatform.getpStatus()))) {
+
+                    if (CmsConstants.ProductStatus.Approved.name().equals(usPlatform.getStatus()) && (CmsConstants.PlatformStatus.OnSale == usPlatform.getpStatus() || CmsConstants.PlatformStatus.InStock == usPlatform.getpStatus() )) {
                         platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, userName);
                     }
                 }
@@ -712,6 +725,9 @@ public class UsaProductDetailService extends BaseService {
                                 updateMap.put("platforms.P" + cartId + ".skus.$.priceDiffFlg", priceDiffFlg);
 
                                 //修改最大值最小值
+                                minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceSaleSt", clientRetailPrice);
+                                minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceSaleEd", clientRetailPrice);
+
                                 minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceRetailSt", clientRetailPrice);
                                 minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceRetailEd", clientRetailPrice);
                             }
@@ -736,10 +752,9 @@ public class UsaProductDetailService extends BaseService {
                             productService.bulkUpdateWithMap(channelId, bulkList1, userName, "$set");
                             productService.bulkUpdateWithMap(channelId, minMaxPrice1, userName, "$set");
                         }
-                        if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus()) && (CmsConstants.PlatformStatus.OnSale.name().equals(platform.getpStatus()) || CmsConstants.PlatformStatus.InStock.name().equals(platform.getpStatus()))) {
+                        if (CmsConstants.ProductStatus.Approved.name().equals(platform.getStatus()) && (CmsConstants.PlatformStatus.OnSale == platform.getpStatus() || CmsConstants.PlatformStatus.InStock == platform.getpStatus() )) {
                             platformProductUploadService.saveCmsBtUsWorkloadModel(channelId, cartId, productCode, null, 0, userName);
                         }
-
                         //更新价格履历
                         List<String> skus1 = new ArrayList<>();
                         skus.forEach(sku -> skus1.add(sku.getStringAttribute("skuCode")));
@@ -940,6 +955,7 @@ public class UsaProductDetailService extends BaseService {
         } else {
             //未勾选全部
             body.setProductCodes(codeList);
+           // String s = JacksonUtil.bean2Json(body);
             cmsMqSenderService.sendMessage(body);
         }
         return null;
@@ -980,6 +996,8 @@ public class UsaProductDetailService extends BaseService {
         } else {
             //未勾选全部
             body.setProductCodes(codeList);
+            //String s = JacksonUtil.bean2Json(body);
+
             cmsMqSenderService.sendMessage(body);
         }
         return null;

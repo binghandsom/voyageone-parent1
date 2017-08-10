@@ -310,7 +310,7 @@ define([
             })
         }
 
-        popBatchPrice(cartId) {
+        popBatchPrice(cartId,usPlatformName) {
             let self = this;
 
             if(self.getSelectedProduct('code').length === 0 && self._selall == "0"){
@@ -321,7 +321,8 @@ define([
                 selAll:self._selall,
                 codeList:self.getSelectedProduct('code'),
                 queryMap:self.searchUtilService.handleQueryParams(self),
-                cartId:cartId? cartId :0
+                cartId:cartId? cartId :0,
+                usPlatformName:usPlatformName?usPlatformName:null
             }).then(res => {
                 //根据返回参数确定勾选状态,"1",需要清除勾选状态,"0"不需要清除勾选状态
                 if(res.success == "1"){
@@ -446,6 +447,9 @@ define([
 
             self.popups.openUsCategory(option).then(res => {
 
+                //判断是否continue
+                //option.continue = false;
+
                 if(!option.muiti){
                     //单个
                     self.confirm("Whether to cover the properties associated with the SN primary category？").then(
@@ -466,6 +470,13 @@ define([
                             ).then(
                                 param =>{
                                     self.notify.success('Update Success');
+                                    if(option.continue){
+                                        //save&continue
+                                    }else {
+                                        //save,去除勾选状态
+                                        self.clearSelList();
+                                        self._selall = 0;
+                                    }
                                 }
                             );
                         },
@@ -484,14 +495,21 @@ define([
                                 }
                             ).then(
                                 param =>{
+                                    console.log("continue:" + option.continue);
                                     self.notify.success('Update Success');
+
+                                    if(option.continue){
+                                        //save&continue
+                                    }else {
+                                        //save,去除勾选状态
+                                        self.clearSelList();
+                                        self._selall = 0;
+                                    }
                                 }
                             );
                         }
                     )
                 }else{
-                    console.log(res);
-                    console.log(option)
                     //多个
                     let pCatPaths = [];
                     angular.forEach(res, function (item) {
@@ -509,6 +527,13 @@ define([
                     ).then(
                         param =>{
                             self.notify.success('Update Success');
+                            if(option.continue){
+                                //save&continue
+                            }else {
+                                //save,去除勾选状态
+                                self.clearSelList();
+                                self._selall = 0;
+                            }
                         }
                     );
 

@@ -18,6 +18,7 @@ define([
                 this.froms = context.froms;
             this.selected = {};
             this.selectObj = {};
+            this.flag = context.flag;
         }
 
         init() {
@@ -88,9 +89,11 @@ define([
 
         }
 
-        finish() {
+        finish(value) {
             let self = this;
 
+            //高级检索标识是否为continue
+            self.context.continue =  value;
 
             if(self.context.muiti)
                 self.$uibModalInstance.close(self.catArrs);
