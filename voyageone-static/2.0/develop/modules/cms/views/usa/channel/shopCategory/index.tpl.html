@@ -47,7 +47,7 @@
                                 <li ng-repeat="category in categoryItem.children | filter:{catName:search.catName}" sv-element="{container:'.category_popup'}">
                                     <div ng-click="ctrl.openCategory(category,categoryItem)" style="padding: 0;line-height: 28px"
                                          ng-class="{indexSelected:categoryItem.selectedCat == category}">
-                                        <label class="label label-info" sv-handle><i class="fa fa-arrows"></i></label>&emsp;
+                                        <label class="label label-info" sv-handle><i class="fa fa-reorder"></i></label>&emsp;
                                         <span>{{category.catName}}</span>
                                         <span class="pull-right">
                                             <button type="button" class="btn btn-success" ng-click="ctrl.popEditCategory(category,$event)">
