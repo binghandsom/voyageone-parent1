@@ -1,6 +1,7 @@
 package com.voyageone.service.impl.cms.sx.word;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.ListUtils;
@@ -56,7 +57,7 @@ public abstract class CustomWordModule extends VOAbsLoggable {
      * @param moduleName  String   调用者名
      * @return String 原图URL
      */
-    public String getPicOriUrl(String imageName, String moduleName) {
+    public String getPicOriUrl(String channelId, String imageName, String moduleName) {
         String completeImageOriUrl = "";
 
         try {
@@ -78,7 +79,8 @@ public abstract class CustomWordModule extends VOAbsLoggable {
 //                }
 //            }
 //            completeImageOriUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&rgn=0,0,%s,%s", imageName, picSizeMap.get("width"), picSizeMap.get("height"));
-            completeImageOriUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100", imageName);
+//            completeImageOriUrl = String.format("http://s7d5.scene7.com/is/image/sneakerhead/%s?fmt=jpg&scl=1&qlt=100", imageName);
+            completeImageOriUrl = ImageServer.imageUrl(channelId, String.format("%s?fmt=jpg&scl=1&qlt=100", imageName));
             // 20160717 tom 换一种方法 END
             $info("[" + moduleName + "]取得原始图片url:" + completeImageOriUrl);
         } catch (Exception e) {

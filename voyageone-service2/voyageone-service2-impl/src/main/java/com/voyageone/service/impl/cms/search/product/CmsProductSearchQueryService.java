@@ -56,7 +56,7 @@ public class CmsProductSearchQueryService extends BaseService {
         if ($isDebugEnabled()) {
             $debug(String.format("获取当前查询的product列表 ChannelId=%s, %s", channelId, queryBean.toString()));
         }
-        Page<CmsProductSearchModel> page = cmsProductSearchService.queryForPage(queryBean, CmsProductSearchModel.class);
+        Page<CmsProductSearchModel> page = cmsProductSearchService.queryForPage("cms_product", queryBean, CmsProductSearchModel.class);
         List<String> productCodeList = page.getContent().stream().filter(model -> model.getProductCode() != null).map(CmsProductSearchModel::getProductCode).collect(Collectors.toList());
         result.setProductCodeList(productCodeList);
         result.setTotalCount(page.getTotalElements());
@@ -74,7 +74,7 @@ public class CmsProductSearchQueryService extends BaseService {
         if ($isDebugEnabled()) {
             $debug(String.format("获取当前查询的product列表 ChannelId=%s, %s", channelId, queryBean.toString()));
         }
-        Page<CmsProductSearchModel> page = cmsProductSearchService.queryForPage(queryBean, CmsProductSearchModel.class);
+        Page<CmsProductSearchModel> page = cmsProductSearchService.queryForPage("cms_product", queryBean, CmsProductSearchModel.class);
         List<String> productCodeList = page.getContent().stream().filter(model -> model.getProductCode() != null).map(CmsProductSearchModel::getProductCode).collect(Collectors.toList());
         result.setProductCodeList(productCodeList);
         result.setTotalCount(page.getTotalElements());
@@ -112,7 +112,7 @@ public class CmsProductSearchQueryService extends BaseService {
                 $debug(String.format("获取当前查询的product列表 ChannelId=%s, %s", channelId, queryBean.toString()));
             }
 
-            Page<CmsProductSearchModel> page = cmsProductSearchService.queryForPage(queryBean, CmsProductSearchModel.class);
+            Page<CmsProductSearchModel> page = cmsProductSearchService.queryForPage("cms_product", queryBean, CmsProductSearchModel.class);
 
             Set<String> resultSet = new HashSet<>();
             for (CmsProductSearchModel model : page.getContent()) {

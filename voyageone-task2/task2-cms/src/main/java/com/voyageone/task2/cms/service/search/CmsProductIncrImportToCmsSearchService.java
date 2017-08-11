@@ -22,7 +22,7 @@ class CmsProductIncrImportToCmsSearchService extends CmsBaseIncrImportSearchSubS
     private final ProductService productService;
 
     private final CmsProductSearchService cmsProductSearchService;
-
+    private final static String CORE_NAME_PRODUCT = "cms_product";
     @Autowired
     public CmsProductIncrImportToCmsSearchService(ProductService productService, CmsProductSearchService cmsProductSearchService) {
         this.productService = productService;
@@ -57,7 +57,7 @@ class CmsProductIncrImportToCmsSearchService extends CmsBaseIncrImportSearchSubS
                 SolrUpdateBean update = cmsProductSearchService.createSolrBeanForNew(cmsBtProductModel, null);
 
                 if (update != null) {
-                    String response = cmsProductSearchService.saveBean(update);
+                    String response = cmsProductSearchService.saveBean(CORE_NAME_PRODUCT, update);
                     $debug("CmsProductIncrImportToSearchService.handleInsert commit ; response:" + response);
                     return true;
                 }
@@ -113,7 +113,7 @@ class CmsProductIncrImportToCmsSearchService extends CmsBaseIncrImportSearchSubS
                 update = cmsProductSearchService.createSolrBeanForNew(cmsBtProductModel, null);
 
                 if (update != null) {
-                    String response = cmsProductSearchService.saveBean(update);
+                    String response = cmsProductSearchService.saveBean(CORE_NAME_PRODUCT, update);
                     $debug("CmsProductIncrImportToSearchService.handleInsert commit ; response:" + response);
                     return true;
                 }
@@ -142,7 +142,7 @@ class CmsProductIncrImportToCmsSearchService extends CmsBaseIncrImportSearchSubS
             return false;
         }
 
-        String response = cmsProductSearchService.deleteById(id);
+        String response = cmsProductSearchService.deleteById(CORE_NAME_PRODUCT, id);
         $debug("CmsProductIncrImportToSearchService.handleDelete commit ; response:" + response);
         return true;
     }

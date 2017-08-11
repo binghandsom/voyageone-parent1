@@ -696,14 +696,14 @@ public class CmsBuildPlatformProductUploadTmProductService extends BaseService {
         try {
             // 判断是否是达尔文（brandCode没有用到）
             isDarwin = tbProductService.isDarwin(Long.parseLong(strPlatformCategoryId), Long.parseLong(strBrandCode), shopBean, failCause);
-            if (isDarwin == null && failCause.length() != 0) {
-                if (failCause.indexOf("访问淘宝超时") == -1) {
-                    String errMsg = String.format("判断商品是否是达尔文体系失败(访问淘宝超时)！[PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",
+            if (failCause.length() != 0) {
+//                if (failCause.indexOf("访问淘宝超时") == -1) {
+                    String errMsg = String.format("判断商品是否是达尔文体系失败！[PlatformCategoryId:%s] [BrandCode:%s] [FailCause:%s]",
                             platformCategoryId, brandCode, failCause.toString());
                     $error(errMsg);
                     sxData.setErrorMessage(errMsg);
                     throw new BusinessException(errMsg);
-                }
+//                }
             }
         } catch (ApiException ex) {
             // 调用API异常

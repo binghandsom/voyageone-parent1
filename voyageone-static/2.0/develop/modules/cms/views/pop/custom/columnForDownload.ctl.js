@@ -63,6 +63,10 @@ define([
                     return !(context.fileType !== 3 && item.name.indexOf('sku货品编码') >= 0);
                 });
 
+                $scope.vm.commonProps = _.filter($scope.vm.commonProps, function (item) {
+                    return !(item.propName.indexOf('中国建议售价') >= 0 || item.propName.indexOf('中国指导售价') >= 0 || item.propName.indexOf('中国最终售价') >= 0);
+                });
+
                 // 检查全选框
                 for (var i = 1; i <= 6; i++) {
                     chkItemStatus(i);

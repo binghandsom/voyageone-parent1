@@ -7,9 +7,9 @@ public class CmsMtHsCodeUnitBean {
 
 
     private String hscode;
-
+    private String firstUnitId;
     private String firstUnit;
-
+    private String secondUnitId;
     private String secondUnit;
 
     public String getHscode() {
@@ -20,12 +20,28 @@ public class CmsMtHsCodeUnitBean {
         this.hscode = hscode;
     }
 
+    public String getFirstUnitId() {
+        return firstUnitId;
+    }
+
+    public void setFirstUnitId(String firstUnitId) {
+        this.firstUnitId = firstUnitId;
+    }
+
     public String getFirstUnit() {
         return firstUnit;
     }
 
     public void setFirstUnit(String firstUnit) {
         this.firstUnit = firstUnit;
+    }
+
+    public String getSecondUnitId() {
+        return secondUnitId;
+    }
+
+    public void setSecondUnitId(String secondUnitId) {
+        this.secondUnitId = secondUnitId;
     }
 
     public String getSecondUnit() {

@@ -127,7 +127,7 @@ public class SxProductServiceTest {
         int i = 1;
         for (String srcUrl : srcUrls) {
             try {
-                Picture picture = sxProductService.uploadImageByUrl(srcUrl, shopProp);
+                Picture picture = sxProductService.uploadImageByUrl(channelId, srcUrl, shopProp);
                 if (picture != null) {
                     String destUrl = picture.getPicturePath();
                     String pictureId = String.valueOf(picture.getPictureId());

@@ -19,7 +19,7 @@ public class Cnn_928_LIKING_DictTest extends BaseDictTest{
 
     @Test
     public void startupTest() {
-        doCreateJson("新独立域名Liking详情页描述", false, doDict_新独立域名Liking详情页描述(1));
+        doCreateJson("新独立域名Liking详情页描述", false, doDict_新独立域名Liking详情页描述());
         doCreateJson("新独立域名Liking详情页描述-重点商品", false, doDict_新独立域名Liking详情页描述(2));
         doCreateJson("新独立域名Liking详情页描述-无属性图", false, doDict_新独立域名Liking详情页描述(3));
         doCreateJson("新独立域名Liking详情页描述-非重点之英文长描述", false, doDict_新独立域名Liking详情页描述(4));
@@ -27,6 +27,128 @@ public class Cnn_928_LIKING_DictTest extends BaseDictTest{
         doCreateJson("新独立域名Liking详情页描述-非重点之中文使用说明", false, doDict_新独立域名Liking详情页描述(6));
         doCreateJson("新独立域名Liking详情页描述-爆款商品", false, doDict_新独立域名Liking详情页描述(7));
     }
+
+    private RuleExpression doDict_新独立域名Liking详情页描述() {
+
+        // 根字典
+        RuleExpression ruleRoot = new RuleExpression();
+        {
+            // 品牌故事图
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("3"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        {
+            // 尺码图 - 0
+            // 固定图片 - 商品尺码
+            String sizeChartImage = String.format(C_TEMPLATE_IMG_790, "https://img.alicdn.com/imgextra/i2/3081276392/TB2T5t6XyYiFuJjSZFkXXaQ_XXa_!!3081276392.jpg");
+
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(sizeChartImage + C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("2"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("0"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+        {
+            // 尺码图 - 1
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("2"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("1"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+        {
+            // 尺码图 - 2
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("2"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("2"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        {
+            // 测量方式图 - 0
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("7"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            RuleExpression useOriUrl = null;
+
+            RuleExpression imageIndex = new RuleExpression();
+            imageIndex.addRuleWord(new TextWord("0"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, useOriUrl, imageIndex);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        {
+            // 使用说明图
+            RuleExpression htmlTemplate = new RuleExpression();
+            htmlTemplate.addRuleWord(new TextWord(C_TEMPLATE_IMG_790));
+
+            RuleExpression imageType = new RuleExpression();
+            imageType.addRuleWord(new TextWord("6"));
+
+            RuleExpression viewType = new RuleExpression();
+            viewType.addRuleWord(new TextWord("1"));
+
+            CustomWordValueGetCommonImages word = new CustomWordValueGetCommonImages(htmlTemplate, imageType, viewType, null, null);
+            ruleRoot.addRuleWord(new CustomWord(word));
+        }
+
+        return ruleRoot;
+
+    }
+
 
     private RuleExpression doDict_新独立域名Liking详情页描述(int propType) {
         // 根字典

@@ -97,7 +97,7 @@
                     </div>
                     <div class="col-sm-4">
                         <div ng-repeat="item in ctrl.previewWindows">
-                            <img src="{{item.url}}" alt="{{item.name}}" ng-if="item.enabled">
+                            <img ng-src="{{item.url}}" alt="{{item.name}}" ng-if="item.enabled">
                         </div>
                     </div>
                 </div>

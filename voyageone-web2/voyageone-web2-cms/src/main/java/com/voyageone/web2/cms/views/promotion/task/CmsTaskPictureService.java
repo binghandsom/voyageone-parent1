@@ -2,7 +2,6 @@ package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.CmsBtBeatInfoBean;
 import com.voyageone.service.bean.cms.CmsBtTasksBean;
@@ -36,7 +35,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static com.voyageone.common.util.ExcelUtils.getString;
 
@@ -106,6 +108,7 @@ class CmsTaskPictureService extends BaseViewService {
             queryModel.setCartId(cartId);
             queryModel.setTaskName(taskBean.getTaskName());
             queryModel.setTaskType(PromotionTypeEnums.Type.JIAGEPILU.getTypeId());
+            queryModel.setActive(1);
             int exist = cmsBtTasksDao.selectCount(queryModel);
             if (exist > 0) {
                 // Task重名

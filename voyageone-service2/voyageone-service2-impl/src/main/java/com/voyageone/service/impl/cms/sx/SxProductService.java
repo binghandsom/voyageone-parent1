@@ -17,6 +17,7 @@ import com.voyageone.base.dao.mongodb.model.BulkJongoUpdateList;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -63,7 +64,7 @@ import com.voyageone.service.dao.ims.ImsBtProductExceptDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.daoext.cms.CmsBtPlatformImagesDaoExt;
 import com.voyageone.service.daoext.cms.CmsBtSxWorkloadDaoExt;
-import com.voyageone.service.daoext.cms.CmsBtUsWorkloadDaoExt;
+import com.voyageone.service.daoext.cms.CmsMtHsCodeUnitDaoExt;
 import com.voyageone.service.daoext.cms.PaddingImageDaoExt;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.*;
@@ -89,6 +90,7 @@ import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.wms.AvailQuantityForCmsRequest;
 import com.voyageone.web2.sdk.api.response.wms.AvailQuantityForCmsResponse;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -161,6 +163,8 @@ public class SxProductService extends BaseService {
     private CmsMtBrandService cmsMtBrandService;
     @Autowired
     private SneakerheadApiService sneakerheadApiService;
+    @Autowired
+    private CmsMtHsCodeUnitDaoExt cmsMtHsCodeUnitDaoExt;
     @Autowired
     private CmsBtSxWorkloadDaoExt sxWorkloadDao;
     @Autowired
@@ -664,7 +668,7 @@ public class SxProductService extends BaseService {
                     // update by desmond 2016/07/13 start 上传图片出错时不抛出异常
                     try {
                         if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
-                            Picture picture = uploadImageByUrl(srcUrl, shopBean);
+                            Picture picture = uploadImageByUrl(channelId, srcUrl, shopBean);
                             // test用 start
     //                    Picture picture = new Picture();
     //                    picture.setPicturePath("456.jgp");
@@ -675,13 +679,13 @@ public class SxProductService extends BaseService {
                                 pictureId = String.valueOf(picture.getPictureId());
                             }
                         } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
-                            String picture = uploadImageByUrl_JM(srcUrl, shopBean);
+                            String picture = uploadImageByUrl_JM(channelId, srcUrl, shopBean);
                             if (!StringUtils.isEmpty(picture)) {
                                 destUrl = picture;
                             }
                         } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
                             // 20170227 增加上传图片到京东图片空间 charis STA
-                            String[] picture = uploadImageByUrl_JD(srcUrl, shopBean);
+                            String[] picture = uploadImageByUrl_JD(channelId, srcUrl, shopBean);
                             if (picture != null && picture.length > 0) {
                                 destUrl = picture[0];
                                 pictureId = picture[1];
@@ -689,7 +693,7 @@ public class SxProductService extends BaseService {
                             // 20170227 增加上传图片到京东图片空间 charis END
                         } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.NTES.getId())) {
                             KoalaConfig koalaConfig = Shops.getShopKoala(channelId, String.valueOf(cartId));
-                            String[] picture = uploadImageByUrl_KL(srcUrl, koalaConfig, groupId);
+                            String[] picture = uploadImageByUrl_KL(channelId, srcUrl, koalaConfig, groupId);
                             if (picture != null && picture.length > 0) {
                                 destUrl = picture[0];
                                 pictureId = picture[1];
@@ -722,7 +726,7 @@ public class SxProductService extends BaseService {
                 // update by desmond 2016/07/13 start 上传图片出错时不抛出异常
                 try {
                     if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.TM.getId())) {
-                        Picture picture = uploadImageByUrl(srcUrl, shopBean);
+                        Picture picture = uploadImageByUrl(channelId, srcUrl, shopBean);
                         // test用 start
     //                Picture picture = new Picture();
     //                picture.setPicturePath("123.jgp");
@@ -733,13 +737,13 @@ public class SxProductService extends BaseService {
                             pictureId = String.valueOf(picture.getPictureId());
                         }
                     } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JM.getId())) {
-                        String picture = uploadImageByUrl_JM(srcUrl, shopBean);
+                        String picture = uploadImageByUrl_JM(channelId, srcUrl, shopBean);
                         if (!StringUtils.isEmpty(picture)) {
                             destUrl = picture;
                         }
                     } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.JD.getId())) {
                         // 20170227 增加上传图片到京东图片空间 charis STA
-                        String[] picture = uploadImageByUrl_JD(srcUrl, shopBean);
+                        String[] picture = uploadImageByUrl_JD(channelId, srcUrl, shopBean);
                         if (picture != null && picture.length > 0) {
                             destUrl = picture[0];
                             pictureId = picture[1];
@@ -747,7 +751,7 @@ public class SxProductService extends BaseService {
                         // 20170227 增加上传图片到京东图片空间 charis END
                     } else if (shopBean.getPlatform_id().equals(PlatFormEnums.PlatForm.NTES.getId())) {
                         KoalaConfig koalaConfig = Shops.getShopKoala(channelId, String.valueOf(cartId));
-                        String[] picture = uploadImageByUrl_KL(srcUrl, koalaConfig, groupId);
+                        String[] picture = uploadImageByUrl_KL(channelId, srcUrl, koalaConfig, groupId);
                         if (picture != null && picture.length > 0) {
                             destUrl = picture[0];
                             pictureId = picture[1];
@@ -786,56 +790,60 @@ public class SxProductService extends BaseService {
         return retUrls;
     }
 
-    public Picture uploadImageByUrl(String url, ShopBean shopBean) throws Exception {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    public Picture uploadImageByUrl(String channelId, String url, ShopBean shopBean) throws Exception {
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//
+//        int TIMEOUT_TIME = 10*1000;
+//        int waitTime = 0;
+//        int retry_times = 0;
+//        int max_retry_times = 3;
+//        InputStream is;
+//        do {
+//            try {
+//                URL imgUrl = new URL(url);
+//                is = imgUrl.openStream();
+//                byte[] byte_buf = new byte[1024];
+//                int readBytes = 0;
+//
+//                while (true) {
+//                    while (is.available() >= 0) {
+//                        readBytes = is.read(byte_buf, 0, 1024);
+//                        if (readBytes < 0)
+//                            break;
+//                        $debug("read " + readBytes + " bytes");
+//                        waitTime = 0;
+//                        baos.write(byte_buf, 0, readBytes);
+//                    }
+//                    if (readBytes < 0)
+//                        break;
+//
+//                    Thread.sleep(1000);
+//                    waitTime += 1000;
+//
+//                    if (waitTime >= TIMEOUT_TIME) {
+//                        $error("fail to download image:" + url);
+//                        return null;
+//                    }
+//                }
+//                is.close();
+//            } catch (Exception e) {
+//                $error("exception when upload image", e);
+//                if ("Connection reset".equals(e.getMessage())) {
+//                    if (++retry_times < max_retry_times)
+//                        continue;
+//                }
+//                throw new BusinessException(String.format("Fail to upload image[%s]: %s", url, e.getMessage()));
+//            }
+//            break;
+//        } while (true);
+//
+//        $info("read complete, begin to upload image");
+//
+//        Picture picture = uploadImageToTm(shopBean, baos.toByteArray());
 
-        int TIMEOUT_TIME = 10*1000;
-        int waitTime = 0;
-        int retry_times = 0;
-        int max_retry_times = 3;
-        InputStream is;
-        do {
-            try {
-                URL imgUrl = new URL(url);
-                is = imgUrl.openStream();
-                byte[] byte_buf = new byte[1024];
-                int readBytes = 0;
-
-                while (true) {
-                    while (is.available() >= 0) {
-                        readBytes = is.read(byte_buf, 0, 1024);
-                        if (readBytes < 0)
-                            break;
-                        $debug("read " + readBytes + " bytes");
-                        waitTime = 0;
-                        baos.write(byte_buf, 0, readBytes);
-                    }
-                    if (readBytes < 0)
-                        break;
-
-                    Thread.sleep(1000);
-                    waitTime += 1000;
-
-                    if (waitTime >= TIMEOUT_TIME) {
-                        $error("fail to download image:" + url);
-                        return null;
-                    }
-                }
-                is.close();
-            } catch (Exception e) {
-                $error("exception when upload image", e);
-                if ("Connection reset".equals(e.getMessage())) {
-                    if (++retry_times < max_retry_times)
-                        continue;
-                }
-                throw new BusinessException(String.format("Fail to upload image[%s]: %s", url, e.getMessage()));
-            }
-            break;
-        } while (true);
-
-        $info("read complete, begin to upload image");
-
-        Picture picture = uploadImageToTm(shopBean, baos.toByteArray());
+        InputStream inputStream = ImageServer.proxyDownloadImage(url, channelId);
+        byte[] byteArray = IOUtils.toByteArray(inputStream);
+        Picture picture = uploadImageToTm(shopBean, byteArray);
         if (picture != null) {
             $info(String.format("Success to upload image[%s -> %s]", url, picture.getPicturePath()));
         }
@@ -879,33 +887,34 @@ public class SxProductService extends BaseService {
         return picture;
     }
 
-    public String uploadImageByUrl_JM(String picUrl, ShopBean shopBean) throws Exception {
+    public String uploadImageByUrl_JM(String channelId, String picUrl, ShopBean shopBean) throws Exception {
 
-        // 图片流
-        InputStream inputStream = null;
-
-        try {
-            // 读取图片
-            inputStream = getImgInputStream(picUrl, 3);
-        } catch (Exception e) {
-            // 即使scene7上URL对应的图片不存在也不要报异常，直接返回空字符串
-            String errMsg = "通过scene7上聚美图片URL取得对应的图片流失败 [picUrl:" + picUrl + "]";
-            $error(errMsg);
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException ignored) {
-                }
-            }
-            throw new BusinessException(errMsg);
-        }
+//        // 图片流
+//        InputStream inputStream = null;
+//
+//        try {
+//            // 读取图片
+//            inputStream = getImgInputStream(picUrl, 3);
+//        } catch (Exception e) {
+//            // 即使scene7上URL对应的图片不存在也不要报异常，直接返回空字符串
+//            String errMsg = "通过scene7上聚美图片URL取得对应的图片流失败 [picUrl:" + picUrl + "]";
+//            $error(errMsg);
+//            if (inputStream != null) {
+//                try {
+//                    inputStream.close();
+//                } catch (IOException ignored) {
+//                }
+//            }
+//            throw new BusinessException(errMsg);
+//        }
 
         try {
             //上传图片
             JmImageFileBean fileBean = new JmImageFileBean();
             //用UUID命名
             fileBean.setImgName(UUID.randomUUID().toString());
-            fileBean.setInputStream(inputStream);
+//            fileBean.setInputStream(inputStream);
+            fileBean.setInputStream(ImageServer.proxyDownloadImage(picUrl, channelId));
             fileBean.setNeedReplace(false);
             fileBean.setDirName(shopBean.getOrder_channel_id());
             fileBean.setExtName("jpg");
@@ -1302,38 +1311,39 @@ public class SxProductService extends BaseService {
             // 2016/09/13 add desmond END
 
             // 2017/02/17 tom Liking官网同购的场合， 禁止某些品牌上新 START
-            if (channelId.equals("928")) {
-                String masterBrand = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getBrand();
-                if (masterBrand.equals("hermes")
-                        || masterBrand.equals("chanel")
-                        || masterBrand.equals("foley & corinna")
-                        || masterBrand.equals("foley + corinna")
-                        || masterBrand.equals("hermes")
-                        || masterBrand.equals("hermès")
-                        || masterBrand.equals("hermès fragrance")
-                        || masterBrand.equals("hermès paris")
-                        || masterBrand.equals("louis vuitton")
-                        ) {
-                    removeProductList.add(productModel);
-                    continue;
-                }
-            }
-            if (channelId.equals("928") && cartId == 31) {
-                String masterBrand = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getBrand();
-                if (masterBrand.equals("burberry")
-                        || masterBrand.equals("burberry london")
-                        || masterBrand.equals("burberry brit")
-                        || masterBrand.equals("burberry childrenswear")
-                        || masterBrand.equals("burberry prorsum")
-                        || masterBrand.equals("maje")
-                        || masterBrand.equals("sandro")
-                        || masterBrand.equals("sandro moscoloni")
-                        || masterBrand.equals("saks fifth avenue")
-                        ) {
-                    removeProductList.add(productModel);
-                    continue;
-                }
-            }
+//            if (channelId.equals("928")) {
+//                String masterBrand = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getBrand();
+//                if (masterBrand.equals("hermes")
+//                        || masterBrand.equals("chanel")
+//                        || masterBrand.equals("foley & corinna")
+//                        || masterBrand.equals("foley + corinna")
+//                        || masterBrand.equals("hermes")
+//                        || masterBrand.equals("hermès")
+//                        || masterBrand.equals("hermès fragrance")
+//                        || masterBrand.equals("hermès paris")
+//                        || masterBrand.equals("louis vuitton")
+//                        ) {
+//                    removeProductList.add(productModel);
+//                    continue;
+//                }
+//            }
+//            if (channelId.equals("928") && cartId == 31) {
+//                String masterBrand = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getBrand();
+//                if (masterBrand.equals("burberry")
+//                        || masterBrand.equals("burberry london")
+//                        || masterBrand.equals("burberry brit")
+//                        || masterBrand.equals("burberry childrenswear")
+//                        || masterBrand.equals("burberry prorsum")
+//                        || masterBrand.equals("maje")
+//                        || masterBrand.equals("sandro")
+//                        || masterBrand.equals("sandro moscoloni")
+//                        || masterBrand.equals("saks fifth avenue")
+//                        || masterBrand.equals("prada")
+//                        ) {
+//                    removeProductList.add(productModel);
+//                    continue;
+//                }
+//            }
             // 所有渠道都不能上
 			if (sxData.getMainProduct().getOrgChannelId().equals("022")) {
 				String masterBrand = sxData.getMainProduct().getCommonNotNull().getFieldsNotNull().getBrand();
@@ -2054,8 +2064,14 @@ public class SxProductService extends BaseService {
                             }
                         }
                         // added by morse.lu 2017/01/03 end
-
-                        ((InputField) field).setValue(propValue.split(",")[0]);
+                        // modified by morse.lu 2017/07/31 start
+                        // 对应 第一，第二计量单位和销售单位
+                        // hscode||||清关要素||||计量单位|||销售单位
+//                        ((InputField) field).setValue(propValue.split(",")[0]);
+                        if (!StringUtils.isEmpty(propValue)) {
+                            ((InputField) field).setValue(constructTmHscode(sxData.getMainProduct(), propValue, shopBean));
+                        }
+                        // modified by morse.lu 2017/07/31 end
                         retMap.put(field.getId(), field);
                     }
                     continue;
@@ -6247,57 +6263,60 @@ public class SxProductService extends BaseService {
         cmsMqSenderService.sendMessage(ewmsStockSyncPlatformMQMessageBody);
     }
 
-    public String[] uploadImageByUrl_JD(String picUrl, ShopBean shopBean) throws Exception {
+    public String[] uploadImageByUrl_JD(String channelId, String picUrl, ShopBean shopBean) throws Exception {
         String imageUrl[] = {"", ""};
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        int TIMEOUT_TIME = 10 * 1000;
-        int waitTime = 0;
-        int retry_times = 0;
-        int max_retry_times = 3;
-        InputStream is;
-        do {
-            try {
-                URL imgUrl = new URL(picUrl);
-                is = imgUrl.openStream();
-                byte[] byte_buf = new byte[1024];
-                int readBytes = 0;
-
-                while (true) {
-                    while (is.available() >= 0) {
-                        readBytes = is.read(byte_buf, 0, 1024);
-                        if (readBytes < 0)
-                            break;
-                        $debug("read " + readBytes + " bytes");
-                        waitTime = 0;
-                        baos.write(byte_buf, 0, readBytes);
-                    }
-                    if (readBytes < 0)
-                        break;
-
-                    Thread.sleep(1000);
-                    waitTime += 1000;
-
-                    if (waitTime >= TIMEOUT_TIME) {
-//                        $error("fail to download image:" + picUrl);
-                        return null;
-                    }
-                }
-                is.close();
-            } catch (Exception e) {
-//                $error("exception when upload image", e);
-                if ("Connection reset".equals(e.getMessage())) {
-                    if (++retry_times < max_retry_times)
-                        continue;
-                }
-                throw new BusinessException(String.format("Fail to upload image[channelId: %s, cartId: %s, orgPicUrl: %s]%s", shopBean.getOrder_channel_id(), shopBean.getCart_id(), picUrl, e.getMessage()));
-            }
-            break;
-        } while (true);
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//
+//        int TIMEOUT_TIME = 10 * 1000;
+//        int waitTime = 0;
+//        int retry_times = 0;
+//        int max_retry_times = 3;
+//        InputStream is;
+//        do {
+//            try {
+//                URL imgUrl = new URL(picUrl);
+//                is = imgUrl.openStream();
+//                byte[] byte_buf = new byte[1024];
+//                int readBytes = 0;
+//
+//                while (true) {
+//                    while (is.available() >= 0) {
+//                        readBytes = is.read(byte_buf, 0, 1024);
+//                        if (readBytes < 0)
+//                            break;
+//                        $debug("read " + readBytes + " bytes");
+//                        waitTime = 0;
+//                        baos.write(byte_buf, 0, readBytes);
+//                    }
+//                    if (readBytes < 0)
+//                        break;
+//
+//                    Thread.sleep(1000);
+//                    waitTime += 1000;
+//
+//                    if (waitTime >= TIMEOUT_TIME) {
+////                        $error("fail to download image:" + picUrl);
+//                        return null;
+//                    }
+//                }
+//                is.close();
+//            } catch (Exception e) {
+////                $error("exception when upload image", e);
+//                if ("Connection reset".equals(e.getMessage())) {
+//                    if (++retry_times < max_retry_times)
+//                        continue;
+//                }
+//                throw new BusinessException(String.format("Fail to upload image[channelId: %s, cartId: %s, orgPicUrl: %s]%s", shopBean.getOrder_channel_id(), shopBean.getCart_id(), picUrl, e.getMessage()));
+//            }
+//            break;
+//        } while (true);
 
 //        $info("read complete, begin to upload image");
+        InputStream inputStream = ImageServer.proxyDownloadImage(picUrl, channelId);
+        byte[] byteArray = IOUtils.toByteArray(inputStream);
+
         try {
-            ImgzonePictureUploadResponse imgzonePictureUploadResponse = jdImgzoneService.uploadPicture("SX", picUrl, shopBean, baos.toByteArray(), "0", "image_title");
+            ImgzonePictureUploadResponse imgzonePictureUploadResponse = jdImgzoneService.uploadPicture("SX", picUrl, shopBean, byteArray, "0", "image_title");
             if (imgzonePictureUploadResponse == null) {
                 String failCause = "上传图片到京东时，超时, jingdong response为空";
                 failCause = String.format("%s[channelId: %s, cartId: %s, orgPicUrl: %s]", failCause, shopBean.getOrder_channel_id(), shopBean.getCart_id(), picUrl);
@@ -6570,54 +6589,56 @@ public class SxProductService extends BaseService {
         return skuLogicQtyMap;
     }
 
-    public String[] uploadImageByUrl_KL(String picUrl, KoalaConfig koalaConfig, String groupId) throws Exception {
+    public String[] uploadImageByUrl_KL(String channelId, String picUrl, KoalaConfig koalaConfig, String groupId) throws Exception {
         String imageUrl[] = {"",""};
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        int TIMEOUT_TIME = 10*1000;
-        int waitTime = 0;
-        int retry_times = 0;
-        int max_retry_times = 3;
-        InputStream is;
-        do {
-            try {
-                URL imgUrl = new URL(picUrl);
-                is = imgUrl.openStream();
-                byte[] byte_buf = new byte[1024];
-                int readBytes = 0;
-
-                while (true) {
-                    while (is.available() >= 0) {
-                        readBytes = is.read(byte_buf, 0, 1024);
-                        if (readBytes < 0)
-                            break;
-                        $debug("read " + readBytes + " bytes");
-                        waitTime = 0;
-                        baos.write(byte_buf, 0, readBytes);
-                    }
-                    if (readBytes < 0)
-                        break;
-
-                    Thread.sleep(1000);
-                    waitTime += 1000;
-
-                    if (waitTime >= TIMEOUT_TIME) {
-                        return null;
-                    }
-                }
-                is.close();
-            } catch (Exception e) {
-                if ("Connection reset".equals(e.getMessage())) {
-                    if (++retry_times < max_retry_times)
-                        continue;
-                }
-                throw new BusinessException(String.format("Fail to upload image[channelId: %s, cartId: %s, orgPicUrl: %s]%s", koalaConfig.getChannelId(), koalaConfig.getCartId(), picUrl, e.getMessage()));
-            }
-            break;
-        } while (true);
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//
+//        int TIMEOUT_TIME = 10*1000;
+//        int waitTime = 0;
+//        int retry_times = 0;
+//        int max_retry_times = 3;
+//        InputStream is;
+//        do {
+//            try {
+//                URL imgUrl = new URL(picUrl);
+//                is = imgUrl.openStream();
+//                byte[] byte_buf = new byte[1024];
+//                int readBytes = 0;
+//
+//                while (true) {
+//                    while (is.available() >= 0) {
+//                        readBytes = is.read(byte_buf, 0, 1024);
+//                        if (readBytes < 0)
+//                            break;
+//                        $debug("read " + readBytes + " bytes");
+//                        waitTime = 0;
+//                        baos.write(byte_buf, 0, readBytes);
+//                    }
+//                    if (readBytes < 0)
+//                        break;
+//
+//                    Thread.sleep(1000);
+//                    waitTime += 1000;
+//
+//                    if (waitTime >= TIMEOUT_TIME) {
+//                        return null;
+//                    }
+//                }
+//                is.close();
+//            } catch (Exception e) {
+//                if ("Connection reset".equals(e.getMessage())) {
+//                    if (++retry_times < max_retry_times)
+//                        continue;
+//                }
+//                throw new BusinessException(String.format("Fail to upload image[channelId: %s, cartId: %s, orgPicUrl: %s]%s", koalaConfig.getChannelId(), koalaConfig.getCartId(), picUrl, e.getMessage()));
+//            }
+//            break;
+//        } while (true);
+        InputStream inputStream = ImageServer.proxyDownloadImage(picUrl, channelId);
+        byte[] byteArray = IOUtils.toByteArray(inputStream);
 
         try {
-            ItemImgUploadResponse response = koalaItemService.imgUpload(koalaConfig, baos.toByteArray(), groupId + ".jpg");
+            ItemImgUploadResponse response = koalaItemService.imgUpload(koalaConfig, byteArray, groupId + ".jpg");
 
             imageUrl[0] = response.getUrl();
             imageUrl[1] = response.getUrl();
@@ -6672,6 +6693,114 @@ public class SxProductService extends BaseService {
         private int getSort() {
             return this.sort;
         }
+    }
+
+    /**
+     * 对应 第一，第二计量单位和销售单位
+     * hscode||||清关要素||||计量单位|||销售单位
+     */
+    public String constructTmHscode(CmsBtProductModel product, String cmsHsCode, ShopBean shopBean) {
+        String sp_hscode = "||||";
+        String[] argsHs = cmsHsCode.split(",");
+        String hsCode = argsHs[0];
+        StringBuilder sb = new StringBuilder(hsCode); // hscode
+        sb.append(sp_hscode);
+        // 清关要素
+        // 暂无
+        sb.append(sp_hscode);
+        // 计量单位
+        String hscodeUnit = constructTmHscodeUnit(product, hsCode, shopBean);
+        sb.append(hscodeUnit).append(sp_hscode);
+        // 销售单位
+        if (argsHs.length == 3) {
+            String hscodeSaleUnit = argsHs[2];
+            sb.append(getTmHscodeSaleUnit(hscodeSaleUnit));
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * 获取天猫 第一，第二计量单位
+     */
+    public CmsMtHsCodeUnitBean getTmHscodeUnitBean(String hsCode, ShopBean shopBean) {
+        CmsMtHsCodeUnitBean bean = cmsMtHsCodeUnitDaoExt.getHscodeUnit(hsCode);
+        if (bean == null) {
+            Map<String, String> mapHscode = tbProductService.getHscodeDetail(hsCode, shopBean);
+            bean = new CmsMtHsCodeUnitBean();
+            bean.setHscode(hsCode);
+            int index = 1;
+            for (Map.Entry<String, String> entry : mapHscode.entrySet()) {
+                if (index == 1) {
+                    bean.setFirstUnit(entry.getValue());
+                    bean.setFirstUnitId(entry.getKey());
+                } else if (index == 2) {
+                    bean.setSecondUnit(entry.getValue());
+                    bean.setSecondUnitId(entry.getKey());
+                }
+                index++;
+            }
+
+            cmsMtHsCodeUnitDaoExt.insertHsCodeUnit(bean);
+        }
+
+        return bean;
+    }
+
+    /**
+     * 获取天猫 第一，第二计量单位
+     * 含量0##1##件||含量1##0.14##千克
+     */
+    private String constructTmHscodeUnit(CmsBtProductModel product, String hsCode, ShopBean shopBean) {
+        StringBuffer sb = new StringBuffer("");
+        String sp_at = "##";
+        String sp_ut = "||";
+
+        CmsMtHsCodeUnitBean bean = getTmHscodeUnitBean(hsCode, shopBean);
+        Double weightKg = product.getCommonNotNull().getFieldsNotNull().getWeightKG();
+        Integer weightG = product.getCommonNotNull().getFieldsNotNull().getWeightG();
+        String firstUnitId = bean.getFirstUnitId();
+        String firstUnit = bean.getFirstUnit();
+        String secondUnitId = bean.getSecondUnitId();
+        String secondUnit = bean.getSecondUnit();
+        if (!StringUtils.isEmpty(firstUnitId) && !StringUtils.isEmpty(firstUnit)) {
+            String firstVal;
+            if ("千克".equals(firstUnit)) {
+                firstVal = weightKg.toString();
+            } else if ("克".equals(firstUnit)) {
+                firstVal = weightG.toString();
+            } else {
+                firstVal = "1";
+            }
+            sb.append(firstUnitId).append(sp_at).append(firstVal).append(sp_at).append(firstUnit);
+
+            if (!StringUtils.isEmpty(secondUnitId) && !StringUtils.isEmpty(secondUnit)) {
+                sb.append(sp_ut);
+                String secondVal;
+                if ("千克".equals(secondUnit)) {
+                    secondVal = weightKg.toString();
+                } else if ("克".equals(secondUnit)) {
+                    secondVal = weightG.toString();
+                } else {
+                    secondVal = "1";
+                }
+                sb.append(secondUnitId).append(sp_at).append(secondVal).append(sp_at).append(secondUnit);
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * 获取天猫 销售单位
+     * code##%s||cnName##%s
+     */
+    public String getTmHscodeSaleUnit(String hscodeSaleUnit) {
+        CmsMtHscodeSaleUnitModel unit = cmsMtHsCodeUnitDaoExt.getHscodeSaleUnit(hscodeSaleUnit);
+        if (unit == null) {
+            throw new BusinessException(String.format("hscode的销售单位 [%s] 在cms_mt_hscode_sale_unit表中不存在, 联系管理员！", hscodeSaleUnit));
+        }
+        return String.format("code##%s||cnName##%s", unit.getUnitCode(), hscodeSaleUnit);
     }
 
     public Map<String, Integer> getSaleQuantity(List<BaseMongoMap<String, Object>> skuList) {

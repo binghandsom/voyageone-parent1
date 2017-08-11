@@ -349,7 +349,8 @@
                                     <span></span>
                                 </div>
                                 <div class="col-md-8">
-                                    <select class="form-control" ng-model="ctrl.vm.platform.fields.mainImageTemplate" ng-change="ctrl.change(ctrl.vm.platform.fields.mainImageTemplate)">
+                                    <select class="form-control" ng-model="ctrl.tempImageTemplate" ng-change="ctrl.change()">
+                                        <option class="form-control" value="请输入...">请输入...</option>
                                         <option class="form-control" value={{item.imageTemplate}} ng-repeat="item in ctrl.vm.sxImageTemplates" >{{item.imageTemplate}}</option>
                                         <option class="form-control" value="">手动输入模板路径</option>
                                     </select>
@@ -363,7 +364,7 @@
                                     <span></span>
                                 </div>
                                 <div class="col-md-8">
-                                    <input class="form-control" ng-model="ctrl.vm.platform.fields.mainImageTemplate">
+                                    <input class="form-control" ng-model="ctrl.tempImageTemplate" ng-change="ctrl.change1()">
                                 </div>
                             </div>
                             <!--xu-->
@@ -546,7 +547,7 @@
                                             <td class="text-center v-middle">
                                                 <input class="sku_check" type="checkbox" ng-model="entity.isSale"
                                                        ng-true-value="true" ng-false-value="false">
-                                            </td>-
+                                            </td>
                                             <td class="text-center v-middle">{{entity.skuCode}}</td>
                                             <td class="text-center v-middle">{{entity.qty || entity.qty == 0 ? entity.qty : ctrl.vm.skuTemp[entity.skuCode].qty ? ctrl.vm.skuTemp[entity.skuCode].qty:0}}</td>
                                             </td>

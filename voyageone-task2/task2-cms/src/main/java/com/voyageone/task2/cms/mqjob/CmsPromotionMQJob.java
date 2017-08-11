@@ -83,7 +83,7 @@ public class CmsPromotionMQJob extends TBaseMQCmsSubService<CmsPromotionMQMessag
             if ("1".equals(cmsBtPromotion.getPromotionType())) {
                 updateSalePrice(cmsBtPromotion.getChannelId(), cmsBtPromotion.getCartId(), messageBody.getPromotionId(), messageBody.getSender());
             } else if ("2".equals(cmsBtPromotion.getPromotionType())) {
-                updateTeJiaBaoPromotion(cmsBtPromotion.getChannelId(), cmsBtPromotion.getCartId(), messageBody.getPromotionId());
+//                updateTeJiaBaoPromotion(cmsBtPromotion.getChannelId(), cmsBtPromotion.getCartId(), messageBody.getPromotionId());
             }
         }else {
             $info("该条MQ已经失效不需要执行");

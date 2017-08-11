@@ -31,7 +31,7 @@ public class CmsShelvesImageUploadMQJobTest {
     }
     @Test
     public void aaa(){
-        byte[] aa = cmsShelvesImageUploadMQJob.downImage("http://s7d5.scene7.com/is/image/sneakerhead/20161026-240x342-jiarugouwuche?$sn_240x342$&$yuanjia=1217&$shiyijia=1217&$product=010-H36899-1&$name=Jewelry.com+925%E9%93%B614K%E9%87%91%E9%95%B60.33%E5%85%8B%E6%8B%89%E9%92%BB%E7%9F%B3%E5%8F%8C%E5%BF%83%E5%A5%B3%E6%AC%BE%E6%97%B6%E5%B0%9A%E5%BF%83%E7%9B%B8%E5%8D%B0%E6%89%8B%E9%93%BE", "001");
+        byte[] aa = cmsShelvesImageUploadMQJob.downImage("http://s7d5.scene7.com/is/image/sneakerhead/sn%2D20170511%2D240x360?$sn-240x360$&$price=0&$chinese-name=sdhs&$product-name=%E7%BE%8E%E5%9B%BDPolar+Bottle%E5%8C%97%E6%9E%81%E7%86%8A%E4%BF%9D%E5%86%B7%E4%BF%9D%E6%B8%A9%E6%B0%B4%E5%A3%B6+%E6%88%B7%E5%A4%96%E9%AA%91%E8%A1%8C%E8%BF%90%E5%8A%A8%E6%B0%B4%E5%A3%B6650ml&$layer_1_src=sneakerhead%2Fsn%2Dbackground－70&$product=001-20170613185322-b6108-p-6", "001");
         Map<String,Object> map = new HashedMap();
         map.put("shelvesId",1);
     }

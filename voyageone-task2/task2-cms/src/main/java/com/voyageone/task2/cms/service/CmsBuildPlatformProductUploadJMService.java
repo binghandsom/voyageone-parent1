@@ -1378,8 +1378,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
         // add by desmond 2016/10/28 start
         // 以前的更新方法有错误，P27.skus里面追加了一个字段sizeNick之后，居然更新的时候会把它的值冲掉(因为没有手动往newSku里面设置)
         JongoUpdate updateProductQuery = new JongoUpdate();
-        updateProductQuery.setQuery("{\"common.fields.code\": #}");
-        updateProductQuery.setQueryParameters(product.getCommon().getFields().getCode());
+        updateProductQuery.setQuery("{\"prodId\": #}");
+        updateProductQuery.setQueryParameters(product.getProdId());
 
         updateProductQuery.setUpdate("{$set:{" +
 //                "\"platforms.P"+ CART_ID +".skus\": #, " +     // skus在后面单独更新
@@ -2172,14 +2172,14 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
             if (StringUtils.isEmpty(mallId) || sb.length() > 0) {
                 if (!StringUtils.isEmpty(mallId)) {
                     // add成功并生成了mallId,只是有别的错误，也回写mallId
-                    updateMallId(product, mallId);
+                    updateMallId(product, mallId, expressionParser.getSxData().getGroupId());
                 } else {
                     // 上传失败
                     throw new BusinessException("添加商品到聚美商城失败!" + sb.toString());
                 }
             } else {
                 // 成功，回写mallId
-                updateMallId(product, mallId);
+                updateMallId(product, mallId, expressionParser.getSxData().getGroupId());
             }
 
             product.getPlatform(CART_ID).setpPlatformMallId(mallId);
@@ -2315,13 +2315,13 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
      * @param product
      * @param mallId 聚美Mall Id
      */
-    protected void updateMallId(CmsBtProductModel product, String mallId) {
+    protected void updateMallId(CmsBtProductModel product, String mallId, long groupId) {
         String channelId = product.getChannelId();
         String code = product.getCommon().getFields().getCode();
 
         JongoUpdate updateProductQuery = new JongoUpdate();
-        updateProductQuery.setQuery("{\"common.fields.code\": #}");
-        updateProductQuery.setQueryParameters(code);
+        updateProductQuery.setQuery("{\"prodId\": #}");
+        updateProductQuery.setQueryParameters(product.getProdId());
 
         // 上到聚美商城是默认在售的，所以只要成功上传到聚美商城，就把状态回写为OnSale
         updateProductQuery.setUpdate("{$set:{" +
@@ -2335,8 +2335,8 @@ public class CmsBuildPlatformProductUploadJMService extends BaseCronTaskService 
 
 
         JongoUpdate updateGroupQuery = new JongoUpdate();
-        updateGroupQuery.setQuery("{\"cartId\": #, \"productCodes\": #}");
-        updateGroupQuery.setQueryParameters(CART_ID, code);
+        updateGroupQuery.setQuery("{\"groupId\": #, \"cartId\": #}");
+        updateGroupQuery.setQueryParameters(groupId, CART_ID);
 
         updateGroupQuery.setUpdate("{$set:{" +
                 "\"platformMallId\": #," +

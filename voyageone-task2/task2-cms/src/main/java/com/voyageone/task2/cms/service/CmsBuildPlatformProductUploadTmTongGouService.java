@@ -492,21 +492,34 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                 for (String sku_outerId : strSkuCodeList) {
                     ScItem scItem;
                     boolean isNew = false;
-                    // 检查是否发布过仓储商品
-                    try {
-                        scItem = tbScItemService.getScItemByOuterCode(shopProp, sku_outerId);
-                    } catch (ApiException e) {
-                        String errMsg = String.format("自动设置天猫商品全链路库存管理:检查是否发布过仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
-                        throw new BusinessException(errMsg);
-                    }
-                    if (scItem == null) {
-                        // 没有发布过仓储商品的场合， 发布仓储商品
+                    Map<String, Object> searchParam = new HashMap<>();
+                    searchParam.put("channelId", channelId);
+                    searchParam.put("cartId", cartId);
+                    searchParam.put("sku", sku_outerId);
+                    searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
+
+                    CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
+                    if (scItemModel != null) {
+                        scItem = new ScItem();
+                        scItem.setItemId(Long.parseLong(scItemModel.getScProductId()));
+                    } else {
+                        // 检查是否发布过仓储商品
                         try {
-                            scItem = tbScItemService.addScItemSimple(shopProp, title, sku_outerId);
-                            isNew = true;
+                            scItem = tbScItemService.getScItemByOuterCode(shopProp, sku_outerId);
+                            isNew = true; // 只要我们表里没有，都认为是new，因为可能创建好了，程序异常了，没有走后面的初始化库存以及货品绑定
                         } catch (ApiException e) {
-                            String errMsg = String.format("自动设置天猫商品全链路库存管理:发布仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
+                            String errMsg = String.format("自动设置天猫商品全链路库存管理:检查是否发布过仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
                             throw new BusinessException(errMsg);
+                        }
+                        if (scItem == null) {
+                            // 没有发布过仓储商品的场合， 发布仓储商品
+                            try {
+                                scItem = tbScItemService.addScItemSimple(shopProp, title, sku_outerId);
+                                isNew = true;
+                            } catch (ApiException e) {
+                                String errMsg = String.format("自动设置天猫商品全链路库存管理:发布仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
+                                throw new BusinessException(errMsg);
+                            }
                         }
                     }
 //                    scItemMap.put(sku_outerId, scItem);
@@ -968,7 +981,7 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             searchParam.put("channelId", sxData.getChannelId());
             searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
             searchParam.put("cartId", cartId);
-            searchParam.put("code", code);
+//            searchParam.put("code", code);
             searchParam.put("sku", skuCode);
 //            searchParam.put("scCode", scCode); // 检索里不需要这个字段
             CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
@@ -1842,7 +1855,6 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
             String hscode = "";
             String hscodeSaleUnit = "";
             String hscode_unit = "";
-            Map<String, String> unitMap = new HashMap<>();
             CmsMtHsCodeUnitBean bean = null;
             // 只有当入关方式(true表示跨境申报)时，才需要设置海关报关税号hscode;false表示邮关申报时，不需要设置海关报关税号hscode
             if ("true".equalsIgnoreCase(crossBorderRreportFlg)) {
@@ -1873,8 +1885,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                     }
                 }
                 if (!StringUtils.isEmpty(hscode)) {
-                    bean = cmsMtHsCodeUnitDaoExt.getHscodeUnit(hscode);
-                    if (bean != null) {
+//                    bean = cmsMtHsCodeUnitDaoExt.getHscodeUnit(hscode);
+                    bean = expressionParser.getSxProductService().getTmHscodeUnitBean(hscode, shopProp);
+//                    if (bean != null) {
                         Double weightKg = product.getCommonNotNull().getFieldsNotNull().getWeightKG();
                         Integer weightG = product.getCommonNotNull().getFieldsNotNull().getWeightG();
                         if (!StringUtils.isEmpty(bean.getFirstUnit())) {
@@ -1896,15 +1909,9 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                                 hscode_unit = hscode_unit + ",1";
                             }
                         }
-                    } else {
-                        throw new BusinessException(String.format("hscode [%s] 在cms_mt_hscode_unit表中不存在, 联系管理员！", hscode));
-                    }
-                }
-                if (!StringUtils.isEmpty(hscodeSaleUnit)) {
-                    unitMap = cmsMtHsCodeUnitDaoExt.getHscodeSaleUnit(hscodeSaleUnit);
-                    if (unitMap == null) {
-                        throw new BusinessException(String.format("hscode的销售单位 [%s] 在cms_mt_hscode_sale_unit表中不存在, 联系管理员！", hscodeSaleUnit));
-                    }
+//                    } else {
+//                        throw new BusinessException(String.format("hscode [%s] 在cms_mt_hscode_unit表中不存在, 联系管理员！", hscode));
+//                    }
                 }
             }
 
@@ -1991,7 +1998,8 @@ public class CmsBuildPlatformProductUploadTmTongGouService extends BaseCronTaskS
                         // 获取hscode对应的第一，第二计量单位和销售单位 20170602 STA
                         skuMap.put("hscode_unit", hscode_unit);
                         // 销售单位
-                        skuMap.put("hscode_sale_unit", String.format("code##%s||cnName##%s", unitMap.get("unitCode"), hscodeSaleUnit));
+//                        skuMap.put("hscode_sale_unit", String.format("code##%s||cnName##%s", unitMap.get("unitCode"), hscodeSaleUnit));
+                        skuMap.put("hscode_sale_unit", sxProductService.getTmHscodeSaleUnit(hscodeSaleUnit));
                         // 获取hscode对应的第一，第二计量单位和销售单位 20170602 END
                     }
 

@@ -8,11 +8,15 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.components.tmall.TbBase;
 import com.voyageone.components.tmall.bean.TmallApiExecuteContext;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -236,11 +240,11 @@ public class TbProductService extends TbBase {
         TmallBrandcatMetadataGetResponse response = reqTaobaoApi(config, req);
         if (response == null) {
             failCause.append("访问淘宝超时");
-            return null;
+            return false;
         }
         if (response.getErrorCode() != null) {
             failCause.append(response.getMsg());
-            return null;
+            return false;
         }
         return response.getBrandCatMetaData().getIsDarwin();
     }
@@ -307,5 +311,68 @@ public class TbProductService extends TbBase {
         request.setXmlData(xmlData);
 
         return reqTaobaoApi(config, request);
+    }
+
+    /**
+     * 获取天猫第一计量单位第二计量单位
+     *
+     * @param hscode
+     * @param config
+     * @return Map<计量单位id, 计量单位名>
+     */
+    public Map<String, String> getHscodeDetail(String hscode, ShopBean config) {
+        TmallItemHscodeDetailGetRequest request = new TmallItemHscodeDetailGetRequest();
+        request.setHscode(hscode);
+        TmallItemHscodeDetailGetResponse response;
+        try {
+            response = reqTaobaoApi(config, request);
+            if (response == null) {
+                String errMsg = "Tmall return null TmallItemHscodeDetailGetResponse";
+                throw new BusinessException(errMsg);
+            }
+            if (!StringUtils.isEmpty(response.getErrorCode())) {
+                String errMsg = String.format("TmallItemHscodeDetailGet 请求失败!errCode:%s, errMsg:%s", response.getSubCode(), response.getSubMsg());
+                throw new BusinessException(errMsg);
+            }
+        } catch (ApiException e) {
+            String errMsg = String.format("TmallItemHscodeDetailGet API调用失败!errCode:%s, errMsg:%s", e.getSubErrCode(), e.getSubErrMsg());
+            throw new BusinessException(errMsg);
+        }
+
+        Map<String, String> ret = new LinkedHashMap<>();
+
+        List<String> list = response.getResults();
+        if (ListUtils.isNull(list) || StringUtils.isEmpty(list.get(0))) {
+//            String errMsg = "TmallItemHscodeDetailGet 取得hscode明细为空!";
+//            throw new BusinessException(errMsg);
+            return ret;
+        }
+
+        // 这边天猫返回的信息很挫，只能自己format了=。=
+//        String resJson = list.get(0).replace("\\\"", "\"");
+//        resJson = resJson.substring(1, resJson.length() - 1);
+//        Map<String, Object> resMap = JacksonUtil.jsonToMap(resJson);
+        Map<String, Object> resMap = JacksonUtil.jsonToMap(list.get(0));
+        if (resMap.get("unitList") == null) {
+            String errMsg = "TmallItemHscodeDetailGet 取得unitList为空!";
+            throw new BusinessException(errMsg);
+        }
+        if (resMap.get("unitList") instanceof List) {
+            List<Map<String, Object>> unitList = (List<Map<String, Object>>) resMap.get("unitList");
+            for (Map<String, Object> unitMap : unitList) {
+                String id = (String) unitMap.get("id");
+                String memo = (String) unitMap.get("memo");
+                if (StringUtils.isEmpty(id) || StringUtils.isEmpty(memo)) {
+                    String errMsg = "TmallItemHscodeDetailGet 返回格式发生变化，联系管理员!";
+                    throw new BusinessException(errMsg);
+                }
+                ret.put(id, memo);
+            }
+        } else {
+            String errMsg = "TmallItemHscodeDetailGet 返回格式发生变化，联系管理员!";
+            throw new BusinessException(errMsg);
+        }
+
+        return ret;
     }
 }

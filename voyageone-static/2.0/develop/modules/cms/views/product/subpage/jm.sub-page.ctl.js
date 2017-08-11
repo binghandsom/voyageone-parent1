@@ -61,15 +61,25 @@ define([
             noMaterMsg: null,
             sxImageTemplates:[]
         };
+        this.tempImageTemplate = "请输入...";
         this.panelShow = true;
     }
     /*xu*/
     SpJmController.prototype.change = function(){
         var self = this;
-        if (self.vm.platform.fields.mainImageTemplate == "") {
+        if(self.tempImageTemplate != "" && self.tempImageTemplate != "请输入..."){
+            self.vm.platform.fields.mainImageTemplate = self.tempImageTemplate;
+        }
+        if (self.tempImageTemplate == "") {
             self.flag = true;
         } else {
             self.flag = false;
+        }
+    };
+    SpJmController.prototype.change1 = function(){
+        var self = this;
+        if(self.tempImageTemplate != "" && self.tempImageTemplate != "请输入..."){
+            self.vm.platform.fields.mainImageTemplate = self.tempImageTemplate;
         }
     };
 

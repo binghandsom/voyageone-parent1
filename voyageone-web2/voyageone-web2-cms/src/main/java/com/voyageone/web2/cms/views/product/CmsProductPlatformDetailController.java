@@ -161,7 +161,6 @@ public class CmsProductPlatformDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_PLATFORM_CHK)
     public AjaxResponse doUpdateProductPlatformChk(@RequestBody Map params) {
-
         Map<String, Object> platform = (Map<String, Object>) params.get("platform");
 
         String channelId = getUser().getSelChannelId(),

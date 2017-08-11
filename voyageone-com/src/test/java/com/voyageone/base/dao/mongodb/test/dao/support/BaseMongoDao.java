@@ -21,8 +21,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 
 @NoRepositoryBean
-public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository<T, ID> {
-
+public class BaseMongoDao<T, ID extends Serializable> extends SimpleMongoRepository<T, ID> {
     // mongoTemplate
     protected MongoOperations mongoOperations;
     public MongoOperations getMongoOperations() {
@@ -38,7 +37,7 @@ public class BaseMongoDao<T, ID extends Serializable> implements MongoRepository
      * @param mongoOperations must not be {@literal null}.
      */
     public BaseMongoDao(MongoEntityInformation<T, ID> metadata, MongoOperations mongoOperations) {
-
+        super(metadata, mongoOperations);
         Assert.notNull(mongoOperations);
         Assert.notNull(metadata);
 

@@ -36,7 +36,7 @@ public class CmsProductSearchServiceTest {
         query.addSort(new Sort(Sort.Direction.DESC, "id"));
         query.setRows(20);
         query.setOffset(100);
-        Page<CommIdSearchModel> page = cmsProductSearchService.queryForPage(query, CommIdSearchModel.class);
+        Page<CommIdSearchModel> page = cmsProductSearchService.queryForPage("cms_product", query, CommIdSearchModel.class);
         System.out.println("Total:" + page.getTotalElements());
         for (CommIdSearchModel idModel : page.getContent()) {
             System.out.println(JacksonUtil.bean2Json(idModel));

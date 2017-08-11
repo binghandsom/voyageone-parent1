@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.ImageServer;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.service.impl.cms.BusinessLogService;
@@ -38,11 +39,11 @@ public class CmsBuildPlatformImageUploadCnService extends BaseCronTaskService {
 
     // url,文件夹名 都未定
     private static final String[][] CN_URLS = new String[][]{
-            {"201", "http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x1200_1200x?$1200x1200$&$product="},
-            {"202", "http://s7d5.scene7.com/is/image/sneakerhead/Target_20160906_x1200_1200x?$1200x1200_exportpng$&$product=="},
-            {"203", "http://s7d5.scene7.com/image/sneakerhead/Target_20160527_x1200_1200x?$1200x1200$&$product="},
-            {"204", "http://s7d5.scene7.com/is/image/sneakerhead/peijian_788_620?$bcbg_ringdetail_788_620$&$images="},
-            {"205", "http://s7d5.scene7.com/is/image/sneakerhead/Target_20160527_x1200_1200x?$1200x1200$&$product="}
+            {"201", "Target_20160527_x1200_1200x?$1200x1200$&$product="},
+            {"202", "Target_20160906_x1200_1200x?$1200x1200_exportpng$&$product="},
+            {"203", "Target_20160527_x1200_1200x?$1200x1200$&$product="},
+            {"204", "peijian_788_620?$bcbg_ringdetail_788_620$&$images="},
+            {"205", "Target_20160527_x1200_1200x?$1200x1200$&$product="}
     }; // String[A][B] A:图片模板X B: 0:上传OSS后存放的文件夹名 1:图片模板
 
     @Override
@@ -122,13 +123,14 @@ public class CmsBuildPlatformImageUploadCnService extends BaseCronTaskService {
 
         List<String> errorList = new ArrayList<>();
         for (String[] cnUrl : CN_URLS) {
+            String imageUrl = ImageServer.imageUrl(cmsBtSxCnImagesModel.getChannelId() ,cnUrl[1]) + cmsBtSxCnImagesModel.getImageName();
             try {
-                cnImageService.doUploadImage(cnUrl[1] + cmsBtSxCnImagesModel.getImageName(), "010/" + cnUrl[0] + "/" + ossImageName);
+                cnImageService.doUploadImage(imageUrl, "010/" + cnUrl[0] + "/" + ossImageName);
             } catch (BusinessException ex) {
                 errorList.add(ex.getMessage());
             } catch (Exception ex) {
-                $warn("独立域名上传图片失败!code[%s],url[%s],错误信息[%s]", cmsBtSxCnImagesModel.getCode(), cnUrl[1] + cmsBtSxCnImagesModel.getImageName(), ex.getMessage());
-                String errMsg = String.format("独立域名上传图片失败!url[%s],错误信息[%s]", cnUrl[1] + cmsBtSxCnImagesModel.getImageName(), ex.getMessage());
+                $warn("独立域名上传图片失败!code[%s],url[%s],错误信息[%s]", cmsBtSxCnImagesModel.getCode(), imageUrl, ex.getMessage());
+                String errMsg = String.format("独立域名上传图片失败!url[%s],错误信息[%s]", imageUrl, ex.getMessage());
                 errorList.add(errMsg);
             }
         }
