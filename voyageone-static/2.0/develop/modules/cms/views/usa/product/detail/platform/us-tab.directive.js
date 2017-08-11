@@ -121,6 +121,7 @@ define([
         save(status) {
             let self = this;
             let platform = angular.copy(self.platform);
+
             if (status) {
                 platform.pStatus = status;
             }
