@@ -1,5 +1,6 @@
 /**
  * @description 固定在右侧的功能栏
+ *              template是navBar.directive.html手动压缩后黏贴进来的
  * @author piao
  */
 define([
@@ -11,7 +12,7 @@ define([
             restrict: 'E',
             transclude: true,
             replace: true,
-            templateUrl:"directives/navBar.directive.html",
+            template:'<nav class="nav-bar nav-container"><div class="nav-item cur-p"style="background: #ededed;"ng-click="blink()"><div class="nav-slide"><span><i class="glyphicon glyphicon-chevron-{{direction}}"></i></span></div></div><div class="nav-item"ng-transclude></div></nav>',
             scope: {
                 heading: '@',
                 isOpen: '=?',
