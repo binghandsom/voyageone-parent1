@@ -737,17 +737,17 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         }
                         break;
                 }
-                if(StringUtil.isEmpty(catPath)) {
+                if (StringUtil.isEmpty(catPath)) {
                     MatchResult searchResult = getMainCatInfo(originalFeed.getCategory(),
                             !StringUtils.isEmpty(originalFeed.getProductType()) ? originalFeed.getProductType() : "",
                             !StringUtils.isEmpty(originalFeed.getSizeType()) ? originalFeed.getSizeType() : "",
                             originalFeed.getName(),
                             originalFeed.getBrand());
-                    if(searchResult != null)
+                    if (searchResult != null)
                         catPath = searchResult.getCnName();
 
                 }
-                if(StringUtil.isEmpty(catPath)) return false;
+                if (StringUtil.isEmpty(catPath)) return false;
                 String finalCatPath = catPath;
                 return categorySingle.stream().noneMatch(cat -> finalCatPath.indexOf(cat) == 0);
             } else if ("2".equals(singleFlg)) {
@@ -759,9 +759,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         /**
          * 将商品从feed导入主数据
          *
-         * @param originalFeed        Feed信息
-         * @param channelId           channel id
-         *                            //         * @param mapBrandMapping 品牌mapping一览
+         * @param originalFeed Feed信息
+         * @param channelId    channel id
+         *                     //         * @param mapBrandMapping 品牌mapping一览
          */
         public void doSaveProductMainProp(
                 CmsBtFeedInfoModel originalFeed
@@ -1027,11 +1027,11 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     }
                     if (feed.getChannelId().equalsIgnoreCase(ChannelConfigEnums.Channel.KitBag.getId())) {
                         cmsProduct.getCommon().getFields().setShortDesEn(feed.getShortDescription());
-                        if(StringUtil.isEmpty(cmsProduct.getCommonNotNull().getFieldsNotNull().getShortDesCn())) {
+                        if (StringUtil.isEmpty(cmsProduct.getCommonNotNull().getFieldsNotNull().getShortDesCn())) {
                             cmsProduct.getCommon().getFields().setShortDesCn(feed.getShortDescription());
                         }
                         cmsProduct.getCommon().getFields().setMaterialEn(feed.getMaterial());
-                        if(StringUtil.isEmpty(cmsProduct.getCommonNotNull().getFieldsNotNull().getMaterialCn())) {
+                        if (StringUtil.isEmpty(cmsProduct.getCommonNotNull().getFieldsNotNull().getMaterialCn())) {
                             cmsProduct.getCommon().getFields().setMaterialCn(feed.getMaterial());
                         }
                     }
@@ -1082,7 +1082,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     int updCnt = productService.updateProductFeedToMaster(usjoi ? "928" : channelId, cmsProduct, getTaskName(), "feed->master导入");
                     if (updCnt == 0) {
                         // 有出错, 跳过
-                        String errMsg = "feed->master导入:更新:编辑商品的时候排他错误:" + originalFeed.getChannelId() + ":" + originalFeed.getCode() + " id:" + cmsProduct.getProdId() + "  "+cmsProduct.getModified();
+                        String errMsg = "feed->master导入:更新:编辑商品的时候排他错误:" + originalFeed.getChannelId() + ":" + originalFeed.getCode() + " id:" + cmsProduct.getProdId() + "  " + cmsProduct.getModified();
                         $error(errMsg);
                         throw new BusinessException(errMsg);
                     }
@@ -1097,7 +1097,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                     // 不存在的场合, 新建一个product
                     cmsProduct = doCreateCmsBtProductModel(feed, newMapping, feedList.size() > 1, originalFeed.getCode());
-                    if(feed.getChannelId().equals(ChannelConfigEnums.Channel.SN.getId()) && CmsConstants.UsaFeedStatus.Approved.name().equals(feed.getStatus())){
+                    if (feed.getChannelId().equals(ChannelConfigEnums.Channel.SN.getId()) && CmsConstants.UsaFeedStatus.Approved.name().equals(feed.getStatus())) {
                         doCreateUsaPlatform(cmsProduct, feed);
                     }
                     // Champion特殊处理
@@ -1162,9 +1162,8 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     productService.createProduct(cmsProduct.getChannelId(), cmsProduct, getTaskName());
 
 
-
                     // sneakerHead 新商品加入top50
-                    if(feed.getChannelId().equals(ChannelConfigEnums.Channel.SN.getId()) && CmsConstants.UsaFeedStatus.Approved.name().equals(feed.getStatus())){
+                    if (feed.getChannelId().equals(ChannelConfigEnums.Channel.SN.getId()) && CmsConstants.UsaFeedStatus.Approved.name().equals(feed.getStatus())) {
                         doInsertTop50(cmsProduct);
                     }
 
@@ -1210,26 +1209,27 @@ public class SetMainPropService extends VOAbsIssueLoggable {
         }
 
         // 新code插入美国sneakhead官网相应类目的第一个
-        public void doInsertTop50(CmsBtProductModel cmsProduct){
+        public void doInsertTop50(CmsBtProductModel cmsProduct) {
             CmsBtProductModel_Platform_Cart platform = cmsProduct.getUsPlatform(CartEnums.Cart.SNKRHDp.getValue());
-            if(platform != null && ListUtils.notNull(platform.getSellerCats())){
+            if (platform != null && ListUtils.notNull(platform.getSellerCats())) {
                 List<String> sellerCatIds = new ArrayList<>();
                 List<String> fullCatIds = platform.getSellerCats()
                         .stream()
-                        .filter(item->ListUtils.notNull(item.getcIds()))
-                        .map(item-> "-"+item.getcIds().stream().collect(Collectors.joining("-"))+"-")
+                        .filter(item -> ListUtils.notNull(item.getcIds()))
+                        .map(item -> "-" + item.getcIds().stream().collect(Collectors.joining("-")) + "-")
                         .collect(Collectors.toList());
                 platform.getSellerCats().stream().map(CmsBtProductModel_SellerCat::getcIds).collect(Collectors.toList()).forEach(sellerCatIds::addAll);
                 sellerCatIds = sellerCatIds.stream().distinct().collect(Collectors.toList());
-                sellerCatIds.forEach(sellerCatId->productTopService.insertTop50(cmsProduct.getChannelId(), sellerCatId, cmsProduct.getCommon().getFields().getCode(), CartEnums.Cart.SNKRHDp.getValue()));
+                sellerCatIds.forEach(sellerCatId -> productTopService.insertTop50(cmsProduct.getChannelId(), sellerCatId, cmsProduct.getCommon().getFields().getCode(), CartEnums.Cart.SNKRHDp.getValue()));
                 CmsCategoryReceiveMQMessageBody cmsCategoryReceiveMQMessageBody = new CmsCategoryReceiveMQMessageBody();
                 cmsCategoryReceiveMQMessageBody.setChannelId(cmsProduct.getChannelId());
-                cmsCategoryReceiveMQMessageBody.setCartId(platform.getCartId()+"");
+                cmsCategoryReceiveMQMessageBody.setCartId(platform.getCartId() + "");
                 cmsCategoryReceiveMQMessageBody.setFullCatIds(fullCatIds);
                 cmsCategoryReceiveMQMessageBody.setSender(getTaskName());
                 cmsMqSenderService.sendMessage(cmsCategoryReceiveMQMessageBody);
             }
         }
+
         private void doCreateUsaPlatform(CmsBtProductModel cmsProduct, CmsBtFeedInfoModel feed) {
             Map<String, CmsBtProductModel_Platform_Cart> usPlatforms = new HashMap<>();
 
@@ -1241,10 +1241,11 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("googleDepartment", feed.getAttribute().get("googleDepartment"));
             cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("priceGrabberCategory", feed.getAttribute().get("priceGrabberCategory"));
             cmsProduct.getCommonNotNull().getFieldsNotNull().setFeedAttribute("taxable", feed.getAttribute().get("taxable"));
+            cmsProduct.getCommonNotNull().getFieldsNotNull().setUnisex(StringUtil.isEmpty(feed.getUnisex()) ? "0" : feed.getUnisex());
 
 //            feed.setCategory(feed.getCategory().replaceAll("-",">").replaceAll("－","-"));
-            if(!StringUtil.isEmpty(cmsProduct.getFeed().getCatPath())){
-                cmsProduct.getFeed().setCatPath(cmsProduct.getFeed().getCatPath().replaceAll(">","-"));
+            if (!StringUtil.isEmpty(cmsProduct.getFeed().getCatPath())) {
+                cmsProduct.getFeed().setCatPath(cmsProduct.getFeed().getCatPath().replaceAll(">", "-"));
                 cmsProduct.getFeed().setCatId(feed.getCategoryCatId());
             }
             for (TypeChannelBean typeChannelBean : typeUsChannelBeanListApprove) {
@@ -1273,13 +1274,13 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
                     BaseMongoMap<String, Object> skuInfo = new BaseMongoMap();
                     skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.skuCode.name(), sku.getSku());
-                    if(feedPlatformCart != null) {
+                    if (feedPlatformCart != null) {
                         skuInfo.put("clientMsrpPrice", feedPlatformCart.getPriceClientMsrp());
                         skuInfo.put("clientRetailPrice", feedPlatformCart.getPriceClientRetail());
                         skuInfo.put("clientNetPrice", feedPlatformCart.getPriceClientRetail());
 
                         Boolean isSale = true;
-                        if(feedPlatformCart.getIsSale() != null && feedPlatformCart.getIsSale() == 0) isSale = false;
+                        if (feedPlatformCart.getIsSale() != null && feedPlatformCart.getIsSale() == 0) isSale = false;
                         skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), isSale);
                         skuList.add(skuInfo);
                         msrpMin = Double.min(msrpMin, feedPlatformCart.getPriceClientMsrp());
@@ -1294,12 +1295,12 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 platform.setpPriceSaleEd(retailMax);
                 BaseMongoMap<String, Object> fields = new BaseMongoMap<>();
                 platform.setFields(fields);
-                switch (CartEnums.Cart.getValueByID(iCartId+"")){
+                switch (CartEnums.Cart.getValueByID(iCartId + "")) {
                     case SNKRHDp:
                     case SNKRHDm:
                     case SNKRxM:
                         CmsBtProductModel_SellerCat seller = sellerCatService.getSellerCat(feed.getChannelId(), CartEnums.Cart.SNKRHDp.getValue(), feed.getCategory());
-                        if(seller != null){
+                        if (seller != null) {
                             platform.setpCatId(seller.getcId());
                         }
                         platform.setpCatPath(feed.getCategory());
@@ -1316,28 +1317,28 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         platform.getFields().setAttribute("sneakerfoiko", false);
 
                         List<String> catPath = new ArrayList<>();
-                        if(!StringUtil.isEmpty(feed.getCategory())) {
+                        if (!StringUtil.isEmpty(feed.getCategory())) {
                             catPath.add(feed.getCategory());
                         }
-                        if(ListUtils.notNull(feed.getAttribute().get("categoriesTree"))){
+                        if (ListUtils.notNull(feed.getAttribute().get("categoriesTree"))) {
                             try {
                                 List<Map<String, Object>> cats = JacksonUtil.jsonToMapList(feed.getAttribute().get("categoriesTree").get(0));
-                                for(Map<String, Object> item:cats){
+                                for (Map<String, Object> item : cats) {
                                     catPath.add((String) item.get("catPath"));
                                 }
-                            }catch (Exception ignored){
+                            } catch (Exception ignored) {
                             }
                         }
                         // NewArrival的自动匹配店铺分类
-                        if(platform.getFields().getAttribute("newArrival") != null && "1".equals(platform.getFields().getAttribute("newArrival"))){
+                        if (platform.getFields().getAttribute("newArrival") != null && "1".equals(platform.getFields().getAttribute("newArrival"))) {
                             List<String> newArrivalCategorys = usaNewArrivalService.getNewArrivalCategory(feed.getProductType(), feed.getSizeType());
-                            if(ListUtils.notNull(newArrivalCategorys)){
+                            if (ListUtils.notNull(newArrivalCategorys)) {
                                 catPath.addAll(newArrivalCategorys);
                             }
                         }
 
                         // 店铺内分类去重
-                        if(ListUtils.notNull(catPath)){
+                        if (ListUtils.notNull(catPath)) {
                             catPath = catPath.stream().distinct().collect(Collectors.toList());
                         }
 
@@ -1382,31 +1383,31 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
                         break;
                     case SNKRHDa:
-                        platform.setpCatPath(feed.getAttribute().get("amazonBrowseTree")==null?"":feed.getAttribute().get("amazonBrowseTree").get(0));
+                        platform.setpCatPath(feed.getAttribute().get("amazonBrowseTree") == null ? "" : feed.getAttribute().get("amazonBrowseTree").get(0));
                         platform.getFields().setAttribute("sellerFulfilledPrime", "1");
                         break;
                 }
 
-                if(!StringUtil.isEmpty(platform.getpCatPath())){
+                if (!StringUtil.isEmpty(platform.getpCatPath())) {
                     platform.setpCatStatus("1");
-                }else{
+                } else {
                     platform.setpCatStatus("0");
                 }
                 platform.setSkus(skuList);
 
-                if(feedPlatformCart != null && feedPlatformCart.getIsSale() == 0){
+                if (feedPlatformCart != null && feedPlatformCart.getIsSale() == 0) {
                     platform.setLock("1");
                     platform.setIsSale("0");
                     platform.setStatus(CmsConstants.ProductStatus.Pending.toString());
-                }else{
+                } else {
                     platform.setLock("0");
                     platform.setIsSale("1");
                     platform.setStatus(CmsConstants.ProductStatus.Approved.toString());
                 }
                 // 商品状态
-                if(ccUsAutoSyncCartList != null && ccUsAutoSyncCartList.contains(iCartId+"") && "1".equals(platform.getIsSale())){
+                if (ccUsAutoSyncCartList != null && ccUsAutoSyncCartList.contains(iCartId + "") && "1".equals(platform.getIsSale())) {
                     platform.setpStatus(CmsConstants.PlatformStatus.OnSale.toString());
-                }else{
+                } else {
                     platform.setpStatus(CmsConstants.ProductStatus.Pending.toString());
                 }
 
@@ -1516,7 +1517,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
             // 产品名称（英文）
 //            if (newFlg || StringUtils.isEmpty(productCommonField.getProductNameEn()) || "1".equals(feed.getIsFeedReImport())) {
-                productCommonField.setProductNameEn(feed.getName());
+            productCommonField.setProductNameEn(feed.getName());
 //            }
 
             // 长标题, 中标题, 短标题: 都是中文, 需要自己翻译的
@@ -1541,7 +1542,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         colorId = feed.getAttribute().get("ColorId").get(0);
                     }
                     productCommonField.setColor(colorName + colorId);
-                }else if("044".equals(feed.getChannelId())){
+                } else if ("044".equals(feed.getChannelId())) {
                     productCommonField.setColor(feed.getColor());
                 }
                 // 20161227 tom champion特殊处理， 目前没有设置common的配置画面， 将来会增加 END
@@ -1557,11 +1558,11 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 //            }
 //            1.【原始 颜色/口味/香型等】为空的场合，【颜色/口味/香型等】为“暂无”。
 //            2.【原始 颜色/口味/香型等】不为空的场合，【颜色/口味/香型等】调用字典进行中文自动翻译。
-            if(!"007".equals(feed.getChannelId()) && !"008".equals(feed.getChannelId())){
-                if(!StringUtil.isEmpty(productCommonField.getCodeDiff()) && (StringUtil.isEmpty(productCommonField.getColor()) || "暂无".equals(productCommonField.getColor()))){
+            if (!"007".equals(feed.getChannelId()) && !"008".equals(feed.getChannelId())) {
+                if (!StringUtil.isEmpty(productCommonField.getCodeDiff()) && (StringUtil.isEmpty(productCommonField.getColor()) || "暂无".equals(productCommonField.getColor()))) {
                     String color = cmsBtTranslateService.translate(usjoi ? "928" : feed.getChannelId(), CmsBtCustomPropModel.CustomPropType.Common.getValue(), "com_color", productCommonField.getCodeDiff());
                     if (!StringUtil.isEmpty(color)) productCommonField.setColor(color);
-                }else if(StringUtil.isEmpty(productCommonField.getCodeDiff()) && StringUtil.isEmpty(productCommonField.getColor())){
+                } else if (StringUtil.isEmpty(productCommonField.getCodeDiff()) && StringUtil.isEmpty(productCommonField.getColor())) {
                     productCommonField.setColor("暂无");
                 }
             }
@@ -1577,18 +1578,18 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             }
             // 简短描述英文
 //            if (newFlg || StringUtils.isEmpty(productCommonField.getShortDesEn()) || "1".equals(feed.getIsFeedReImport())) {
-                productCommonField.setShortDesEn(feed.getShortDescription());
+            productCommonField.setShortDesEn(feed.getShortDescription());
 //            }
             // 详情描述英文
 //            if (newFlg || StringUtils.isEmpty(productField.getLongDesEn()) || "1".equals(feed.getIsFeedReImport())) {
 //                productField.setLongDesEn(feed.getLongDescription());
 //            }
 //            if (newFlg || StringUtils.isEmpty(productCommonField.getLongDesEn()) || "1".equals(feed.getIsFeedReImport())) {
-                productCommonField.setLongDesEn(feed.getLongDescription());
+            productCommonField.setLongDesEn(feed.getLongDescription());
 //            }
 
 //            if (newFlg || StringUtils.isEmpty(productCommonField.getLastReceivedOn()) || "1".equals(feed.getIsFeedReImport())) {
-                productCommonField.setLastReceivedOn(feed.getLastReceivedOn());
+            productCommonField.setLastReceivedOn(feed.getLastReceivedOn());
 //            }
             // 税号集货: 不要设置
             // 税号个人: 不要设置
@@ -1907,7 +1908,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
             // 追加P0(主数据)平台属性
             CmsBtProductModel_Platform_Cart platformP0 = new CmsBtProductModel_Platform_Cart();
             platformP0.setCartId(0);
-            CmsBtProductGroupModel groupP0 = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), "0",usjoi ? feed.getChannelId():null);
+            CmsBtProductGroupModel groupP0 = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), "0", usjoi ? feed.getChannelId() : null);
             if (groupP0 == null) {
                 platformP0.setMainProductCode(common.getFields().getCode());
             } else {
@@ -1990,7 +1991,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 if (!CartEnums.Cart.JM.getId().equals(typeChannelBean.getValue())
                         && !CartEnums.Cart.CN.getId().equals(typeChannelBean.getValue())
                         && !CartEnums.Cart.KL.getId().equals(typeChannelBean.getValue())) {
-                    group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), typeChannelBean.getValue(),usjoi ? feed.getChannelId():null);
+                    group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), typeChannelBean.getValue(), usjoi ? feed.getChannelId() : null);
                 }
                 if (group == null) {
                     platform.setpIsMain(1);
@@ -2043,13 +2044,13 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                     BaseMongoMap<String, Object> skuInfo = new BaseMongoMap();
                     skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.skuCode.name(), sku.getSku());
                     Boolean isSale = true;
-                    if(sku.getIsSale() != null && sku.getIsSale() == 0) isSale = false;
+                    if (sku.getIsSale() != null && sku.getIsSale() == 0) isSale = false;
                     skuInfo.put(CmsBtProductConstants.Platform_SKU_COM.isSale.name(), isSale);
                     skuList.add(skuInfo);
                 }
 
                 platform.setSkus(skuList);
-                if(feed.getPlatform(platform.getCartId()) != null && feed.getPlatform(platform.getCartId()).getIsSale() == 0){
+                if (feed.getPlatform(platform.getCartId()) != null && feed.getPlatform(platform.getCartId()).getIsSale() == 0) {
                     platform.setLock("1");
                     platform.setIsSale("0");
                 }
@@ -2734,7 +2735,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 if (blnFound) {
                     continue;
                 }
-                if(Integer.parseInt(shop.getValue()) > 0 && Integer.parseInt(shop.getValue()) < 20){
+                if (Integer.parseInt(shop.getValue()) > 0 && Integer.parseInt(shop.getValue()) < 20) {
                     continue;
                 }
 
@@ -2761,7 +2762,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         //取得当前code的创建的时间
                         LocalDate feedDate = formatter.parseLocalDate(feed.getCreated());
                         //取得当前group的创建的时间
-                        CmsBtProductGroupModel groupCode = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), shop.getValue(),usjoi ? feed.getChannelId():null);
+                        CmsBtProductGroupModel groupCode = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), shop.getValue(), usjoi ? feed.getChannelId() : null);
                         if (groupCode != null) {
                             LocalDate groupDate = formatter.parseLocalDate(groupCode.getCreated());
                             //feed和group的创建时间作比较
@@ -2774,7 +2775,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                             }
                         }
                     } else {
-                        group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), shop.getValue(),usjoi ? feed.getChannelId():null);
+                        group = getGroupIdByFeedModel(usjoi ? "928" : feed.getChannelId(), feed.getModel(), shop.getValue(), usjoi ? feed.getChannelId() : null);
                     }
                 }
 
@@ -2821,7 +2822,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
          * @return group对象
          */
         // private long getGroupIdByFeedModel(String channelId, String modelCode, String cartId) {
-        private CmsBtProductGroupModel getGroupIdByFeedModel(String channelId, String modelCode, String cartId, String orgChannelId ) {
+        private CmsBtProductGroupModel getGroupIdByFeedModel(String channelId, String modelCode, String cartId, String orgChannelId) {
             // 先去看看是否有存在的了
             return productGroupService.selectProductGroupByModelCodeAndCartId(channelId, modelCode, cartId, orgChannelId);
         }
@@ -3013,7 +3014,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                 return newModel.getImgName();
             } else {
-                if(!StringUtil.isEmpty(findImage.getOriginalUrl())){
+                if (!StringUtil.isEmpty(findImage.getOriginalUrl())) {
                     findImage.setOriginalUrl(findImage.getOriginalUrl().trim());
                 }
                 // 如果原始图片的地址发生变更则做更新操作
@@ -3120,25 +3121,25 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         minClientNetPrice = commonSku.getClientNetPrice();
                     }
 
-                    if(commonSku.getAttribute("confClientMsrpPrice") == null){
+                    if (commonSku.getAttribute("confClientMsrpPrice") == null) {
                         commonSku.setConfClientMsrpPrice(commonSku.getClientMsrpPrice());
                     }
 
                     String clientMsrpPriceChgFlg = null;
-                    if(commonSku.getConfClientMsrpPrice().compareTo(commonSku.getClientMsrpPrice()) == 0){
-                        clientMsrpPriceChgFlg =  "0";
-                    }else if (commonSku.getConfClientMsrpPrice() < commonSku.getClientMsrpPrice()) {
+                    if (commonSku.getConfClientMsrpPrice().compareTo(commonSku.getClientMsrpPrice()) == 0) {
+                        clientMsrpPriceChgFlg = "0";
+                    } else if (commonSku.getConfClientMsrpPrice() < commonSku.getClientMsrpPrice()) {
                         if (commonSku.getConfClientMsrpPrice().equals(0D))
-                            clientMsrpPriceChgFlg =  "U100%";
+                            clientMsrpPriceChgFlg = "U100%";
                         else {
                             Long range = Math.round(((commonSku.getClientMsrpPrice() - commonSku.getConfClientMsrpPrice()) / commonSku.getConfClientMsrpPrice()) * 100d);
-                            clientMsrpPriceChgFlg =  "U" + range + "%";
+                            clientMsrpPriceChgFlg = "U" + range + "%";
                         }
                     } else {
                         Long range = Math.round(((commonSku.getConfClientMsrpPrice() - commonSku.getClientMsrpPrice()) / commonSku.getConfClientMsrpPrice()) * 100d);
-                        if(range.compareTo(0L) == 0){
+                        if (range.compareTo(0L) == 0) {
                             clientMsrpPriceChgFlg = "0";
-                        }else{
+                        } else {
                             clientMsrpPriceChgFlg = "D" + range + "%";
                         }
                     }
@@ -3195,22 +3196,22 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
             CmsBtProductModel_Field field = productModel.getCommon().getFields();
 
-            for(CmsBtProductModel_Sku sku:productModel.getCommon().getSkus()){
-                        String channelId = StringUtils.isEmpty(productModel.getOrgChannelId()) ? productModel.getChannelId() : productModel.getOrgChannelId();
-                        String oneSkuCode = sku.getSkuCode();
-                        CmsBtProductModel oldProductModel = null;
-                        if(usjoi){
-                            oldProductModel = productService.getProductBySku("928",channelId, oneSkuCode);
-                        }else{
-                            oldProductModel = productService.getProductBySku(channelId, oneSkuCode);
-                        }
-                        if (oldProductModel != null && !field.getCode().equals(oldProductModel.getCommon().getFields().getCode())) {
-                            String errMsg = String.format("feed->master导入:异常终止:由于该sku所属的feedCode发生了变更,[sku:%s] [OldFeedCode:%s] [NewFeedCode:%s]",
-                                    oneSkuCode, oldProductModel.getCommon().getFields().getCode(), field.getCode());
-                            $error(errMsg);
-                            throw new BusinessException(errMsg);
-                        }
-                    }
+            for (CmsBtProductModel_Sku sku : productModel.getCommon().getSkus()) {
+                String channelId = StringUtils.isEmpty(productModel.getOrgChannelId()) ? productModel.getChannelId() : productModel.getOrgChannelId();
+                String oneSkuCode = sku.getSkuCode();
+                CmsBtProductModel oldProductModel = null;
+                if (usjoi) {
+                    oldProductModel = productService.getProductBySku("928", channelId, oneSkuCode);
+                } else {
+                    oldProductModel = productService.getProductBySku(channelId, oneSkuCode);
+                }
+                if (oldProductModel != null && !field.getCode().equals(oldProductModel.getCommon().getFields().getCode())) {
+                    String errMsg = String.format("feed->master导入:异常终止:由于该sku所属的feedCode发生了变更,[sku:%s] [OldFeedCode:%s] [NewFeedCode:%s]",
+                            oneSkuCode, oldProductModel.getCommon().getFields().getCode(), field.getCode());
+                    $error(errMsg);
+                    throw new BusinessException(errMsg);
+                }
+            }
 
             // 按sku为单位推送产品信息到wms
             productModel.getCommon().getSkus().forEach(sku -> {
@@ -3269,16 +3270,17 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 sxProductService.insertSxWorkLoad(cmsProduct, ccAutoSyncCartList, getTaskName());
             }
 
-            if(ListUtils.notNull(ccUsAutoSyncCartList)){
-                ccUsAutoSyncCartList.forEach(cartId->{
+            if (ListUtils.notNull(ccUsAutoSyncCartList)) {
+                ccUsAutoSyncCartList.forEach(cartId -> {
                     CmsBtProductModel_Platform_Cart platform = cmsProduct.getUsPlatform(Integer.parseInt(cartId));
-                    if(platform != null && CmsConstants.ProductStatus.Approved.toString().equals(platform.getStatus())){
+                    if (platform != null && CmsConstants.ProductStatus.Approved.toString().equals(platform.getStatus())) {
                         Integer publishTime = 0;
-                        if(feed.getUsPlatform(Integer.parseInt(cartId)) != null) publishTime = feed.getUsPlatform(Integer.parseInt(cartId)).getSharingDay();
-                        if(publishTime == null) publishTime = 0;
-                        if(publishTime == 0){
+                        if (feed.getUsPlatform(Integer.parseInt(cartId)) != null)
+                            publishTime = feed.getUsPlatform(Integer.parseInt(cartId)).getSharingDay();
+                        if (publishTime == null) publishTime = 0;
+                        if (publishTime == 0) {
                             platformProductUploadService.saveCmsBtUsWorkloadModel(cmsProduct.getChannelId(), Integer.parseInt(cartId), cmsProduct.getCommon().getFields().getCode(), null, 0, getTaskName());
-                        }else{
+                        } else {
                             Calendar calendar = new GregorianCalendar();
                             calendar.setTime(new Date());
                             calendar.add(Calendar.DATE, publishTime);
@@ -3304,7 +3306,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 b = new BigDecimal(weight * 453.59237 / 1000.0);
 
                 Double kg = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                if(kg.compareTo(0.0) == 0) kg = 0.1;
+                if (kg.compareTo(0.0) == 0) kg = 0.1;
                 cmsProduct.getCommon().getFields().setWeightKG(kg);
             }
         }
@@ -3568,7 +3570,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
             // feed里面人为设置过主类目的场合
             MtCategoryKeysModel mtCategoryKeysModel = null;
-            if(!StringUtil.isEmpty(feed.getMainCategoryEn()) && "1".equals(feed.getCatConf())){
+            if (!StringUtil.isEmpty(feed.getMainCategoryEn()) && "1".equals(feed.getCatConf())) {
                 mtCategoryKeysModel = mtCategoryKeysDao.selectOne(feed.getMainCategoryEn());
             }
 
@@ -3585,7 +3587,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
 
             // 用feed里面的主类目进行替换
-            if(!"1".equals(prodCommon.getCatConf()) && mtCategoryKeysModel != null){
+            if (!"1".equals(prodCommon.getCatConf()) && mtCategoryKeysModel != null) {
                 searchResult.setCnName(feed.getMainCategoryCn());
                 searchResult.setEnName(feed.getMainCategoryEn());
                 searchResult.setTaxDeclare(mtCategoryKeysModel.getTaxDeclare());
@@ -3593,7 +3595,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 searchResult.setProductTypeCn(mtCategoryKeysModel.getProductTypeCn());
                 searchResult.setProductTypeEn(mtCategoryKeysModel.getProductTypeEn());
                 String weight = mtCategoryKeysModel.getWeight();
-                if(!StringUtil.isEmpty(weight)){
+                if (!StringUtil.isEmpty(weight)) {
                     searchResult.setWeight(Double.parseDouble(weight));
                 }
             }
@@ -3652,7 +3654,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 // 如果sku的重量不存在,则设置成默认重量
                 prodCommon.getSkus().forEach(sku -> {
                     if ((sku.getWeight() == null || sku.getWeight() == 0.0D)
-                    && searchResult.getWeight() != null && searchResult.getWeight() != 0.0D) {
+                            && searchResult.getWeight() != null && searchResult.getWeight() != 0.0D) {
                         sku.setWeight(searchResult.getWeight());
                         sku.setWeightUnit("lb");
                     }
@@ -3698,13 +3700,13 @@ public class SetMainPropService extends VOAbsIssueLoggable {
 
                         // 设置中文名称 产品名称 brand(英文) + " " + brand(中文) + " " + sizeTypeCn + " " + leafCategoryCnName 来生成
                         TypeChannelBean typeChannelBean = null;
-                        if(!StringUtil.isEmpty(prodCommonField.getBrand()) && usjoi) {
+                        if (!StringUtil.isEmpty(prodCommonField.getBrand()) && usjoi) {
                             typeChannelBean = TypeChannels.getTypeChannelByCode(Constants.comMtTypeChannel.BRAND_41, "928", prodCommonField.getBrand(), "cn");
                         }
-                        if(typeChannelBean != null && !StringUtil.isEmpty(typeChannelBean.getName())){
+                        if (typeChannelBean != null && !StringUtil.isEmpty(typeChannelBean.getName())) {
                             prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(typeChannelBean.getName()
                                     , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
-                        }else{
+                        } else {
                             prodCommonField.setOriginalTitleCn(getOriginalTitleCnByCategory(prodCommonField.getBrand()
                                     , prodCommonField.getSizeTypeCn(), leafCategoryCnName));
                         }
@@ -3775,9 +3777,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
          * @return String 商品中文名称(品牌 + 空格 + Size Type中文 + 空格 + 主类目叶子级中文名称)
          */
         private String getOriginalTitleCnByCategory(String brand, String sizeTypeCn, String leafCategoryCnName) {
-            if(brand == null) brand = "";
-            if(sizeTypeCn == null) sizeTypeCn = "";
-            if(leafCategoryCnName == null) leafCategoryCnName = "";
+            if (brand == null) brand = "";
+            if (sizeTypeCn == null) sizeTypeCn = "";
+            if (leafCategoryCnName == null) leafCategoryCnName = "";
             return brand + " " + sizeTypeCn + " " + leafCategoryCnName;
         }
     }

@@ -5,27 +5,22 @@ define([
     'cms',
     'modules/cms/enums/Carts',
     'modules/cms/directives/platFormStatus.directive'
-], function (cms,cartEntity) {
+], function (cms) {
 
     class usTabController {
 
-        constructor($scope, detailDataService, $usProductDetailService, notify, popups) {
+        constructor($scope, detailDataService, notify, popups) {
             let self = this;
-
             self.$scope = $scope;
             self.detailDataService = detailDataService;
-            self.$usProductDetailService = $usProductDetailService;
             self.notify = notify;
             self.popups = popups;
             self.productInfo = $scope.productInfo;
             self.cartInfo = $scope.cartInfo;
-
             // 平台信息
             self.platform = {};
-
             // SKU
             self.selAllSkuFlag = false;
-
             // 平台状态
             self.platformStatus = this.detailDataService.platformStatus;
 
@@ -110,8 +105,9 @@ define([
         }
 
         checkSelAllSku(sku) {
-            let self = this;
-            let isSale = sku.isSale;
+            let self = this,
+                isSale = sku.isSale;
+
             if (!isSale) {
                 self.selAllSkuFlag = false;
             } else {
@@ -122,10 +118,10 @@ define([
             }
         }
 
-        // Save
         save(status) {
             let self = this;
             let platform = angular.copy(self.platform);
+
             if (status) {
                 platform.pStatus = status;
             }
@@ -135,7 +131,8 @@ define([
                     platform: platform
                 }
             };
-            this.$usProductDetailService.updateProductPlatform(parameter).then(res => {
+
+            self.detailDataService.updateProductPlatform(parameter).then(res => {
                 if (res.data) {
                     self.notify.success("Save success.");
                     self.platform.pStatus = platform.pStatus;

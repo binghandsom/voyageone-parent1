@@ -128,6 +128,8 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
                 }
 
                 minMaxPrices[i] = newPrice;
+                //价格不能小于0
+                newPrice = newPrice >= 0 ? newPrice : 0;
                 JongoUpdate jongoUpdate = new JongoUpdate();
                 jongoUpdate.setQuery("{\"usPlatforms.P" + cartId + ".skus.skuCode\":#}");
                 jongoUpdate.setQueryParameters(skuCode);
@@ -152,8 +154,9 @@ public class CmsBtProductUpdatePriceMQJob extends TBaseMQCmsService<CmsBtProduct
             Double newEdPrice = null;
             Arrays.sort(minMaxPrices);
             if (minMaxPrices.length != 0) {
-                newStPrice = minMaxPrices[0];
-                newEdPrice = minMaxPrices[minMaxPrices.length - 1];
+                //价格不能小于0
+                newStPrice = minMaxPrices[0] >= 0?minMaxPrices[0]:0;
+                newEdPrice = minMaxPrices[minMaxPrices.length - 1] >= 0 ? minMaxPrices[minMaxPrices.length - 1]:0;
             }
             JongoUpdate jongoUpdate = new JongoUpdate();
             //通过code定位

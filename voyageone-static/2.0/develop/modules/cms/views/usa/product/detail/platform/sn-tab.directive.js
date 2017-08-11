@@ -4,20 +4,18 @@
  */
 define([
     'cms',
-    'modules/cms/enums/Carts',
     'modules/cms/service/product.detail.service',
     'modules/cms/directives/platFormStatus.directive',
     'modules/cms/directives/noticeTip.directive',
     'modules/cms/directives/contextMenu.directive',
     '../detail.data.service'
-], function (cms, carts) {
+], function (cms) {
 
     class SnTabController{
 
-        constructor($scope,detailDataService,$usProductDetailService,notify,$rootScope,popups,confirm,alert){
+        constructor($scope,detailDataService,notify,$rootScope,popups,confirm,alert){
             this.$scope = $scope;
             this.detailDataService = detailDataService;
-            this.$usProductDetailService = $usProductDetailService;
             this.notify = notify;
             this.$rootScope = $rootScope;
             this.popups = popups;
@@ -104,9 +102,9 @@ define([
 
                 self.selAllSkuFlag = flag;
 
-                self.categorys.priceGrabberCategory = self.searchField("priceGrabberCategory", self.productComm.schemaFields);
-                self.categorys.googleDepartment = self.searchField("googleDepartment", self.productComm.schemaFields);
-                self.categorys.googleCategory = self.searchField("googleCategory", self.productComm.schemaFields);
+                self.categorys.priceGrabberCategory = self.detailDataService.searchField("priceGrabberCategory", self.productComm.schemaFields);
+                self.categorys.googleDepartment = self.detailDataService.searchField("googleDepartment", self.productComm.schemaFields);
+                self.categorys.googleCategory = self.detailDataService.searchField("googleCategory", self.productComm.schemaFields);
 
             });
         }
@@ -119,13 +117,14 @@ define([
             });
         }
 
-        // Save
         save(status) {
             let self = this;
             let platform = angular.copy(self.platform);
+
             if (status) {
                 platform.platform.pStatus = status;
             }
+
             let productComm = angular.copy(self.productComm);
             productComm.fields.images1 = self.imageView.images;
             productComm.fields.images2 = self.imageView.boxImages;
@@ -138,11 +137,10 @@ define([
                     freeTags:self.freeTags
                 }
             };
-            this.$usProductDetailService.updateCommonProductInfo(parameter).then(res => {
-                if (res.data) {
-                    self.notify.success("Save success.");
-                    self.platform.platform.pStatus = platform.platform.pStatus;
-                }
+
+            self.detailDataService.updateCommonProductInfo(parameter).then(() => {
+                self.notify.success("Save success.");
+                self.platform.platform.pStatus = platform.platform.pStatus;
             });
         }
 
@@ -166,55 +164,30 @@ define([
                     let confirmMsg = "Whether to cover the properties associated with the SN primary category?"
                                      + "(including Google Category, Google DepartMent, PriceGrabber Category, "
                                      + "SEO attributes...)";
-                    self.confirm(confirmMsg).then(confirmed => {
+                    self.confirm(confirmMsg).then(() => {
                         if (context.mapping) {
-                            self.searchField("googleCategory", self.productComm.schemaFields).value = context.mapping.googleCategory;
-                            self.searchField("googleDepartment", self.productComm.schemaFields).value = context.mapping.googleDepartment;
-                            self.searchField("priceGrabberCategory", self.productComm.schemaFields).value = context.mapping.priceGrabber;
+                            self.detailDataService.searchField("googleCategory", self.productComm.schemaFields).value = context.mapping.googleCategory;
+                            self.detailDataService.searchField("googleDepartment", self.productComm.schemaFields).value = context.mapping.googleDepartment;
+                            self.detailDataService.searchField("priceGrabberCategory", self.productComm.schemaFields).value = context.mapping.priceGrabber;
 
-                            self.searchField("seoTitle", self.platform.platform.platformFields).value = context.mapping.seoTitle;
-                            self.searchField("seoKeywords", self.platform.platform.platformFields).value = context.mapping.seoKeywords;
-                            self.searchField("seoDescription", self.platform.platform.platformFields).value = context.mapping.seoDescription;
+                            self.detailDataService.searchField("seoTitle", self.platform.platform.platformFields).value = context.mapping.seoTitle;
+                            self.detailDataService.searchField("seoKeywords", self.platform.platform.platformFields).value = context.mapping.seoKeywords;
+                            self.detailDataService.searchField("seoDescription", self.platform.platform.platformFields).value = context.mapping.seoDescription;
                         } else {
-                            self.searchField("googleCategory", self.productComm.schemaFields).value = "";
-                            self.searchField("googleDepartment", self.productComm.schemaFields).value = "";
-                            self.searchField("priceGrabberCategory", self.productComm.schemaFields).value = "";
+                            self.detailDataService.searchField("googleCategory", self.productComm.schemaFields).value = "";
+                            self.detailDataService.searchField("googleDepartment", self.productComm.schemaFields).value = "";
+                            self.detailDataService.searchField("priceGrabberCategory", self.productComm.schemaFields).value = "";
 
-                            self.searchField("seoTitle", self.platform.platform.platformFields).value = "";
-                            self.searchField("seoKeywords", self.platform.platform.platformFields).value = "";
-                            self.searchField("seoDescription", self.platform.platform.platformFields).value = "";
+                            self.detailDataService.searchField("seoTitle", self.platform.platform.platformFields).value = "";
+                            self.detailDataService.searchField("seoKeywords", self.platform.platform.platformFields).value = "";
+                            self.detailDataService.searchField("seoDescription", self.platform.platform.platformFields).value = "";
                         }
                     });
                 }
             });
         }
 
-        /**全schema中通过name递归查找field*/
-        searchField(fieldId, schema) {
-            let self = this;
-
-            let result = null;
-
-            _.find(schema, function (field) {
-
-                if (field.id === fieldId) {
-                    result = field;
-                    return true;
-                }
-
-                if (field.fields && field.fields.length) {
-                    result = self.searchField(fieldId, field.fields);
-                    if (result)
-                        return true;
-                }
-
-                return false;
-            });
-
-            return result;
-        }
-
-        // 添加Item -> image
+        /** 添加Item -> image */
         addImage() {
             let self = this;
             self.imageView.images.push({});
@@ -224,7 +197,8 @@ define([
                 self.imageView.currImage = self.imageView.images[0];
             }
         }
-        // 删除Item -> image
+
+        /** 删除Item -> image */
         deleteImage(index) {
             let self = this;
             self.imageView.images.splice(index, 1);
@@ -236,7 +210,8 @@ define([
                 self.imageView.currImage = self.imageView.images[0];
             }
         }
-        // 初始化Item -> image
+
+        /** 初始化Item -> image */
         initImage(num) {
             let self = this;
 
@@ -256,7 +231,7 @@ define([
                     let add = num - count;
                     if (add != 0) {
                         if (add > 0) {
-                            let urlkey = self.searchField("urlkey", self.productComm.schemaFields);
+                            let urlkey = self.detailDataService.searchField("urlkey", self.productComm.schemaFields);
                             if (!urlkey || !urlkey.value) {
                                 self.alert("No urlkey!")
                                 return;
@@ -275,7 +250,8 @@ define([
                 }
             });
         }
-        // 添加Box -> image
+
+        /** 添加Box -> image */
         addBoxImage() {
             let self = this;
             self.imageView.boxImages.push({});
@@ -285,7 +261,8 @@ define([
                 self.imageView.currBoxImage = self.imageView.boxImages[0];
             }
         }
-        // 删除Box -> image
+
+        /** 删除Box -> image */
         deleteBoxImage(index) {
             let self = this;
             self.imageView.boxImages.splice(index, 1);
@@ -297,7 +274,8 @@ define([
                 self.imageView.currBoxImage = self.imageView.currBoxImage[0];
             }
         }
-        // 初始化Box -> image
+
+        /**  初始化Box -> image */
         initBoxImage(num) {
             let self = this;
 
@@ -317,7 +295,7 @@ define([
                     let add = num - count;
                     if (add != 0) {
                         if (add > 0) {
-                            let urlkey = self.searchField("urlkey", self.productComm.schemaFields);
+                            let urlkey = self.detailDataService.searchField("urlkey", self.productComm.schemaFields);
                             if (!urlkey || !urlkey.value) {
                                 self.alert("No urlkey!")
                                 return;
@@ -336,17 +314,19 @@ define([
                 }
             });
         }
+
         changeImages(index, imageUrl, arrays) {
             arrays.splice(index, 1, imageUrl);
         }
 
-        // SKU可售选择
+        /** SKU可售选择 */
         selAllSku() {
             let self = this;
             _.each(self.platform.platform.skus, sku => {
                 sku.isSale = self.selAllSkuFlag;
             });
         }
+
         checkSelAllSku(sku) {
             let self = this;
             let isSale = sku.isSale;
@@ -360,12 +340,12 @@ define([
             }
         }
 
-        // Move model
+        /** Move model */
         moveModel() {
             let self = this;
-            let prodId = self.searchField("prodId", self.productComm.schemaFields);
-            let code = self.searchField("code", self.productComm.schemaFields);
-            let model = self.searchField("model", self.productComm.schemaFields);
+            let prodId = self.detailDataService.searchField("prodId", self.productComm.schemaFields);
+            let code = self.detailDataService.searchField("code", self.productComm.schemaFields);
+            let model = self.detailDataService.searchField("model", self.productComm.schemaFields);
             let parameter = {
                 prodId:self.$scope.productInfo.productId,
                 code:code.value,
@@ -378,12 +358,10 @@ define([
             });
         }
 
-        // Edit Group
+        /** Edit Group */
         editGroup() {
             let self = this;
-            let ctx = {
 
-            };
             self.popups.openUsEditGroup({modelCodes:self.mastData.images}).then(res => {
 
             });
@@ -395,19 +373,17 @@ define([
         setFreeTag () {
             //orgChkStsMap
             let self = this;
-            let params = {
+
+            self.popups.openUsFreeTag({
                 orgFlg: '1',
                 selTagType: '6',
                 selAllFlg: 0,
                 orgChkStsMap:self.freeTags
-            };
-
-            self.popups.openUsFreeTag(params).then(res => {
-                // console.log(res);
+            }).then(res => {
                 self.freeTagList = res.selectdTagList == null ? [] : res.selectdTagList;
                 let freeTags = [];
                 if (_.size(self.freeTagList) > 0) {
-                    freeTags = _.chain(self.freeTagList).map(function (key, value) {
+                    freeTags = _.chain(self.freeTagList).map(function (key) {
                         return key.tagPath;
                     }).value();
                 }

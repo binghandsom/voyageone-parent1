@@ -90,6 +90,63 @@ define([
             return defer.promise;
         }
 
+        /**
+         * SN Tab 平台保存
+         */
+        updateCommonProductInfo(req){
+            let self = this,
+                defer = self.$q.defer();
+
+            self.$usProductDetailService.updateCommonProductInfo(req).then(res => {
+                defer.resolve(res);
+            }, res => {
+                defer.reject(res);
+            });
+
+            return defer.promise;
+        }
+
+        /**全schema中通过name递归查找field*/
+        searchField(fieldId, schema) {
+            let self = this;
+
+            let result = null;
+
+            _.find(schema, function (field) {
+
+                if (field.id === fieldId) {
+                    result = field;
+                    return true;
+                }
+
+                if (field.fields && field.fields.length) {
+                    result = self.searchField(fieldId, field.fields);
+                    if (result)
+                        return true;
+                }
+
+                return false;
+            });
+
+            return result;
+        }
+
+        /**
+         * @description 平台保存
+         */
+        updateProductPlatform(req){
+            let self = this,
+                defer = self.$q.defer();
+
+            self.$usProductDetailService.updateProductPlatform(req).then(res => {
+                defer.resolve(res);
+            }, res => {
+                defer.reject(res);
+            });
+
+            return defer.promise;
+        }
+
     }
 
     cms.service('detailDataService', DetailDataService);
