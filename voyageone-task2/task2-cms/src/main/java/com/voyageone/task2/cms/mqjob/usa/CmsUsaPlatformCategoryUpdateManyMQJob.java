@@ -7,6 +7,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductTopService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.usa.CmsCategoryReceiveMQMessageBody;
@@ -42,6 +43,9 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
     @Autowired
     CmsMqSenderService cmsMqSenderService;
 
+    @Autowired
+    ProductTopService productTopService;
+
     @Override
     public void onStartup(CmsUsaPlatformCategoryUpdateManyMQMessageBody messageBody) throws Exception {
         $info("接收到批量更新SN Other Category MQ消息体" + JacksonUtil.bean2Json(messageBody));
@@ -56,6 +60,7 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
                 CmsBtProductModel_Platform_Cart platform = cmsBtProductModel.getUsPlatform(cartId);
 
                 List<CmsBtProductModel_SellerCat> sellerCats = platform.getSellerCats();
+                List<CmsBtProductModel_SellerCat> sellerBak = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(sellerCats), CmsBtProductModel_SellerCat.class);
                 List<String> pCatPaths = messageBody.getpCatPath();
 
                 for (String pCatPath : pCatPaths) {
@@ -96,6 +101,11 @@ public class CmsUsaPlatformCategoryUpdateManyMQJob extends TBaseMQCmsService<Cms
                 if (CmsConstants.ProductStatus.Approved.name().equalsIgnoreCase(platform.getStatus())) {
                     //上新状态,更新上新表
                     sxProductService.insertSxWorkLoad(messageBody.getChannelId(), productCode, cartId, getTaskName());
+                }
+                // productTop50 更新
+                Map<String, List<String>> diff = sellerCatService.sellerCompare(sellerBak, sellerCats);
+                if (ListUtils.notNull(diff.get("del"))) {
+                    diff.get("del").forEach(catId -> productTopService.removeTop50(messageBody.getChannelId(), catId, cmsBtProductModel.getCommon().getFields().getCode(), cartId));
                 }
             }
         }

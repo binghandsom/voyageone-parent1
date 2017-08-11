@@ -5,12 +5,14 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.util.BeanUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtSellerCatDao;
 import com.voyageone.service.impl.cms.SellerCatService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductTopService;
 import com.voyageone.service.impl.cms.sx.SxProductService;
 import com.voyageone.service.impl.cms.vomq.CmsMqSenderService;
 import com.voyageone.service.impl.cms.vomq.vomessage.body.CmsPlatformCategoryUpdateMQMessageBody;
@@ -49,6 +51,9 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
     @Autowired
     CmsMqSenderService cmsMqSenderService;
 
+    @Autowired
+    ProductTopService productTopService;
+
     @Override
     public void onStartup(CmsUsaPlatformCategoryUpdateOneMQMessageBody messageBody) throws Exception {
         $info("接收到批量更新SN Primary Category MQ消息体" + JacksonUtil.bean2Json(messageBody));
@@ -63,6 +68,7 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
                 if (platform != null){
                     //主类目有改动
                     List<CmsBtProductModel_SellerCat> sellerCats = platform.getSellerCats();
+                    List<CmsBtProductModel_SellerCat> sellerBak = JacksonUtil.jsonToBeanList(JacksonUtil.bean2Json(sellerCats), CmsBtProductModel_SellerCat.class);
                     ArrayList<CmsBtProductModel_SellerCat> copysSllerCats = new ArrayList<>();
                     copysSllerCats.addAll(sellerCats);
 
@@ -97,9 +103,20 @@ public class CmsUsaPlatformCategoryUpdateOneMQJob extends TBaseMQCmsService<CmsU
                         //上新状态,更新上新表
                         sxProductService.insertSxWorkLoad(messageBody.getChannelId(), productCode, cartId, getTaskName());
                     }
+
+
+                    // productTop50 更新
+                    Map<String, List<String>> diff = sellerCatService.sellerCompare(sellerBak, sellerCats);
+                    if (ListUtils.notNull(diff.get("del"))) {
+                        diff.get("del").forEach(catId -> productTopService.removeTop50(messageBody.getChannelId(), catId, cmsBtProductModel.getCommon().getFields().getCode(), cartId));
+                    }
                 }
             }
         }
+
+
+
+
         CmsCategoryReceiveMQMessageBody body = new CmsCategoryReceiveMQMessageBody();
         body.setChannelId(messageBody.getChannelId());
         body.setCartId(cartId.toString());
