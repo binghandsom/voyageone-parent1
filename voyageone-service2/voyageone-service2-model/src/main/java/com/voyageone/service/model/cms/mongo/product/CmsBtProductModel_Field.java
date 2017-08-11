@@ -349,6 +349,14 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         return getStringAttribute("taxable");
     }
 
+    public String getUnisex() {
+        return getStringAttribute("unisex");
+    }
+
+    public void setUnisex(String unisex) {
+        setAttribute("unisex", unisex );
+    }
+
     //商品图片
     public List<CmsBtProductModel_Field_Image> getImages(CmsBtProductConstants.FieldImageType imageType) {
         List<CmsBtProductModel_Field_Image> result = null;
