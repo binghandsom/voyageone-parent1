@@ -650,12 +650,14 @@ public class UsaProductDetailService extends BaseService {
                             HashMap<String, Object> minMaxPriceUpdateMap = new HashMap<>();
                             HashMap<String, Object> updateMap = new HashMap<>();
                             if (clientMsrpPrice != null) {
+                                clientMsrpPrice = clientMsrpPrice >= 0?clientMsrpPrice:0;
                                 updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientMsrpPrice", clientMsrpPrice);
                                 //修改最大值最小值
                                 minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceMsrpSt", clientMsrpPrice);
                                 minMaxPriceUpdateMap.put("usPlatforms.P" + cartId + ".pPriceMsrpEd", clientMsrpPrice);
                             }
                             if (clientRetailPrice != null) {
+                                clientRetailPrice = clientRetailPrice >= 0 ? clientRetailPrice :0;
                                 updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientRetailPrice", clientRetailPrice);
                                 updateMap.put("usPlatforms.P" + cartId + ".skus.$.clientNetPrice", clientRetailPrice);
                                 //修改最大值最小值
@@ -711,12 +713,14 @@ public class UsaProductDetailService extends BaseService {
                             HashMap<String, Object> minMaxPriceUpdateMap = new HashMap<>();
 
                             if (clientMsrpPrice != null) {
+                                clientMsrpPrice = clientMsrpPrice >= 0?clientMsrpPrice:0;
                                 updateMap.put("platforms.P" + cartId + ".skus.$.priceMsrp", clientMsrpPrice);
                                 //修改最大值最小值
                                 minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceMsrpSt", clientMsrpPrice);
                                 minMaxPriceUpdateMap.put("platforms.P" + cartId + ".pPriceMsrpEd", clientMsrpPrice);
                             }
                             if (clientRetailPrice != null) {
+                                clientRetailPrice = clientRetailPrice >= 0 ? clientRetailPrice:0;
                                 updateMap.put("platforms.P" + cartId + ".skus.$.priceRetail", clientRetailPrice);
                                 //修改priceDiffFlg
                                 //调用接口计算priceDiffFlg的值
@@ -872,12 +876,12 @@ public class UsaProductDetailService extends BaseService {
                 retailMin = Double.min(retailMin, clientRetailPrice);
                 retailMax = Double.max(retailMax, clientRetailPrice);
             }
-            usPlatform.setpPriceMsrpSt(msrpMin);
-            usPlatform.setpPriceMsrpEd(msrpMax);
-            usPlatform.setpPriceRetailSt(retailMin);
-            usPlatform.setpPriceRetailEd(retailMax);
-            usPlatform.setpPriceSaleSt(retailMin);
-            usPlatform.setpPriceSaleEd(retailMax);
+            usPlatform.setpPriceMsrpSt(msrpMin >= 0?msrpMin:0);
+            usPlatform.setpPriceMsrpEd(msrpMax>= 0?msrpMax:0);
+            usPlatform.setpPriceRetailSt(retailMin>= 0?retailMin:0);
+            usPlatform.setpPriceRetailEd(retailMax>= 0?retailMax:0);
+            usPlatform.setpPriceSaleSt(retailMin>= 0?retailMin:0);
+            usPlatform.setpPriceSaleEd(retailMax>= 0?retailMax:0);
         }
     }
 
@@ -954,8 +958,8 @@ public class UsaProductDetailService extends BaseService {
             }
         } else {
             //未勾选全部
+            // String s = JacksonUtil.bean2Json(body);
             body.setProductCodes(codeList);
-           // String s = JacksonUtil.bean2Json(body);
             cmsMqSenderService.sendMessage(body);
         }
         return null;
