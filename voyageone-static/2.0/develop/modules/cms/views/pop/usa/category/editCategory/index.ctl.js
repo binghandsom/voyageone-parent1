@@ -27,6 +27,7 @@ define([
                 self.category = {
                     mapping: {}
                 };
+
             } else {
                 let catPath = self.category.catPath,
                     parentCatPaths = catPath.split('>');
@@ -36,6 +37,15 @@ define([
                     self.parentCatPath = `${parentCatPaths.join('>')}`;
             }
 
+        }
+
+        copyAttribute(){
+            let self = this;
+
+            if(self.context.parentCat){
+                self.category.urlKey = self.context.parentCat.urlKey;
+                self.category.mapping = self.context.parentCat.mapping;
+            }
         }
 
         popCategory(option, attrName) {

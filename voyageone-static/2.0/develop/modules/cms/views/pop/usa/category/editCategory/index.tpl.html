@@ -12,7 +12,11 @@
                 <div class="col-md-10">
 
                     <div class="tab-title" style="width: 100%;">
-                        <h3 class="text-md">Current Shop Category</h3>
+                        <h3 class="text-md">
+                            Current Shop Category
+                            <button type="button" class="btn btn-primary pull-right" ng-if="ctrl.context.type === 'add'"
+                                    ng-click="ctrl.copyAttribute()"><i class="fa fa-copy"></i></button>
+                        </h3>
                     </div>
                     <br>
 

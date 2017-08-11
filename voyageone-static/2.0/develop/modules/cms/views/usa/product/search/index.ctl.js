@@ -452,7 +452,8 @@ define([
 
                 if(!option.muiti){
                     //单个
-                    self.confirm("Whether to cover the properties associated with the SN primary category？").then(
+                    let value = "Whether to cover the properties associated with the SN primary category？（including Google Category，Google DepartMent，PriceGrabber Category，Amazon Browse Tree，Visible On Menu，Enable Filter，Publish ，SEO attributes···）"
+                    self.confirm(value).then(
                         (confirmed) => {
                             //确定
                             flag =true;

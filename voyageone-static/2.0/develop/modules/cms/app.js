@@ -152,10 +152,7 @@ define([
         });
 
         // set de default language
-        if ($localStorage.isCn)
-            translateService.setLanguage("");
-        else
-            translateService.setLanguage("en");
+        translateService.setLanguage("");
 
         function isSmartDevice($window) {
             // Adapted from http://www.detectmobilebrowsers.com

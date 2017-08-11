@@ -202,6 +202,55 @@ public class SellerCatService extends BaseService {
         }
     }
 
+
+    public void addSellerCat(String channelId, int cartId, String cName,String cId, String parentCId, Map<String, Object> mapping, String creator, String urlKey) {
+        /*List<CmsBtSellerCatModel> sellerCats = getSellerCatsByChannelCart(channelId, cartId, false);
+        if (isDuplicateNode(sellerCats, cName, parentCId, null)) {
+            throw new BusinessException("重复的店铺内分类名!");
+        }*/
+        List<CmsBtSellerCatModel> sellerCats = getSellerCatsByChannelCart(channelId, cartId, true);
+        if (isDuplicateNodeTree(sellerCats, cName, parentCId, cId)) {
+            throw new BusinessException("重复的店铺内分类名!-"+ cName + "-" + parentCId);
+        }
+        // 如果urlKey不为空，则校验唯一性
+        if (!StringUtils.isNullOrBlank2(urlKey)) {
+            if (isDuplicateUrlKey(sellerCats, urlKey)) {
+                throw new BusinessException("重复的目录urlKey!");
+            }
+        }
+
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
+        if (shopBean == null && cartId >= 20) {
+            throw new BusinessException("未配置店铺的销售平台!");
+        }
+//        String cId = "";
+        String shopCartId = shopBean.getCart_id();
+
+        if (isJDPlatform(shopBean)) {
+            cId = jdShopService.addShopCategory(shopBean, cName, parentCId);
+        } else if (isTMPlatform(shopCartId)) {
+            cId = tbSellerCatService.addSellerCat(shopBean, cName, parentCId);
+        }
+        // Liking店独立官网创建店铺内分类
+        else if (shopCartId.equals(CartEnums.Cart.LCN.getId())) {
+            ////  2016/9/23  独立官网 店铺内分类api  下周tom提供   需返回cId
+            int size = getBrotherSize(sellerCats, parentCId); // 2016-12-07 新增节点时默认设置index为当前层级节点的最后一位
+            Map<String, String> resultMap = cnSellerCatService.addSellerCat(channelId, parentCId, cName, urlKey, shopBean, size + 1);
+            cId = resultMap.get("catId");
+            urlKey = resultMap.get("urlKey"); // 如果url传入为空，新增时向官网新增时生成urlKey，所以此处再次取值
+        }
+        // sneakerhead旗舰店创建店铺内分类
+        else if (shopCartId.equals(CartEnums.Cart.CN.getId())) {
+            cId = cnCategoryService.addSnSellerCat(channelId, parentCId, cName, shopBean);
+        }else if(cartId < 20){
+//            cId = Long.toString(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_CnShopCategory_ID));
+        }
+        if (!StringUtils.isNullOrBlank2(cId)) {
+            // 2016-12-08 传入参数新增urlKey
+            cmsBtSellerCatDao.add(channelId, cartId, cName, urlKey, mapping, parentCId, cId, creator);
+        }
+    }
+
     /**
      * updateSellerCat
      */

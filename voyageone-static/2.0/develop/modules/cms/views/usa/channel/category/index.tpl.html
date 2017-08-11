@@ -347,9 +347,6 @@
                                 </th>
                             </tr>
                             </thead>
-                            <tbody>
-                                <tr><td colspan="{{ctrl.customColumns.selCommonProps.length  + ctrl.customColumns.selPlatformAttributes.length + ctrl.customColumns.selPlatformSales.length + 2}}" if-no-rows="ctrl.searchResult.productList.length"></td></tr>
-                            </tbody>
                             <tbody class="box-body" ng-repeat="productInfo in ctrl.searchResult.productList" style="border-bottom: 1px solid #ddd; height: 80px;">
                             <tr ng-class="{'table_bg_green_mint': productInfo.groupBean.publishTime}" class="table_bg_gray" style="border-bottom:1px solid #ddd;border-top:1px solid #ddd;height: 40px;">
                                 <td class="text-center" rowspan="2">
@@ -466,10 +463,10 @@
                                 <a href="javascript:void(0)" ng-click="ctrl.batchCategory()"><i class="fa fa-minus"></i>&nbsp;Category</a>
                             </li>-->
                             <li ng-if="platform.value == 8">
-                                <a href="javascript:void(0)" ng-click="ctrl.batchUpdateCategory({cartId:platform.value})"><i class="fa fa-minus"></i>&nbsp;Sn Primary Category</a>
+                                <a href="javascript:void(0)" ng-click="ctrl.batchUpdateCategory({cartId:platform.value,flag:true})"><i class="fa fa-minus"></i>&nbsp;Sn Primary Category</a>
                             </li>
                             <li ng-if="platform.value == 8">
-                                <a href="javascript:void(0)" ng-click="ctrl.batchUpdateCategory({cartId:platform.value,muiti:true,move:true})"><i class="fa fa-minus"></i>&nbsp;Sn Other Category</a>
+                                <a href="javascript:void(0)" ng-click="ctrl.batchUpdateCategory({cartId:platform.value,flag:true,muiti:true,move:true})"><i class="fa fa-minus"></i>&nbsp;Sn Other Category</a>
                             </li>
                             <li>
                                 <a href="javascript:void(0)" ng-click="ctrl.batchList(platform.value,'list',platform.name)"><i class="fa fa-minus"></i>&nbsp;List</a>
