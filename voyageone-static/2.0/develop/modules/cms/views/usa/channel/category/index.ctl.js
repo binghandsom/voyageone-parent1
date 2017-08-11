@@ -1,6 +1,5 @@
 /**
  * @description 美国店铺内分类
- *
  *              由于和高级检索逻辑类似请尽量把共同部分写在searchUtilService
  *
  * @author piao
@@ -146,6 +145,7 @@ define([
             _.extend(self.searchInfo, sort);
             self.tempUpEntity = {};
         }
+
         clearSelList(){
             this.srInstance.clearSelectedList();
         }
@@ -167,8 +167,7 @@ define([
 
                 if(!option.muiti){
                     //单个
-                    self.confirm("Whether to cover the properties associated with the SN primary category？").then(
-                        (confirmed) => {
+                    self.confirm("Whether to cover the properties associated with the SN primary category？").then(() => {
                             //确定
                             flag =true;
                             self.advanceSearch.updatePrimaryCategory(
@@ -182,20 +181,16 @@ define([
                                     cartId:option.cartId,
                                     flag:flag
                                 }
-                            ).then(
-                                param =>{
+                            ).then(() =>{
                                     self.notify.success('Update Success');
-                                    if(option.continue){
-                                        //save&continue
-                                    }else {
+                                    if(!option.continue){
                                         //save,去除勾选状态
                                         self.clearSelList();
                                         self._selall = 0;
                                     }
                                 }
                             );
-                        },
-                        (confirmed) => {
+                        },() => {
                             //取消
                             self.advanceSearch.updatePrimaryCategory(
                                 {
@@ -208,13 +203,9 @@ define([
                                     cartId:option.cartId,
                                     flag:flag
                                 }
-                            ).then(
-                                param =>{
+                            ).then(() =>{
                                     self.notify.success('Update Success');
-                                    if(option.continue){
-                                        //save&continue
-                                    }else {
-                                        //save,去除勾选状态
+                                    if(!option.continue){
                                         self.clearSelList();
                                         self._selall = 0;
                                     }
@@ -223,13 +214,11 @@ define([
                         }
                     )
                 }else{
-                    console.log(res);
-                    console.log(option)
                     //多个
                     let pCatPaths = [];
                     angular.forEach(res, function (item) {
                         pCatPaths.push(item.catPath);
-                    })
+                    });
                     self.advanceSearch.updateOtherCategory(
                         {
                             selAll:self._selall == "1"?"true":"false",
@@ -239,12 +228,9 @@ define([
                             pCatPaths:pCatPaths,
                             statue:option.move == "1" ? true:false
                         }
-                    ).then(
-                        param =>{
+                    ).then(() =>{
                             self.notify.success('Update Success');
-                            if(option.continue){
-                                //save&continue
-                            }else {
+                            if(!option.continue){
                                 //save,去除勾选状态
                                 self.clearSelList();
                                 self._selall = 0;
@@ -423,7 +409,7 @@ define([
 
                     if(newValue && !angular.equals(newValue,oldValue)){
                         //回调返回
-                        self.alert("计算完成！");
+                        self.alert("The calculation is complete！");
 
                         let _cusRes = newValue;
                         self.customColumns.selCommonProps = self.getSelectedProps(self.customColumns.commonProps,_cusRes.selCommonProps,'propId');
@@ -431,7 +417,7 @@ define([
                         self.customColumns.selPlatformSales = _cusRes.selPlatformSales;
                     }else{
                         //回调未返回
-                        self.alert('程序在计算请稍后！');
+                        self.alert('Please wait in the calculation later！');
                     }
                 },true);
 
@@ -440,10 +426,12 @@ define([
 
         popBatchPrice(cartId,usPlatformName) {
             let self = this;
+
             if (self.getSelectedProduct('code').length == 0) {
                 self.alert("please choose at least one!!!");
                 return;
             }
+
             self.popups.openBatchPrice({
                 selAll: self._selall,
                 codeList: self.getSelectedProduct('code'),
@@ -465,17 +453,18 @@ define([
             });
         }
 
-        // 批量修改Free tags
         /**
          * 添加产品到指定自由标签
          */
         addFreeTag() {
-            let self = this;
-            let selCodeList = self.getSelectedProduct('code');
+            let self = this,
+                selCodeList = self.getSelectedProduct('code');
+
             if (!self._selall && _.size(selCodeList) == 0) {
                 self.alert("Please select at least one record.");
                 return;
             }
+
             let params = {
                 orgFlg: '2',
                 selTagType: '6',
@@ -483,6 +472,7 @@ define([
                 selCodeList: self.getSelectedProduct('code'),
                 searchInfo: self.searchUtilService.handleQueryParams(self)
             };
+
             self.popups.openUsFreeTag(params).then(res => {
                 let msg = '';
                 if (_.size(res.selectdTagList) > 0) {
@@ -519,10 +509,12 @@ define([
         //进行上下架操作
         batchList(cartId, activeStatus, usPlatformName) {
             let self = this;
+
             if (self.getSelectedProduct('code').length == 0) {
                 self.alert("please choose at least one!!!");
                 return;
             }
+
             self.popups.openUsList({
                 selAll: self._selall,
                 codeList: self.getSelectedProduct('code'),

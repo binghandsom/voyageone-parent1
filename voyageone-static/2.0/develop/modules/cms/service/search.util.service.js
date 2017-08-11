@@ -183,7 +183,7 @@ define([
                     return;
                 }
 
-                _this.confirm(`您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>${_this.pageOption.total}</span></h3>`).then(function () {
+                self.confirm(`You have started “Select All Items By Query Terms ”，This action object is the search result for all products<h3>Modify the number of records:&emsp;<span class='label label-danger'>${self.pageOption.total}</span></h3>`).then(function () {
                     callback(cartId);
                 });
             }

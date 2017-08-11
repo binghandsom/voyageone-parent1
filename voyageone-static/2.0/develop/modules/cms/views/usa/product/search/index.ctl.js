@@ -1,5 +1,7 @@
 /**
  * @description 高级检索
+ *              由于和类目逻辑类似请尽量把共同部分写在searchUtilService
+ *
  * @author piao
  */
 define([
@@ -145,8 +147,8 @@ define([
 
         // 获取数据
         query() {
-            let self = this;
-            let searchInfo = self.searchUtilService.handleQueryParams(self);
+            let self = this,
+                searchInfo = self.searchUtilService.handleQueryParams(self);
 
             self.srInstance.clearCurrPageRows();
             self.advanceSearch.search(searchInfo).then(res => {
@@ -273,7 +275,7 @@ define([
                     return;
                 }
 
-                self.confirm(`您已启动“检索结果全量”选中机制，本次操作对象为检索结果中的所有产品<h3>修改记录数:&emsp;<span class='label label-danger'>${self.pageOption.total}</span></h3>`).then(function () {
+                self.confirm(`You have started “Select All Items By Query Terms ”，This action object is the search result for all products<h3>Modify the number of records:&emsp;<span class='label label-danger'>${self.pageOption.total}</span></h3>`).then(function () {
                     callback(cartId);
                 });
             }
@@ -295,7 +297,7 @@ define([
 
                     if(newValue && !angular.equals(newValue,oldValue)){
                         //回调返回
-                        self.alert("计算完成！");
+                        self.alert("The calculation is complete！");
 
                         let _cusRes = newValue;
                         self.customColumns.selCommonProps = self.getSelectedProps(self.customColumns.commonProps,_cusRes.selCommonProps,'propId');
@@ -303,7 +305,7 @@ define([
                         self.customColumns.selPlatformSales = _cusRes.selPlatformSales;
                     }else{
                         //回调未返回
-                        self.alert('程序在计算请稍后！');
+                        self.alert('Please wait in the calculation later！');
                     }
                 },true);
 
@@ -449,12 +451,10 @@ define([
 
                 //判断是否continue
                 //option.continue = false;
-
                 if(!option.muiti){
                     //单个
                     let value = "Whether to cover the properties associated with the SN primary category？（including Google Category，Google DepartMent，PriceGrabber Category，Amazon Browse Tree，Visible On Menu，Enable Filter，Publish ，SEO attributes···）"
-                    self.confirm(value).then(
-                        (confirmed) => {
+                    self.confirm(value).then(() => {
                             //确定
                             flag =true;
                             self.advanceSearch.updatePrimaryCategory(
@@ -468,20 +468,16 @@ define([
                                     cartId:option.cartId,
                                     flag:flag
                                 }
-                            ).then(
-                                param =>{
+                            ).then(() =>{
                                     self.notify.success('Update Success');
-                                    if(option.continue){
-                                        //save&continue
-                                    }else {
+                                    if(!option.continue){
                                         //save,去除勾选状态
                                         self.clearSelList();
                                         self._selall = 0;
                                     }
                                 }
                             );
-                        },
-                        (confirmed) => {
+                        },() => {
                             //取消
                             self.advanceSearch.updatePrimaryCategory(
                                 {
@@ -494,14 +490,10 @@ define([
                                     cartId:option.cartId,
                                     flag:flag
                                 }
-                            ).then(
-                                param =>{
-                                    console.log("continue:" + option.continue);
+                            ).then(() =>{
                                     self.notify.success('Update Success');
 
-                                    if(option.continue){
-                                        //save&continue
-                                    }else {
+                                    if(!option.continue){
                                         //save,去除勾选状态
                                         self.clearSelList();
                                         self._selall = 0;
@@ -515,22 +507,17 @@ define([
                     let pCatPaths = [];
                     angular.forEach(res, function (item) {
                         pCatPaths.push(item.catPath);
-                    })
-                    self.advanceSearch.updateOtherCategory(
-                        {
+                    });
+                    self.advanceSearch.updateOtherCategory({
                             selAll:self._selall == "1"?"true":"false",
                             codeList:self.getSelectedProduct('code'),
                             searchInfo:self.searchUtilService.handleQueryParams(self),
                             cartId:option.cartId,
                             pCatPaths:pCatPaths,
                             statue:option.move == "1" ? true:false
-                        }
-                    ).then(
-                        param =>{
+                        }).then(() =>{
                             self.notify.success('Update Success');
-                            if(option.continue){
-                                //save&continue
-                            }else {
+                            if(!option.continue){
                                 //save,去除勾选状态
                                 self.clearSelList();
                                 self._selall = 0;
@@ -596,7 +583,6 @@ define([
 
         }
 
-        // 批量修改Free tags
         /**
          * 添加产品到指定自由标签
          */
@@ -631,8 +617,7 @@ define([
                     return key.tagPath;
                 }).value();
 
-                self.confirm(msg)
-                    .then(function () {
+                self.confirm(msg).then(function () {
                         self.$searchAdvanceService2.addFreeTag({
                             "type":"usa",
                             "tagPathList": freeTags,

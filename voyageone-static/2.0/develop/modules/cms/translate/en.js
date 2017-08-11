@@ -442,7 +442,7 @@ define(function () {
         "TXT_MSG_INCREMENT_FAIL": "增量操作失败.",
         "TXT_MSG_REVERT_SUCCESS": "还原操作成功",
         "TXT_MSG_REVERT_FAIL": "还原操作失败",
-        "TXT_MSG_NO_ROWS_SELECT": "请至少选择一条数据.",
+        "TXT_MSG_NO_ROWS_SELECT": "Please select at least one piece of data.",
         "TXT_MSG_NO_PRODUCT_ROWS": "请至少保证有一条产品数据",
         "TXT_MSG_NO_CATEGORY_SELECT": "请选择一个子类目.",
         "TXT_MSG_NO_SELECT_CATEGORY": "请选择一个类目.",
