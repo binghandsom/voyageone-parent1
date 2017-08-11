@@ -16,7 +16,7 @@ public class CmsBtFeedInfoModel_Platform_Cart extends BaseMongoMap<String, Objec
     private Double priceClientRetail;
     private Double priceMsrp;
     private Double priceCurrent;
-    private Integer sharingDay;
+    private Integer sharingDay = 0;
 
     public Integer getCartId() {
         return getIntAttribute("cartId");
@@ -71,6 +71,6 @@ public class CmsBtFeedInfoModel_Platform_Cart extends BaseMongoMap<String, Objec
     }
 
     public void setSharingDay(Integer sharingDay) {
-        setAttribute("sharingDay", sharingDay);
+        setAttribute("sharingDay", sharingDay == null ? 0 : sharingDay);
     }
 }

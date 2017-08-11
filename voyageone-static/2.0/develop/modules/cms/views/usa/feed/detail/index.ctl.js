@@ -86,10 +86,11 @@ define([
                         self.platformsObj[cartId] = cartId < 20 ? platform.name : platform.add_name2;
                     });
                     // cartId=5是sharingDay默认45
-                    let cart5Obj = _.find(self.feed.usPlatforms, platform => {
-                        return platform.cartId == 5;
+                    _.each(self.feed.usPlatforms, platform => {
+                        if (!platform.sharingDay) {
+                            platform.sharingDay = platform.cartId == 5 ? 45 : 0;
+                        }
                     });
-                    cart5Obj['sharingDay'] = 45;
 
                     // 如果有中国平台中国价格为null, 则触发计算价格
                     if (self.feed.feedAuth > 1) {
@@ -655,7 +656,7 @@ define([
                     _.each(usPlatforms, platform => {
                         unCheckedPlatforms.push(self.platformsObj[platform.cartId]);
                     });
-                    let message = `Platform[${unCheckedPlatforms}] Msrp($) or Price($) is empty or 0.`;
+                    let message = `Platform[ ${unCheckedPlatforms} ] Msrp($) or Price($) is empty or 0.`;
                     self.alert(message);
                 }
             }

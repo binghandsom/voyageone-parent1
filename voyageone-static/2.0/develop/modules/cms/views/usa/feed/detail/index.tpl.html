@@ -736,7 +736,7 @@
                                         <table class="table table-hover-new vo_table tableWordBreak dropdown_table_main">
                                             <thead>
                                             <tr>
-                                                <th class="text-left" ng-if="ctrl.feed.feedAuth == 3">Is Sale</th>
+                                                <th class="text-left">Is Sale</th>
                                                 <th class="text-left">Platform</th>
                                                 <th class="text-right">
                                                     <default-price type="priceClientMsrp" func="ctrl.setPlatformPrice" ng-if="ctrl.feed.approvePricing != '1'">Msrp($)</default-price>
@@ -748,12 +748,12 @@
                                                 </th>
                                                 <th class="text-right">CN Msrp(￥)</th>
                                                 <th class="text-right">CN Price(￥)</th>
-                                                <th class="text-right" ng-if="ctrl.feed.feedAuth == 3">Days OldBefore Sharing</th>
+                                                <th class="text-right">Days OldBefore Sharing</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             <tr ng-repeat="(key, platform) in ctrl.feed.usPlatforms">
-                                                <td class="text-left" ng-if="ctrl.feed.feedAuth == 3">
+                                                <td class="text-left">
                                                     <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="platform.isSale">
                                                 </td>
                                                 <td class="text-left">{{ctrl.platformsObj[platform.cartId]}}</td>
@@ -769,12 +769,12 @@
                                                 </td>
                                                 <td class="text-right"><label>-</label></td>
                                                 <td class="text-right"><label>-</label></td>
-                                                <td class="text-right" ng-if="ctrl.feed.feedAuth == 3">
+                                                <td class="text-right">
                                                     <input type="number" class="form-control text-right" ng-model="platform.sharingDay" scale="2,0"/>
                                                 </td>
                                             </tr>
                                             <tr ng-if="ctrl.feed.feedAuth > 1" ng-repeat="(key, platform) in ctrl.feed.platforms">
-                                                <td class="text-left" ng-if="ctrl.feed.feedAuth == 3">
+                                                <td class="text-left">
                                                     <input type="checkbox" ng-true-value="1" ng-false-value="0" ng-model="platform.isSale">
                                                 </td>
                                                 <td class="text-left">{{ctrl.platformsObj[platform.cartId]}}</td>
@@ -786,7 +786,7 @@
                                                 <td class="text-right">
                                                     <input type="number" class="form-control text-right" ng-model="platform.priceCurrent" readonly>
                                                 </td>
-                                                <td class="text-right" ng-if="ctrl.feed.feedAuth == 3"><label>-</label></td>
+                                                <td class="text-right"><label>-</label></td>
                                             </tr>
                                             </tbody>
                                         </table>
