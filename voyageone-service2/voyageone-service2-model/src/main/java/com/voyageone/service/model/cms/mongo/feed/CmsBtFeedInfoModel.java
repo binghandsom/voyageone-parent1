@@ -89,7 +89,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     private String approvePricing;
 
-    private Boolean unisex = Boolean.FALSE;
+    private String unisex = "0"; // 默认值“0”
 
     public String getSizeChartType() {
         return sizeChartType;
@@ -543,11 +543,11 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         return getUsPlatforms().get(PLATFORM_CART_PRE + cartId);
     }
 
-    public Boolean getUnisex() {
+    public String getUnisex() {
         return unisex;
     }
 
-    public void setUnisex(Boolean unisex) {
+    public void setUnisex(String unisex) {
         this.unisex = unisex;
     }
 }
