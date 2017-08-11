@@ -89,6 +89,8 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
 
     private String approvePricing;
 
+    private Boolean unisex = Boolean.FALSE;
+
     public String getSizeChartType() {
         return sizeChartType;
     }
@@ -539,5 +541,13 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
             return null;
         }
         return getUsPlatforms().get(PLATFORM_CART_PRE + cartId);
+    }
+
+    public Boolean getUnisex() {
+        return unisex;
+    }
+
+    public void setUnisex(Boolean unisex) {
+        this.unisex = unisex;
     }
 }
