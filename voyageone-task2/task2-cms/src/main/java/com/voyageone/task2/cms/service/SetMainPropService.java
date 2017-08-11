@@ -2734,6 +2734,9 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 if (blnFound) {
                     continue;
                 }
+                if(Integer.parseInt(shop.getValue()) > 0 && Integer.parseInt(shop.getValue()) < 20){
+                    continue;
+                }
 
                 // group对象
                 CmsBtProductGroupModel group = null;
