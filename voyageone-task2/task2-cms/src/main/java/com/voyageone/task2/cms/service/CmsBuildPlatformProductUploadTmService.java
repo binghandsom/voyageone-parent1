@@ -433,29 +433,25 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
             storeCode = taobaoScItemService.doCheckNeedSetScItem(shopProp, mainProduct);
             if (!StringUtils.isEmpty(storeCode)) {
                 String title = sxProductService.getProductValueByMasterMapping("title", shopProp, expressionParser, getTaskName());
-//                Map<String, ScItem> scItemMap = new HashMap<>();
                 for (String sku_outerId : strSkuCodeList) {
-                    // 皇马店先看scItem表有没有该货品 20170627 STA
-                    ScItem scItem;
                     boolean isNew = false;
-                    if (ChannelConfigEnums.Channel.REAL_MADRID.getId().equals(channelId)) {
+                    ScItem scItem;
+                    Map<String, Object> searchParam = new HashMap<>();
+                    searchParam.put("channelId", channelId);
+                    searchParam.put("cartId", cartId);
+                    searchParam.put("sku", sku_outerId);
+                    searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
+
+                    CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
+
+                    if (scItemModel != null) {
                         scItem = new ScItem();
-                        Map<String, Object> searchParam = new HashMap<>();
-                        searchParam.put("channelId", channelId);
-                        searchParam.put("cartId", cartId);
-                        searchParam.put("sku", sku_outerId);
-                        searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
-
-                        CmsBtTmScItemModel scItemModel = cmsBtTmScItemDao.selectOne(searchParam);
-
-                        if (scItemModel != null) {
-                            scItem.setItemId(Long.parseLong(scItemModel.getScProductId()));
-                        }
-                    // 皇马店先看scItem表有没有该货品 20170627 END
+                        scItem.setItemId(Long.parseLong(scItemModel.getScProductId()));
                     } else {
                         // 检查是否发布过仓储商品
                         try {
                             scItem = tbScItemService.getScItemByOuterCode(shopProp, sku_outerId);
+                            isNew = true; // 只要我们表里没有，都认为是new，因为可能创建好了，程序异常了，没有走后面的初始化库存以及货品绑定
                         } catch (ApiException e) {
                             String errMsg = String.format("自动设置天猫商品全链路库存管理:检查是否发布过仓储商品:{outerId: %s, err_msg: %s}", sku_outerId, e.toString());
                             throw new BusinessException(errMsg);
@@ -474,7 +470,6 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
 
                     sxData.putSxScItem(sku_outerId, scItem, isNew);
                 }
-//                sxData.setScItemMap(scItemMap);
             }
             // 20170417 全链路库存改造 charis END
 
@@ -854,7 +849,7 @@ public class CmsBuildPlatformProductUploadTmService extends BaseCronTaskService 
                 Map<String, Object> searchParam = new HashMap<>();
                 searchParam.put("channelId", channelId);
                 searchParam.put("cartId", cartId);
-                searchParam.put("code", code);
+//                searchParam.put("code", code);
                 searchParam.put("sku", skuCode);
                 searchParam.put("orgChannelId", sxData.getMainProduct().getOrgChannelId());
                 String scCode;

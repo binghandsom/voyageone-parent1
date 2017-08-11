@@ -7,7 +7,6 @@ import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.ListUtils;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.bean.cms.CmsMtHsCodeUnitBean;
 import com.voyageone.service.dao.cms.CmsBtTmScItemDao;
 import com.voyageone.service.dao.cms.CmsBtTmTonggouFeedAttrDao;
 import com.voyageone.service.dao.cms.CmsMtChannelConditionMappingConfigDao;
@@ -239,22 +238,6 @@ public class CmsBuildPlatformProductUploadTmTongGouServiceTest {
         wirelessValue = uploadTmTongGouService.updateDefaultValue(wirelessValue, "item_picture", defaultValue);
 
         System.out.println(wirelessValue);
-
-    }
-
-    @Test
-    public void testGetHscodeUnit() {
-        String hscode = "9019101000";
-//        CmsMtHsCodeUnitBean cmsMtHsCodeUnitBean = cmsMtHsCodeUnitDaoExt.getHscodeUnit(hscode);
-
-//        System.out.println(cmsMtHsCodeUnitBean.getHscode());
-        String unitName = "瓶";
-        Map<String, String> unitMap = cmsMtHsCodeUnitDaoExt.getHscodeSaleUnit(unitName);
-        String aaa = String.format("code##%s||cnName##%s", unitMap.get("unitCode"), unitName);
-        System.out.println(aaa);
-        if (unitMap == null) {
-            System.out.println("a");
-        }
 
     }
 

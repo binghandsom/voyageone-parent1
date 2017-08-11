@@ -128,12 +128,12 @@
         </if>
         left JOIN cms_bt_jm_promotion_special_extension as jmpromext
         on jmpromext.jmpromotion_id = jmprom.id
-        <if test="mainCata != null">
-            and jmpromext.main_channel = #{mainCata}
-        </if>
         <where>
             prom.active = 1 and jmprom.active = 1
             and jmprom.channel_id = #{channelId}
+            <if test="mainCata != null">
+                and jmpromext.main_channel = #{mainCata}
+            </if>
             <if test="jmActId != null">
                 AND ( jmprom.activity_pc_id = #{jmActId} or jmprom.activity_app_id = #{jmActId} )
             </if>
@@ -198,12 +198,12 @@
         </if>
         left JOIN cms_bt_jm_promotion_special_extension as jmpromext
         on jmpromext.jmpromotion_id = jmprom.id
-        <if test="mainCata != null">
-            and jmpromext.main_channel = #{mainCata}
-        </if>
         <where>
             prom.active = 1 and jmprom.active = 1
             and jmprom.channel_id = #{channelId}
+            <if test="mainCata != null">
+                and jmpromext.main_channel = #{mainCata}
+            </if>
             <if test="jmActId != null">
                 AND ( jmprom.activity_pc_id = #{jmActId} or jmprom.activity_app_id = #{jmActId} )
             </if>

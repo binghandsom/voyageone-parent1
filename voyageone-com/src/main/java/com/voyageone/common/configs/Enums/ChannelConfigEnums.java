@@ -642,6 +642,8 @@ public class ChannelConfigEnums {
 
         Ladolcevitae("039"),
 
+        SoleUnlimited("045"),
+
         /**
          * TestChannel088
          */
@@ -784,6 +786,8 @@ public class ChannelConfigEnums {
                     return FAMbrand;
                 case "039":
                     return Ladolcevitae;
+                case "045":
+                    return SoleUnlimited;
                 case "088":
                     return TestChannel088;
                 case "089":

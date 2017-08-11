@@ -340,16 +340,16 @@ define([
                 window.open(url);
             },
 
-            linkToDetail: function (numIid) {
+            linkToDetail: function (numIid, code) {
                 console.log(numIid);
                 var self = this;
                 console.log(self.task);
                 if (self.task && self.task.pUrl) {
                     var platformId = self.task.platformId;
                     if (platformId == '2') {
-                        self.taskJiagepiluService.getJdSeriesSkuId({num_iid:numIid,cartId:self.task.cartId}).then(function (resp) {
+                        self.taskJiagepiluService.getJdSeriesSkuId({code:code,num_iid:numIid,cartId:self.task.cartId}).then(function (resp) {
                             if (resp.data) {
-                                window.open(self.task.pUrl + resp.data);
+                                window.open(self.task.pUrl + resp.data+".html");
                             }
                         });
                     } else {

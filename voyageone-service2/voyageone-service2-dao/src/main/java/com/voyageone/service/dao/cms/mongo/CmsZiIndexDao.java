@@ -80,4 +80,8 @@ public class CmsZiIndexDao extends BaseMongoDao<CmsZiIndexModel> {
         mongoTemplate.getDb().getCollection(collName).createIndex(keys, indexName, unique);
     }
 
+    public void createCollectionIndexFromDB(String collName, DBObject keys, DBObject options) {
+        mongoTemplate.getDb().getCollection(collName).createIndex(keys, options);
+    }
+
 }

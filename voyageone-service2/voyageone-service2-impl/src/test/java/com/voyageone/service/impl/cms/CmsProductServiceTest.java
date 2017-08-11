@@ -308,16 +308,15 @@ public class CmsProductServiceTest {
 
         String[] projection = "prodId;channelId;fields;skus;groups".split(";");
 
-        ProductForWmsBean result = cmsProductService.getWmsProductsInfo("928", "037-314192 117 FORCE WHITE 5", projection);
+        ProductForWmsBean result = cmsProductService.getWmsProductsInfo("928", "016-33835-NTMT-0524603-065", projection);
         System.out.println(result);
     }
 
     @Test
     public void getOmsProductsInfo () {
         List<String> skuList = new ArrayList<>();
-        skuList.add("1FMA3324Y11");
 
-        List<ProductForOmsBean> result = cmsProductService.getOmsProductsInfo("010", null, skuList, null, null, "1", null);
+        List<ProductForOmsBean> result = cmsProductService.getOmsProductsInfo("928", "016-33835-NTMT-0524603-065", skuList, null, null, "1", null);
         System.out.println(result);
     }
 

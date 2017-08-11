@@ -8,7 +8,7 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.components.solr.bean.CommIdSearchModel;
 import com.voyageone.components.solr.bean.SolrUpdateBean;
-import com.voyageone.components.solr.query.SimpleQueryCursor;
+import com.voyageone.components.solr.query.SimpleQueryBean;
 import com.voyageone.components.solr.service.CmsProductSearchService;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.ChannelService;
@@ -16,12 +16,15 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseCronTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Cms Product Data 全量导入收索服务器 Service
@@ -34,6 +37,7 @@ import java.util.List;
 public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
 
     private static final int IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE = 1000;
+    private final static String CORE_NAME_PRODUCT = "cms_product";
 
     @Autowired
     private ChannelService channelService;
@@ -53,18 +57,19 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
             return;
         }
         List<String> cart = Arrays.asList("928");
-        for (OrderChannelBean bean: list) {
-            List<TypeChannelBean> typeChannelBeans = TypeChannels.getTypeListSkuCarts(bean.getOrder_channel_id(), Constants.comMtTypeChannel.SKU_CARTS_53_A,"en");
-           if(typeChannelBeans.stream().anyMatch(typeChannelBean -> !cart.contains(typeChannelBean.getValue()))) {
+        for (OrderChannelBean bean : list) {
+            List<TypeChannelBean> typeChannelBeans = TypeChannels.getTypeListSkuCarts(bean.getOrder_channel_id(), Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+            if (typeChannelBeans.stream().anyMatch(typeChannelBean -> !cart.contains(typeChannelBean.getValue()))) {
                 String channelId = bean.getOrder_channel_id();
                 logger.info("CmsProductSearchImportService.onStartup start channelId:{}", channelId);
                 importDataToSearchFromMongo(channelId);
                 logger.info("CmsProductSearchImportService.onStartup end channelId:{}", channelId);
-            }else{
+            } else {
                 logger.info("channelId:{} 不需要做", bean.getOrder_channel_id());
             }
         }
     }
+
     /**
      * 全量导入
      */
@@ -85,46 +90,49 @@ public class CmsProductTotalImportToSearchService extends BaseCronTaskService {
             beans.add(update);
             // 更新数据
             if (index % IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE == 0) {
-                String response = cmsProductSearchService.saveBeans(beans);
+                String response = cmsProductSearchService.saveBeans(CORE_NAME_PRODUCT, beans);
                 logger.info("CmsProductSearchImportService.importDataToSearchFromMongo commit count:{}; response:{}", index, response);
-                cmsProductSearchService.commit();
+                cmsProductSearchService.commit(CORE_NAME_PRODUCT);
                 beans = new ArrayList<>();
             }
             index++;
         }
         // 更新数据
         if (!beans.isEmpty()) {
-            String response = cmsProductSearchService.saveBeans(beans);
+            String response = cmsProductSearchService.saveBeans(CORE_NAME_PRODUCT, beans);
             logger.info("CmsProductSearchImportService.importDataToSearchFromMongo commit count:{}; response:{}", index, response);
-            cmsProductSearchService.commit();
+            cmsProductSearchService.commit(CORE_NAME_PRODUCT);
         }
 
         // 因为增量job以运行 避免删除增量误删除
-        index = 1;
-        List<String> removeIdList = new ArrayList<>();
         //删除数据
-        SimpleQueryCursor<CommIdSearchModel> productSearchCursor = cmsProductSearchService.queryIdsForCursorNotLastVer(channelId, currentTime);
-        //noinspection Duplicates
-        while (productSearchCursor.hasNext()) {
-            CommIdSearchModel model = productSearchCursor.next();
-            if (model != null && model.getId() != null) {
-                removeIdList.add(model.getId());
-            }
-            // 删除数据
-            if (index % IMPORT_DATA_TO_SEARCH_FROM_MONGO_SIZE == 0) {
-                cmsProductSearchService.deleteByIds(removeIdList);
-                removeIdList = new ArrayList<>();
-                cmsProductSearchService.commit();
-            }
-//            pageNo++;
-        }
-        // 删除数据
-        if (!removeIdList.isEmpty()) {
-            cmsProductSearchService.deleteByIds(removeIdList);
-            cmsProductSearchService.commit();
-        }
+        String queryString = String.format("productChannel:\"%s\" && -lastVer:\"%s\"", channelId, currentTime);
+        SimpleQueryBean query = new SimpleQueryBean(queryString);
+        query.addSort(new Sort(Sort.Direction.DESC, "id"));
+        query.addProjectionOnField("id");
 
-        cmsProductSearchService.optimize();
+        int pageNo = 0;
+        int pageSize = 2000;
+        //noinspection Duplicates
+        while (true) {
+            List<String> removeIdList = new ArrayList<>();
+
+            query.setOffset(pageNo * pageSize);
+            query.setRows(pageSize);
+            Page<CommIdSearchModel> productSearchCursor = cmsProductSearchService.queryIdsForCursorNotLastVer(CORE_NAME_PRODUCT, query);
+            if (!productSearchCursor.hasContent()) {
+                break;
+            }
+
+            removeIdList.addAll(productSearchCursor.getContent().stream().filter(model -> model != null && model.getId() != null).map(CommIdSearchModel::getId).collect(Collectors.toList()));
+            // 删除数据
+            if (removeIdList.size() > 0) {
+                cmsProductSearchService.deleteByIds(CORE_NAME_PRODUCT, removeIdList);
+                cmsProductSearchService.commit(CORE_NAME_PRODUCT);
+            }
+            //pageNo++;
+        }
+        cmsProductSearchService.optimize(CORE_NAME_PRODUCT);
     }
 
     @Override

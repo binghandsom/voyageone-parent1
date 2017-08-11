@@ -6,6 +6,8 @@
         UPDATE voyageone_cms2.cms_bt_tasks
         SET task_name = #{taskName},
         config = #{config},
+        activity_start = #{activityStart},
+        activity_end = #{activityEnd},
         modified = NOW(),
             modifier  = #{modifier}
         WHERE id = #{id}

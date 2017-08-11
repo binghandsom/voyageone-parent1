@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.system;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.MongoServerException;
 import com.mongodb.util.JSON;
@@ -96,7 +97,7 @@ public class CmsMongoOptimizeIndexService extends BaseCronTaskService {
                 if (indexInfoList != null) {
                     for (DBObject index : indexInfoList) {
                         boolean isDefined = checkIndexDefined(index, indexListDefined);
-                        // 如果没有在Meta中定义
+                        // 如果没有在Meta中`定义
                         if (!isDefined) {
                             boolean unique = index.get("unique") == null ? false : (Boolean) index.get("unique");
                             String noDefined = String.format("%s->name:%s,key:%s,unique:%s", collName, index.get("name"), index.get("key"), unique);
@@ -164,7 +165,7 @@ public class CmsMongoOptimizeIndexService extends BaseCronTaskService {
         for (CmsZiIndexModel_Index idx : indexList) {
             //String name = idx.getName();
             String keyDef = idx.getKey().replace(" ", "");
-            boolean uniqueDef = idx.getUnique();
+            boolean uniqueDef = idx.getUnique() == null ? false : idx.getUnique().booleanValue();
             boolean isExisted = false;
 
             for (DBObject idxExisting : indexInfoList) {
@@ -179,16 +180,18 @@ public class CmsMongoOptimizeIndexService extends BaseCronTaskService {
                     keyObj.put(s, ((Double) keyObj.get(s)).intValue());
                 });
 
+
                 String keyExists = keyObj.toString().replace(" ", "");
+
                 boolean uniqueExists = false;
                 if (idxExisting.containsField("unique")) {
                     uniqueExists = (Boolean) idxExisting.get("unique");
                 }
-                if (keyDef.equals(keyExists) && uniqueDef == uniqueExists) {
-                    // 相同key,相同unique的索引存在
+                if (keyDef.equals(keyExists) && isIndexOptionsEqual(idxExisting, idx)) {
+                    // 相同key,相同属性（unique,sparse,partialFilterExpression）的索引存在
                     isExisted = true;
                     break;
-                } else if (keyDef.equals(keyExists) && uniqueDef != uniqueExists) {
+                } else if (keyDef.equals(keyExists) && !isIndexOptionsEqual(idxExisting, idx)) {
                     // 相同key,不同unique的索引存在,需要先删除索引然后重建
                     Map<String, Object> dropMap = new HashMap<>();
                     dropMap.put("coll_name", collName);
@@ -204,6 +207,10 @@ public class CmsMongoOptimizeIndexService extends BaseCronTaskService {
                     createMap.put("action", "create");
                     createMap.put("key", keyDef);
                     createMap.put("unique", uniqueDef);
+                    createMap.put("sparse", idx.getSparse() == null ? false : idx.getSparse().booleanValue());
+                    createMap.put("partialFilterExpression", idx.getPartialFilterExpression());
+                    createMap.put("name", idx.getName());
+
                     operList.add(createMap);
 
                     isExisted = true;
@@ -217,6 +224,9 @@ public class CmsMongoOptimizeIndexService extends BaseCronTaskService {
                 createMap.put("action", "create");
                 createMap.put("key", keyDef);
                 createMap.put("unique", uniqueDef);
+                createMap.put("sparse", idx.getSparse() == null ? false : idx.getSparse().booleanValue());
+                createMap.put("partialFilterExpression", idx.getPartialFilterExpression());
+                createMap.put("name", idx.getName());
                 operList.add(createMap);
             }
 
@@ -244,15 +254,33 @@ public class CmsMongoOptimizeIndexService extends BaseCronTaskService {
                     proccessResult.add("删除索引：" + indexDef);
                 } else if ("create".equals(oper)) {
                     // 创建索引的名称传入null，也就是利用默认索引名称
-                    String name = null;
+                    String name = (String) operMap.get("name");
                     String keys = operMap.get("key").toString();
                     boolean unique = ((Boolean) operMap.get("unique")).booleanValue();
-                    String indexDef = String.format("coll->%s,key->%s,unique->%s", coll_name, keys, unique);
+                    boolean sparse = ((Boolean) operMap.get("sparse")).booleanValue();
+                    DBObject keyObj = (DBObject) JSON.parse(keys);
+
+                    DBObject optionsObj = new BasicDBObject();
+                    if (unique) {
+                        optionsObj.put("unique", unique);
+                    }
+                    if (sparse) {
+                        optionsObj.put("sparse", sparse);
+                    }
+                    String partialExp = (String) operMap.get("partialFilterExpression");
+                    if (partialExp != null && partialExp.trim().length() > 0) {
+                        optionsObj.put("partialFilterExpression", JSON.parse(partialExp));
+                    }
+                    if (name != null && name.trim().length() > 0) {
+                        optionsObj.put("name", name);
+                    }
+
+//                    optionsObj.put("background", true);
+                    String indexDef = String.format("coll->%s,key->%s,options->%s", coll_name, keys, optionsObj.toString());
                     failMsg = "创建索引失败：" + indexDef;
                     $info("创建索引开始：" + indexDef);
-                    DBObject keyObj = (DBObject) JSON.parse(keys);
-                    indexOptDao.createCollectionIndexFromDB(coll_name, name, keyObj, unique);
-                    $info("创建索引完成：" + indexDef);
+                    indexOptDao.createCollectionIndexFromDB(coll_name, keyObj, optionsObj);
+                    $info("创建索引完成：" + indexDef + ",option-->" + optionsObj.toString());
                     proccessResult.add("创建索引：" + indexDef);
                 }
             } catch (MongoServerException e) {
@@ -292,4 +320,37 @@ public class CmsMongoOptimizeIndexService extends BaseCronTaskService {
         return null;
     }
 
+    private boolean isIndexOptionsEqual(DBObject indexInfo, CmsZiIndexModel_Index indexModel) {
+
+        boolean existingUnique = false;
+        if (indexInfo.containsField("unique")) {
+            existingUnique = (Boolean) indexInfo.get("unique");
+        }
+        boolean defUnique = indexModel.getUnique() == null ? false : indexModel.getUnique().booleanValue();
+        boolean defSparse = indexModel.getSparse() == null ? false : indexModel.getSparse().booleanValue();
+        boolean existingSparse = false;
+        if (indexInfo.containsField("sparse")) {
+            existingSparse = (Boolean) indexInfo.get("sparse");
+        }
+        DBObject partialExp = null;
+        if (indexInfo.containsField("partialFilterExpression")) {
+            partialExp = (DBObject) indexInfo.get("partialFilterExpression");
+        }
+        String defPartialExp = indexModel.getPartialFilterExpression();
+        if (existingUnique != defUnique || existingSparse != defSparse
+                || (partialExp == null && defPartialExp != null) || (partialExp != null && defPartialExp == null)) {
+            return false;
+        }
+
+        if (partialExp == null && defPartialExp == null) {
+            return true;
+        }
+
+        String existingPartialExp = partialExp.toString().replace(" ", "");
+        if (existingPartialExp.equals(defPartialExp.replace(" ", ""))) {
+            return true;
+        }
+
+        return false;
+    }
 }

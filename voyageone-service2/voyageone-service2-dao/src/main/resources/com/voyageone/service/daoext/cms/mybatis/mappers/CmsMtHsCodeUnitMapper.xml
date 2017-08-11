@@ -2,12 +2,50 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
 
-
+    <insert id="insertHsCodeUnit" parameterType="com.voyageone.service.bean.cms.CmsMtHsCodeUnitBean">
+        insert into voyageone_cms2.cms_mt_hscode_unit
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="hscode != null" >
+                `hs_code`,
+            </if>
+            <if test="firstUnitId != null" >
+                `hs_code_first_unit_id`,
+            </if>
+            <if test="firstUnit != null" >
+                `hs_code_first_unit`,
+            </if>
+            <if test="secondUnitId != null" >
+                `hs_code_second_unit_id`,
+            </if>
+            <if test="secondUnit != null" >
+                `hs_code_second_unit`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="hscode != null" >
+                #{hscode,jdbcType=VARCHAR},
+            </if>
+            <if test="firstUnitId != null" >
+                #{firstUnitId,jdbcType=VARCHAR},
+            </if>
+            <if test="firstUnit != null" >
+                #{firstUnit,jdbcType=VARCHAR},
+            </if>
+            <if test="secondUnitId != null" >
+                #{secondUnitId,jdbcType=VARCHAR},
+            </if>
+            <if test="secondUnit != null" >
+                #{secondUnit,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
 
     <select id="selectUnitByHsCode" resultType="com.voyageone.service.bean.cms.CmsMtHsCodeUnitBean">
         SELECT
             hs_code as hscode,
+            hs_code_first_unit_id as firstUnitId,
             hs_code_first_unit as firstUnit,
+            hs_code_second_unit_id as secondUnitId,
             hs_code_second_unit as secondUnit
         FROM
             voyageone_cms2.cms_mt_hscode_unit
@@ -16,7 +54,7 @@
     </select>
 
 
-    <select id="selectSaleUnit" resultType="Map">
+    <select id="selectSaleUnit" resultType="com.voyageone.service.model.cms.CmsMtHscodeSaleUnitModel">
         SELECT
             unit_name as unitName,
             unit_code as unitCode

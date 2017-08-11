@@ -109,7 +109,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             if (!StringUtils.isEmpty(useOriUrlStr) && "1".equals(useOriUrlStr)) {
                 for (CmsBtProductModel_Field_Image productImage : productImages) {
                     // 使用原图(不使用image模板，不用判断是否有image模板)
-                    completeImageUrl = getPicOriUrl(productImage.getName(), moduleName);
+                    completeImageUrl = getPicOriUrl(sxData.getChannelId(), productImage.getName(), moduleName);
                     imageUrlList.add(completeImageUrl);
                 }
                 // add by desmond 2016/07/15 end
@@ -147,7 +147,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             // 看是否使用原图
             if (!StringUtils.isEmpty(useOriUrlStr) && "1".equals(useOriUrlStr)) {
                 // 使用原图(不使用image模板，不用判断是否有image模板)
-                paddingImage = getPicOriUrl(paddingImageKey.trim(), moduleName);
+                paddingImage = getPicOriUrl(sxData.getChannelId(), paddingImageKey.trim(), moduleName);
                 imageUrlList.add(paddingImage);
                 // add by desmond 2016/07/15 end
             } else {
@@ -180,7 +180,7 @@ public class CustomWordModuleGetMainPropductImages extends CustomWordModule {
             // 看是否使用原图
             if (!StringUtils.isEmpty(useOriUrlStr) && "1".equals(useOriUrlStr)) {
                 // 使用原图(不使用image模板，不用判断是否有image模板)
-                completeImageUrl = getPicOriUrl(productImage.getName(), moduleName);
+                completeImageUrl = getPicOriUrl(sxData.getChannelId(), productImage.getName(), moduleName);
                 imageUrlList.add(completeImageUrl);
                 // add by desmond 2016/07/15 end
             } else {

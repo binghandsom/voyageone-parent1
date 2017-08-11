@@ -33,7 +33,7 @@ public class CmsImageGroupService extends BaseViewService {
 
     @Autowired
     private ImageGroupService imageGroupService;
-@Autowired
+    @Autowired
     CmsBtSizeChartImageGroupService cmsBtSizeChartImageGroupService;
 
     @Autowired

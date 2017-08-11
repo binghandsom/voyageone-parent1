@@ -939,7 +939,10 @@ public class PriceService extends BaseService {
             Double clientMsrp = feedSku.getPriceClientMsrp();
 
             // 获取sku的重量
-            Double weight = Double.valueOf(feedSku.getWeightOrg());
+            Double weight = null;
+            if(!StringUtils.isEmpty(feedSku.getWeightOrg())) {
+                weight = Double.valueOf(feedSku.getWeightOrg());
+            }
             if (weight == null || weight <= 0) {
 
                 // 获取默认商品重量
