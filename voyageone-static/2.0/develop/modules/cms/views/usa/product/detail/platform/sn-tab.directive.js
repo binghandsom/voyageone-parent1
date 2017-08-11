@@ -108,11 +108,6 @@ define([
                 self.categorys.googleDepartment = self.searchField("googleDepartment", self.productComm.schemaFields);
                 self.categorys.googleCategory = self.searchField("googleCategory", self.productComm.schemaFields);
 
-                // console.log(res.data);
-                // _.each(self.platform.platform.platformFields, item => {
-                //    console.log(item.id);
-                // });
-
             });
         }
 

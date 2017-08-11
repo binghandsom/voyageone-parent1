@@ -374,33 +374,34 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
         }
         platform.setSkus(skuList);
 
+        // todo 美国不需要生成group数据
         // 设定是否主商品
         // 如果是聚美或者独立官网的话，那么就是一个Code对应一个Group
-        CmsBtProductGroupModel group;
-
-        if (isSingle) {
-            group = productGroupService.createNewGroup(cmsBtProductModel.getChannelId(), cartId, code, false);
-            group.setModifier(getTaskName());
-            group.setCreater(getTaskName());
-            platform.setpIsMain(1);
-            platform.setMainProductCode(cmsBtProductModel.getCommon().getFields().getCode());
-        } else {
-            group = productGroupService.selectProductGroupByModelCodeAndCartId(cmsBtProductModel.getChannelId(), cmsBtProductModel.getCommon().getFields().getModel(), cartId.toString());
-            if (group != null) {
-                group.getProductCodes().add(code);
-                group.setModifier(getTaskName());
-                platform.setpIsMain(0);
-            } else {
-                group = productGroupService.createNewGroup(cmsBtProductModel.getChannelId(), cartId, code, false);
-                group.setModifier(getTaskName());
-                group.setCreater(getTaskName());
-                platform.setpIsMain(1);
-            }
-            platform.setMainProductCode(group.getMainProductCode());
-        }
+//        CmsBtProductGroupModel group;
+//
+//        if (isSingle) {
+//            group = productGroupService.createNewGroup(cmsBtProductModel.getChannelId(), cartId, code, false);
+//            group.setModifier(getTaskName());
+//            group.setCreater(getTaskName());
+//            platform.setpIsMain(1);
+//            platform.setMainProductCode(cmsBtProductModel.getCommon().getFields().getCode());
+//        } else {
+//            group = productGroupService.selectProductGroupByModelCodeAndCartId(cmsBtProductModel.getChannelId(), cmsBtProductModel.getCommon().getFields().getModel(), cartId.toString());
+//            if (group != null) {
+//                group.getProductCodes().add(code);
+//                group.setModifier(getTaskName());
+//                platform.setpIsMain(0);
+//            } else {
+//                group = productGroupService.createNewGroup(cmsBtProductModel.getChannelId(), cartId, code, false);
+//                group.setModifier(getTaskName());
+//                group.setCreater(getTaskName());
+//                platform.setpIsMain(1);
+//            }
+//            platform.setMainProductCode(group.getMainProductCode());
+//        }
 
         cmsBtProductModel.setUsPlatform(cartId, platform);
-        productGroupService.update(group);
+//        productGroupService.update(group);
 
         JongoUpdate updateQuery = new JongoUpdate();
         updateQuery.setQuery("{\"prodId\": #}");

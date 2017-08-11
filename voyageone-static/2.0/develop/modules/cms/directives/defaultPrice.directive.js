@@ -47,7 +47,7 @@ define([
             },
             controller: ['$scope', '$attrs', '$element', 'notify', '$parse',DefaultPriceController],
             controllerAs: 'ctrl',
-            templateUrl:"directives/defaultPrice.directive.html"
+            template:'<div><script type="text/ng-template"id="priceTemplate.html"><div class="panel panel-default"><div class="panel-heading"style="background: #71d0ee;">{{ctrl.dynamicPopover.title}}</div><div class="panel-body"><input type="number"scale="11,2"class="form-control"ng-enter="ctrl.delivery()"ng-model="ctrl.price"></div></div></script><button uib-popover-template="ctrl.dynamicPopover.templateUrl"popover-is-open="ctrl.isOpen"type="button"class="btn btn-default btn-pop"title="{{ctrl.$scope.data.common.fields.originalTitleCn}}"ng-transclude></button></div>'
         }
     });
 
