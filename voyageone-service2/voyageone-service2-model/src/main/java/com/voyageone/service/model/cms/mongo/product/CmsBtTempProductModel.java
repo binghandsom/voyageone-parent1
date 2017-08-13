@@ -38,6 +38,7 @@ public class CmsBtTempProductModel extends ChannelPartitionModel implements Clon
     private String price;
     private String thirdPrice;
     private String colorMap;
+    private String urlKey;
 
     public String getCode() {
         return code;
@@ -245,6 +246,18 @@ public class CmsBtTempProductModel extends ChannelPartitionModel implements Clon
 
     public void setThirdPrice(String thirdPrice) {
         this.thirdPrice = thirdPrice;
+    }
+
+    public String getTaxable() {
+        return taxable;
+    }
+
+    public String getUrlKey() {
+        return urlKey;
+    }
+
+    public void setUrlKey(String urlKey) {
+        this.urlKey = urlKey;
     }
 
     @Override

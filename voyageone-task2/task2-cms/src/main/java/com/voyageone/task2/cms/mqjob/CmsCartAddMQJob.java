@@ -233,6 +233,7 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
             cmsBtProductModel.getCommon().getFields().setGoogleCategory(tempProductModel.getGoogleCategoryPath());
             cmsBtProductModel.getCommon().getFields().setGoogleDepartment(tempProductModel.getGoogleDepartmentPath());
             cmsBtProductModel.getCommon().getFields().setPriceGrabberCategory(tempProductModel.getPriceGrabberCategory());
+            cmsBtProductModel.getCommon().getFields().setUrlKey(tempProductModel.getUrlKey());
             if (!StringUtils.isEmpty(tempProductModel.getColorMap()))
                 cmsBtProductModel.getCommon().getFields().setColorMap(tempProductModel.getColorMap().toLowerCase());
             cmsBtProductModel.getCommon().getFields().setTaxable(tempProductModel.isTaxable());
@@ -260,11 +261,11 @@ public class CmsCartAddMQJob extends TBaseMQCmsService<CmsCartAddMQMessageBody> 
                     newFileds.setAttribute("seoTitle", tempProductModel.getSeoTitle());
                     newFileds.setAttribute("seoDescription", tempProductModel.getSeoDescription());
                     newFileds.setAttribute("seoKeywords", tempProductModel.getSeoKeywords());
-                    newFileds.setAttribute("freeShipping", "1" == tempProductModel.getFreeShippingType() ? "1": "0");
+                    newFileds.setAttribute("freeShipping", String.valueOf(Double.valueOf(tempProductModel.getFreeShippingType()).intValue()));
                     newFileds.setAttribute("rewardEligible", String.valueOf(Double.valueOf(tempProductModel.getRewardEligible()).intValue()));
                     newFileds.setAttribute("discountEligible", String.valueOf(Double.valueOf(tempProductModel.getDiscountEligible()).intValue()));
                     newFileds.setAttribute("sneakerheadPlus", "0");
-                    newFileds.setAttribute("sneakerfolio", String.valueOf(Double.valueOf(tempProductModel.getOnsale()).intValue()));
+                    newFileds.setAttribute("sneakerfolio", "1".equalsIgnoreCase(String.valueOf(Double.valueOf(tempProductModel.getOnsale()).intValue())) ? "0" : "1");
                     if ("1".equals(tempProductModel.getMagento()) || "2".equals(tempProductModel.getMagento())) {
                         platform.setStatus("Approved");
                         platform.setpStatus("OnSale");

@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.service.sneakerhead;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.voyageone.base.dao.mongodb.JongoQuery;
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -144,8 +146,18 @@ public class CmsUsCategorySyncService extends BaseCronTaskService {
 
         CmsBtTempCategoryModel tempCategoryModel = cmsBtTempCategoryDao.selectTempCategoryModelById(channelId, category.getId());
 
-        if (tempCategoryModel != null)
-            sellerCatService.addSellerCat(channelId, 8, category.getName(), category.getId().toString(), parentCId, tempCategoryModel.getMapping(), getTaskName(), tempCategoryModel.getUrlKey());
+        if (tempCategoryModel != null) {
+            BaseMongoMap<String, Object> newMapping = new BaseMongoMap<>();
+            tempCategoryModel.getMapping().forEach((key, value) ->{
+                if(value instanceof Double) {
+                    DecimalFormat format = new DecimalFormat("0");
+                    newMapping.put(key, "1".equalsIgnoreCase(format.format(value)) ? true : false);
+                }
+                else
+                    newMapping.put(key, String.valueOf(value));
+            });
+            sellerCatService.addSellerCat(channelId, 8, category.getName(), category.getId().toString(), parentCId, newMapping, getTaskName(), tempCategoryModel.getUrlKey());
+        }
         else
             sellerCatService.addSellerCat(channelId, 8, category.getName(), category.getId().toString(), parentCId, null, getTaskName(), "");
         if(ListUtils.notNull(category.getSubCategory())){
