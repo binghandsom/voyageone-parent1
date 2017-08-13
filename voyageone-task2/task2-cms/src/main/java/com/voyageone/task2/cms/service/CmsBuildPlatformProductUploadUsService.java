@@ -412,6 +412,11 @@ public class CmsBuildPlatformProductUploadUsService extends BaseCronTaskService 
         productModel.setGoogleDepartment(commonFields.getGoogleDepartment());
         productModel.setPriceGrabberCategory(commonFields.getPriceGrabberCategory());
         productModel.setStatus(statusMap.get(platformInfo.getpStatus()));
+        if (StringUtils.isNullOrBlank2(commonFields.getUnisex()) || "0".equals(commonFields.getUnisex())) {
+            productModel.setUnisex(false);
+        } else {
+            productModel.setUnisex(true);
+        }
         if (StringUtils.isNullOrBlank2(commonFields.getTaxable()) || "0".equals(commonFields.getTaxable())) {
             productModel.setTaxable(false);
         } else {

@@ -26,6 +26,7 @@ public class TransferUsProductModel {
     private List<String> marketingImages;
     private String brand;
     private boolean taxable;
+    private boolean unisex;
     private String colorMap;
     private String material;
     private String origin;
@@ -259,5 +260,13 @@ public class TransferUsProductModel {
 
     public void setTaxable(boolean taxable) {
         this.taxable = taxable;
+    }
+
+    public boolean isUnisex() {
+        return unisex;
+    }
+
+    public void setUnisex(boolean unisex) {
+        this.unisex = unisex;
     }
 }
