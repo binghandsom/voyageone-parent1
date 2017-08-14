@@ -4,7 +4,7 @@ define(function () {
         "TXT_IMAGE_STATUS": "Image Status",
         "TXT_REMINDER_WITH_COLON": "Tips：",
         "TXT_EDIT_TASK": "Edit Current Task ",
-        "TXT_LOGOUT": "Write off",
+        "TXT_LOGOUT": "Sign out",
         "TXT_HOME": "Home",
         "TXT_CATEGORY_VIEWS": "-- Category View --",
         "TXT_FEED_MANAGER": "Feed Management",
