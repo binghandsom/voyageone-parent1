@@ -49,7 +49,13 @@ public class CmsMenuService extends BaseViewService {
      * @return
      */
     public List<TypeChannelBean> getPlatformTypeList (String channelId, String language) {
-        return typeChannelsService.getPlatformTypeList(channelId, language);
+        List<TypeChannelBean> beans = typeChannelsService.getPlatformTypeList(channelId, language);
+        try {
+            beans.sort((o1, o2) -> Integer.compare(Integer.parseInt(o1.getValue()), Integer.parseInt(o2.getValue())));
+        }catch (Exception ignored){
+
+        }
+        return beans;
     }
 
     public List<TypeChannelBean> getUsPlatformTypeList (String channelId, String language) {
