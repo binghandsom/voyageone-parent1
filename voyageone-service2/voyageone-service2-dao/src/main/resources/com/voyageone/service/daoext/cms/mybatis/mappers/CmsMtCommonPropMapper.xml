@@ -119,9 +119,9 @@
         AND cfg_name = #{cfgName}
     </select>
 
-    <select id="select_synship_ct_user_config_platform_sale_carts" parameterType="String" resultType="String">
+    <select id="select_synship_ct_user_config_platform_sale_carts" parameterType="String" resultType="HashMap">
         SELECT
-            cfg_val2
+            cfg_val2,cfg_val1
         FROM
             synship.ct_user_config
         WHERE

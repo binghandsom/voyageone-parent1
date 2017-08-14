@@ -39,6 +39,7 @@ public class UsaSaleDataStatisticsService extends BaseService {
     }
 
     public void SaleDataStatistics(CmsSaleDataStatisticsMQMessageBody messageBody) {
+        $info(String.format("销量计算: cartId=%d, beginTime=%s, endTime=%s", messageBody.getCartId(), messageBody.getStartDate(), messageBody.getEndDate()));
         String username = messageBody.getSender();
         if (StringUtils.isBlank(username)) {
             username = getClass().getSimpleName();

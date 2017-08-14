@@ -21,8 +21,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -136,6 +134,7 @@ public class SneakerheadMastDateImportTest {
                     map.put("price", ExcelUtils.getString(row, index++));
                     map.put("thirdPrice", ExcelUtils.getString(row, index++));
                     map.put("colorMap", ExcelUtils.getString(row, index++));
+                    map.put("urlKey",ExcelUtils.getString(row, index++));
 
                     mongoTemplate.insert(map,"cms_bt_temp_product_c001");
 
