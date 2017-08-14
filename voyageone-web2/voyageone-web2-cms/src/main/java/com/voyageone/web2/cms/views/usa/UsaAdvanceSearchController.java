@@ -172,6 +172,9 @@ public class UsaAdvanceSearchController extends CmsController {
         // 查询平台显示商品URL
         resultBean.put("productUrl", platformService.getPlatformProductUrl(String.valueOf(params.getCartId())));
 
+        // 用户自定义列
+        resultBean.putAll(usaCustomColumnService.getUserCustomColumns(userInfo.getSelChannelId(), userInfo.getUserId(), getLang()));
+
         // 返回用户信息
         return success(resultBean);
     }

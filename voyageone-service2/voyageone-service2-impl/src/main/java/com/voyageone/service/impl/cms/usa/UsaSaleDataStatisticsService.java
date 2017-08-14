@@ -61,7 +61,7 @@ public class UsaSaleDataStatisticsService extends BaseService {
     }
 
     public void SaleDataStatistics(CmsSaleDataStatisticsMQMessageBody messageBody) {
-        $info(JacksonUtil.bean2Json(messageBody));
+        $info(String.format("销量计算: cartId=%d, beginTime=%s, endTime=%s", messageBody.getCartId(), messageBody.getStartDate(), messageBody.getEndDate()));
         List<String> codes = new ArrayList<>();
         String username = messageBody.getSender();
         if (StringUtils.isBlank(username)) {

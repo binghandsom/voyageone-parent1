@@ -6,7 +6,7 @@
                 <div class="container-fluid" id="common">
 
                     <div class="row">
-                            <div class="col-sm-8">
+                        <div class="col-sm-8">
 
                             <div class="row form-group">
                                 <label class="col-md-2 control-label"><strong>{{ctrl.cartInfo.name}}</strong></label>
@@ -31,7 +31,7 @@
                                 </div>
                             </div>
 
-                            <div class="row form-group">
+                            <div class="row form-group" ng-if="ctrl.cartInfo.value != 10">
 
                                 <button class="col-md-2 btn btn-default" ng-click="ctrl.popUsCategory()">
                                     <span>{{ctrl.cartInfo.name}}&nbsp;Category</span>
@@ -51,10 +51,10 @@
 
 
                     <!------------------------------------------------以下为产品Schema------------------------------------------------------->
-                    <div class="product-title">
+                    <div class="product-title" ng-if="ctrl.cartInfo.value != 10">
                         <h3><i class="fa fa-arrow-circle-right"></i>&nbsp;&nbsp;Platform Product Attribute</h3>
                     </div>
-                    <div class="container-fluid" id="product">
+                    <div class="container-fluid" id="product" ng-if="ctrl.cartInfo.value != 10">
                         <div class="row">
                             <div class="col-sm-10">
                                 <schema data="ctrl.platform.platformFields"></schema>

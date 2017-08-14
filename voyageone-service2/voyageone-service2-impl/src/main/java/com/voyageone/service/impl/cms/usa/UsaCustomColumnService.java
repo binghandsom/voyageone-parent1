@@ -2,6 +2,8 @@ package com.voyageone.service.impl.cms.usa;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CommonPropService;
@@ -68,7 +70,7 @@ public class UsaCustomColumnService extends BaseService {
             List<Map<String, String>> selPlatformAttributes = new ArrayList<>();
             for (Map<String, Object> attrMap : platformAttrMapList) {
                 String cartId = (String) attrMap.get("cfg_val2");
-                String[] cartAttrs = ((String)attrMap.get("cfg_val1")).split(",");
+                String[] cartAttrs = ((String) attrMap.get("cfg_val1")).split(",");
                 if (cartAttrs != null && cartAttrs.length > 0) {
                     for (String attr : cartAttrs) {
                         Map<String, String> platformAttrMap = new HashMap<>();
@@ -87,8 +89,11 @@ public class UsaCustomColumnService extends BaseService {
             List<Map<String, Object>> selPlatformSales = new ArrayList<>();
             for (Map<String, Object> map : platformSales) {
                 Map<String, Object> cartMap = new HashMap<>();
-                cartMap.put("cartId", map.get("cfg_val2"));
+                String cartId = (String) map.get("cfg_val2");
+                cartMap.put("cartId", cartId);
                 cartMap.putAll(JacksonUtil.jsonToMap((String) map.get("cfg_val1")));
+                // 当前平台Platform Sale是否在计算中
+                cartMap.put("calculateFlag", CacheHelper.getValueOperation().get("P" + cartId + "_customSale"));
                 selPlatformSales.add(cartMap);
             }
             rsMap.put("selPlatformSales", selPlatformSales);
@@ -275,82 +280,100 @@ public class UsaCustomColumnService extends BaseService {
                 commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_platform_attr", sb.toString(), cartId);
             }
         }
-        // 保存用户自定义列 --->>> usa_cms_cust_col_platform_sale
 
-        // 当前用户的自定义列 -> 平台动态日期销售数量, KV: cfg_val2-cfg_val1
-        List<Map<String, Object>> platformSales = commonPropService.getMultiCustColumnsByUserId(userId, "usa_cms_cust_col_platform_sale");
-        if (platformSales == null) {
-            platformSales = Collections.emptyList();
-        }
-        // 方便起见, 直接删除用户‘usa_cms_cust_col_platform_sale’配置, 再重新初始化
-        commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_platform_sale");
+        // 当前用户勾选了Platform Sale
         if (CollectionUtils.isNotEmpty(selPlatformSales)) {
-            // 动态销售日期区间, 所有用户共享, 一人改变全部的用户自定义列对应时间区间都修改
-            // group by cartId(cfg_val2), 看所有用户总共选择了多少cartId
-            List<String> platformSaleCarts = commonPropService.getUsaPlatformSaleCarts("usa_cms_cust_col_platform_sale");
-            if (platformSaleCarts == null) {
-                platformSaleCarts = Collections.emptyList();
+            List<CmsSaleDataStatisticsMQMessageBody> mqMessageBodies = new ArrayList<>();
+            // 所有用户勾选的Platform Sale
+            List<Map<String, Object>> platformSaleCarts = commonPropService.getUsaPlatformSaleCarts("usa_cms_cust_col_platform_sale");
+            // 所有用户勾选的Platform Sale -> List<Map> 转化为 Map
+            Map<String, String> platformSaleInfoMap = new HashMap<>();
+            // 所有用户勾选的Platform Sale 共享同一个时间区间, 记录之前的时间区间
+            String beginTimeVal = "";
+            String endTimeVal = "";
+            if (CollectionUtils.isNotEmpty(platformSaleCarts)) {
+                for (Map<String, Object> platformSaleMap : platformSaleCarts) {
+                    platformSaleInfoMap.put((String) platformSaleMap.get("cfg_val2"), (String) platformSaleMap.get("cfg_val1"));
+                    // 记录一下之前的时间区间
+                    if (StringUtils.isBlank(beginTimeVal) || StringUtils.isBlank(endTimeVal)) {
+                        Map<String, Object> tempSaleTimeMap = JacksonUtil.jsonToMap((String) platformSaleMap.get("cfg_val1"));
+                        beginTimeVal = (String) tempSaleTimeMap.get("beginTime");
+                        endTimeVal = (String) tempSaleTimeMap.get("endTime");
+                    }
+                }
             }
+
+            // 当前用户勾选的Platform Sale
+            List<Map<String, Object>> platformSales = commonPropService.getMultiCustColumnsByUserId(userId, "usa_cms_cust_col_platform_sale");
+            if (platformSales == null) {
+                platformSales = Collections.emptyList();
+            }
+
+            // 方便起见, 直接删除当前用户 Platform Sale
+            commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_platform_sale");
+            // 本次勾选时间和之前时间区间是否发生变化了
             boolean saleTimeUpdFlag = false;
-            String beginTime = "";
-            String endTime = "";
-            for (Map<String, Object> cartMap : selPlatformSales) {
-                String cartId = (String) cartMap.get("cartId");
-                beginTime = (String) cartMap.get("beginTime");
-                endTime = (String) cartMap.get("endTime");
+            for (Map<String, Object> selPlatformSaleMap : selPlatformSales) {
+                String cartId = (String) selPlatformSaleMap.get("cartId");
+                String beginTime = (String) selPlatformSaleMap.get("beginTime");
+                String endTime = (String) selPlatformSaleMap.get("endTime");
                 if (StringUtils.isBlank(cartId) || StringUtils.isBlank(beginTime) || StringUtils.isBlank(endTime)) {
                     throw new BusinessException("Platform sale parameter invalid");
                 }
+                selPlatformSaleMap.remove("cartId");
+                boolean mqFlag = true;
+                if (platformSaleInfoMap.containsKey(cartId)) {
+                    Map<String, Object> tempCartTimeMap = JacksonUtil.jsonToMap(platformSaleInfoMap.get(cartId));
+                    if (tempCartTimeMap != null && beginTime.equals((String) tempCartTimeMap.get("beginTime")) && endTime.equals((String) tempCartTimeMap.get("endTime"))) {
+                        mqFlag = false;
+                    }
+                    platformSaleInfoMap.remove(cartId);
+                }
+                if (mqFlag) {
+                    CmsSaleDataStatisticsMQMessageBody messageBody = new CmsSaleDataStatisticsMQMessageBody();
+                    messageBody.setCartId(Integer.valueOf(cartId));
+                    messageBody.setStartDate(beginTime);
+                    messageBody.setEndDate(endTime);
+                    messageBody.setSender(username);
+                    messageBody.setChannelId(channelId);
+                    mqMessageBodies.add(messageBody);
+                }
 
-                if (!saleTimeUpdFlag) {
-                    // 当前用户的配置记录已删除, 把其他所有用户相关配置的时间区间修改一致
-                    cartMap.remove("cartId");
-                    commonPropService.updateUsaPlatformSaleTime("usa_cms_cust_col_platform_sale", JacksonUtil.bean2Json(cartMap));
+                commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_platform_sale", JacksonUtil.bean2Json(selPlatformSaleMap), cartId);
+
+                if ((!beginTimeVal.equals(beginTime) || !endTimeVal.equals(endTime)) && !saleTimeUpdFlag) {
+                    beginTimeVal = beginTime;
+                    endTimeVal = endTime;
+                    // 把其他用户勾选的Platform Sale 的时间区间更改为一致
+                    commonPropService.updateUsaPlatformSaleTime("usa_cms_cust_col_platform_sale", JacksonUtil.bean2Json(selPlatformSaleMap), username);
                     saleTimeUpdFlag = true;
                 }
+            }
 
-                // 逐一添加当前用户平台设置
-                cartMap.put("cartId", cartId);
-                commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_platform_sale", JacksonUtil.bean2Json(cartMap), cartId);
-
-                boolean mqFlag = true;
-                for (Map<String, Object> saleMap : platformSales) {
-                    String tempCartId = (String) saleMap.get("cfg_val2");
-                    if (cartId.equals(tempCartId)) {
-                        Map<String, Object> cartTimeMap = JacksonUtil.jsonToMap((String) saleMap.get("cfg_val1"));
-                        if (beginTime.equals((String) cartTimeMap.get("beginTime")) && endTime.equals((String) cartTimeMap.get("endTime"))) {
-                            mqFlag = false;
-                            break;
-                        }
-                    }
-                }
-
-                if (mqFlag) {
-                    CmsSaleDataStatisticsMQMessageBody mqMessageBody = new CmsSaleDataStatisticsMQMessageBody();
-                    mqMessageBody.setChannelId(channelId);
-                    mqMessageBody.setCartId(Integer.valueOf(cartId));
-                    mqMessageBody.setStartDate(beginTime);
-                    mqMessageBody.setEndDate(endTime);
-                    mqMessageBody.setSender(username);
-                    // cmsMqSenderService.sendMessage(mqMessageBody);
-                    usaSaleDataStatisticsService.SaleDataStatistics(mqMessageBody);
-
-                    platformSaleCarts.remove(cartId);
+            if (saleTimeUpdFlag && MapUtils.isNotEmpty(platformSaleInfoMap)) {
+                for (Map.Entry<String, String> platformSaleInfoEntry : platformSaleInfoMap.entrySet()) {
+                    CmsSaleDataStatisticsMQMessageBody messageBody = new CmsSaleDataStatisticsMQMessageBody();
+                    messageBody.setCartId(Integer.valueOf(platformSaleInfoEntry.getKey()));
+                    messageBody.setStartDate(beginTimeVal);
+                    messageBody.setEndDate(endTimeVal);
+                    messageBody.setSender(username);
+                    messageBody.setChannelId(channelId);
+                    mqMessageBodies.add(messageBody);
                 }
             }
 
-            if (saleTimeUpdFlag && platformSaleCarts.size() > 0) {
-                for (String cartId : platformSaleCarts) {
-                    CmsSaleDataStatisticsMQMessageBody mqMessageBody = new CmsSaleDataStatisticsMQMessageBody();
-                    mqMessageBody.setChannelId(channelId);
-                    mqMessageBody.setCartId(Integer.valueOf(cartId));
-                    mqMessageBody.setStartDate(beginTime);
-                    mqMessageBody.setEndDate(endTime);
-                    mqMessageBody.setSender(username);
-                    // cmsMqSenderService.sendMessage(mqMessageBody);
-                    usaSaleDataStatisticsService.SaleDataStatistics(mqMessageBody);
-                }
+            if (!mqMessageBodies.isEmpty()) {
+                // mqMessageBodies.forEach(messageBody -> usaSaleDataStatisticsService.SaleDataStatistics(messageBody));
+
+                mqMessageBodies.forEach(messageBody -> {
+                    CacheHelper.getValueOperation().set("P" + messageBody.getCartId() + "_customSale", DateTimeUtil.getNowTimeStampLong());
+                    cmsMqSenderService.sendMessage(messageBody);
+                });
             }
+
+        } else {
+            // 当前用户此次未勾选Platform Sale, 尝试删除之前勾选的usa_cms_cust_col_platform_sale的记录
+            commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_platform_sale");
         }
     }
 }
