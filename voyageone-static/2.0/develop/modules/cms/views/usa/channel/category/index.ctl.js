@@ -275,8 +275,8 @@ define([
 
                     // 最新的自定义列信息
                     self.customColumnNames = {};
-                    self.customColumns.selCommonProps = self.getSelectedProps(self.customColumns.commonProps,res.data.selCommonProps,'propId');
-                    self.customColumns.selPlatformAttributes = self.getSelectedProps(self.customColumns.platformAttributes, res.data.selPlatformAttributes,'value');
+                    self.customColumns.selCommonProps = self.searchUtilService.getSelectedProps(self.customColumns.commonProps,res.data.selCommonProps,'propId',self);
+                    self.customColumns.selPlatformAttributes = self.searchUtilService.getSelectedProps(self.customColumns.platformAttributes, res.data.selPlatformAttributes,'value',self);
                     self.customColumns.selPlatformSales = res.data.selPlatformSales;
 
                 }
