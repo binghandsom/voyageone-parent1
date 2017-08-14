@@ -72,61 +72,64 @@ define([
                 _sort,
                 catInfo = self.catInfo;
 
-            //初始化右侧搜索初始化
+            /**
+             * 初始化右侧搜索初始化和获取自定义列的数据
+             * search方法要在回调中调用
+             * */
             this.advanceSearch.init().then(res => {
-                if (res.data) {
-                    // 美国平台、中国平台
-                    let channelPlatforms = res.data.platforms;
 
-                    self.masterData.usPlatforms = _.filter(channelPlatforms, cartObj => {
-                        let cartId = parseInt(cartObj.value);
-                        return cartId > 0 && cartId < 20;
-                    });
-                    // 品牌列表
-                    self.masterData.brandList = res.data.brandList;
-                    self.masterData.freeTags = {};
-                    _.each(res.data.freeTags, freeTag => {
-                        self.masterData.freeTags[freeTag.tagPath] = freeTag;
-                    });
+                // 美国平台、中国平台
+                let channelPlatforms = res.data.platforms;
 
-                    // 用户自定义列
-                    self.customColumnNames = {};
-                    self.customColumns.commonProps = res.data.commonProps;
-                    self.customColumns.platformAttributes = res.data.platformAttributes;
-                    self.customColumns.platformSales = res.data.platformSales;
-                }
-            });
+                self.masterData.usPlatforms = _.filter(channelPlatforms, cartObj => {
+                    let cartId = parseInt(cartObj.value);
+                    return cartId > 0 && cartId < 20;
+                });
+                // 品牌列表
+                self.masterData.brandList = res.data.brandList;
+                self.masterData.freeTags = {};
+                _.each(res.data.freeTags, freeTag => {
+                    self.masterData.freeTags[freeTag.tagPath] = freeTag;
+                });
 
-            //获取保存的排序结果
-            self.productTopService.init({cartId: carts.SNKRHDp.id, catId: catInfo.catId}).then(function (res) {
-                let _sortName = res.data.sortColumnName,
-                    _sortType = res.data.sortType;
+                // 用户自定义列
+                self.customColumnNames = {};
+                self.customColumns.commonProps = res.data.commonProps;
+                self.customColumns.platformAttributes = res.data.platformAttributes;
+                self.customColumns.platformSales = res.data.platformSales;
 
-                _sort = _.chain(self.sortEntity).map((value)=>{
-                    return value;
-                }).find(value => {
+                //获取保存的排序结果
+                self.productTopService.init({cartId: carts.SNKRHDp.id, catId: catInfo.catId}).then(function (res) {
+                    let _sortName = res.data.sortColumnName,
+                        _sortType = res.data.sortType;
 
-                    let _str = value['sortValue'].split(',');
+                    _sort = _.chain(self.sortEntity).map((value)=>{
+                        return value;
+                    }).find(value => {
 
-                    if(_str.length === 2 && /^P(\d)+_(\w)+/.test(_sortName)){
-                        if(_sortType === Number(value['sortType']))
-                            return true;
+                        let _str = value['sortValue'].split(',');
 
-                    }else{
-                        if (value['sortValue'] === _sortName && Number(value['sortType']) === _sortType) {
-                            return true;
+                        if(_str.length === 2 && /^P(\d)+_(\w)+/.test(_sortName)){
+                            if(_sortType === Number(value['sortType']))
+                                return true;
+
+                        }else{
+                            if (value['sortValue'] === _sortName && Number(value['sortType']) === _sortType) {
+                                return true;
+                            }
                         }
+
+                    }).value();
+
+                    if (_sort) {
+                        self.sort = _sort;
+
+                        self.combineSort();
+                    } else {
+                        self.search();
                     }
 
-                }).value();
-
-                if (_sort) {
-                    self.sort = _sort;
-
-                    self.combineSort();
-                } else {
-                    self.search();
-                }
+                });
 
             });
 
