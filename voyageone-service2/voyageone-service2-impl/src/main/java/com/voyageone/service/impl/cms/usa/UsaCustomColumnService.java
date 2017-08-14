@@ -2,6 +2,8 @@ package com.voyageone.service.impl.cms.usa;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.CommonPropService;
@@ -359,7 +361,11 @@ public class UsaCustomColumnService extends BaseService {
 
             if (!mqMessageBodies.isEmpty()) {
                 // mqMessageBodies.forEach(messageBody -> usaSaleDataStatisticsService.SaleDataStatistics(messageBody));
-                mqMessageBodies.forEach(messageBody -> cmsMqSenderService.sendMessage(messageBody));
+
+                mqMessageBodies.forEach(messageBody -> {
+                    CacheHelper.getValueOperation().set("P" + messageBody.getCartId() + "_customSale", DateTimeUtil.getNowTimeStampLong());
+                    cmsMqSenderService.sendMessage(messageBody);
+                });
             }
 
         } else {
