@@ -316,10 +316,11 @@ define([
         }
 
         popBatchPrice(cartId,usPlatformName) {
-            let self = this;
+            let self = this,
+                selCodeList = self.getSelectedProduct('code');
 
-            if(self.getSelectedProduct('code').length === 0 && self._selall == "0"){
-                self.alert("please choose at least one!!!");
+            if (!self._selall && _.size(selCodeList) === 0) {
+                self.alert("Please select at least one record.");
                 return;
             }
             self.popups.openBatchPrice({
@@ -412,10 +413,11 @@ define([
 
         //进行上下架操作
         batchList(cartId,activeStatus,usPlatformName){
-            let self = this;
+            let self = this,
+                selCodeList = self.getSelectedProduct('code');
 
-            if(self.getSelectedProduct('code').length == 0 && self._selall == "0"){
-                self.alert("please choose at least one!!!");
+            if (!self._selall && _.size(selCodeList) === 0) {
+                self.alert("Please select at least one record.");
                 return;
             }
 
@@ -443,8 +445,17 @@ define([
          * @return move:0|1
          */
         batchUpdateCategory(option){
-            let self = this;
+
+            let self = this,
+                selCodeList = self.getSelectedProduct('code');
+
+            if (!self._selall && _.size(selCodeList) === 0) {
+                self.alert("Please select at least one record.");
+                return;
+            }
+
             let flag = false;
+
             if(self.getSelectedProduct('code').length === 0 && self._selall == "0"){
                 self.alert("please choose at least one!!!");
                 return;
