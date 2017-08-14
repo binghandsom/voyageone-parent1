@@ -10,14 +10,18 @@ define([
 
         constructor(confirm, advanceSearch, $modalInstance, context,alert) {
             let self = this;
-            this.alert = alert;
-            this.advanceSearch = advanceSearch;
-            this.confirm = confirm;
-            this.$modalInstance = $modalInstance;
-            this.context = context;
-            this.usPlatformName = "";
+            self.alert = alert;
+            self.advanceSearch = advanceSearch;
+            self.confirm = confirm;
+            self.$modalInstance = $modalInstance;
+            self.context = context;
+            self.usPlatformName = "";
+            self.usPlatformName = self.context.usPlatformName;
+        }
+
+        init(){
             //设置修改参数
-            self.paraMap = {
+            this.paraMap = {
                 //被修改的价格类型clientMsrpPrice,clientRetailPrice
                 changedPriceType: "clientRetailPrice",
                 //clientMsrpPrice,clientRetailPrice,fixedValue,如果选择了fixedValue,操作类型默认为=,不能修改
@@ -33,7 +37,6 @@ define([
                 codeList: [],
                 cartId: ""
             };
-            self.usPlatformName = self.context.usPlatformName;
         }
 
         //修改价格
