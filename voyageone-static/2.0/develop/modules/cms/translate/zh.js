@@ -4,7 +4,7 @@ define(function () {
         "TXT_IMAGE_STATUS": "图片状态",
         "TXT_REMINDER_WITH_COLON": "温馨提示：",
         "TXT_EDIT_TASK": "编辑当前 Task ",
-        "TXT_LOGOUT": "注销",
+        "TXT_LOGOUT": "Sign out",
         "TXT_HOME": "首页",
         "TXT_CATEGORY_VIEWS": "-- 类目视图 --",
         "TXT_FEED_MANAGER": "Feed管理",

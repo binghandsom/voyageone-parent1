@@ -916,7 +916,7 @@ define(function () {
         "TXT_COMBINED_PRODUCT_NEW" : "新建组合套装",
         "TXT_COMBINED_NUM_ID" : "商品编码（numID）",
         "TXT_COMBINED_PRODUCT_EDIT" : "编辑组合套装",
-        "TXT_CHANGE_PASS": "修改密码",
+        "TXT_CHANGE_PASS": "change Password",
         "TXT_TRANSLATION_DATE": "翻译时间",
 
         "TXT_BATCH_UPDATE_TAG":"批量修改tag",
