@@ -10,7 +10,7 @@
 
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-6">
                     <div class="panel panel-success">
                         <div class="panel-heading">
                             <strong>USA</strong>
@@ -22,7 +22,7 @@
                                         <th colspan="2">
                                             USA Platform
                                         </th>
-                                        <th class="white-space-noWrap">Days Old Before Sharing</th>
+                                        <!--<th class="white-space-noWrap">Days Old Before Sharing</th>-->
                                     </thead>
                                     <tbody>
                                         <tr ng-repeat="platform in ctrl.platforms" ng-if="platform.cartId < 20">
@@ -34,9 +34,9 @@
                                                 </div>
                                             </td>
                                             <td class="v-middle">{{platform.name}}</td>
-                                            <td class="v-middle">
-                                                <input type="number" class="form-control text-right" ng-model="platform.day">
-                                            </td>
+                                            <!--<td class="v-middle">-->
+                                                <!--<input type="number" class="form-control text-right" ng-model="platform.day">-->
+                                            <!--</td>-->
                                         </tr>
                                     </tbody>
 
@@ -45,7 +45,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="panel panel-success">
                         <div class="panel-heading">
                             <strong>CN</strong>

@@ -573,7 +573,7 @@ public class UsaFeedInfoService extends BaseService {
 
             if (cartId < 20) {
                 sb.append(",\"usPlatforms.P" + cartId + ".isSale\":#");
-                sb.append(",\"usPlatforms.P" + cartId + ".sharingDay\":#");
+//                sb.append(",\"usPlatforms.P" + cartId + ".sharingDay\":#");
                 updateParameters.add((checked != null && checked.booleanValue()) ? 1 : 0);
                 updateParameters.add(day);
             } else {
