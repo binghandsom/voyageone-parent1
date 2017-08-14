@@ -62,7 +62,6 @@ public class UsaSaleDataStatisticsService extends BaseService {
 
     public void SaleDataStatistics(CmsSaleDataStatisticsMQMessageBody messageBody) {
         $info(String.format("销量计算: cartId=%d, beginTime=%s, endTime=%s", messageBody.getCartId(), messageBody.getStartDate(), messageBody.getEndDate()));
-        List<String> codes = new ArrayList<>();
         String username = messageBody.getSender();
         if (StringUtils.isBlank(username)) {
             username = getClass().getSimpleName();
@@ -86,7 +85,6 @@ public class UsaSaleDataStatisticsService extends BaseService {
             SaleMode item = iterator.next();
             HashMap<String, Object> queryMap = new HashMap<>();
             queryMap.put("common.fields.code", item.get_id());
-            codes.add(item.get_id());
             HashMap<String, Object> updateMap = new HashMap<>();
             updateMap.put("sales.P" + messageBody.getCartId(), item.getSale());
             BulkUpdateModel model = new BulkUpdateModel();
@@ -105,6 +103,7 @@ public class UsaSaleDataStatisticsService extends BaseService {
             $info(bulkWriteResult.toString());
             bulkList.clear();
         }
+        $info("P" + messageBody.getCartId()+"的销量统计完成");
         CacheHelper.delete("P" + messageBody.getCartId() + "_customSale");
     }
 
