@@ -6,6 +6,7 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.ListUtils;
 import com.voyageone.components.solr.bean.CommIdSearchModel;
 import com.voyageone.components.solr.bean.SolrUpdateBean;
 import com.voyageone.components.solr.query.SimpleQueryBean;
@@ -66,9 +67,9 @@ public class UsaSaleDataStatisticsService extends BaseService {
         if (StringUtils.isBlank(username)) {
             username = getClass().getSimpleName();
         }
-        $info("销量数据从solr中清空start");
+        $info("cartId："+messageBody.getCartId()+" 销量数据从solr中清空start");
         cleanBeforeSaleData(messageBody.getChannelId(), messageBody.getCartId());
-        $info("销量数据从solr中清空中end");
+        $info("cartId："+messageBody.getCartId()+" 销量数据从solr中清空中end");
         Criteria criteria = new Criteria("channel_id").is(messageBody.getChannelId()).and("date").gte(messageBody.getStartDate()).lte(messageBody.getEndDate());
 
         if(messageBody.getCartId() != null && messageBody.getCartId() != -1){
@@ -108,12 +109,16 @@ public class UsaSaleDataStatisticsService extends BaseService {
     }
 
     private void addSaleDataToSolr(String channelId, String code, Integer cartId, String sale){
-        CmsBtProductModel cmsBtProductModel = productService.getProductByCode(channelId, code);
-        if(cmsBtProductModel != null) {
-            SolrUpdateBean update = new SolrUpdateBean("id", cmsBtProductModel.get_id());
-            update.add("P" + cartId + "_customSale", sale);
-            cmsProductSearchService.saveBean(CORE_NAME_PRODUCT, update);
+        String queryString = String.format("productChannel:\"%s\" && productCode:\"%s\"", channelId, code);
+        SimpleQueryBean query = new SimpleQueryBean(queryString);
+
+        Page<CommIdSearchModel> productSearchCursor = cmsProductSearchService.queryForPage(CORE_NAME_PRODUCT, query, CommIdSearchModel.class);
+        if (!productSearchCursor.hasContent() || ListUtils.isNull(productSearchCursor.getContent())) {
+            return;
         }
+        SolrUpdateBean update = new SolrUpdateBean("id", productSearchCursor.getContent().get(0).getId());
+        update.add("P" + cartId + "_customSale", sale);
+        cmsProductSearchService.saveBean(CORE_NAME_PRODUCT, update);
 
     }
     private void cleanBeforeSaleData(String channelId, Integer cartId){
