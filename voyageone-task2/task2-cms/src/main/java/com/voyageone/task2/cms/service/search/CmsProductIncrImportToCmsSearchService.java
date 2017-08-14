@@ -97,7 +97,7 @@ class CmsProductIncrImportToCmsSearchService extends CmsBaseIncrImportSearchSubS
             }
             if(object.size() == 1){
                 if(object.toJson().matches(".*sales.P[-,0-9]{1,2}.*")){
-                    $info("自定义销量不同步solr  " + object.toJson());
+                    $debug("自定义销量不同步solr  " + object.toJson());
                     return true;
                 }
             }
