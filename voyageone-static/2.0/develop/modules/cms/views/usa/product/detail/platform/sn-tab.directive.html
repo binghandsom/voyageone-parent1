@@ -44,7 +44,7 @@
                                         <div class="col-md-6">
                                             <input type="text" class="form-control" name="model" ng-model="ctrl.productComm.fields.model" required readonly>
                                         </div>
-                                        <div class="col-md-1">
+                                        <div class="col-md-2">
                                             <button type="button" class="btn btn-default" ng-click="ctrl.showModel=!ctrl.showModel">
                                                 <i ng-class="{'fa-angle-double-down':!ctrl.showModel,'fa-angle-double-up':ctrl.showModel}" class="fa fa-angle-double-down" style="font-size: 16px;"></i>
                                             </button>
@@ -212,7 +212,7 @@
 
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" style="width: 400px;">
                             <div class="col no-padder bg-light vo_prodDetailPanel">
 
                                 <uib-tabset class="tab-container vo_nav-tabs">
@@ -238,7 +238,7 @@
                                                                 <a href="javascript:void(0)"
                                                                    class="thumbnail clear-margin-bottom img-auto-fix" ng-click="ctrl.imageView.currImage = image"
                                                                    ng-class="active" style="height: 88px;padding: 0px">
-                                                                    <img class="thumb-group" style="max-height: 80px;max-width: 45px"
+                                                                    <img class="thumb-group" style="max-height: 80px;"
                                                                          ng-src="{{ctrl.imageView.imageUrl.replace('{image_name}', image.image1)}}"
                                                                          align="bottom">
                                                                 </a>
@@ -294,7 +294,8 @@
                                                 <div class="imageContainer">
                                                     <div class="imageWrapper">
                                                         <img  class="imageWrapper"  style="cursor: pointer;max-width: 200px; max-height: 170px;"
-                                                              ng-src="{{ctrl.currentBoxImage}}" title="【click me】" ng-click="ctrl.goDetail(ctrl.currentBoxImage)">
+                                                              ng-src="{{ctrl.imageView.imageUrl.replace('{image_name}', ctrl.currentBoxImage.image2)}}"
+                                                              title="【click me】" ng-click="ctrl.goDetail(ctrl.currentBoxImage)">
                                                     </div>
                                                 </div>
                                             </div>
@@ -307,7 +308,7 @@
                                                                 <a href="javascript:void(0)" class="thumbnail clear-margin-bottom img-auto-fix"
                                                                    ng-click="ctrl.currentBoxImage = image"
                                                                    ng-class="active" style="height: 80px">
-                                                                    <img style="max-height: 80px;max-width: 45px" class="thumb-group pos-abt"
+                                                                    <img style="max-height: 80px;max-width: 70px" class="thumb-group pos-abt"
                                                                          ng-src="{{ctrl.imageView.imageUrl.replace('{image_name}', image.image2)}}">
                                                                 </a>
                                                             </div>

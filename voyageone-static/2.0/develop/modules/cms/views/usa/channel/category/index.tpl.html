@@ -333,7 +333,7 @@
                                 <th class="text-center td-width-100 white-space-noWrap th-border-white">IMG</th>
                                 <th class="text-left td-width-100 white-space-noWrap th-border-white">Code</th>
                                 <th class="text-center w10m">Action</th>
-                                <th class="text-center td-width-150 white-space-noWrap th-border-white" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selCommonProps">
+                                <th class="text-center td-width-150 white-space-noWrap th-border-white" style="min-width: 100px" ng-repeat="prop in ctrl.customColumns.selCommonProps track by $index">
                                     {{prop.propName}}
                                     <button class="opacityBtn" ng-click="ctrl.columnOrder(prop.sortName)" ng-if="prop.sortFlag == 1">
                                         <i class="fa fa-{{ctrl.getArrowName(prop.sortName)}}"></i>
@@ -426,7 +426,7 @@
                                         <i class="glyphicon glyphicon-arrow-up"></i>
                                     </button>&emsp;
                                 </td>
-                                <td class="text-center" ng-repeat="prop in ctrl.customColumns.selCommonProps">
+                                <td class="text-center" ng-repeat="prop in ctrl.customColumns.selCommonProps track by $index">
                                     <span ng-if="prop.propName == 'Long Description'">
                                         <popover-text content="ctrl.getProductValue(productInfo,prop)" direct="left" size="50"></popover-text>
                                     </span>
