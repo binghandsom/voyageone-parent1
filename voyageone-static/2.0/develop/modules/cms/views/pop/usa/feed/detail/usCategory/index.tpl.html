@@ -35,7 +35,7 @@
                     </div>
                     <div class="category_drag_list_dp category_popup">
                         <ul>
-                            <li ng-repeat="category in categoryItem.children">
+                            <li ng-repeat="category in categoryItem.children | filter:{catName:search.catName }">
                                 <a href="javascript:void(0)" ng-click="ctrl.openCategory(category,categoryItem)" ng-class="{indexSelected:categoryItem.selectedCat == category}">
                                     <span ng-if="ctrl.context.muiti">
                                         <input type="checkbox" ng-click="ctrl.selectCat(category)"

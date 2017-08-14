@@ -293,8 +293,25 @@ define([
             }).then(res => {
                 if (res.data) {
                     self.topList = res.data;
+
+                    //保留最近一次toplist的list
+                    self.bakTopList = angular.copy(self.topList);
                 }
             });
+        }
+
+        doInventory(){
+            let self = this;
+
+            if(self.inventoryFilter === 1){
+                self.topList = _.filter(self.topList,item=>{
+                    return item.quantity > 0;
+                });
+            }else{
+                self.topList = self.bakTopList;
+            }
+
+
         }
 
         addTopProductClick(productInfo) {

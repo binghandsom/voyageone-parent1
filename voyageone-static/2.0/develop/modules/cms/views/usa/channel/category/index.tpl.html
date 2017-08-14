@@ -25,6 +25,12 @@
 
                     <div class="col-md-3">
                         <button class="btn btn-success btn-pop" ng-click="ctrl.saveTopProduct()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;Sync To SN</button>
+
+                        <button type="button" class="btn btn-primary btn-pop" ng-model="ctrl.inventoryFilter"
+                                ng-click="ctrl.doInventory()"
+                                uib-btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
+                            inventory
+                        </button>
                     </div>
 
                 </div>
