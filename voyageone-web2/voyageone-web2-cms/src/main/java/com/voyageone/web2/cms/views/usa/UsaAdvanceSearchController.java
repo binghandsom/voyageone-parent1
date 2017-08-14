@@ -134,14 +134,14 @@ public class UsaAdvanceSearchController extends CmsController {
         long productListTotal = cmsProductCodeListBean.getTotalCount();
 
         List<CmsBtProductBean> prodInfoList = null;
-        if(StringUtils.isNumeric(params.getSortOneName())){
-            prodInfoList = usaAdvanceSearchService.saleDataSort(params,getUser());
-        }else{
+//        if(StringUtils.isNumeric(params.getSortOneName())){
+//            prodInfoList = usaAdvanceSearchService.saleDataSort(params,getUser());
+//        }else{
             // 从Solr中获取本页实际Code List后再从MongoDB中查询Product实际信息
             List<String> currCodeList = cmsProductCodeListBean.getProductCodeList();
             prodInfoList = searchIndexService.getProductInfoList(currCodeList, params, userInfo);
             prodInfoList.sort((o1, o2) -> Integer.compare(currCodeList.indexOf(o1.getCommon().getFields().getCode()), currCodeList.indexOf(o2.getCommon().getFields().getCode())));
-        }
+//        }
 
         Map<String, TypeChannelBean> productTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_57, userInfo.getSelChannelId(), getLang());
         Map<String, TypeChannelBean> sizeTypes = TypeChannels.getTypeMapWithLang(Constants.comMtTypeChannel.PROUDCT_TYPE_58, userInfo.getSelChannelId(), getLang());
@@ -171,6 +171,9 @@ public class UsaAdvanceSearchController extends CmsController {
 
         // 查询平台显示商品URL
         resultBean.put("productUrl", platformService.getPlatformProductUrl(String.valueOf(params.getCartId())));
+
+        // 用户自定义列
+        resultBean.putAll(usaCustomColumnService.getUserCustomColumns(userInfo.getSelChannelId(), userInfo.getUserId(), getLang()));
 
         // 返回用户信息
         return success(resultBean);

@@ -89,8 +89,11 @@ public class UsaCustomColumnService extends BaseService {
             List<Map<String, Object>> selPlatformSales = new ArrayList<>();
             for (Map<String, Object> map : platformSales) {
                 Map<String, Object> cartMap = new HashMap<>();
-                cartMap.put("cartId", map.get("cfg_val2"));
+                String cartId = (String) map.get("cfg_val2");
+                cartMap.put("cartId", cartId);
                 cartMap.putAll(JacksonUtil.jsonToMap((String) map.get("cfg_val1")));
+                // 当前平台Platform Sale是否在计算中
+                cartMap.put("calculateFlag", CacheHelper.getValueOperation().get("P" + cartId + "_customSale"));
                 selPlatformSales.add(cartMap);
             }
             rsMap.put("selPlatformSales", selPlatformSales);

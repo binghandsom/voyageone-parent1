@@ -13,7 +13,7 @@ define([
 
     class SnTabController{
 
-        constructor($scope,detailDataService,notify,$rootScope,popups,confirm,alert){
+        constructor($scope,detailDataService,notify,$rootScope,popups,confirm,alert,$location){
             this.$scope = $scope;
             this.detailDataService = detailDataService;
             this.notify = notify;
@@ -21,6 +21,7 @@ define([
             this.popups = popups;
             this.confirm = confirm;
             this.alert = alert;
+            this.$location = $location;
 
             // 图片展示
             this.imageView = {
@@ -356,6 +357,12 @@ define([
                 self.productComm.fields.model = res.model;
                 self.mastData.images = res.data;
             });
+        }
+
+        // 跳转到AdvSearch页并根据model检索
+        searchByModel() {
+            let self = this;
+            self.$location.path("/product/usa/search/" + angular.toJson({model:self.productComm.fields.model}));
         }
 
         /** Edit Group */

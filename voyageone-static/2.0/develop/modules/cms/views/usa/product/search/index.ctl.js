@@ -93,6 +93,11 @@ define([
                     } else {
                         self.searchInfo.platformStatus[platformStatus] = true;
                     }
+                } else {
+                    let model = routePrams.model;
+                    if (model) {
+                        self.searchInfo.codeList = model;
+                    }
                 }
             }
             self.sort = {
@@ -162,6 +167,12 @@ define([
                     });
 
                     self.productSelList = self.srInstance.selectRowsInfo;
+
+                    // 最新的自定义列信息
+                    self.customColumns.selCommonProps = self.getSelectedProps(res.data.commonProps,res.data.selCommonProps,'propId');
+                    self.customColumns.selPlatformAttributes = self.getSelectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
+                    self.customColumns.selPlatformSales = res.data.selPlatformSales;
+
                 }
             });
         }
