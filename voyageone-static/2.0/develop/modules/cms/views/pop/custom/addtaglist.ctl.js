@@ -7,7 +7,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
 
-    cms.controller('popAddTagListCtl', function ($scope, channelTagService, context, alert) {
+    cms.controller('popAddTagListCtl', function ($scope, channelTagService, context, alert,$window) {
 
         //定义常量
         $scope.vm = {
@@ -41,6 +41,9 @@ define([
                     alert('TXT_MSG_TAG');
                 }
             }
+
+            //默认聚焦
+            $window.document.getElementById('piao').focus();
         };
 
         /**
