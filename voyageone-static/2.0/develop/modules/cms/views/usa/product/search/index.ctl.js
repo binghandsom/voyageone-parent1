@@ -74,6 +74,7 @@ define([
 
             if (self.$routeParams.code) {
                 let routePrams = eval('(' + self.$routeParams.code + ')');
+                console.log("routePrams: " + routePrams);
                 let cartId = routePrams.cartId;
                 let platformStatus = routePrams.platformStatus;
                 if (cartId && platformStatus) {
@@ -92,6 +93,11 @@ define([
                         });
                     } else {
                         self.searchInfo.platformStatus[platformStatus] = true;
+                    }
+                } else {
+                    let model = routePrams.model;
+                    if (model) {
+                        self.searchInfo.codeList = model;
                     }
                 }
             }
