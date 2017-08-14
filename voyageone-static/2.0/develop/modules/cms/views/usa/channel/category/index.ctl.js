@@ -14,7 +14,7 @@ define([
 
     cms.controller('usCategoryController', class UsCategoryController {
 
-        constructor($routeParams, advanceSearch, productTopService, alert, notify, confirm, $filter, popups, selectRowsFactory, $rootScope,searchUtilService) {
+        constructor($routeParams, advanceSearch, productTopService, alert, notify, confirm, $filter, popups, selectRowsFactory, $rootScope,searchUtilService,$searchAdvanceService2) {
             let self = this;
 
             self.sortEntity = sortEntity;
