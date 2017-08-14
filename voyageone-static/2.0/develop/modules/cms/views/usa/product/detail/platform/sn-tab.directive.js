@@ -362,7 +362,8 @@ define([
         // 跳转到AdvSearch页并根据model检索
         searchByModel() {
             let self = this;
-            self.$location.path("/product/usa/search/" + angular.toJson({model:self.productComm.fields.model}));
+
+            window.open(`#/product/usa/search/${angular.toJson({model:self.productComm.fields.model})}`);
         }
 
         /** Edit Group */
