@@ -74,7 +74,6 @@ define([
 
             if (self.$routeParams.code) {
                 let routePrams = eval('(' + self.$routeParams.code + ')');
-                console.log("routePrams: " + routePrams);
                 let cartId = routePrams.cartId;
                 let platformStatus = routePrams.platformStatus;
                 if (cartId && platformStatus) {
