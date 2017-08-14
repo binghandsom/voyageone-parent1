@@ -96,7 +96,7 @@ public class SneakerheadMastDateImportTest {
                 try {
                     rowNum++;
                     // 跳过第一行
-                    if (rowNum < 3) {
+                    if (rowNum == 1) {
                         continue;
                     }
 
