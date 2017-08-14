@@ -45,7 +45,7 @@ define([
                 self.platform = res.data.platform;
                 self.productComm = res.data.productComm;
 
-                if(!self.platform.pStatus){
+                if (!self.platform.pStatus) {
                     self.platform.pStatus = 'Pending';
                 }
 
@@ -64,11 +64,11 @@ define([
                         });
                         if (commonSku) {
                             let commAttr = {
-                                barcode:commonSku.barcode,
-                                clientSize:commonSku.clientSize,
-                                size:commonSku.size,
-                                weight:commonSku.weight,
-                                weightUnit:commonSku.weightUnit
+                                barcode: commonSku.barcode,
+                                clientSize: commonSku.clientSize,
+                                size: commonSku.size,
+                                weight: commonSku.weight,
+                                weightUnit: commonSku.weightUnit
                             };
                             _.extend(sku, commAttr);
                         }
@@ -87,13 +87,29 @@ define([
         popUsCategory() {
             let self = this;
 
-            self.popups.openUsCategory({
-                cartId: self.cartInfo.value == 5 ? 5 : 8,
-                from: self.platform.pCatPath
-            }).then(res => {
-                self.platform.pCatPath = res.catPath;
-                self.platform.pCatId = res.catId;
-            });
+            if (Number(self.cartInfo.value) !== 5) {
+
+                self.popups.openUsCategory({
+                    cartId: 8,
+                    from: self.platform.pCatPath
+                }).then(res => {
+                    self.platform.pCatPath = res.catPath;
+                    self.platform.pCatId = res.catId;
+                });
+
+            }else{
+
+                self.popups.openAmazonCategory({
+                    cartId:5,
+                    from:self.platform.pCatPath
+                }).then(res => {
+                    self.platform.pCatPath = res.catPath;
+                    self.platform.pCatId = res.catId;
+                });
+
+            }
+
+
         }
 
         // SKU可售选择
