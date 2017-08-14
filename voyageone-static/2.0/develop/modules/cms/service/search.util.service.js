@@ -58,6 +58,10 @@ define([
                 searchInfo.sortOneName = _priceResult.replace('.','_');
             }
 
+            if(/^[-1,0-9]{1,}$/.test(searchInfo.sortOneName)){
+                searchInfo.sortOneName = `P${searchInfo.sortOneName}_customSale`;
+            }
+
             // 分页参数处理
             _.extend(searchInfo, {productPageNum:_this.pageOption.curr, productPageSize:_this.pageOption.size});
             return searchInfo;
@@ -152,6 +156,26 @@ define([
 
                 return result;
             }
+        }
+
+        /**
+         * @description 获取销量值
+         * @param productInfo
+         * @param prop
+         */
+        getPlatformSaleValue(productInfo,prop){
+            let _result;
+
+            if(prop.calculateFlag){
+                _result = 'calculation...';
+            }else{
+                let result = productInfo.sales["P"+prop.cartId];
+
+                _result = result? result: 0;
+
+            }
+
+            return _result;
         }
 
         /**

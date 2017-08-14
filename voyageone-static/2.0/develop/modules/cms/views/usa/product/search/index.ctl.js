@@ -69,6 +69,7 @@ define([
                 selPlatformAttributes:[],
                 selPlatformSales:[]
             };
+            self.platformSalesEntity = {};
             self.columnArrow = {};
             self.cartEntity = cartEntity;
 
@@ -135,9 +136,10 @@ define([
                     self.customColumns.commonProps = res.data.commonProps;
                     self.customColumns.platformAttributes = res.data.platformAttributes;
                     self.customColumns.platformSales = res.data.platformSales;
-                    self.customColumns.selCommonProps = self.getSelectedProps(res.data.commonProps,res.data.selCommonProps,'propId');
-                    self.customColumns.selPlatformAttributes = self.getSelectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
-                    self.customColumns.selPlatformSales = res.data.selPlatformSales;
+
+                    res.data.platformSales.forEach(item => {
+                        self.platformSalesEntity[item.cartId] = item;
+                    });
 
                     self.search();
                 }
@@ -169,8 +171,9 @@ define([
                     self.productSelList = self.srInstance.selectRowsInfo;
 
                     // 最新的自定义列信息
-                    self.customColumns.selCommonProps = self.getSelectedProps(res.data.commonProps,res.data.selCommonProps,'propId');
-                    self.customColumns.selPlatformAttributes = self.getSelectedProps(res.data.platformAttributes, res.data.selPlatformAttributes,'value');
+                    self.customColumnNames = {};
+                    self.customColumns.selCommonProps = self.getSelectedProps(self.customColumns.commonProps,res.data.selCommonProps,'propId');
+                    self.customColumns.selPlatformAttributes = self.getSelectedProps(self.customColumns.platformAttributes, res.data.selPlatformAttributes,'value');
                     self.customColumns.selPlatformSales = res.data.selPlatformSales;
 
                 }
@@ -247,6 +250,11 @@ define([
             return self.searchUtilService.getProductValue(element, prop);
         }
 
+        getPlatformSaleValue(productInfo,prop){
+            let self = this;
+            return self.searchUtilService.getPlatformSaleValue(productInfo, prop);
+        }
+
         clear() {
             let self = this;
             self.searchInfo = angular.copy(self.defaultSearchInfo);
@@ -301,24 +309,8 @@ define([
                 customAttributeResult:self.customAttributeResult
             };
             self.popups.openCustomAttributes(ctx).then(() => {
-                //防止重复显示，不能删除这行代码
-                self.customColumnNames = {};
-
-                self.$rootScope.$watch('customAttributeResult',function(newValue,oldValue){
-
-                    if(newValue && !angular.equals(newValue,oldValue)){
-                        //回调返回
-                        self.alert("The calculation is complete！");
-
-                        let _cusRes = newValue;
-                        self.customColumns.selCommonProps = self.getSelectedProps(self.customColumns.commonProps,_cusRes.selCommonProps,'propId');
-                        self.customColumns.selPlatformAttributes = self.getSelectedProps(self.customColumns.platformAttributes, _cusRes.selPlatformAttributes,'value');
-                        self.customColumns.selPlatformSales = _cusRes.selPlatformSales;
-                    }else{
-                        //回调未返回
-                        self.alert('Please wait in the calculation later！');
-                    }
-                },true);
+                self.notify.success("save success");
+                self.search();
 
             })
         }

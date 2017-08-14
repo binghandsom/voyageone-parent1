@@ -140,13 +140,9 @@ define([
                 selPlatformSales:selPlatformSales
             },{
                 autoBlock: false
-            }).then(res => {
-                //self.context.customAttributeResult = res.data;
-                self.$rootScope.customAttributeResult = res.data;
-                self.notify.success("save success");
             });
 
-            self.$uibModalInstance.close(self.context.customAttributeResult);
+            self.$uibModalInstance.close();
         }
 
     });
