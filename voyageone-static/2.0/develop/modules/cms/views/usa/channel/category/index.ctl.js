@@ -63,6 +63,7 @@ define([
                 }
             };
             self.searchUtilService = searchUtilService;
+            self.$searchAdvanceService2 = $searchAdvanceService2;
             self.sort = sortEntity[1];
         }
 
