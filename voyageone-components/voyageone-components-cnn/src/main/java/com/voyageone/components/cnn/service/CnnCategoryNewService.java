@@ -37,7 +37,7 @@ public class CnnCategoryNewService extends CnnBase {
 
     /**
      * sn app批量设置商品的店铺内分类
-     * numIIdList中的每一个商品都设置为idList中的店铺内分类，直接完全覆盖
+     * numIId设置为idList中的店铺内分类，直接完全覆盖
      */
     public CategoryProductSetResponse setCategoryProduct(ShopBean shop, CategoryProductSetRequest request) throws Exception {
         return reqApi(shop, request, CnnUtil.getHeadersForSnApp());

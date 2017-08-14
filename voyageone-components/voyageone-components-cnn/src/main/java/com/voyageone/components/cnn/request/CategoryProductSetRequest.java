@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * 批量设置商品的店铺内分类
- * numIIdList中的每一个商品都设置为idList中的店铺内分类，直接完全覆盖
+ * numIId设置为idList中的店铺内分类，直接完全覆盖
  * Created by morse on 2017/7/31.
  */
 public class CategoryProductSetRequest extends AbstractCnnRequest<CategoryProductSetResponse> {
@@ -17,8 +17,16 @@ public class CategoryProductSetRequest extends AbstractCnnRequest<CategoryProduc
         return CnnConstants.CnnApiAction.CATALOG_PRODUCT_SET;
     }
 
+    private Long numIId; // 商品numIId
     private List<String> idList; // 店铺内分类ID列表，最多10个，目前必须是叶子节点
-    private List<Long> numIIdList; // 商品numIId列表，最多500个
+
+    public Long getNumIId() {
+        return numIId;
+    }
+
+    public void setNumIId(Long numIId) {
+        this.numIId = numIId;
+    }
 
     public List<String> getIdList() {
         return idList;
@@ -28,11 +36,4 @@ public class CategoryProductSetRequest extends AbstractCnnRequest<CategoryProduc
         this.idList = idList;
     }
 
-    public List<Long> getNumIIdList() {
-        return numIIdList;
-    }
-
-    public void setNumIIdList(List<Long> numIIdList) {
-        this.numIIdList = numIIdList;
-    }
 }
