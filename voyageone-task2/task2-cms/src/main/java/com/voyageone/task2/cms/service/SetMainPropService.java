@@ -1298,7 +1298,6 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                 switch (CartEnums.Cart.getValueByID(iCartId + "")) {
                     case SNKRHDp:
                     case SNKRHDm:
-                    case SNKRxM:
                         CmsBtProductModel_SellerCat seller = sellerCatService.getSellerCat(feed.getChannelId(), CartEnums.Cart.SNKRHDp.getValue(), feed.getCategory());
                         if (seller != null) {
                             platform.setpCatId(seller.getcId());
@@ -1363,6 +1362,7 @@ public class SetMainPropService extends VOAbsIssueLoggable {
                         platform.getFields().setFeedAttribute("newArrival", feed.getAttribute().get("newArrival"));
                         break;
                     case SNKRx:
+                    case SNKRxM:
                         platform.setpCatId(feed.getCategoryCatId());
                         platform.setpCatPath(feed.getCategory());
                         platform.getFields().setFeedAttribute("orderlimitcount", feed.getAttribute().get("orderlimitcount"));
