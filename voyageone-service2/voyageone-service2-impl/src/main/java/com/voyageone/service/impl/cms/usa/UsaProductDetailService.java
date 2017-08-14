@@ -289,7 +289,8 @@ public class UsaProductDetailService extends BaseService {
         // 价格类型处理,String -> Double
         for (BaseMongoMap<String, Object> sku : platformModel.getSkus()) {
             sku.setAttribute("clientMsrpPrice", sku.getDoubleAttribute("clientMsrpPrice"));
-            sku.setAttribute("clientNetPrice", sku.getDoubleAttribute("clientNetPrice"));
+            // sku.setAttribute("clientNetPrice", sku.getDoubleAttribute("clientNetPrice"));
+            sku.setAttribute("clientNetPrice", sku.getDoubleAttribute("clientRetailPrice"));
             sku.setAttribute("clientRetailPrice", sku.getDoubleAttribute("clientRetailPrice"));
         }
         updateUsPlatformMinAndMaxPrice(platformModel);
