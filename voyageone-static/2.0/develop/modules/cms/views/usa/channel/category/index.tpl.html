@@ -29,7 +29,7 @@
                         <button type="button" class="btn btn-primary btn-pop" ng-model="ctrl.inventoryFilter"
                                 ng-click="ctrl.doInventory()"
                                 uib-btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0">
-                            inventory
+                            <i class="glyphicon {{ctrl.inventoryFilter == 1 ? 'glyphicon-ok-circle' : 'glyphicon-remove-circle'}}"></i>&nbsp;inventory
                         </button>
                     </div>
 
