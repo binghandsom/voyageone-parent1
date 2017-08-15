@@ -65,6 +65,52 @@ angular.module("voyageone.angular.filter", []);
 
 angular.module("voyageone.angular", [ "voyageone.angular.controllers", "voyageone.angular.directives", "voyageone.angular.factories", "voyageone.angular.services", "voyageone.angular.filter" ]);
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function(obj) {
+    return typeof obj;
+} : function(obj) {
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+};
+
+angular.module("voyageone.angular.filter").filter("gmtDate", [ "$filter", function($filter) {
+    return function(input, format) {
+        var miliTimes;
+        if (!input) {
+            return "";
+        }
+        switch (typeof input === "undefined" ? "undefined" : _typeof(input)) {
+          case "string":
+            input = new Date(input);
+            miliTimes = input.getTime() + new Date().getTimezoneOffset() * 60 * 1e3 * -1;
+            break;
+
+          case "number":
+            miliTimes = new Date(input);
+            break;
+
+          default:
+            console.error("传入了未知类型数据！！！");
+        }
+        return $filter("date")(new Date(miliTimes), format);
+    };
+} ]);
+
+angular.module("voyageone.angular.filter").filter("stringCutter", function() {
+    return function(value, wordWise, max, tail) {
+        if (!value) return "";
+        max = parseInt(max, 10);
+        if (!max) return value;
+        if (value.length <= max) return value;
+        value = value.substr(0, max);
+        if (wordWise) {
+            var lastSpace = value.lastIndexOf(" ");
+            if (lastSpace != -1) {
+                value = value.substr(0, lastSpace);
+            }
+        }
+        return value + (tail || " …");
+    };
+});
+
 angular.module("voyageone.angular.controllers").controller("selectRowsCtrl", [ "$scope", function($scope) {
     $scope.selectAll = selectAll;
     $scope.selectOne = selectOne;
@@ -214,345 +260,6 @@ angular.module("voyageone.angular.controllers").controller("showPopoverCtrl", [ 
         $scope.codeCartQty = codeCartQty;
     }
 } ]);
-
-angular.module("voyageone.angular.factories").factory("$dialogs", [ "$uibModal", "$filter", "$templateCache", function($uibModal, $filter, $templateCache) {
-    var templateName = "voyageone.angular.factories.dialogs.tpl.html";
-    var template = '<div class="vo_modal vo-dialogs"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()"><span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span></button><h5 class="modal-title"><i class="fa fa-exclamation-triangle"></i>&nbsp;<span ng-bind-html="title"></span></h5></div><div class="modal-body"><div class="text-left text-wrap" ng-bind-html="content"></div></div><div class="modal-footer"><button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button><button class="btn btn-sm {{::isAlert?\'btn-default\':\'btn-vo\'}}" ng-click="ok()" translate="BTN_OK"></button></div></div>';
-    $templateCache.put(templateName, template);
-    function tran(translationId, values) {
-        return $filter("translate")(translationId, values);
-    }
-    return function(options) {
-        if (!_.isObject(options)) throw "arg type must be object";
-        var values;
-        if (_.isObject(options.content)) {
-            values = options.content.values;
-            options.content = options.content.id;
-        }
-        options.title = tran(options.title);
-        options.content = tran(options.content, values);
-        var modalInstance = $uibModal.open({
-            templateUrl: templateName,
-            controller: [ "$scope", function(scope) {
-                _.extend(scope, options);
-            } ],
-            size: "md"
-        });
-        options.close = function() {
-            modalInstance.dismiss("close");
-        };
-        options.ok = function() {
-            modalInstance.close("");
-        };
-        return modalInstance;
-    };
-} ]).factory("alert", [ "$dialogs", function($dialogs) {
-    return function(content, title) {
-        return $dialogs({
-            title: title || "TXT_ALERT",
-            content: content,
-            isAlert: true
-        }).result;
-    };
-} ]).factory("confirm", [ "$dialogs", function vConfirm($dialogs) {
-    return function(content, title) {
-        return $dialogs({
-            title: title || "TXT_CONFIRM",
-            content: content,
-            isAlert: false
-        }).result;
-    };
-} ]);
-
-angular.module("voyageone.angular.factories").factory("interceptorFactory", function() {
-    var UNKNOWN_CODE = "5";
-    var CODE_SYS_REDIRECT = "SYS_REDIRECT";
-    var MSG_TIMEOUT = "300001";
-    var MSG_LOCKED = "A003";
-    var MSG_MANYFAILS = "A004";
-    var MSG_MISSAUTHENTICATION = "A005";
-    var MSG_CHANGEPASS = "A006";
-    var MSG_LOGINAGAIN = "A001";
-    var CODE_SEL_CHANNEL = "SYS_0";
-    function autoRedirect(res) {
-        if (res.code != CODE_SYS_REDIRECT && res.code != CODE_SEL_CHANNEL) {
-            return false;
-        }
-        location.href = res.redirectTo || "/login.html";
-        return true;
-    }
-    function sessionTimeout(res) {
-        if (res.code != MSG_TIMEOUT) {
-            return false;
-        }
-        location.href = "/login.html";
-        return true;
-    }
-    function adminReLogin(res) {
-        if (res.code != MSG_LOGINAGAIN) {
-            return false;
-        }
-        location.href = "/";
-        return true;
-    }
-    function unknownException(response) {
-        if (response.data.code !== UNKNOWN_CODE) {
-            return;
-        }
-        window.$$lastUnknow = response;
-        console.error("Server throw unknown exceptio. Message:", response.data.message);
-    }
-    return {
-        request: function request(config) {
-            return config;
-        },
-        response: function response(res) {
-            var result = res.data;
-            if (autoRedirect(result) || sessionTimeout(result) || adminReLogin(result)) {
-                return res;
-            }
-            unknownException(res);
-            return res;
-        },
-        requestError: function requestError(config) {
-            return config;
-        },
-        responseError: function responseError(res) {}
-    };
-}).config([ "$httpProvider", function($httpProvider) {
-    $httpProvider.interceptors.push("interceptorFactory");
-} ]);
-
-angular.module("voyageone.angular.factories").factory("notify", [ "$filter", function($filter) {
-    var notifyStyle = {
-        noticeTip: {
-            html: "<div><span data-notify-text/></div>",
-            classes: {
-                base: {
-                    "min-width": "150px",
-                    "background-color": "#ee903d",
-                    padding: "5px",
-                    color: "white",
-                    border: "1px solid #ee903d"
-                },
-                superBlue: {
-                    color: "white",
-                    "background-color": "blue"
-                }
-            }
-        }
-    };
-    function notify(options) {
-        if (!options) return;
-        if (_.isString(options)) options = {
-            message: options
-        };
-        if (!_.isObject(options)) return;
-        var values;
-        if (_.isObject(options.message)) {
-            values = options.message.values;
-            options.message = options.message.id;
-        }
-        options.message = $filter("translate")(options.message, values);
-        if (options.type === "noticeTip") {
-            $.notify.addStyle("noticeTip", notifyStyle.noticeTip);
-            options.style = "noticeTip";
-            _.extend(options, options.opts);
-            return $.notify(options.jqObj, options.message, options);
-        }
-        return $.notify(options.message, options);
-    }
-    notify.success = function(message) {
-        return notify({
-            message: message,
-            className: "success"
-        });
-    };
-    notify.warning = function(message) {
-        return notify({
-            message: message,
-            className: "warning"
-        });
-    };
-    notify.danger = function(message) {
-        return notify({
-            message: message,
-            className: "danger"
-        });
-    };
-    notify.noticeTip = function(jqObj, message, options) {
-        return notify({
-            jqObj: jqObj,
-            type: "noticeTip",
-            message: message,
-            opts: options
-        });
-    };
-    return notify;
-} ]);
-
-angular.module("voyageone.angular.factories").factory("pppAutoImpl", [ "$q", "$modal", function($q, $modal) {
-    return function(declares, viewBaseUrl, jsBaseUrl) {
-        if (!declares.$$$ || !declares.$$$.impl) declares.$$$ = {
-            impl: declarePopupMethods(declares, viewBaseUrl, jsBaseUrl, "")
-        };
-        return declares.$$$.impl;
-    };
-    function declarePopupMethods(declares, viewBaseUrl, jsBaseUrl, popupBaseKey) {
-        var impl = {};
-        if (popupBaseKey) popupBaseKey += "/";
-        _.each(declares, function(declare, parentDir) {
-            if (!declare.popupKey) {
-                if (_.isObject(declare) || _.isArray(declare)) _.extend(impl, declarePopupMethods(declare, viewBaseUrl, jsBaseUrl, popupBaseKey + parentDir, $q, $modal));
-                return;
-            }
-            var options = _.clone(declare.options) || {};
-            var pathBase = "/" + popupBaseKey;
-            if (_.isString(parentDir)) pathBase += parentDir + "/";
-            pathBase += declare.popupKey;
-            options.templateUrl = viewBaseUrl + pathBase + ".tpl.html";
-            options.controllerUrl = jsBaseUrl + pathBase + ".ctl";
-            if (declare.controllerAs || declare.controller) options.controller = getControllerName(declare.popupKey);
-            if (declare.controllerAs) options.controller += " as " + (_.isString(declare.controllerAs) ? declare.controllerAs : "ctrl");
-            impl[declare.popupKey] = function(_context) {
-                if (_context) options.resolve = {
-                    context: function context() {
-                        return _context;
-                    }
-                };
-                var defer = $q.defer();
-                require([ options.controllerUrl ], function() {
-                    defer.resolve($modal.open(options).result);
-                });
-                return defer.promise;
-            };
-        });
-        return impl;
-    }
-    function getControllerName(key) {
-        return key.replace(/\.(\w)/g, function(m, m1) {
-            return m1.toUpperCase();
-        }).replace(/^(\w)/, function(m, m1) {
-            return m1.toLowerCase();
-        }) + "PopupController";
-    }
-} ]);
-
-angular.module("voyageone.angular.factories").factory("selectRowsFactory", function() {
-    return function(config) {
-        var _selectRowsInfo = config ? config : {
-            selAllFlag: false,
-            currPageRows: [],
-            selFlag: [],
-            selList: []
-        };
-        this.selAllFlag = function(value) {
-            return value !== undefined ? _selectRowsInfo.selAllFlag = value : _selectRowsInfo.selAllFlag;
-        };
-        this.clearCurrPageRows = function() {
-            _selectRowsInfo.currPageRows = [];
-        };
-        this.currPageRows = function(value) {
-            return value !== undefined ? _selectRowsInfo.currPageRows.push(value) : _selectRowsInfo.currPageRows;
-        };
-        this.selFlag = function(value) {
-            return value !== undefined ? _selectRowsInfo.selFlag.push(value) : _selectRowsInfo.selFlag;
-        };
-        this.selList = function(value) {
-            return value !== undefined ? _selectRowsInfo.selList.push(value) : _selectRowsInfo.selList;
-        };
-        this.clearSelectedList = function() {
-            _selectRowsInfo.selList = [];
-            _selectRowsInfo.selFlag = [];
-        };
-        this.selectRowsInfo = _selectRowsInfo;
-    };
-});
-
-angular.module("voyageone.angular.factories").factory("vpagination", function() {
-    return function(config) {
-        var _pages, _lastTotal = 0, _showPages = [], defaultPage = config.size;
-        this.getTotal = function() {
-            return config.total;
-        };
-        this.getSize = function() {
-            return config.size;
-        };
-        this.getCurr = function() {
-            return {
-                pageNo: curr(),
-                start: getCurrStartItems(),
-                end: getCurrEndItems(),
-                isFirst: isFirst(),
-                isLast: isLast(),
-                pages: createShowPages(),
-                isShowStart: isShowStart(),
-                isShowEnd: isShowEnd()
-            };
-        };
-        this.goPage = load;
-        this.getPageCount = getPages;
-        this.isCurr = isCurr;
-        function load(page) {
-            page = page || config.curr;
-            if (page < 1 || page > getPages() || isCurr(page)) return;
-            config.curr = page;
-            defaultPage = config.size;
-            config.fetch(config.curr, config.size);
-        }
-        function createShowPages() {
-            var minPage, maxPage, _showPages = [];
-            if (config.curr < config.showPageNo) {
-                minPage = 1;
-                if (_pages <= config.showPageNo) maxPage = _pages; else maxPage = config.showPageNo;
-            } else if (config.curr + 2 > _pages) {
-                minPage = _pages + 1 - config.showPageNo;
-                maxPage = _pages;
-            } else {
-                minPage = config.curr + 3 - config.showPageNo;
-                maxPage = config.curr + 2;
-            }
-            for (var i = minPage; i <= maxPage; i++) {
-                _showPages.push(i);
-            }
-            return _showPages;
-        }
-        function getPages() {
-            if (_lastTotal != config.total || config.size !== defaultPage) {
-                _pages = parseInt(config.total / config.size) + (config.total % config.size > 0 ? 1 : 0);
-                _lastTotal = config.total;
-            }
-            return _pages;
-        }
-        function getCurrStartItems() {
-            return (config.curr - 1) * config.size + 1;
-        }
-        function getCurrEndItems() {
-            var currEndItems = config.curr * config.size;
-            return currEndItems <= config.total ? currEndItems : config.total;
-        }
-        function isLast() {
-            return config.curr == getPages();
-        }
-        function isFirst() {
-            return config.curr == 1;
-        }
-        function isCurr(page) {
-            return config.curr == page && config.size === defaultPage;
-        }
-        function curr() {
-            return config.curr;
-        }
-        function isShowStart() {
-            _showPages = createShowPages();
-            return _showPages[0] > 1;
-        }
-        function isShowEnd() {
-            _showPages = createShowPages();
-            return _showPages[_showPages.length - 1] < _pages;
-        }
-    };
-});
 
 angular.module("voyageone.angular.directives").directive("autoComplete", function() {
     return {
@@ -2325,6 +2032,346 @@ angular.module("voyageone.angular.directives").directive("ngCharMaxlength", func
     };
 });
 
+angular.module("voyageone.angular.factories").factory("$dialogs", [ "$uibModal", "$filter", "$templateCache", function($uibModal, $filter, $templateCache) {
+    var templateName = "voyageone.angular.factories.dialogs.tpl.html";
+    var template = '<div class="vo_modal vo-dialogs"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()"><span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span></button><h5 class="modal-title"><i class="fa fa-exclamation-triangle"></i>&nbsp;<span ng-bind-html="title"></span></h5></div><div class="modal-body"><div class="text-left text-wrap" ng-bind-html="content"></div></div><div class="modal-footer"><button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button><button class="btn btn-sm {{::isAlert?\'btn-default\':\'btn-vo\'}}" ng-click="ok()" translate="BTN_OK"></button></div></div>';
+    $templateCache.put(templateName, template);
+    function tran(translationId, values) {
+        return $filter("translate")(translationId, values);
+    }
+    return function(options) {
+        if (!_.isObject(options)) throw "arg type must be object";
+        var values;
+        if (_.isObject(options.content)) {
+            values = options.content.values;
+            options.content = options.content.id;
+        }
+        options.title = tran(options.title);
+        options.content = tran(options.content, values);
+        var modalInstance = $uibModal.open({
+            templateUrl: templateName,
+            controller: [ "$scope", function(scope) {
+                _.extend(scope, options);
+            } ],
+            size: "md",
+            windowClass: "zindex"
+        });
+        options.close = function() {
+            modalInstance.dismiss("close");
+        };
+        options.ok = function() {
+            modalInstance.close("");
+        };
+        return modalInstance;
+    };
+} ]).factory("alert", [ "$dialogs", function($dialogs) {
+    return function(content, title) {
+        return $dialogs({
+            title: title || "TXT_ALERT",
+            content: content,
+            isAlert: true
+        }).result;
+    };
+} ]).factory("confirm", [ "$dialogs", function vConfirm($dialogs) {
+    return function(content, title) {
+        return $dialogs({
+            title: title || "TXT_CONFIRM",
+            content: content,
+            isAlert: false
+        }).result;
+    };
+} ]);
+
+angular.module("voyageone.angular.factories").factory("interceptorFactory", function() {
+    var UNKNOWN_CODE = "5";
+    var CODE_SYS_REDIRECT = "SYS_REDIRECT";
+    var MSG_TIMEOUT = "300001";
+    var MSG_LOCKED = "A003";
+    var MSG_MANYFAILS = "A004";
+    var MSG_MISSAUTHENTICATION = "A005";
+    var MSG_CHANGEPASS = "A006";
+    var MSG_LOGINAGAIN = "A001";
+    var CODE_SEL_CHANNEL = "SYS_0";
+    function autoRedirect(res) {
+        if (res.code != CODE_SYS_REDIRECT && res.code != CODE_SEL_CHANNEL) {
+            return false;
+        }
+        location.href = res.redirectTo || "/login.html";
+        return true;
+    }
+    function sessionTimeout(res) {
+        if (res.code != MSG_TIMEOUT) {
+            return false;
+        }
+        location.href = "/login.html";
+        return true;
+    }
+    function adminReLogin(res) {
+        if (res.code != MSG_LOGINAGAIN) {
+            return false;
+        }
+        location.href = "/";
+        return true;
+    }
+    function unknownException(response) {
+        if (response.data.code !== UNKNOWN_CODE) {
+            return;
+        }
+        window.$$lastUnknow = response;
+        console.error("Server throw unknown exceptio. Message:", response.data.message);
+    }
+    return {
+        request: function request(config) {
+            return config;
+        },
+        response: function response(res) {
+            var result = res.data;
+            if (autoRedirect(result) || sessionTimeout(result) || adminReLogin(result)) {
+                return res;
+            }
+            unknownException(res);
+            return res;
+        },
+        requestError: function requestError(config) {
+            return config;
+        },
+        responseError: function responseError(res) {}
+    };
+}).config([ "$httpProvider", function($httpProvider) {
+    $httpProvider.interceptors.push("interceptorFactory");
+} ]);
+
+angular.module("voyageone.angular.factories").factory("notify", [ "$filter", function($filter) {
+    var notifyStyle = {
+        noticeTip: {
+            html: "<div><span data-notify-text/></div>",
+            classes: {
+                base: {
+                    "min-width": "150px",
+                    "background-color": "#ee903d",
+                    padding: "5px",
+                    color: "white",
+                    border: "1px solid #ee903d"
+                },
+                superBlue: {
+                    color: "white",
+                    "background-color": "blue"
+                }
+            }
+        }
+    };
+    function notify(options) {
+        if (!options) return;
+        if (_.isString(options)) options = {
+            message: options
+        };
+        if (!_.isObject(options)) return;
+        var values;
+        if (_.isObject(options.message)) {
+            values = options.message.values;
+            options.message = options.message.id;
+        }
+        options.message = $filter("translate")(options.message, values);
+        if (options.type === "noticeTip") {
+            $.notify.addStyle("noticeTip", notifyStyle.noticeTip);
+            options.style = "noticeTip";
+            _.extend(options, options.opts);
+            return $.notify(options.jqObj, options.message, options);
+        }
+        return $.notify(options.message, options);
+    }
+    notify.success = function(message) {
+        return notify({
+            message: message,
+            className: "success"
+        });
+    };
+    notify.warning = function(message) {
+        return notify({
+            message: message,
+            className: "warning"
+        });
+    };
+    notify.danger = function(message) {
+        return notify({
+            message: message,
+            className: "danger"
+        });
+    };
+    notify.noticeTip = function(jqObj, message, options) {
+        return notify({
+            jqObj: jqObj,
+            type: "noticeTip",
+            message: message,
+            opts: options
+        });
+    };
+    return notify;
+} ]);
+
+angular.module("voyageone.angular.factories").factory("pppAutoImpl", [ "$q", "$modal", function($q, $modal) {
+    return function(declares, viewBaseUrl, jsBaseUrl) {
+        if (!declares.$$$ || !declares.$$$.impl) declares.$$$ = {
+            impl: declarePopupMethods(declares, viewBaseUrl, jsBaseUrl, "")
+        };
+        return declares.$$$.impl;
+    };
+    function declarePopupMethods(declares, viewBaseUrl, jsBaseUrl, popupBaseKey) {
+        var impl = {};
+        if (popupBaseKey) popupBaseKey += "/";
+        _.each(declares, function(declare, parentDir) {
+            if (!declare.popupKey) {
+                if (_.isObject(declare) || _.isArray(declare)) _.extend(impl, declarePopupMethods(declare, viewBaseUrl, jsBaseUrl, popupBaseKey + parentDir, $q, $modal));
+                return;
+            }
+            var options = _.clone(declare.options) || {};
+            var pathBase = "/" + popupBaseKey;
+            if (_.isString(parentDir)) pathBase += parentDir + "/";
+            pathBase += declare.popupKey;
+            options.templateUrl = viewBaseUrl + pathBase + ".tpl.html";
+            options.controllerUrl = jsBaseUrl + pathBase + ".ctl";
+            if (declare.controllerAs || declare.controller) options.controller = getControllerName(declare.popupKey);
+            if (declare.controllerAs) options.controller += " as " + (_.isString(declare.controllerAs) ? declare.controllerAs : "ctrl");
+            impl[declare.popupKey] = function(_context) {
+                if (_context) options.resolve = {
+                    context: function context() {
+                        return _context;
+                    }
+                };
+                var defer = $q.defer();
+                require([ options.controllerUrl ], function() {
+                    defer.resolve($modal.open(options).result);
+                });
+                return defer.promise;
+            };
+        });
+        return impl;
+    }
+    function getControllerName(key) {
+        return key.replace(/\.(\w)/g, function(m, m1) {
+            return m1.toUpperCase();
+        }).replace(/^(\w)/, function(m, m1) {
+            return m1.toLowerCase();
+        }) + "PopupController";
+    }
+} ]);
+
+angular.module("voyageone.angular.factories").factory("selectRowsFactory", function() {
+    return function(config) {
+        var _selectRowsInfo = config ? config : {
+            selAllFlag: false,
+            currPageRows: [],
+            selFlag: [],
+            selList: []
+        };
+        this.selAllFlag = function(value) {
+            return value !== undefined ? _selectRowsInfo.selAllFlag = value : _selectRowsInfo.selAllFlag;
+        };
+        this.clearCurrPageRows = function() {
+            _selectRowsInfo.currPageRows = [];
+        };
+        this.currPageRows = function(value) {
+            return value !== undefined ? _selectRowsInfo.currPageRows.push(value) : _selectRowsInfo.currPageRows;
+        };
+        this.selFlag = function(value) {
+            return value !== undefined ? _selectRowsInfo.selFlag.push(value) : _selectRowsInfo.selFlag;
+        };
+        this.selList = function(value) {
+            return value !== undefined ? _selectRowsInfo.selList.push(value) : _selectRowsInfo.selList;
+        };
+        this.clearSelectedList = function() {
+            _selectRowsInfo.selList = [];
+            _selectRowsInfo.selFlag = [];
+        };
+        this.selectRowsInfo = _selectRowsInfo;
+    };
+});
+
+angular.module("voyageone.angular.factories").factory("vpagination", function() {
+    return function(config) {
+        var _pages, _lastTotal = 0, _showPages = [], defaultPage = config.size;
+        this.getTotal = function() {
+            return config.total;
+        };
+        this.getSize = function() {
+            return config.size;
+        };
+        this.getCurr = function() {
+            return {
+                pageNo: curr(),
+                start: getCurrStartItems(),
+                end: getCurrEndItems(),
+                isFirst: isFirst(),
+                isLast: isLast(),
+                pages: createShowPages(),
+                isShowStart: isShowStart(),
+                isShowEnd: isShowEnd()
+            };
+        };
+        this.goPage = load;
+        this.getPageCount = getPages;
+        this.isCurr = isCurr;
+        function load(page) {
+            page = page || config.curr;
+            if (page < 1 || page > getPages() || isCurr(page)) return;
+            config.curr = page;
+            defaultPage = config.size;
+            config.fetch(config.curr, config.size);
+        }
+        function createShowPages() {
+            var minPage, maxPage, _showPages = [];
+            if (config.curr < config.showPageNo) {
+                minPage = 1;
+                if (_pages <= config.showPageNo) maxPage = _pages; else maxPage = config.showPageNo;
+            } else if (config.curr + 2 > _pages) {
+                minPage = _pages + 1 - config.showPageNo;
+                maxPage = _pages;
+            } else {
+                minPage = config.curr + 3 - config.showPageNo;
+                maxPage = config.curr + 2;
+            }
+            for (var i = minPage; i <= maxPage; i++) {
+                _showPages.push(i);
+            }
+            return _showPages;
+        }
+        function getPages() {
+            if (_lastTotal != config.total || config.size !== defaultPage) {
+                _pages = parseInt(config.total / config.size) + (config.total % config.size > 0 ? 1 : 0);
+                _lastTotal = config.total;
+            }
+            return _pages;
+        }
+        function getCurrStartItems() {
+            return (config.curr - 1) * config.size + 1;
+        }
+        function getCurrEndItems() {
+            var currEndItems = config.curr * config.size;
+            return currEndItems <= config.total ? currEndItems : config.total;
+        }
+        function isLast() {
+            return config.curr == getPages();
+        }
+        function isFirst() {
+            return config.curr == 1;
+        }
+        function isCurr(page) {
+            return config.curr == page && config.size === defaultPage;
+        }
+        function curr() {
+            return config.curr;
+        }
+        function isShowStart() {
+            _showPages = createShowPages();
+            return _showPages[0] > 1;
+        }
+        function isShowEnd() {
+            _showPages = createShowPages();
+            return _showPages[_showPages.length - 1] < _pages;
+        }
+    };
+});
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function(obj) {
     return typeof obj;
 } : function(obj) {
@@ -2665,49 +2712,3 @@ TranslateService.prototype = {
         return currentLang.substr(0, 2);
     }
 };
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function(obj) {
-    return typeof obj;
-} : function(obj) {
-    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-};
-
-angular.module("voyageone.angular.filter").filter("gmtDate", [ "$filter", function($filter) {
-    return function(input, format) {
-        var miliTimes;
-        if (!input) {
-            return "";
-        }
-        switch (typeof input === "undefined" ? "undefined" : _typeof(input)) {
-          case "string":
-            input = new Date(input);
-            miliTimes = input.getTime() + new Date().getTimezoneOffset() * 60 * 1e3 * -1;
-            break;
-
-          case "number":
-            miliTimes = new Date(input);
-            break;
-
-          default:
-            console.error("传入了未知类型数据！！！");
-        }
-        return $filter("date")(new Date(miliTimes), format);
-    };
-} ]);
-
-angular.module("voyageone.angular.filter").filter("stringCutter", function() {
-    return function(value, wordWise, max, tail) {
-        if (!value) return "";
-        max = parseInt(max, 10);
-        if (!max) return value;
-        if (value.length <= max) return value;
-        value = value.substr(0, max);
-        if (wordWise) {
-            var lastSpace = value.lastIndexOf(" ");
-            if (lastSpace != -1) {
-                value = value.substr(0, lastSpace);
-            }
-        }
-        return value + (tail || " …");
-    };
-});
