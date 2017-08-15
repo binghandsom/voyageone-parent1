@@ -92,7 +92,7 @@ public class ProductInfoBean {
         private String sizeType; // 适用人群
         private String usage; // 使用说明(中文)
         private String mainImage; // 商品主图
-        private List<String> images; // 产品图列表
+        private String images; // 产品图列表
         private String pageDetailPC; // PC端产品页详情内容（直接是html脚本）
         private String pageDetailM; // 移动端产品页详情内容（直接是html脚本）
         private String searchKey; // 搜索用关键词
@@ -209,11 +209,11 @@ public class ProductInfoBean {
             this.mainImage = mainImage;
         }
 
-        public List<String> getImages() {
+        public String getImages() {
             return images;
         }
 
-        public void setImages(List<String> images) {
+        public void setImages(String images) {
             this.images = images;
         }
 

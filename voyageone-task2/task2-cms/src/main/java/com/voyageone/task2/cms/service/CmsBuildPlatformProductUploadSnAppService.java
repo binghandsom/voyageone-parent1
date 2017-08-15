@@ -446,7 +446,7 @@ public class CmsBuildPlatformProductUploadSnAppService extends BaseCronTaskServi
         fillCommonFields(platformCart, sxData, shop, productInfoBean);
 
         // 填充sku
-        fillSkuFields(platformCart, sxData, productInfoBean, priceConfigValue);
+        fillSkuFields(sxData, productInfoBean, priceConfigValue);
 
         // 填充optionItem
         fillOptionItems(productInfoBean, sxData);
@@ -558,30 +558,28 @@ public class CmsBuildPlatformProductUploadSnAppService extends BaseCronTaskServi
         for (CmsBtProductModel productModel : sxData.getProductList()) {
             List<String> imageList = sxProductService.getProductImages(productModel, CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE, sxData.getCartId())
                     .stream()
-                    .map(CmsBtProductModel_Field_Image::getName)
+                    .map(image -> "'" + image.getName() + "'")
                     .collect(Collectors.toList());
 
             listPicNameUrl.addAll(imageList);
         }
-        commonFields.setImages(listPicNameUrl);
+        commonFields.setImages(listPicNameUrl.toString());
     }
 
     /**
      * 填充productAddRequest中skuList结构体
-     * @param platformCart 平台信息
      * @param sxData 上新主数据
      * @param productInfoBean 商品属性信息
      * @param priceConfigValue 价格配置
      * @throws Exception
      */
-    private void fillSkuFields(CmsBtProductModel_Platform_Cart platformCart, SxData sxData, ProductInfoBean productInfoBean,
-                               String priceConfigValue) throws Exception{
+    private void fillSkuFields(SxData sxData, ProductInfoBean productInfoBean, String priceConfigValue) throws Exception{
 
         for (CmsBtProductModel product : sxData.getProductList()) {
             String code = product.getCommon().getFields().getCode();
             String color = sxProductService.getSxColorAlias(sxData.getChannelId(), sxData.getCartId(), product, 50);
 
-            for (BaseMongoMap<String, Object> pSku : platformCart.getSkus()) {
+            for (BaseMongoMap<String, Object> pSku : product.getPlatform(sxData.getCartId()).getSkus()) {
                 // 获取sku
                 String pSkuCode = pSku.getStringAttribute(CmsBtProductConstants.Platform_SKU_COM.skuCode.name());
                 // 根据skuCode从skuList中取得common.sku和PXX.sku合并之后的sku
