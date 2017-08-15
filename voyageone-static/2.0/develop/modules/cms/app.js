@@ -453,9 +453,10 @@ define([
                 $scope.menuInfo.only4jumei = data.only4jumei;
             });
 
-            if (!$scope.isCn) {
-                selectPlatformType({add_name2: "MS", value: 8});
+            //美国取店铺内分类且默认展开
+            selectPlatformType({add_name2: "MS", value: 8});
 
+            if (!$scope.isCn) {
                 /**修改店铺内后实时更新左侧菜单栏*/
                 $rootScope.$on('asyncCategorys', function () {
                     selectPlatformType({add_name2: "MS", value: 8});

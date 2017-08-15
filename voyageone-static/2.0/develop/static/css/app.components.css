@@ -522,3 +522,8 @@ vpagination button.btn-default {
     cursor: pointer;
     word-break: break-all;
 }
+
+/**$uibModal z-index*/
+.zindex {
+    z-index: 2000 !important;
+}

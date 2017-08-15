@@ -29,7 +29,8 @@ angular.module("voyageone.angular.factories").factory("$dialogs", function ($uib
             controller: ["$scope", function (scope) {
                 _.extend(scope, options);
             }],
-            size: "md"
+            size: "md",
+            windowClass: 'zindex'
         });
         options.close = function () {
             modalInstance.dismiss("close");
