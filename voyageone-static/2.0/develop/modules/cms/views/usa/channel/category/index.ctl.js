@@ -268,7 +268,7 @@ define([
                     self.pageOption.total = res.data.productListTotal;
 
                     self.searchResult.productList.forEach(productInfo => {
-                        // self.setFreeTagList(productInfo);
+                         self.setFreeTagList(productInfo);
                         self.srInstance.currPageRows({
                             "id": productInfo.prodId,
                             "code": productInfo.common.fields["code"]
