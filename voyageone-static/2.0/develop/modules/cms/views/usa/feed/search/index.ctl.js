@@ -194,7 +194,7 @@ define([
                 sortName:"created",
                 sortType:"-1"
             };
-            self.status = [false, false, false];
+            self.status = [true, false, false];
             self.approvePricing = [false, false];
             self.paging.curr = 1;
            // self.paging.total = 0;
