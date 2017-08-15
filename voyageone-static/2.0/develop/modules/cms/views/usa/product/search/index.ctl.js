@@ -456,11 +456,6 @@ define([
 
             let flag = false;
 
-            if(self.getSelectedProduct('code').length === 0 && self._selall == "0"){
-                self.alert("please choose at least one!!!");
-                return;
-            }
-
             self.popups.openUsCategory(option).then(res => {
 
                 //判断是否continue
