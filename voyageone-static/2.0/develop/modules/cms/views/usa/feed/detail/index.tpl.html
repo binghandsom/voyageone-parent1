@@ -587,7 +587,6 @@
                                                     </div>
                                                 </div>
 
-
                                                 <ul class="list-group">
                                                     <li class="list-group-item text-wrap" ng-repeat="image in ctrl.feed.image track by $index">
                                                         <div class="row">
@@ -595,7 +594,7 @@
                                                                 <textarea class="form-control no-resize" ng-model="image" rows="3" ng-change="ctrl.changeImages($index,image,ctrl.feed.image)"></textarea>
                                                             </div>
                                                             <div class="col-md-2">
-                                                                <button type="button" class="btn btn-default" ng-click="ctrl.deleteImage($index)"><i class="fa fa-trash"></i></button>
+                                                                <button type="button" class="btn btn-danger" ng-click="ctrl.deleteImage($index)"><i class="fa fa-trash"></i></button>
                                                             </div>
                                                         </div>
                                                     </li>
@@ -660,7 +659,7 @@
                                                                 <textarea class="form-control no-resize" ng-model="image" rows="3" ng-change="ctrl.changeImages($index,image,ctrl.feed.attribute.boximages)"></textarea>
                                                             </div>
                                                             <div class="col-md-2">
-                                                                <button type="button" class="btn btn-default" ng-click="ctrl.deleteBoxImage($index)"><i class="fa fa-trash"></i></button>
+                                                                <button type="button" class="btn btn-danger" ng-click="ctrl.deleteBoxImage($index)"><i class="fa fa-trash"></i></button>
                                                             </div>
                                                         </div>
 
