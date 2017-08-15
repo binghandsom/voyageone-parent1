@@ -366,7 +366,7 @@ public class UsaCustomColumnService extends BaseService {
                 // mqMessageBodies.forEach(messageBody -> usaSaleDataStatisticsService.SaleDataStatistics(messageBody));
 
                 mqMessageBodies.forEach(messageBody -> {
-                    CacheHelper.getValueOperation().set("P" + messageBody.getCartId() + "_customSale", DateTimeUtil.getNowTimeStampLong());
+                    CacheHelper.getValueOperation().set("P" + messageBody.getCartId() + "_customSale", messageBody.getStartDate() + messageBody.getEndDate());
                     cmsMqSenderService.sendMessage(messageBody);
                 });
             }
