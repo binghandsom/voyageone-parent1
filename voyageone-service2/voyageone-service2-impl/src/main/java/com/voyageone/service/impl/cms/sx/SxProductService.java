@@ -4903,8 +4903,8 @@ public class SxProductService extends BaseService {
         CmsBtProductModel_Platform_Cart platformInfo = sxData.getMainProduct().getUsPlatform(cartId);
 
         JongoUpdate jongoUpdate = new JongoUpdate();
-        jongoUpdate.setQuery("{\"common.fields.code\": #}");
-        jongoUpdate.setQueryParameters(workload.getCode());
+        jongoUpdate.setQuery("{\"prodId\": #}");
+        jongoUpdate.setQueryParameters(sxData.getMainProduct().getProdId());
 
         StringBuilder stringBuilder = new StringBuilder();
         List<String> updateParems = new ArrayList<>();
