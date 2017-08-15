@@ -440,7 +440,7 @@ s-field textarea.s-html {
     position: relative;
 }
 
-.product-shema-detail .saleShadow{
+.saleShadow{
     position: absolute;
     background: #ededed;
     width: 100%;
@@ -451,7 +451,7 @@ s-field textarea.s-html {
     -khtml-opacity: 0.6;
 }
 
-.product-shema-detail .saleTip{
+.saleTip{
     position: absolute;
     left: 42%;
     top: 20%;

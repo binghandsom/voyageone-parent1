@@ -1,5 +1,6 @@
 <div class="product-shema-detail" ng-init="ctrl.init()">
-
+    <div class="saleShadow" ng-if="ctrl.platform.isSale == '0'"></div>
+    <label class="saleTip" ng-if="ctrl.platform.isSale == '0'">No Sale</label>
     <form class="form-horizontal" name="productFieldForm" novalidate>
         <div class="panel vo_panel tab_panel">
             <div class="wrapper">
