@@ -245,11 +245,14 @@ public class UsaCmsFeedController extends BaseController {
             CmsBtFeedInfoModel cmsBtFeedInfoModel = feedInfoService.getProductByCode(getUser().getSelChannelId(), code);
             CmsBtFeedInfoModel_Platform_Cart platform = null;
             if (cmsBtFeedInfoModel != null && cartId != null && (platform = cmsBtFeedInfoModel.getUsPlatform(cartId)) != null) {
-                if (msrpPrice != null) {
-                    platform.setPriceClientMsrp(msrpPrice);
-                }
-                if (price != null) {
-                    platform.setPriceClientRetail(price);
+                // 修改所有平台价格
+                for (CmsBtFeedInfoModel_Platform_Cart usPlatform : cmsBtFeedInfoModel.getUsPlatforms().values()) {
+                    if (msrpPrice != null) {
+                        usPlatform.setPriceClientMsrp(msrpPrice);
+                    }
+                    if (price != null) {
+                        usPlatform.setPriceClientRetail(price);
+                    }
                 }
 
                 // cartId=8, 同步计算中国价格

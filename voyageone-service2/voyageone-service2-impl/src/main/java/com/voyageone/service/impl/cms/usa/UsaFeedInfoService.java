@@ -7,6 +7,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.CmsConstants;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
@@ -14,6 +15,7 @@ import com.voyageone.common.util.ListUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.impl.cms.TypeChannelsService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -61,6 +63,8 @@ public class UsaFeedInfoService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private TypeChannelsService typeChannelsService;
 
 
     /**
@@ -600,14 +604,22 @@ public class UsaFeedInfoService extends BaseService {
     public void bulkApprovePricing(String channelId, List<String> codeList, String username) {
         if (StringUtils.isNotBlank(channelId) && CollectionUtils.isNotEmpty(codeList)) {
 
+            List<TypeChannelBean> usPlatforms = typeChannelsService.getOnlyUsPlatformTypeList(channelId, "en");
+            StringBuffer sb = new StringBuffer("{");
+            sb.append("\"channelId\":#,\"code\":{$in:#}");
+            // 查询条件，美国各平台价格都存在且都大于0
+            for (TypeChannelBean cartObj : usPlatforms) {
+                sb.append(",\"usPlatforms.P" + cartObj.getValue() + ".priceClientMsrp\":{$exists:true},\"usPlatforms.P" + cartObj.getValue() + ".priceClientMsrp\":{$gt:0}");
+                sb.append(",\"usPlatforms.P" + cartObj.getValue() + ".priceClientRetail\":{$exists:true},\"usPlatforms.P" + cartObj.getValue() + ".priceClientRetail\":{$gt:0}");
+            }
+            sb.append("}");
+
             JongoUpdate jongoUpdate = new JongoUpdate();
-            // usPlatforms.P8.priceClientMsrp 和 usPlatforms.P8.priceClientRetail 必须大于0才能设置approvePricing=1
-            jongoUpdate.setQuery("{\"channelId\":#,\"code\":{$in:#}" +
-                    ",\"usPlatforms.P8.priceClientMsrp\":{$exists:true},\"usPlatforms.P8.priceClientMsrp\":{$gt:0}" +
-                    ",\"usPlatforms.P8.priceClientRetail\":{$exists:true},\"usPlatforms.P8.priceClientRetail\":{$gt:0}}");
+            jongoUpdate.setQuery(sb.toString());
             jongoUpdate.setQueryParameters(channelId, codeList);
 
-            StringBuffer sb = new StringBuffer();
+            // 清空sb, 设置update
+            sb.delete(0, sb.toString().length());
             sb.append("{\"approvePricing\":#,\"modifier\":#,\"modified\":#}");
             List<Object> updateParameters = new ArrayList<>();
             updateParameters.add("1");

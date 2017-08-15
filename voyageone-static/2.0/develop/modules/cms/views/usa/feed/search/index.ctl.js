@@ -261,6 +261,7 @@ define([
                         searchMap: self.paraMap
                     }
                 ).then(res => {
+                    self.notify.success("Bulk Approve Pricing successfully.")
                     self.isAll = false;
                     angular.forEach(self.feeds, function (feed) {
                         feed.check = false;
