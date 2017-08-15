@@ -33,6 +33,13 @@ import java.util.Map;
 @Service
 public class UsaCustomColumnService extends BaseService {
 
+    // 自定义列 -> Common Attributes
+    public static final String USA_COMMON_ATTR_CONFIG_NAME = "usa_cms_cust_col_common_attr";
+    // 自定义列 -> Platform Attributes
+    public static final String USA_PLATFORM_ATTR_CONFIG_NAME = "usa_cms_cust_col_platform_attr";
+    // 自定义列 -> Common Sales
+    public static final String USA_PLATFORM_SALE_CONFIG_NAME = "usa_cms_cust_col_platform_sale";
+
     @Autowired
     private PropService propService;
     @Autowired
@@ -54,7 +61,7 @@ public class UsaCustomColumnService extends BaseService {
     public Map<String, Object> getUserCustomColumns(String channelId, Integer userId, String language) {
         Map<String, Object> rsMap = new HashMap<>();
         // 取得已选择Common Attributes
-        Map<String, Object> colMap2 = commonPropService.getCustColumnsByUserId(userId, "usa_cms_cust_col_common_attr");
+        Map<String, Object> colMap2 = commonPropService.getCustColumnsByUserId(userId, USA_COMMON_ATTR_CONFIG_NAME);
         if (colMap2 == null || colMap2.isEmpty()) {
             rsMap.put("selCommonProps", new String[]{});
         } else {
@@ -63,7 +70,7 @@ public class UsaCustomColumnService extends BaseService {
         }
 
         // 取得已选择Platform Attributes
-        List<Map<String, Object>> platformAttrMapList = commonPropService.getMultiCustColumnsByUserId(userId, "usa_cms_cust_col_platform_attr");
+        List<Map<String, Object>> platformAttrMapList = commonPropService.getMultiCustColumnsByUserId(userId, USA_PLATFORM_ATTR_CONFIG_NAME);
         if (platformAttrMapList == null || platformAttrMapList.isEmpty()) {
             rsMap.put("selPlatformAttributes", new String[]{});
         } else {
@@ -82,12 +89,12 @@ public class UsaCustomColumnService extends BaseService {
             }
             rsMap.put("selPlatformAttributes", selPlatformAttributes);
         }
-        List<Map<String, Object>> platformSales = commonPropService.getMultiCustColumnsByUserId(userId, "usa_cms_cust_col_platform_sale");
+        List<Map<String, Object>> platformSales = commonPropService.getMultiCustColumnsByUserId(userId, USA_PLATFORM_SALE_CONFIG_NAME);
         if (platformSales == null || platformSales.isEmpty()) {
             rsMap.put("selPlatformSales", new ArrayList<Map<String, String>>());
             // 所有用户Platform Sale共享一个销量日期区间
             // 当前用户为勾选Platform Sale时, 找一条其他用户的usa_cms_cust_col_platform_sale记录, 用以显示日期区间
-            Map<String, Object> shareTimeInterval = commonPropService.getOnePlatformSaleWithoutUserId("usa_cms_cust_col_platform_sale");
+            Map<String, Object> shareTimeInterval = commonPropService.getOnePlatformSaleWithoutUserId(USA_PLATFORM_SALE_CONFIG_NAME);
             if (MapUtils.isNotEmpty(shareTimeInterval)) {
                 rsMap.put("shareTimeInterval", JacksonUtil.jsonToMap((String) shareTimeInterval.get("cfg_val1")));
             }
@@ -254,7 +261,7 @@ public class UsaCustomColumnService extends BaseService {
         Map<String, List<String>> selPlatformAttributes = (Map<String, List<String>>) params.get("selPlatformAttributes");
         List<Map<String, Object>> selPlatformSales = (List<Map<String, Object>>) params.get("selPlatformSales");
         // 保存用户自定义列 --->>> usa_cms_cust_col_common_attr
-        commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_common_attr");
+        commonPropService.deleteUserCustColumns(userId, USA_COMMON_ATTR_CONFIG_NAME);
         if (CollectionUtils.isNotEmpty(selCommonProps)) {
             int size = selCommonProps.size();
             StringBuffer sb = new StringBuffer();
@@ -264,10 +271,10 @@ public class UsaCustomColumnService extends BaseService {
                     sb.append(",");
                 }
             }
-            commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_common_attr", sb.toString(), "");
+            commonPropService.addUserCustColumn(userId, username, USA_COMMON_ATTR_CONFIG_NAME, sb.toString(), "");
         }
         // 保存用户自定义列 --->>> usa_cms_cust_col_platform_attr
-        commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_platform_attr");
+        commonPropService.deleteUserCustColumns(userId, USA_PLATFORM_ATTR_CONFIG_NAME);
         if (MapUtils.isNotEmpty(selPlatformAttributes)) {
             for (Map.Entry<String, List<String>> platformEntry : selPlatformAttributes.entrySet()) {
                 String cartId = platformEntry.getKey();
@@ -283,7 +290,7 @@ public class UsaCustomColumnService extends BaseService {
                         sb.append(",");
                     }
                 }
-                commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_platform_attr", sb.toString(), cartId);
+                commonPropService.addUserCustColumn(userId, username, USA_PLATFORM_ATTR_CONFIG_NAME, sb.toString(), cartId);
             }
         }
 
@@ -291,7 +298,7 @@ public class UsaCustomColumnService extends BaseService {
         if (CollectionUtils.isNotEmpty(selPlatformSales)) {
             List<CmsSaleDataStatisticsMQMessageBody> mqMessageBodies = new ArrayList<>();
             // 所有用户勾选的Platform Sale
-            List<Map<String, Object>> platformSaleCarts = commonPropService.getUsaPlatformSaleCarts("usa_cms_cust_col_platform_sale");
+            List<Map<String, Object>> platformSaleCarts = commonPropService.getUsaPlatformSaleCarts(USA_PLATFORM_SALE_CONFIG_NAME);
             // 所有用户勾选的Platform Sale -> List<Map> 转化为 Map
             Map<String, String> platformSaleInfoMap = new HashMap<>();
             // 所有用户勾选的Platform Sale 共享同一个时间区间, 记录之前的时间区间
@@ -310,13 +317,13 @@ public class UsaCustomColumnService extends BaseService {
             }
 
             // 当前用户勾选的Platform Sale
-            List<Map<String, Object>> platformSales = commonPropService.getMultiCustColumnsByUserId(userId, "usa_cms_cust_col_platform_sale");
+            List<Map<String, Object>> platformSales = commonPropService.getMultiCustColumnsByUserId(userId, USA_PLATFORM_SALE_CONFIG_NAME);
             if (platformSales == null) {
                 platformSales = Collections.emptyList();
             }
 
             // 方便起见, 直接删除当前用户 Platform Sale
-            commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_platform_sale");
+            commonPropService.deleteUserCustColumns(userId, USA_PLATFORM_SALE_CONFIG_NAME);
             // 本次勾选时间和之前时间区间是否发生变化了
             boolean saleTimeUpdFlag = false;
             for (Map<String, Object> selPlatformSaleMap : selPlatformSales) {
@@ -345,13 +352,13 @@ public class UsaCustomColumnService extends BaseService {
                     mqMessageBodies.add(messageBody);
                 }
 
-                commonPropService.addUserCustColumn(userId, username, "usa_cms_cust_col_platform_sale", JacksonUtil.bean2Json(selPlatformSaleMap), cartId);
+                commonPropService.addUserCustColumn(userId, username, USA_PLATFORM_SALE_CONFIG_NAME, JacksonUtil.bean2Json(selPlatformSaleMap), cartId);
 
                 if ((!beginTimeVal.equals(beginTime) || !endTimeVal.equals(endTime)) && !saleTimeUpdFlag) {
                     beginTimeVal = beginTime;
                     endTimeVal = endTime;
                     // 把其他用户勾选的Platform Sale 的时间区间更改为一致
-                    commonPropService.updateUsaPlatformSaleTime("usa_cms_cust_col_platform_sale", JacksonUtil.bean2Json(selPlatformSaleMap), username);
+                    commonPropService.updateUsaPlatformSaleTime(USA_PLATFORM_SALE_CONFIG_NAME, JacksonUtil.bean2Json(selPlatformSaleMap), username);
                     saleTimeUpdFlag = true;
                 }
             }
@@ -379,7 +386,7 @@ public class UsaCustomColumnService extends BaseService {
 
         } else {
             // 当前用户此次未勾选Platform Sale, 尝试删除之前勾选的usa_cms_cust_col_platform_sale的记录
-            commonPropService.deleteUserCustColumns(userId, "usa_cms_cust_col_platform_sale");
+            commonPropService.deleteUserCustColumns(userId, USA_PLATFORM_SALE_CONFIG_NAME);
         }
     }
 }
