@@ -82,4 +82,8 @@ public class CmsMtCommonPropDaoExt extends ServiceBaseDao {
     public int updateUsaPlatformSaleTime(String cfgName, String cfgVal1, String modifier) {
         return update("update_synship_ct_user_config_platform_sale_time", parameters("cfgName", cfgName, "cfgVal1", cfgVal1, "modifier", modifier));
     }
+
+    public Map<String,Object> selectOnePlatformSaleWithoutUser(String cfgName) {
+        return selectOne("select_one_platform_sale_without_user", parameters("cfgName", cfgName));
+    }
 }

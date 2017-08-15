@@ -81,4 +81,8 @@ public class CommonPropService extends BaseService {
     public int updateUsaPlatformSaleTime(String cfgName, String cfgVal1, String modifier) {
         return cmsMtCommonPropDaoExt.updateUsaPlatformSaleTime(cfgName, cfgVal1, modifier);
     }
+
+    public Map<String, Object> getOnePlatformSaleWithoutUserId(String cfgName) {
+        return cmsMtCommonPropDaoExt.selectOnePlatformSaleWithoutUser(cfgName);
+    }
 }

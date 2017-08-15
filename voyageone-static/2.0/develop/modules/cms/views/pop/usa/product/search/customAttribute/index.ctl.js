@@ -11,14 +11,6 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.notify = notify;
 
-            this.customColumns = {
-                commonProps:[],
-                selCommonProps:[],
-                platformAttributes:[],
-                selPlatformAttributes:[],
-                platformSales:[],
-                selPlatformSales:[]
-            };
             // Platform Sales
             this.saleInfo = {
                 beginTime:"",
@@ -80,6 +72,11 @@ define([
                            self.saleInfo.selCartObj[platformSale.cartId] = true;
                            self.saleInfo.selCarts.push(platformSale.cartId);
                        });
+                   } else {
+                       if (res.data.shareTimeInterval) {
+                           self.saleInfo.beginTime = res.data.shareTimeInterval.beginTime;
+                           self.saleInfo.endTime = res.data.shareTimeInterval.endTime;
+                       }
                    }
 
                }

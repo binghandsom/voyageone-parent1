@@ -83,8 +83,14 @@ public class UsaCustomColumnService extends BaseService {
             rsMap.put("selPlatformAttributes", selPlatformAttributes);
         }
         List<Map<String, Object>> platformSales = commonPropService.getMultiCustColumnsByUserId(userId, "usa_cms_cust_col_platform_sale");
-        if (colMap2 == null || colMap2.isEmpty()) {
+        if (platformSales == null || platformSales.isEmpty()) {
             rsMap.put("selPlatformSales", new ArrayList<Map<String, String>>());
+            // 所有用户Platform Sale共享一个销量日期区间
+            // 当前用户为勾选Platform Sale时, 找一条其他用户的usa_cms_cust_col_platform_sale记录, 用以显示日期区间
+            Map<String, Object> shareTimeInterval = commonPropService.getOnePlatformSaleWithoutUserId("usa_cms_cust_col_platform_sale");
+            if (MapUtils.isNotEmpty(shareTimeInterval)) {
+                rsMap.put("shareTimeInterval", JacksonUtil.jsonToMap((String) shareTimeInterval.get("cfg_val1")));
+            }
         } else {
             List<Map<String, Object>> selPlatformSales = new ArrayList<>();
             for (Map<String, Object> map : platformSales) {

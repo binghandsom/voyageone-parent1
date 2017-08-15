@@ -134,4 +134,14 @@
         UPDATE synship.ct_user_config SET cfg_val1=#{cfgVal1,jdbcType=VARCHAR} WHERE cfg_name=#{cfgName,jdbcType=VARCHAR}
     </update>
 
+    <select id="select_one_platform_sale_without_user" parameterType="String" resultType="HashMap">
+        SELECT
+            cfg_val2,cfg_val1
+        FROM
+            synship.ct_user_config
+        WHERE
+            cfg_name = #{cfgName,jdbcType=VARCHAR}
+            LIMIT 1
+    </select>
+
 </mapper>
