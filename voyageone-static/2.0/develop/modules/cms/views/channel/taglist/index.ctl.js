@@ -47,24 +47,30 @@ define([
 
             if (self.usaFlag) {
                 self.usTagService.init({tagTypeSelectValue: vm.usTagTypeSelectValue}).then(res => {
-                    //获取选择下拉数据
-                    vm.tagTypeList = res.data.tagTypeList;
-                    //保存原来的树
-                    vm.orgTagTree = res.data.tagTree;
-
-                    self.constructOrg(res.data.tagTree, parentIndex);
+                   self._callBack(parentIndex,res);
                 });
             } else {
                 self.channelTagService.init({tagTypeSelectValue: vm.tagTypeSelectValue}).then(function (res) {
-                    //获取选择下拉数据
-                    vm.tagTypeList = res.data.tagTypeList;
-                    //保存原来的树
-                    vm.orgTagTree = res.data.tagTree;
-
-                    self.constructOrg(res.data.tagTree, parentIndex);
+                    self._callBack(parentIndex,res);
                 });
             }
         };
+
+        _callBack(parentIndex,response){
+            let self = this,
+                vm = self.vm;
+
+            //获取选择下拉数据
+            vm.tagTypeList = response.data.tagTypeList;
+
+            vm.tagTypeSelectValue = vm.tagTypeList[0].value;
+
+            //保存原来的树
+            vm.orgTagTree = response.data.tagTree;
+
+            self.constructOrg(response.data.tagTree, parentIndex);
+
+        }
 
         /**
          * 展开树状结构
