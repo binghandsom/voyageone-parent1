@@ -29,41 +29,55 @@ define([
             this.selected = [];
             this.searchName = [];
             this.vm = {
-                tagTypeSelectValue: "0",
+                tagTypeSelectValue: "4",
                 usTagTypeSelectValue: "6",
                 tagTypeList: null,
                 trees: null
             }
         }
 
-
-
         /**
          * 初始化    构建tag树形结构
          * @param parentIndex
          */
-        init(parentIndex) {
+        init() {
             let self = this, vm = self.vm;
 
             if (self.usaFlag) {
                 self.usTagService.init({tagTypeSelectValue: vm.usTagTypeSelectValue}).then(res => {
-                   self._callBack(parentIndex,res);
+                    vm.tagTypeList = res.data.tagTypeList;
+
+                    vm.tagTypeSelectValue = vm.tagTypeList[0].value;
+                    self.selectData();
+                });
+            } else {
+                self.channelTagService.init({tagTypeSelectValue: vm.tagTypeSelectValue}).then(function (res) {
+                    vm.tagTypeList = res.data.tagTypeList;
+
+                    vm.tagTypeSelectValue = vm.tagTypeList[0].value;
+                    self.selectData();
+                });
+            }
+        };
+
+        selectData(parentIndex){
+            let self = this,
+                vm = self.vm;
+
+            if (self.usaFlag) {
+                self.usTagService.init({tagTypeSelectValue: vm.tagTypeSelectValue}).then(res => {
+                    self._callBack(parentIndex,res);
                 });
             } else {
                 self.channelTagService.init({tagTypeSelectValue: vm.tagTypeSelectValue}).then(function (res) {
                     self._callBack(parentIndex,res);
                 });
             }
-        };
+        }
 
         _callBack(parentIndex,response){
             let self = this,
                 vm = self.vm;
-
-            //获取选择下拉数据
-            vm.tagTypeList = response.data.tagTypeList;
-
-            vm.tagTypeSelectValue = vm.tagTypeList[0].value;
 
             //保存原来的树
             vm.orgTagTree = response.data.tagTree;
@@ -101,7 +115,7 @@ define([
                 tag:tag,
                 parentIndex:parentIndex}).then(() => {
                 self.notify.success("TagName modified successfully.");
-                self.init(parentIndex);
+                self.selectData(parentIndex);
             });
 
             $event.stopPropagation();
@@ -127,7 +141,7 @@ define([
                 tagSelectObject: self.selected[parentIndex === 0 ? 0 : parentIndex - 1]
             }).then(function () {
                 self.notify.success('The tag was successfully added.');
-                self.init(parentIndex);
+                self.selectData(parentIndex);
             });
         };
 
@@ -144,7 +158,7 @@ define([
                     parentTagId: tag.parentTagId,
                     tagTree: self.vm.orgTagTree
                 }).then(function () {
-                    self.init(parentIndex);
+                    self.selectData(parentIndex);
 
                     //删除后再出发一个搜索
                 });

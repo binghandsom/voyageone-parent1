@@ -9,7 +9,7 @@ module.exports = {
     "middleware": [
         morgan('dev'),
         proxy(['/cms', '/core'], {
-            target: "http://10.0.1.108:8080",
+            target: "http://10.0.1.47:8080",
             changeOrigin: true,
             logLevel: 'debug'
         })
